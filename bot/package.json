@@ -1,0 +1,17 @@
+{
+  "name": "tonbola-bot",
+  "version": "1.0.0",
+  "description": "TonBola Telegram Bot — Live Bingo on TON",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "grammy": "^1.26.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.0",
+    "ws": "^8.18.0"
+  }
+}
