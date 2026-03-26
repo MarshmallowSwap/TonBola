@@ -741,6 +741,27 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     <div class="lbt" onclick="setTab('squads',this)">Squads</div>
     <div class="lbt" onclick="setTab('alltime',this)">All Time</div>
   </div>
+
+  <!-- LIVE PRIZE POOL BANNER -->
+  <div style="margin:8px 10px;border-radius:14px;overflow:hidden;
+    background:linear-gradient(135deg,#1E1005,#130A02);
+    border:2px solid #6B4423;
+    box-shadow:0 4px 0 #0A0602,inset 0 0 20px rgba(255,184,0,.04)">
+    <div style="background:linear-gradient(90deg,#2E1A08,#1E1005);
+      padding:8px 14px;border-bottom:1px solid rgba(107,68,35,.3);
+      display:flex;align-items:center;gap:6px">
+      <span class="live-dot"></span>
+      <span style="font-size:.68rem;font-weight:700;letter-spacing:1px;
+        text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
+      <span style="font-size:.65rem;color:#4A3318;margin-left:auto" id="lb-pool-label">This week · resets Monday</span>
+    </div>
+    <div style="padding:12px 14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="lb-pool-grid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
   <div id="lb-list"></div>
 </div>
 
@@ -1040,7 +1061,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 </div>
 <nav class="nav">
   <button class="nb on" id="nb-h" onclick="go('sh');setNav('nb-h')"><div class="ni">⚔</div>Play</button>
-  <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');renderLb('weekly')"><div class="ni">🏆</div>Ranks</button>
+  <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
   <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile();renderSquad()"><div class="ni">🛡️</div>Profile</button>
 </nav>
 
@@ -1408,7 +1429,92 @@ function setTab(tab,el){
   renderLb(tab)
   const label=document.getElementById('lb-reset-label')
   if(label) label.textContent=LB_LABELS[tab]||''
+  renderPoolBanner(tab)
 }
+
+// Prize pool data per tab (simulated, grows over time)
+const POOL_BASE = {
+  weekly:  { stars: 48200, ton: 0,    tbola: 284000, label: 'This week · resets Monday' },
+  monthly: { stars: 186400, ton: 0,   tbola: 920000, label: 'This month · resets 1st' },
+  squads:  { stars: 0,     ton: 1.84, tbola: 142000, label: 'Squad fund · resets Monday' },
+  alltime: { stars: 0,     ton: 0,    tbola: 4820000, label: 'Cumulative all time' },
+}
+// Simulate live growth: +~100 Stars every ~30s, +~0.01 TON every ~60s
+let poolGrowth = { stars: 0, ton: 0, tbola: 0 }
+let poolTick = 0
+let currentTab = 'weekly'
+
+function renderPoolBanner(tab) {
+  currentTab = tab
+  const base = POOL_BASE[tab]
+  const lbl = document.getElementById('lb-pool-label')
+  if(lbl) lbl.textContent = base.label
+
+  const grid = document.getElementById('lb-pool-grid')
+  if(!grid) return
+
+  const stars = base.stars + (tab==='weekly'?poolGrowth.stars:tab==='monthly'?poolGrowth.stars*4:0)
+  const ton   = base.ton   + (tab==='squads'?poolGrowth.ton:0)
+  const tbola = base.tbola + poolGrowth.tbola
+
+  const boxes = []
+
+  if(base.stars > 0 || stars > 0) boxes.push({
+    label:'⭐ Stars Pool', color:'#FFD93D',
+    bg:'rgba(255,184,0,.08)', border:'rgba(255,184,0,.25)',
+    value: Math.floor(stars).toLocaleString()+' Stars',
+    sub: tab==='weekly'?'Top 10 share':'Top 10 share'
+  })
+  if(base.ton > 0 || ton > 0) boxes.push({
+    label:'💎 TON Pool', color:'#40B8FF',
+    bg:'rgba(61,158,255,.08)', border:'rgba(61,158,255,.25)',
+    value: ton.toFixed(2)+' TON',
+    sub: 'Top squads share'
+  })
+  if(base.tbola > 0) boxes.push({
+    label:'◆ $TBOLA Pool', color:'#FFD93D',
+    bg:'rgba(255,184,0,.06)', border:'rgba(255,184,0,.2)',
+    value: Math.floor(tbola).toLocaleString(),
+    sub: 'Airdrop snapshot'
+  })
+
+  // alltime shows total distributed
+  if(tab==='alltime') {
+    grid.style.gridTemplateColumns = 'repeat(3,1fr)'
+    grid.innerHTML = [
+      {label:'⭐ Total Stars', color:'#FFD93D', bg:'rgba(255,184,0,.08)', border:'rgba(255,184,0,.25)', value:'1,284,400', sub:'paid out ever'},
+      {label:'💎 Total TON',   color:'#40B8FF', bg:'rgba(61,158,255,.08)', border:'rgba(61,158,255,.25)', value:'48.2 TON', sub:'paid out ever'},
+      {label:'◆ $TBOLA Given',color:'#C080FF', bg:'rgba(192,128,255,.08)', border:'rgba(192,128,255,.2)', value:Math.floor(tbola).toLocaleString(), sub:'accumulated'},
+    ].map(b=>`
+      <div style="background:${b.bg};border:1.5px solid ${b.border};border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${b.color};margin-bottom:4px;opacity:.8">${b.label}</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${b.color};line-height:1.1;text-shadow:0 0 10px ${b.color}55">${b.value}</div>
+        <div style="font-size:.62rem;color:#4A3318;margin-top:2px">${b.sub}</div>
+      </div>`).join('')
+    return
+  }
+
+  grid.style.gridTemplateColumns = boxes.length===1?'1fr':boxes.length===2?'1fr 1fr':'repeat(3,1fr)'
+  grid.innerHTML = boxes.map(b=>`
+    <div style="background:${b.bg};border:1.5px solid ${b.border};border-radius:10px;padding:10px 8px;text-align:center">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${b.color};margin-bottom:4px;opacity:.8">${b.label}</div>
+      <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${b.color};line-height:1.1;text-shadow:0 0 10px ${b.color}55" id="pool-val-${b.label.replace(/[^a-z]/gi,'')}">${b.value}</div>
+      <div style="font-size:.62rem;color:#4A3318;margin-top:2px">${b.sub}</div>
+    </div>`).join('')
+}
+
+// Grow pool every few seconds to simulate live activity
+setInterval(()=>{
+  poolTick++
+  // ~1 card every 8 seconds on average across all rooms
+  poolGrowth.stars  += Math.random() < 0.4 ? Math.floor(Math.random()*100+50) : 0
+  poolGrowth.ton    += Math.random() < 0.2 ? parseFloat((Math.random()*0.1).toFixed(3)) : 0
+  poolGrowth.tbola  += Math.floor(Math.random()*20+10)
+  // Re-render banner if on leaderboard screen
+  if(document.getElementById('slb').classList.contains('active')) {
+    renderPoolBanner(currentTab)
+  }
+}, 8000)
 
 initHome();renderLb('weekly')
 
