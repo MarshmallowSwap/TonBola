@@ -89,19 +89,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 
 .room-card{margin:0 12px 10px;border-radius:var(--r);padding:14px 16px;
   border:1px solid rgba(255,255,255,.08);cursor:pointer;
-  transition:transform .12s,border-color .15s;position:relative;overflow:hidden}
+  transition:transform .12s,border-color .15s;position:relative;overflow:visible;min-height:0}
 .room-card:active{transform:scale(.98)}
 .room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .room-card.free::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
 .room-card.stars::before{background:linear-gradient(90deg,var(--yellow),var(--coral))}
 .room-card.ton::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
 .room-card.vip::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
-.room-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.room-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
 .room-name{font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600}
 .room-meta{display:flex;gap:8px;align-items:center;margin-top:6px}
 .room-players{font-size:.8rem;color:var(--hint);display:flex;align-items:center;gap:4px}
 .room-price{font-family:'Fredoka',sans-serif;font-size:.95rem;font-weight:600}
-.room-next{font-size:.75rem;color:var(--hint);margin-top:4px}
+.room-next{font-size:.75rem;color:var(--hint);margin-top:5px;white-space:normal;line-height:1.4}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;
   animation:blink 1.2s ease infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
@@ -187,7 +187,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
   font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;
   border:3px solid rgba(255,255,255,.15)}
 .xp-bar-wrap{background:rgba(255,255,255,.07);border-radius:50px;height:8px;
-  margin:8px 0 4px;overflow:hidden}
+  margin:8px 0 4px;overflow:visible;min-height:0}
 .xp-bar{height:100%;border-radius:50px;
   background:linear-gradient(90deg,var(--purple),var(--pink));
   transition:width .8s cubic-bezier(.34,1.56,.64,1)}
