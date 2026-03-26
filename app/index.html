@@ -762,9 +762,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   </div>
 
   <!-- CURRENCY SUB-TABS -->
-  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 4px;background:#1A0F08">
-    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')">⭐ Stars</div>
-    <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')">💎 TON</div>
+  <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:#1A0F08">
+    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">⭐ Stars</div>
+    <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')" style="justify-content:center">💎 TON</div>
   </div>
 
   <!-- POOL BANNER -->
