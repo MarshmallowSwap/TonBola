@@ -738,21 +738,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     </div>
   </div>
   <!-- MAIN TABS -->
-  <div class="lbtabs">
-    <div class="lbt on" onclick="setTab('weekly',this)">Weekly</div>
-    <div class="lbt" onclick="setTab('monthly',this)">Monthly</div>
-    <div class="lbt" onclick="setTab('squads',this)">Squads</div>
-    <div class="lbt" onclick="setTab('alltime',this)">All Time</div>
+  <div style="display:flex;gap:5px;padding:8px 10px 4px;overflow-x:auto;scrollbar-width:none">
+    <div class="lbt on" id="lt-weekly"  onclick="setTab('weekly',this)" style="flex-shrink:0">Weekly</div>
+    <div class="lbt"    id="lt-monthly" onclick="setTab('monthly',this)" style="flex-shrink:0">Monthly</div>
+    <div class="lbt"    id="lt-squads"  onclick="setTab('squads',this)" style="flex-shrink:0">Squads</div>
+    <div class="lbt"    id="lt-alltime" onclick="setTab('alltime',this)" style="flex-shrink:0">All Time</div>
   </div>
 
-  <!-- CURRENCY SUB-TABS (Stars / TON) — hidden for squads/alltime -->
-  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:4px 10px 8px">
+  <!-- CURRENCY SUB-TABS — visible only for weekly/monthly/alltime -->
+  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:2px 10px 6px">
     <div class="lbt on" id="lc-stars" onclick="setCurrency('stars')"
-      style="font-size:.75rem;padding:5px 12px;display:flex;align-items:center;gap:4px">
+      style="font-size:.75rem;padding:5px 12px;flex-shrink:0">
       ⭐ Stars
     </div>
     <div class="lbt" id="lc-ton" onclick="setCurrency('ton')"
-      style="font-size:.75rem;padding:5px 12px;display:flex;align-items:center;gap:4px">
+      style="font-size:.75rem;padding:5px 12px;flex-shrink:0">
       💎 TON
     </div>
   </div>
