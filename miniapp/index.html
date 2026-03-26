@@ -714,7 +714,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
   <div class="sec">Squad</div>
   <div id="p-squad-section" style="padding:0 10px 8px">
-    <div id="p-squad-display" onclick="go('s-squad');setNav('nb-p');renderSquad()"
+    <div onclick="go('s-squad');setNav('nb-s');renderSquad()"
       style="display:flex;align-items:center;gap:10px;padding:12px 14px;
         border-radius:12px;cursor:pointer;
         background:linear-gradient(135deg,#1A2A0A,#0E1A06);
@@ -724,11 +724,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
           background:linear-gradient(145deg,#3A2810,#1A1005);
           border:2px solid #6B4423;display:flex;align-items:center;
           justify-content:center;font-size:1.4rem;flex-shrink:0">🛡️</div>
-      <div style="flex:1">
+      <div style="flex:1;min-width:0">
         <div style="font-size:.9rem;font-weight:700;color:#FFE0A0" id="p-squad-name">No Squad</div>
-        <div style="font-size:.75rem;color:#5A3D1A" id="p-squad-sub">Create or join a squad</div>
+        <div style="font-size:.75rem;color:#5A3D1A" id="p-squad-sub">Tap to join or create</div>
       </div>
-      <div style="font-size:.85rem;color:#5A3D1A">›</div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.9rem;font-weight:700;color:#FFD93D" id="p-squad-value"></div>
+        <div style="font-size:.65rem;color:#5A3D1A" id="p-squad-rank"></div>
+      </div>
+      <div style="font-size:.85rem;color:#5A3D1A;margin-left:4px">›</div>
     </div>
   </div>
 
@@ -915,12 +919,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 <div class="screen" id="s-squad">
   <div class="stone-header">
     <div class="topbar">
-      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">👥 Squad</div>
-      <div style="width:60px"></div>
+      <div style="font-size:1rem;font-weight:700;color:#FFE0A0">👥 Squads</div>
     </div>
   </div>
-  <div id="squad-content" style="padding:12px;display:flex;flex-direction:column;gap:10px"></div>
+  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
 <!-- CREATE SQUAD SCREEN -->
@@ -1101,7 +1103,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 <nav class="nav">
   <button class="nb on" id="nb-h" onclick="go('sh');setNav('nb-h')"><div class="ni">⚔</div>Play</button>
   <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');lbCurrency='stars';lbTab='weekly';renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
-  <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile();renderSquad()"><div class="ni">🛡️</div>Profile</button>
+  <button class="nb" id="nb-s" onclick="go('s-squad');setNav('nb-s');renderSquad()"><div class="ni">👥</div>Squads</button>
+  <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile()"><div class="ni">🛡️</div>Profile</button>
 </nav>
 
 <script>
@@ -1840,112 +1843,162 @@ let mySquad = null // null = no squad
 function renderSquad() {
   const cont = document.getElementById('squad-content')
   if(!cont) return
+
   if(!mySquad) {
-    // No squad — show options
+    // ── NO SQUAD ──
     cont.innerHTML = `
-      <div style="text-align:center;padding:30px 20px">
-        <div style="font-size:4rem;margin-bottom:12px">🛡️</div>
+      <div style="text-align:center;padding:20px 16px 12px">
+        <div style="font-size:3.5rem;margin-bottom:10px">🛡️</div>
         <div style="font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">You have no squad</div>
-        <div style="font-size:.82rem;color:#6B4423;margin-bottom:24px;line-height:1.6">
-          Create your own squad or join one with a code. Compete weekly for squad prizes.
+        <div style="font-size:.82rem;color:#6B4423;line-height:1.6;max-width:260px;margin:0 auto">
+          Create your own squad or send a join request to an existing one.
         </div>
-      </div>
-      <button class="btn btn-gold" onclick="go('s-create-squad')" style="padding:14px;font-size:1rem;margin:0 0 10px">⚔ Create Squad</button>
-      <div class="wood-panel" style="padding:16px">
-        <div class="nail-bl"></div><div class="nail-br"></div>
-        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Join with Code</div>
-        <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
-          style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-            padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.95rem;
-            outline:none;box-sizing:border-box;margin-bottom:10px">
-        <button class="btn btn-stone" onclick="joinSquad()" style="padding:10px;font-size:.9rem;width:100%">Join Squad</button>
       </div>
 
-      <div class="sec" style="margin-top:8px">Top Squads This Week</div>
-      ${[
-        {rank:'🥇',name:'TON Wolves',score:'48,200',members:18},
-        {rank:'🥈',name:'Iron Clan',score:'41,800',members:20},
-        {rank:'🥉',name:'Crystal Guild',score:'38,400',members:15},
-        {rank:'4',name:'Stone Legion',score:'31,200',members:12},
-        {rank:'5',name:'Lucky Seven',score:'28,900',members:9},
-      ].map(s=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
-          border-bottom:1px solid rgba(255,255,255,.05)">
-          <div style="font-size:1rem;font-weight:700;width:28px;text-align:center;
-            color:${s.rank.includes('🥇')||s.rank.includes('🥈')||s.rank.includes('🥉')?'#FFD93D':'#5A3D1A'}">${s.rank}</div>
-          <div style="flex:1">
-            <div style="font-size:.85rem;font-weight:700;color:#FFE0A0">${s.name}</div>
-            <div style="font-size:.72rem;color:#5A3D1A">${s.members} members</div>
-          </div>
-          <div style="font-size:.9rem;font-weight:700;color:#FFD93D">${s.score}</div>
-        </div>`).join('')}`
-  } else {
-    // Has squad — show squad details
-    cont.innerHTML = `
-      <div class="wood-panel" style="padding:16px;text-align:center">
+      <!-- CREATE -->
+      <button class="btn btn-gold" onclick="go('s-create-squad')" style="padding:14px;font-size:1rem">
+        ⚔ Create a Squad — 0.5 TON or 500 Stars
+      </button>
+
+      <!-- JOIN WITH CODE -->
+      <div class="wood-panel" style="padding:16px">
         <div class="nail-bl"></div><div class="nail-br"></div>
-        <div style="width:70px;height:70px;border-radius:14px;margin:0 auto 10px;
-          background:linear-gradient(145deg,#3A2810,#1A1005);border:3px solid #6B4423;
-          display:flex;align-items:center;justify-content:center;font-size:2.2rem">${mySquad.icon}</div>
-        <div style="font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:2px">${mySquad.name}</div>
-        <div style="font-size:.78rem;color:#6B4423;margin-bottom:12px">${mySquad.desc||'No description'}</div>
-        <div style="display:flex;justify-content:center;gap:16px">
-          <div style="text-align:center">
-            <div style="font-size:1.2rem;font-weight:700;color:#FFD93D">${mySquad.members}</div>
-            <div style="font-size:.68rem;color:#6B4423">Members</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:1.2rem;font-weight:700;color:#3AFF8A">${mySquad.weekScore?.toLocaleString()||'0'}</div>
-            <div style="font-size:.68rem;color:#6B4423">Week Score</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:1.2rem;font-weight:700;color:#FFD93D">#${mySquad.rank||'-'}</div>
-            <div style="font-size:.68rem;color:#6B4423">Rank</div>
-          </div>
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">
+          🔑 Join with Code
+        </div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
+            style="flex:1;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
+              padding:9px 12px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
+              outline:none;box-sizing:border-box;text-transform:uppercase">
+          <button class="btn btn-stone btn-sm" onclick="joinSquad()" style="flex-shrink:0;padding:9px 14px">Join</button>
         </div>
       </div>
+
+      <!-- BROWSE SQUADS -->
+      <div class="sec" style="padding:4px 0">Open Squads</div>
+      ${renderSquadList()}
+    `
+  } else {
+    // ── HAS SQUAD ──
+    cont.innerHTML = `
+      <!-- MY SQUAD CARD -->
+      <div class="wood-panel" style="padding:16px;text-align:center">
+        <div class="nail-bl"></div><div class="nail-br"></div>
+        <div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;
+          background:linear-gradient(145deg,#3A2810,#1A1005);border:3px solid #6B4423;
+          display:flex;align-items:center;justify-content:center;font-size:2rem">${mySquad.icon}</div>
+        <div style="font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:2px">${mySquad.name}</div>
+        <div style="font-size:.78rem;color:#6B4423;margin-bottom:14px">${mySquad.desc||'No description'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:#FFD93D">${mySquad.members}</div>
+            <div style="font-size:.65rem;color:#6B4423">Members</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:#3AFF8A">${(mySquad.weekScore||0).toLocaleString()}</div>
+            <div style="font-size:.65rem;color:#6B4423">Week Score</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:#FFD93D">#${mySquad.rank||'?'}</div>
+            <div style="font-size:.65rem;color:#6B4423">Rank</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;
+          display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:.75rem;color:#6B4423">Squad code</span>
+          <span style="font-size:.85rem;font-weight:700;color:#FFD93D;letter-spacing:2px"
+            onclick="navigator.clipboard?.writeText('${mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}')">
+            ${mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
+          </span>
+        </div>
+      </div>
+
+      <!-- MEMBERS -->
       <div class="stone-panel" style="padding:14px">
-        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6B4423;margin-bottom:10px">Members</div>
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+          color:#6B4423;margin-bottom:10px">Members · ${mySquad.members}/20</div>
         ${(mySquad.memberList||[]).map((m,i)=>`
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-            <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(145deg,#6B4423,#3A2810);
-              border:2px solid #4A3318;display:flex;align-items:center;justify-content:center;font-size:.9rem">${m.avatar||'😊'}</div>
-            <div style="flex:1;font-size:.82rem;font-weight:600;color:#FFE0A0">${m.name}</div>
-            ${i===0?'<div style="font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:#FFD93D;border:1px solid rgba(255,184,0,.3)">Captain</div>':''}
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;
+            border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="width:32px;height:32px;border-radius:50%;
+              background:linear-gradient(145deg,#6B4423,#3A2810);
+              border:2px solid #4A3318;display:flex;align-items:center;
+              justify-content:center;font-size:.95rem;flex-shrink:0">${m.avatar||'😊'}</div>
+            <div style="flex:1;font-size:.85rem;font-weight:600;color:#FFE0A0">${m.name}</div>
+            ${i===0?'<div style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:#FFD93D;border:1px solid rgba(255,184,0,.3)">Captain</div>':''}
           </div>`).join('')}
       </div>
-      <button class="btn btn-stone" onclick="leaveSquad()" style="padding:12px;font-size:.85rem;margin-top:4px">Leave Squad</button>`
+
+      <!-- LEAVE -->
+      <button class="btn btn-stone" onclick="leaveSquad()" style="padding:12px;font-size:.85rem">
+        🚪 Leave Squad
+      </button>`
   }
-  // Update profile squad section
+
+  // Update profile widget
   const pname = document.getElementById('p-squad-name')
-  const psub = document.getElementById('p-squad-sub')
+  const psub  = document.getElementById('p-squad-sub')
   const picon = document.getElementById('p-squad-icon')
+  const pval  = document.getElementById('p-squad-value')
+  const prnk  = document.getElementById('p-squad-rank')
   if(mySquad) {
     if(pname) pname.textContent = mySquad.name
-    if(psub) psub.textContent = `${mySquad.members} members · #${mySquad.rank||'?'} this week`
+    if(psub)  psub.textContent  = mySquad.members+' members'
     if(picon) picon.textContent = mySquad.icon
+    if(pval)  pval.textContent  = (mySquad.weekScore||0).toLocaleString()+' pts'
+    if(prnk)  prnk.textContent  = mySquad.rank ? '#'+mySquad.rank+' this week' : 'unranked'
+  } else {
+    if(pname) pname.textContent = 'No Squad'
+    if(psub)  psub.textContent  = 'Tap to join or create'
+    if(picon) picon.textContent = '🛡️'
+    if(pval)  pval.textContent  = ''
+    if(prnk)  prnk.textContent  = ''
   }
 }
 
-let squadFee = 'ton' // 'ton' or 'stars'
+function renderSquadList() {
+  const squads = [
+    {name:'TON Wolves',icon:'🐺',members:18,max:20,score:48000,open:true},
+    {name:'Crystal Guild',icon:'💎',members:15,max:20,score:38800,open:true},
+    {name:'Stone Legion',icon:'⚔️',members:12,max:15,score:32100,open:true},
+    {name:'Lucky Seven',icon:'🍀',members:9,max:10,score:28900,open:false},
+    {name:'Dragon Fire',icon:'🐉',members:14,max:20,score:24400,open:true},
+    {name:'Moon Raiders',icon:'🌙',members:11,max:15,score:21200,open:true},
+  ]
+  return squads.map(s=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
+      background:linear-gradient(135deg,#1E1005,#130A02);
+      border:2px solid ${s.open?'#3A5C1A':'#3D2810'};border-radius:12px;margin-bottom:6px">
+      <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;
+        background:linear-gradient(145deg,#3A2810,#1A1005);border:2px solid #6B4423;
+        display:flex;align-items:center;justify-content:center;font-size:1.2rem">${s.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.88rem;font-weight:700;color:#FFE0A0">${s.name}</div>
+        <div style="font-size:.7rem;color:#5A3D1A">${s.members}/${s.max} members · ${s.score.toLocaleString()} pts</div>
+      </div>
+      ${s.open
+        ? `<button class="btn btn-stone btn-sm" onclick="requestJoinSquad('${s.name}')"
+            style="padding:6px 12px;font-size:.75rem;flex-shrink:0">Request</button>`
+        : `<div style="font-size:.7rem;color:#5A3D1A;padding:4px 8px;border-radius:50px;
+            border:1px solid #3D2810">Full</div>`
+      }
+    </div>`).join('')
+}
 
-function selectSquadFee(cur) {
-  squadFee = cur
-  const tonEl   = document.getElementById('sf-ton')
-  const starsEl = document.getElementById('sf-stars')
-  const btn     = document.getElementById('squad-create-btn')
-  if(cur === 'ton') {
-    tonEl.style.background   = 'rgba(0,152,234,.15)'
-    tonEl.style.borderColor  = '#0098EA'
-    starsEl.style.background = 'rgba(0,0,0,.2)'
-    starsEl.style.borderColor= 'rgba(255,255,255,.1)'
-    btn.textContent = '💎 Pay 0.5 TON & Create Squad'
-  } else {
-    starsEl.style.background = 'rgba(255,184,0,.15)'
-    starsEl.style.borderColor= '#FFB800'
-    tonEl.style.background   = 'rgba(0,0,0,.2)'
-    tonEl.style.borderColor  = 'rgba(255,255,255,.1)'
-    btn.textContent = '⭐ Pay 500 Stars & Create Squad'
+function requestJoinSquad(name) {
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'📨 Join Request',
+      message:'Send a join request to "'+name+'"?\n\nThe captain will be notified and can accept or decline.',
+      buttons:[{id:'ok',type:'default',text:'Send Request'},{type:'cancel'}]
+    }, (id)=>{
+      if(id==='ok' && tg?.showPopup) {
+        tg.showPopup({title:'✅ Request Sent!',
+          message:'Your request has been sent to "'+name+'". You'll be notified when the captain responds.',
+          buttons:[{type:'ok'}]})
+      }
+    })
   }
 }
 
