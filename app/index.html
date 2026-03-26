@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+@font-face {
+  font-family: 'Clash';
+  src: url('../fonts/Clash_Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash';
+  src: url('../fonts/Clash_Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root{
   --gold:#FFB800;--gold2:#FFD93D;--brown:#8B4513;--stone:#5A4A3A;
   --crystal-blue:#4FC3FF;--crystal-gold:#FFD700;--crystal-purple:#B44FFF;
@@ -18,7 +31,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--dark);
-  font-family:'Fredoka',sans-serif;-webkit-font-smoothing:antialiased}
+  font-family:'Clash',sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ── */
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
@@ -68,7 +81,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 /* ── STONE BUTTON ── */
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;
   border-radius:50px;border:none;cursor:pointer;
-  font-family:'Fredoka',sans-serif;font-weight:700;
+  font-family:'Clash',sans-serif;font-weight:700;
   transition:transform .1s;-webkit-user-select:none}
 .btn:active{transform:translateY(2px)}
 
@@ -418,7 +431,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   background:linear-gradient(90deg,transparent,#FFD700,transparent);opacity:.3}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;
   gap:2px;cursor:pointer;border:none;background:transparent;
-  color:#5A3D1A;font-family:'Fredoka',sans-serif;font-size:.7rem;font-weight:700;
+  color:#5A3D1A;font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;
   padding:5px 4px}
 .nb.on{color:#FFD93D}
 .ni{font-size:1.2rem;transition:transform .15s}
@@ -623,7 +636,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
         <!-- placeholder balls before first draw -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;opacity:.35">
           <div style="font-size:2rem">🎱</div>
-          <div style="font-size:.68rem;color:#6B4423;font-family:'Fredoka',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
+          <div style="font-size:.68rem;color:#6B4423;font-family:'Clash',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
         </div>
       </div>
       <div class="dcount" id="g-dc">Get ready — first number coming up!</div>

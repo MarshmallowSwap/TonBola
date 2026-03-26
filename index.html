@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="TonBola — Live multiplayer Bingo on Telegram. Win real TON & Stars every game.">
 <title>TonBola — Live Bingo on TON Chain</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+
 <style>
+@font-face {
+  font-family: 'Clash';
+  src: url('/fonts/Clash_Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash';
+  src: url('/fonts/Clash_Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --gold:#FFD93D;--gold2:#FFB800;--gold3:#FF8C00;
   --brown:#4A2800;--brown2:#2E1600;
@@ -18,7 +31,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Fredoka',sans-serif;background:#1A3A06;overflow-x:hidden;cursor:default}
+body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden;cursor:default}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:8px}
@@ -58,7 +71,7 @@ nav{
 nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
   background:linear-gradient(90deg,#6B4423,#FFD700,#C4933F,#FFD700,#6B4423);opacity:.5}
 .nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:24px}
-.nav-logo{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;
+.nav-logo{font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:900;
   color:#FFD93D;text-shadow:0 0 20px rgba(255,184,0,.5),3px 3px 0 #7A5200,-1px -1px 0 rgba(0,0,0,.5);
   letter-spacing:-1px;cursor:pointer}
 .nav-logo span{color:#FF4444;text-shadow:0 0 20px rgba(255,68,68,.4),3px 3px 0 #8B0000}
@@ -134,7 +147,7 @@ nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
 .btn-gold{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   padding:14px 32px;border-radius:50px;border:none;cursor:pointer;
-  font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.5px;
+  font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.5px;
   background:linear-gradient(180deg,#FFE566 0%,#FFD93D 40%,#FFB800 100%);
   color:#3D1A00;border:3px solid #FFE566;
   box-shadow:0 6px 0 #8B6000,0 8px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);
@@ -146,7 +159,7 @@ nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
 .btn-stone{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   padding:12px 28px;border-radius:50px;border:none;cursor:pointer;
-  font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;
+  font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
   background:linear-gradient(180deg,#7A7060,#5A5040);
   color:#FFE0A0;border:3px solid #9A9080;
   box-shadow:0 5px 0 #2A2418,0 7px 16px rgba(0,0,0,.5);
@@ -175,7 +188,7 @@ nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
 @keyframes pulse-d{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
 
 .hero-title{
-  font-family:'Nunito',sans-serif;font-weight:900;
+  font-family:'Clash',sans-serif;font-weight:900;
   font-size:clamp(3rem,8vw,6.5rem);line-height:1;
   margin-bottom:8px;
   animation:fadeUp .7s .1s ease both}
@@ -200,7 +213,7 @@ nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
 /* FLOATING BALLS hero */
 .hero-balls{position:absolute;inset:0;pointer-events:none}
 .hball{position:absolute;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;
+  justify-content:center;font-family:'Clash',sans-serif;font-weight:700;
   animation:hfloat var(--d,5s) var(--dl,0s) ease-in-out infinite alternate;
   box-shadow:0 4px 0 rgba(0,0,0,.4),inset -3px -3px 8px rgba(0,0,0,.3),
     inset 2px 2px 6px rgba(255,255,255,.25)}
@@ -221,7 +234,7 @@ section{padding:80px 24px;position:relative}
 
 /* Section title */
 .s-title{
-  font-family:'Nunito',sans-serif;font-weight:900;
+  font-family:'Clash',sans-serif;font-weight:900;
   font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:12px;
   color:#FFE0A0;text-shadow:3px 3px 0 rgba(0,0,0,.5);-webkit-text-stroke:.5px #4A2800}
 .s-sub{font-size:1rem;color:rgba(255,200,120,.6);line-height:1.7;max-width:560px}
@@ -233,7 +246,7 @@ section{padding:80px 24px;position:relative}
   animation:fadeUp .6s ease both}
 .step-num{
   width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
-  font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;
+  font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:900;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 5px 0 rgba(0,0,0,.4),inset -2px -2px 6px rgba(0,0,0,.3)}
 .step h3{font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:8px;
@@ -296,13 +309,13 @@ section{padding:80px 24px;position:relative}
 .tok-bar{flex:1;height:8px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;
   border:1px solid rgba(0,0,0,.3)}
 .tok-fill{height:100%;border-radius:4px}
-.tok-pct{font-family:'Fredoka',sans-serif;font-size:.95rem;font-weight:700;min-width:32px;text-align:right}
+.tok-pct{font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;min-width:32px;text-align:right}
 
 /* ── REFERRAL ── */
 #referral{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
 .ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px}
 .ref-card{padding:24px;text-align:center;border-radius:10px}
-.ref-pct{font-family:'Nunito',sans-serif;font-weight:900;font-size:3rem;line-height:1;margin-bottom:4px}
+.ref-pct{font-family:'Clash',sans-serif;font-weight:900;font-size:3rem;line-height:1;margin-bottom:4px}
 .ref-name{font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:4px}
 .ref-desc{font-size:.8rem;color:rgba(255,200,120,.5);line-height:1.5}
 
@@ -311,7 +324,7 @@ section{padding:80px 24px;position:relative}
   background:linear-gradient(180deg,#142A08 0%,#0E1A04 100%);
   text-align:center;padding:100px 24px}
 .cta-inner h2{
-  font-family:'Nunito',sans-serif;font-weight:900;
+  font-family:'Clash',sans-serif;font-weight:900;
   font-size:clamp(2.2rem,5vw,4rem);color:#FFD93D;
   text-shadow:4px 4px 0 #7A5200,0 0 40px rgba(255,184,0,.3);
   -webkit-text-stroke:1px #4A2800;margin-bottom:16px}
@@ -326,7 +339,7 @@ footer{
   padding:32px 24px}
 .footer-inner{max-width:1100px;margin:0 auto;
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-logo{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.5rem;
+.footer-logo{font-family:'Clash',sans-serif;font-weight:900;font-size:1.5rem;
   color:#FFD93D;text-shadow:2px 2px 0 #7A5200;letter-spacing:-1px}
 .footer-logo span{color:#FF4444}
 .footer-links{display:flex;gap:16px;flex-wrap:wrap}
@@ -349,7 +362,7 @@ footer{
 .stats-inner{max-width:1100px;margin:0 auto;
   display:flex;justify-content:space-around;flex-wrap:wrap;gap:8px}
 .stat{text-align:center;padding:0 24px}
-.stat-n{font-family:'Nunito',sans-serif;font-weight:900;font-size:2.2rem;
+.stat-n{font-family:'Clash',sans-serif;font-weight:900;font-size:2.2rem;
   color:#FFD93D;line-height:1;
   text-shadow:2px 2px 0 #7A5200,0 0 20px rgba(255,184,0,.3)}
 .stat-l{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
@@ -628,7 +641,7 @@ footer{
         <div style="font-size:.75rem;color:rgba(0,0,0,.6)">5 friends invited</div>
       </div>
       <div style="text-align:center;background:rgba(0,0,0,.3);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
-        <div style="font-size:1.8rem;font-weight:900;color:#3D1A00;font-family:'Nunito',sans-serif">~14,150</div>
+        <div style="font-size:1.8rem;font-weight:900;color:#3D1A00;font-family:'Clash',sans-serif">~14,150</div>
         <div style="font-size:.75rem;color:rgba(0,0,0,.55);font-weight:700">$TBOLA in 30 days</div>
       </div>
     </div>
