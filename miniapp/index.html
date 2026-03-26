@@ -771,11 +771,30 @@ function updateCost(){
   else el.textContent=(cfg.price*selectedCards).toFixed(2)+' TON'
   const te=document.getElementById('l-tbola')
   if(te) te.textContent='+'+cfg.tbola*selectedCards+' $TBOLA'
-  const pool=cfg.currency==='stars'?cfg.price*16*0.55:
-    cfg.currency==='ton'?(cfg.price*16*0.55).toFixed(2):0
+
+  // Calculate pool based on current players (simulate 8 players avg 2 cards each)
+  const totalCards = 16 + selectedCards
+  const pool = cfg.currency==='stars' ? cfg.price*totalCards*0.55 :
+               cfg.currency==='ton'   ? cfg.price*totalCards*0.55 : 0
+  const fmt = (v) => cfg.currency==='stars' ? Math.floor(v)+' Stars' :
+                     cfg.currency==='ton'   ? v.toFixed(2)+' TON' : v+' $TBOLA'
+
   const pe=document.getElementById('l-pool')
-  if(pe) pe.textContent=cfg.currency==='free'?'$TBOLA prizes':
-    cfg.currency==='stars'?Math.floor(pool)+' Stars':pool+' TON'
+  if(pe) pe.textContent=cfg.currency==='free'?'$TBOLA prizes':fmt(pool)
+
+  // Prize breakdown
+  const pl=document.getElementById('l-prize-line')
+  const pb=document.getElementById('l-prize-bingo')
+  const pt=document.getElementById('l-prize-tbola')
+  if(cfg.currency==='free'){
+    if(pl) pl.textContent='250 $TBOLA'
+    if(pb) pb.textContent='750 $TBOLA'
+    if(pt) pt.textContent='+'+cfg.tbola+' each'
+  } else {
+    if(pl) pl.textContent=fmt(pool*0.25)
+    if(pb) pb.textContent=fmt(pool*0.75)
+    if(pt) pt.textContent='+'+cfg.tbola*selectedCards
+  }
 }
 
 // ── GAME ──
@@ -903,11 +922,30 @@ function showWin(type){
   document.getElementById('w-ball').textContent=type==='bingo'?'🎱':'🎯'
   document.getElementById('w-type').textContent=type==='bingo'?'FULL HOUSE':'FIRST LINE'
   document.getElementById('w-title').textContent=type==='bingo'?'BINGO!':'LINE!'
-  const prize=type==='bingo'
-    ?(cfg.currency==='stars'?'1,800 Stars':cfg.currency==='free'?'750 $TBOLA':'0.54 TON')
-    :(cfg.currency==='stars'?'600 Stars':cfg.currency==='free'?'250 $TBOLA':'0.18 TON')
-  document.getElementById('w-amount').textContent='+'+prize
-  document.getElementById('w-tbola').textContent='+'+(type==='bingo'?500:100)+' $TBOLA earned'
+
+  // Real prize from pool
+  const totalCards=16+selectedCards
+  const pool=cfg.currency==='free'?0:cfg.price*totalCards*0.55
+  const prizeVal=type==='bingo'?pool*0.75:pool*0.25
+  const prizeFmt=cfg.currency==='free'
+    ?(type==='bingo'?'750 $TBOLA':'250 $TBOLA')
+    :cfg.currency==='stars'
+      ?Math.floor(prizeVal)+' Stars'
+      :prizeVal.toFixed(2)+' TON'
+
+  const tbolaWon=(type==='bingo'?500:100)+(cfg.tbola*selectedCards)
+  document.getElementById('w-amount').textContent='+'+prizeFmt
+  document.getElementById('w-tbola').textContent='+'+tbolaWon+' $TBOLA earned'
+
+  // Update user balance immediately
+  user.tbola+=tbolaWon
+  user.wins+=(type==='bingo'?1:0)
+  user.games+=1
+  const hb=document.getElementById('h-tbola')
+  const bcb=document.getElementById('bc-tbola')
+  if(hb) hb.textContent=user.tbola.toLocaleString()
+  if(bcb) bcb.textContent=user.tbola.toLocaleString()
+
   spawnConfetti()
   ov.classList.add('show')
   if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
@@ -929,6 +967,7 @@ function spawnConfetti(){
 function closeWin(){
   document.getElementById('win-overlay').classList.remove('show')
   showScreen('s-home')
+  setNav('nav-home')
 }
 
 // ── PROFILE ──
