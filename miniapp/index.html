@@ -1939,11 +1939,11 @@ function renderSquad() {
           </div>
         </div>
         <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;
-          display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:.75rem;color:#6B4423">Squad code</span>
-          <span style="font-size:.85rem;font-weight:700;color:#FFD93D;letter-spacing:2px"
-            onclick="navigator.clipboard?.writeText('${mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}')">
-            ${mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
+          display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;cursor:pointer"
+          onclick="const c='${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}';navigator.clipboard?.writeText(c);if(tg?.showPopup)tg.showPopup({title:'Copied!',message:'Code '+c+' copied to clipboard.',buttons:[{type:'ok'}]})">
+          <span style="font-size:.75rem;color:#6B4423">Squad code · tap to copy</span>
+          <span style="font-size:.85rem;font-weight:700;color:#FFD93D;letter-spacing:2px">
+            ${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
           </span>
         </div>
       </div>
@@ -1993,14 +1993,11 @@ function renderSquad() {
 
 function renderSquadList() {
   const medals = ['🥇','🥈','🥉']
-  const squads = [
-    {rank:1,name:'TON Wolves', icon:'🐺',members:18,max:20,score:48000,open:true},
-    {rank:2,name:'Crystal Guild',icon:'💎',members:15,max:20,score:38800,open:true},
-    {rank:3,name:'Stone Legion',icon:'⚔️',members:12,max:15,score:32100,open:true},
-    {rank:4,name:'Lucky Seven', icon:'🍀',members:9, max:10,score:28900,open:false},
-    {rank:5,name:'Dragon Fire',  icon:'🐉',members:14,max:20,score:24400,open:true},
-    {rank:6,name:'Moon Raiders', icon:'🌙',members:11,max:15,score:21200,open:true},
-  ]
+  const squads = SQUAD_REGISTRY.map((s,i)=>({
+    rank:i+1, name:s.name, icon:s.icon, code:s.code,
+    members:s.members, max:s.max, score:s.weekScore,
+    open:s.members < s.max
+  }))
   return squads.map(s=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
       background:linear-gradient(135deg,#1E1005,#130A02);
@@ -2086,19 +2083,65 @@ function _doCreateSquad(name) {
   }
 }
 
+// Squad registry — in production this comes from Supabase
+const SQUAD_REGISTRY = [
+  {code:'TONWOL', name:'TON Wolves',  desc:'We hunt TON together',      icon:'🐺', members:18, max:20, rank:1, weekScore:48000, memberList:[{name:'WolfAlpha',avatar:'🐺'},{name:'TonHunter',avatar:'🦊'},{name:'CryptoFang',avatar:'⚔️'}]},
+  {code:'CRYSTL', name:'Crystal Guild',desc:'Crystal clear victories',  icon:'💎', members:15, max:20, rank:3, weekScore:38800, memberList:[{name:'DiamondHands',avatar:'💎'},{name:'GemCutter',avatar:'🔮'}]},
+  {code:'STONLG', name:'Stone Legion', desc:'Hard as stone, strong as one',icon:'⚔️',members:12, max:15, rank:4, weekScore:32100, memberList:[{name:'IronWall',avatar:'🛡️'},{name:'RockSolid',avatar:'🗿'}]},
+  {code:'DRAGFR', name:'Dragon Fire',  desc:'We breathe fire on the leaderboard',icon:'🐉',members:14,max:20,rank:5,weekScore:24400,memberList:[{name:'FireBreath',avatar:'🔥'},{name:'AshWing',avatar:'🐉'}]},
+  {code:'MOONRD', name:'Moon Raiders', desc:'Strike under the moonlight', icon:'🌙', members:11, max:15, rank:6, weekScore:21200, memberList:[{name:'NightStar',avatar:'🌙'},{name:'DarkArrow',avatar:'🏹'}]},
+]
+
 function joinSquad() {
-  const code = document.getElementById('squad-join-code')?.value.trim()
-  if(!code) return
-  // Demo join
-  mySquad = {
-    name:'TON Wolves', desc:'We hunt TON together', icon:'🐺',
-    members:19, rank:1, weekScore:48200,
-    memberList:[
-      {name:'WolfAlpha',avatar:'🐺'},{name:'TonHunter',avatar:'🦊'},
-      {name:user.name,avatar:user.avatar||'😊'}
-    ]
+  const input = document.getElementById('squad-join-code')
+  const code = input?.value.trim().toUpperCase()
+  if(!code) {
+    if(tg?.showPopup) tg.showPopup({title:'Missing code',message:'Please enter the squad code.',buttons:[{type:'ok'}]})
+    return
   }
-  go('s-squad'); renderSquad()
+  const found = SQUAD_REGISTRY.find(s => s.code === code)
+  if(!found) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'Code not found',
+      message:'"'+code+'" does not match any squad.\nDouble check the code and try again.',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+  if(found.members >= found.max) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'Squad is full',
+      message:'"'+found.name+'" is at maximum capacity ('+found.max+' members).',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'Join "'+found.name+'"?',
+      message:found.icon+' '+found.name+'\n'+found.desc+'\n\n'+found.members+'/'+found.max+' members · Rank #'+found.rank,
+      buttons:[{id:'join',type:'default',text:'Join Squad'},{type:'cancel'}]
+    }, (id) => {
+      if(id === 'join') {
+        mySquad = {
+          name:found.name, desc:found.desc, icon:found.icon,
+          members:found.members+1, max:found.max,
+          rank:found.rank, weekScore:found.weekScore,
+          memberList:[...found.memberList, {name:user.name, avatar:user.avatar||'😊'}]
+        }
+        if(input) input.value = ''
+        go('s-squad'); renderSquad()
+      }
+    })
+  } else {
+    mySquad = {
+      name:found.name, desc:found.desc, icon:found.icon,
+      members:found.members+1, max:found.max,
+      rank:found.rank, weekScore:found.weekScore,
+      memberList:[...found.memberList, {name:user.name, avatar:user.avatar||'😊'}]
+    }
+    go('s-squad'); renderSquad()
+  }
 }
 
 function leaveSquad() {
