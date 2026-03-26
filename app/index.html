@@ -742,9 +742,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 </div>
 
 <!-- LEADERBOARD -->
-<div class="screen" id="slb" style="overflow:hidden;flex-direction:column">
+<div class="screen" id="slb">
 
-  <div style="flex-shrink:0;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+  <!-- STICKY HEADER WITH TABS -->
+  <div style="position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
     border-bottom:3px solid #6B4423;padding:10px 12px 8px">
     <div style="display:flex;align-items:center;margin-bottom:10px">
       <div style="font-size:1rem;font-weight:700;color:#FFE0A0">🏆 Leaderboard</div>
@@ -759,13 +760,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     </div>
   </div>
 
-  <div id="lb-currency-tabs" style="flex-shrink:0;display:flex;gap:6px;
-    padding:8px 10px 4px;background:#1A0F08">
+  <!-- CURRENCY SUB-TABS -->
+  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 4px;background:#1A0F08">
     <div id="lc-stars" class="ltb ltb-sm ltb-on">⭐ Stars</div>
     <div id="lc-ton"   class="ltb ltb-sm">💎 TON</div>
   </div>
 
-  <div style="flex-shrink:0;margin:6px 10px;border-radius:12px;
+  <!-- POOL BANNER -->
+  <div style="margin:6px 10px 8px;border-radius:12px;
     background:linear-gradient(135deg,#1E1005,#130A02);
     border:2px solid #6B4423;padding:10px 12px">
     <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
@@ -777,7 +779,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="lb-pool-grid"></div>
   </div>
 
-  <div style="flex:1;overflow-y:auto;overflow-x:hidden" id="lb-list"></div>
+  <div id="lb-list"></div>
 </div>
 
 <!-- SQUAD SCREEN -->
