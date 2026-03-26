@@ -453,6 +453,44 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .nb.on{color:#FFD93D}
 .ni{font-size:1.2rem;transition:transform .15s}
 .nb.on .ni{transform:scale(1.15)}
+
+/* ── LEVEL UP OVERLAY ── */
+.lvup-ov{position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;background:transparent}
+.lvup-ov.show{opacity:1;pointer-events:auto;animation:lvovIn .25s ease forwards}
+@keyframes lvovIn{to{background:rgba(4,2,1,.94)}}
+.lvup-flash{position:absolute;inset:0;background:#FFF8E8;z-index:1;opacity:0;pointer-events:none}
+.lvup-ov.show .lvup-flash{animation:lvflash .25s .04s ease-out forwards}
+@keyframes lvflash{0%{opacity:.75}100%{opacity:0}}
+.lvup-burst{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;border-radius:50%;z-index:2;pointer-events:none}
+.lvup-ov.show .lvup-burst{animation:lvburst .6s .04s ease-out forwards}
+@keyframes lvburst{60%{box-shadow:0 0 0 120px rgba(255,180,0,.28),0 0 0 200px rgba(255,140,0,.12),0 0 0 270px rgba(255,80,0,.05)}100%{box-shadow:0 0 0 160px rgba(255,180,0,0),0 0 0 250px rgba(255,140,0,0),0 0 0 310px rgba(255,80,0,0)}}
+.lvup-ray{position:absolute;top:50%;left:50%;transform-origin:0 0;width:2px;border-radius:1px;opacity:0;height:0}
+.lvup-ov.show .lvup-ray{animation:lvray .8s ease-out forwards}
+@keyframes lvray{0%{opacity:1;height:0}45%{opacity:.85;height:300px}100%{opacity:0;height:300px}}
+.lvup-bwrap{position:relative;z-index:10;transform:scale(0)}
+.lvup-ov.show .lvup-bwrap{animation:lvbpop .55s .07s cubic-bezier(.34,1.9,.64,1) forwards}
+@keyframes lvbpop{to{transform:scale(1)}}
+.lvup-badge{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;border:5px solid}
+.lvup-icon{font-size:3.8rem}
+.lvup-num{position:absolute;bottom:-10px;right:-10px;width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FF6A00);border:3px solid #1A0F08;display:flex;align-items:center;justify-content:center;font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#1A0500;box-shadow:0 0 14px rgba(255,184,0,.7)}
+.lvup-lbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:#FF9000;margin-top:16px;z-index:10;opacity:0;text-shadow:0 0 16px rgba(255,140,0,.8)}
+.lvup-ov.show .lvup-lbl{animation:lvsup .4s .4s cubic-bezier(.34,1.4,.64,1) forwards}
+.lvup-title{font-family:'Clash',sans-serif;font-weight:700;font-size:2.4rem;line-height:1.1;z-index:10;opacity:0;text-align:center;background:linear-gradient(155deg,#FFFFFF 0%,#FFD93D 40%,#FF7700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 14px rgba(255,184,0,.8))}
+.lvup-ov.show .lvup-title{animation:lvsup .45s .48s cubic-bezier(.34,1.4,.64,1) forwards}
+@keyframes lvsup{from{opacity:0;transform:translateY(20px) scale(.88)}to{opacity:1;transform:none}}
+.lvup-unlock{background:rgba(0,0,0,.5);border-radius:14px;padding:12px 18px;margin-top:12px;text-align:center;border:2px solid;z-index:10;opacity:0;max-width:260px;width:100%}
+.lvup-ov.show .lvup-unlock{animation:lvsup .4s .6s cubic-bezier(.34,1.4,.64,1) forwards}
+.lvup-ulbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:#6B4423;margin-bottom:5px}
+.lvup-uval{font-family:'Clash',sans-serif;font-weight:700;font-size:.92rem}
+.lvup-tbola{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;background:rgba(58,255,138,.1);border:1.5px solid rgba(58,255,138,.3);border-radius:50px;padding:5px 14px;color:#3AFF8A;text-shadow:0 0 10px rgba(58,255,138,.4);z-index:10;opacity:0;margin-top:10px}
+.lvup-ov.show .lvup-tbola{animation:lvsup .4s .7s cubic-bezier(.34,1.4,.64,1) forwards}
+.lvup-btn{z-index:10;opacity:0;margin-top:16px;padding:13px 36px;border-radius:50px;background:linear-gradient(180deg,#FFE566,#FFD93D 40%,#FFB800);color:#3D1A00;font-family:'Clash',sans-serif;font-size:1.05rem;font-weight:700;border:3px solid #FFE566;box-shadow:0 5px 0 #7A5200,0 0 24px rgba(255,184,0,.4);cursor:pointer;transform:translateY(10px)}
+.lvup-ov.show .lvup-btn{animation:lvsup .4s .82s cubic-bezier(.34,1.4,.64,1) forwards}
+.lvup-btn:active{transform:translateY(3px)!important;box-shadow:0 2px 0 #7A5200!important}
+.lvup-cp{position:absolute;z-index:20;border-radius:2px;animation:lvcp var(--d) var(--dl) ease-in both}
+@keyframes lvcp{0%{opacity:1;transform:translateY(-8px) rotate(0)}80%{opacity:.9}100%{opacity:0;transform:translateY(680px) rotate(840deg)}}
 </style>
 </head>
 <body>
@@ -1087,6 +1125,28 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   </div>
 </div>
 
+<!-- LEVEL UP OVERLAY -->
+<div class="lvup-ov" id="lvup-ov">
+  <div class="lvup-flash"></div>
+  <div class="lvup-burst"></div>
+  <div id="lvup-rays" style="position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden"></div>
+  <div id="lvup-conf" style="position:absolute;inset:0;pointer-events:none;z-index:20;overflow:hidden"></div>
+  <div class="lvup-bwrap">
+    <div class="lvup-badge" id="lvup-badge">
+      <span class="lvup-icon" id="lvup-icon">⭐</span>
+      <div class="lvup-num" id="lvup-num">10</div>
+    </div>
+  </div>
+  <div class="lvup-lbl">Level Up!</div>
+  <div class="lvup-title" id="lvup-title">Gold Cards</div>
+  <div class="lvup-unlock" id="lvup-unlock">
+    <div class="lvup-ulbl">Unlocked</div>
+    <div class="lvup-uval" id="lvup-uval">+5% win rate forever</div>
+  </div>
+  <div class="lvup-tbola" id="lvup-tbola">+200 $TBOLA Bonus!</div>
+  <div class="lvup-btn" onclick="closeLvUp()">Incredible!</div>
+</div>
+
 <!-- WIN OVERLAY -->
 <div class="wov" id="wov">
   <div class="conf" id="conf"></div>
@@ -1354,6 +1414,8 @@ function showWin(type){
   user.lines+=(type==='line'?1:0)
   user.games+=1
   user.cards+=nCards
+  // Award XP — bingo=25, line=10, per card=5
+  awardXp(type==='bingo'?25:10)
   // Update ALL balance displays immediately
   const update=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val}
   update('h-tbola', user.tbola.toLocaleString())
@@ -1376,6 +1438,79 @@ function spawnConf(){
     const w=6+Math.random()*6
     return`<div class="cp" style="left:${x}%;width:${w}px;height:${w}px;background:${c};--d:${d}s;--dl:${dl}s"></div>`
   }).join('')
+}
+
+// ── LEVEL UP SYSTEM ──
+const LEVEL_THRESHOLDS = [
+  {lv:6,  icon:'⚔️', title:'Player',      unlock:'Referral program activated!',      color:'#4080CC', bg:'#00102A', tbola:150},
+  {lv:10, icon:'⭐', title:'Gold Cards',   unlock:'+5% win rate on every game',       color:'#CC8800', bg:'#2A1800', tbola:200},
+  {lv:16, icon:'🔥', title:'Expert',       unlock:'Monthly leaderboard prizes',        color:'#CC5500', bg:'#280800', tbola:250},
+  {lv:20, icon:'👑', title:'VIP Access',   unlock:'VIP TON Room unlocked!',            color:'#CC2200', bg:'#280400', tbola:300},
+  {lv:30, icon:'⚡', title:'Double XP',    unlock:'2x XP every weekend',               color:'#0090CC', bg:'#001828', tbola:400},
+  {lv:31, icon:'🏅', title:'Master',       unlock:'Priority squad matching',           color:'#2ECC71', bg:'#002210', tbola:400},
+  {lv:50, icon:'🃏', title:'Free Card',    unlock:'1 free card every day forever!',   color:'#2288FF', bg:'#001228', tbola:500},
+  {lv:51, icon:'💎', title:'Legend',       unlock:'Season badge + exclusive frame',    color:'#8B2FFF', bg:'#180028', tbola:600},
+  {lv:75, icon:'🎱', title:'Grand Master', unlock:'Legend avatar in all lobbies!',    color:'#FFD700', bg:'#221A00', tbola:1000},
+]
+const CONF_COLS=['#FFD93D','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
+
+function showLevelUp(lv) {
+  const t = LEVEL_THRESHOLDS.find(t=>t.lv===lv)
+  if(!t) return
+  const badge = document.getElementById('lvup-badge')
+  badge.style.background = `radial-gradient(circle at 35% 28%,${t.color}66,${t.bg})`
+  badge.style.borderColor = t.color
+  badge.style.boxShadow = `0 0 50px ${t.color}88`
+  document.getElementById('lvup-icon').textContent = t.icon
+  document.getElementById('lvup-icon').style.filter = `drop-shadow(0 0 20px ${t.color}dd)`
+  document.getElementById('lvup-num').textContent = lv
+  document.getElementById('lvup-title').textContent = t.title
+  document.getElementById('lvup-uval').textContent = t.unlock
+  document.getElementById('lvup-uval').style.color = t.color
+  document.getElementById('lvup-unlock').style.borderColor = t.color+'55'
+  document.getElementById('lvup-tbola').textContent = '+'+t.tbola+' $TBOLA Bonus!'
+  // Rays
+  document.getElementById('lvup-rays').innerHTML = Array.from({length:18},(_,i)=>
+    `<div class="lvup-ray" style="transform:rotate(${i*20}deg) translateX(-50%);background:${t.color}99;animation-delay:${(i*.028).toFixed(2)}s"></div>`
+  ).join('')
+  // Confetti
+  document.getElementById('lvup-conf').innerHTML = Array.from({length:65},(_,i)=>{
+    const c=CONF_COLS[i%CONF_COLS.length],x=Math.random()*100
+    const d=(1.6+Math.random()*2.2).toFixed(2),dl=(Math.random()*1.1).toFixed(2)
+    const w=4+Math.random()*7,h=w*(Math.random()<.4?1:2.6)
+    return `<div class="lvup-cp" style="left:${x}%;width:${w}px;height:${h}px;background:${c};--d:${d}s;--dl:${dl}s"></div>`
+  }).join('')
+  // Give TBOLA bonus
+  user.tbola += t.tbola
+  const hb=document.getElementById('h-tbola');if(hb)hb.textContent=user.tbola.toLocaleString()
+  // Show overlay
+  const ov = document.getElementById('lvup-ov')
+  ov.classList.remove('show')
+  void ov.offsetWidth
+  ov.classList.add('show')
+  if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+
+function closeLvUp(){
+  const ov=document.getElementById('lvup-ov')
+  ov.style.transition='opacity .22s'
+  ov.style.opacity='0'
+  setTimeout(()=>{ov.classList.remove('show');ov.style.opacity='';ov.style.transition=''},240)
+}
+
+function checkLevelUp(oldXp, newXp, level) {
+  const threshold = LEVEL_THRESHOLDS.find(t=>t.lv===level)
+  if(threshold) setTimeout(()=>showLevelUp(level), 800)
+}
+
+function awardXp(amount) {
+  const oldLv = user.level
+  user.xp += amount
+  while(user.xp >= 100) {
+    user.xp -= 100
+    user.level++
+    checkLevelUp(0, user.xp, user.level)
+  }
 }
 
 function closeWin(){
