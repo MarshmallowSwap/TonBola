@@ -250,7 +250,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .sm{width:36px;height:36px;font-size:.8rem}
 /* number text on top of ball image */
 .ball span{position:relative;z-index:2;font-family:'Clash',sans-serif;
-  font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.8)}
+  font-weight:700;color:#FFFFFF;
+  text-shadow:0 1px 4px rgba(0,0,0,.95),0 0 10px rgba(0,0,0,.9),
+    1px 1px 0 rgba(0,0,0,.8),-1px -1px 0 rgba(0,0,0,.8)}
 /* ball colors — map to images */
 .c1{background-image:url(assets/ball-blue.png)}
 .c2{background-image:url(assets/ball-gold.png)}
@@ -258,12 +260,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .c4{background-image:url(assets/ball-green.png)}
 .c5{background-image:url(assets/ball-red.png)}
 .c6{background-image:url(assets/ball-blue.png)}
-/* number colors per ball */
-.c1 span,.c6 span{color:#E8F8FF;text-shadow:0 0 8px rgba(0,0,0,.9),0 1px 3px rgba(0,0,80,.8)}
-.c2 span{color:#3D1A00;text-shadow:0 1px 2px rgba(0,0,0,.6)}
-.c3 span{color:#F0E0FF;text-shadow:0 0 8px rgba(0,0,0,.9)}
-.c4 span{color:#E8FFE8;text-shadow:0 0 8px rgba(0,0,0,.9)}
-.c5 span{color:#FFE8E8;text-shadow:0 0 8px rgba(0,0,0,.9)}
 .bnew{animation:bdrop .45s cubic-bezier(.34,1.56,.64,1) both!important;
   filter:drop-shadow(0 0 14px rgba(255,220,60,.8))}
 @keyframes bdrop{from{opacity:0;transform:scale(.2) translateY(-30px) rotate(-20deg)}
