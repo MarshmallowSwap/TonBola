@@ -991,7 +991,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
       </div>
     </div>
 
-    <button class="btn btn-gold" onclick="createSquad()" style="padding:14px;font-size:1rem">⚔ Create Squad</button>
+    <!-- Fee notice -->
+    <div style="background:linear-gradient(135deg,#001A2A,#000E1A);
+      border:2px solid #0060A0;border-radius:12px;padding:14px 16px;
+      display:flex;align-items:center;gap:12px">
+      <div style="font-size:2rem;flex-shrink:0">💎</div>
+      <div style="flex:1">
+        <div style="font-size:.9rem;font-weight:700;color:#40B8FF;margin-bottom:2px">
+          Squad Creation Fee
+        </div>
+        <div style="font-size:.78rem;color:rgba(64,184,255,.6);line-height:1.5">
+          One-time fee to prevent spam squads.<br>Goes into the weekly squad prize pool.
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:1.4rem;font-weight:700;color:#40B8FF;
+          text-shadow:0 0 12px rgba(64,184,255,.6)">0.5</div>
+        <div style="font-size:.7rem;color:rgba(64,184,255,.5);font-weight:700">TON</div>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" onclick="createSquad()" style="padding:14px;font-size:1rem">
+      💎 Pay 0.5 TON & Create Squad
+    </button>
   </div>
 </div>
 
@@ -1905,6 +1927,21 @@ function createSquad() {
     if(tg?.showPopup) tg.showPopup({title:'Missing name',message:'Please enter a squad name.',buttons:[{type:'ok'}]})
     return
   }
+  // Show fee confirmation
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'💎 Confirm Payment',
+      message:'Creating "'+name+'" costs 0.5 TON (one-time fee).\n\nThis goes directly into the weekly squad prize pool.',
+      buttons:[{id:'pay',type:'default',text:'Pay 0.5 TON ✓'},{type:'cancel',text:'Cancel'}]
+    }, (id) => {
+      if(id === 'pay') _doCreateSquad(name)
+    })
+    return
+  }
+  _doCreateSquad(name)
+}
+
+function _doCreateSquad(name) {
   const desc = document.getElementById('squad-desc')?.value.trim()
   mySquad = {
     name, desc, icon: squadAvatar,
@@ -1917,9 +1954,10 @@ function createSquad() {
   if(pname) pname.textContent = name
   if(psub) psub.textContent = '1 member · Captain'
   if(picon) picon.textContent = squadAvatar
+  const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
   if(tg?.showPopup) {
     tg.showPopup({title:'⚔ Squad Created!',
-      message:`"${name}" is ready!\n\nShare your squad code with friends:\n🔑 ${name.toUpperCase().replace(/\s/g,'').slice(0,6).padEnd(6,'X')}`,
+      message:'"'+name+'" is ready!\n\nShare this code with friends:\n🔑 '+code+'\n\n0.5 TON added to squad prize pool.',
       buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); renderSquad() })
   } else {
     go('s-squad'); renderSquad()
