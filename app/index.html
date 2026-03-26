@@ -427,10 +427,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 /* leaderboard tab buttons */
 .ltb{flex-shrink:0;border-radius:50px;font-weight:700;cursor:pointer;
   border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-  color:#8B6340;font-family:'Clash',sans-serif;padding:7px 14px;font-size:.8rem;
+  color:#8B6340;font-family:'Clash',sans-serif;padding:7px 8px;font-size:.78rem;
   box-shadow:0 3px 0 #0A0602;-webkit-tap-highlight-color:transparent;
   user-select:none;-webkit-user-select:none;touch-action:manipulation;
-  display:inline-flex;align-items:center;white-space:nowrap;position:relative;z-index:10}
+  display:inline-flex;align-items:center;justify-content:center;
+  white-space:nowrap;position:relative;z-index:10;text-align:center}
 .ltb-sm{padding:5px 12px;font-size:.75rem;box-shadow:0 2px 0 #0A0602}
 .ltb-on{border-color:#FFB800!important;
   background:linear-gradient(180deg,#FFD93D,#FFB800)!important;
@@ -752,11 +753,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
       <div style="flex:1"></div>
       <div style="font-size:.65rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
     </div>
-    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
-      <div id="lt-weekly"  class="ltb ltb-on" onclick="setTab('weekly')">Weekly</div>
-      <div id="lt-monthly" class="ltb" onclick="setTab('monthly')">Monthly</div>
-      <div id="lt-squads"  class="ltb" onclick="setTab('squads')">Squads</div>
-      <div id="lt-alltime" class="ltb" onclick="setTab('alltime')">All Time</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;padding-bottom:2px">
+      <div id="lt-weekly"  class="ltb ltb-on" onclick="setTab('weekly')" style="justify-content:center;padding:7px 4px">Weekly</div>
+      <div id="lt-monthly" class="ltb" onclick="setTab('monthly')" style="justify-content:center;padding:7px 4px">Monthly</div>
+      <div id="lt-squads"  class="ltb" onclick="setTab('squads')" style="justify-content:center;padding:7px 4px">Squads</div>
+      <div id="lt-alltime" class="ltb" onclick="setTab('alltime')" style="justify-content:center;padding:7px 4px">All Time</div>
     </div>
   </div>
 
@@ -776,7 +777,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
         text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
       <span style="font-size:.6rem;color:#4A3318;margin-left:auto" id="lb-pool-label">This week</span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="lb-pool-grid"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px" id="lb-pool-grid"></div>
   </div>
 
   <div id="lb-list"></div>
@@ -1413,8 +1414,8 @@ function renderPoolBanner(tab) {
 
   if(isAlltime) {
     boxes = [
-      {label:'⭐ Stars Paid',   color:'#FFD93D', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'all time total'},
-      {label:'💎 TON Paid',    color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',                  sub:'all time total'},
+      {label:'⭐ Stars Paid',   color:'#FFD93D', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'all time'},
+      {label:'💎 TON Paid',    color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',                  sub:'all time'},
       {label:'◆ $TBOLA',      color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(),       sub:'accumulated'},
     ]
     grid.style.gridTemplateColumns = 'repeat(3,1fr)'
