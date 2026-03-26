@@ -18,25 +18,18 @@ export async function handleStart(ctx) {
   // Daily login check
   const { alreadyClaimed, streak } = await handleDailyLogin(tgUser.id)
 
-  const keyboard = new InlineKeyboard()
-    .webApp('🎱 Play TonBola', `${MINIAPP_URL}/app/index.html`)
-    .row()
-    .webApp('👤 My Profile', `${MINIAPP_URL}/profile`)
-    .text('👥 My Squad', 'squad_menu')
-    .row()
-    .webApp('🏆 Leaderboard', `${MINIAPP_URL}/leaderboard`)
-    .text('💰 Earn $TBOLA', 'earn_menu')
-
   const streakMsg = alreadyClaimed
     ? `🔥 Streak: ${streak} days`
     : `✅ Daily login claimed! 🔥 Streak: ${streak} days (+${streak >= 7 ? 'BONUS' : '5 $TBOLA'})`
+
+  const keyboard = new InlineKeyboard()
+    .webApp('🎱  Open TonBola', `${MINIAPP_URL}/app/index.html`)
 
   await ctx.reply(
     `🎱 *Welcome to TonBola*, ${user.first_name}!\n\n` +
     `${streakMsg}\n\n` +
     `💎 $TBOLA Balance: *${user.tbola_balance.toLocaleString()}*\n` +
-    `⭐ Level: *${user.level}* · XP: *${user.xp}*\n\n` +
-    `Choose your room and start playing — prizes in Stars or TON, every 5 minutes.`,
+    `⭐ Level: *${user.level}* · XP: *${user.xp}*`,
     { parse_mode: 'Markdown', reply_markup: keyboard }
   )
 }

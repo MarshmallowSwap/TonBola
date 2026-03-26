@@ -65,5 +65,20 @@ bot.catch((err) => {
 // ── START ─────────────────────────────────────────────────
 console.log('🎱 TonBola Bot starting...')
 bot.start({
-  onStart: (info) => console.log(`✅ Bot running as @${info.username}`),
+  onStart: async (info) => {
+    console.log(`✅ Bot running as @${info.username}`)
+    // Set persistent menu button that opens Mini App directly
+    try {
+      await bot.api.setChatMenuButton({
+        menu_button: {
+          type: 'web_app',
+          text: '🎱 Play TonBola',
+          web_app: { url: `${process.env.MINIAPP_URL}/app/index.html` }
+        }
+      })
+      console.log('✅ Menu button set')
+    } catch(e) {
+      console.log('Menu button:', e.message)
+    }
+  },
 })
