@@ -174,7 +174,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .lobby-hdr{background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
   border-bottom:3px solid #6B4423;padding:10px 12px;
   display:flex;align-items:center;justify-content:space-between}
-.lpool{text-align:center;padding:14px 16px;
+.lpool{text-align:center;padding:10px 14px 8px;
   background-image:url(assets/panel-stone.png);
   background-size:100% 100%;background-repeat:no-repeat;
   margin:8px 10px;border-radius:var(--r);
@@ -184,11 +184,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   letter-spacing:1px;color:#8B6340;margin-bottom:3px}
 .pa{font-size:2rem;font-weight:700;color:#FFD93D;
   text-shadow:0 0 20px rgba(255,184,0,.6),0 2px 4px rgba(0,0,0,.8)}
-.prize-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px}
-.pg-box{border-radius:10px;padding:8px 6px;text-align:center;border:1.5px solid}
-.pg-line{background:rgba(255,184,0,.08);border-color:rgba(255,184,0,.25)}
-.pg-bingo{background:rgba(180,79,255,.08);border-color:rgba(180,79,255,.25)}
-.pg-tbola{background:rgba(0,152,234,.08);border-color:rgba(0,152,234,.2)}
+.prize-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-top:5px}
+.pg-box{padding:4px 4px 5px;text-align:center;border:none;background:none}
+.pg-line{}
+.pg-bingo{}
+.pg-tbola{}
 .pg-lbl{font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
   margin-bottom:3px;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .pg-val{font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
@@ -698,19 +698,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       Grows with every card · Updated live</div>
     <div class="prize-grid">
       <div class="pg-box pg-line">
-        <div class="pg-lbl" style="color:rgba(255,184,0,.7)">📏 Line</div>
+        <div class="pg-lbl" style="color:#FFD93D">📏 LINE</div>
         <div class="pg-val" style="color:#FFD93D" id="l-pz-line">-</div>
-        <div style="font-size:.58rem;color:#4A3318;margin-top:1px">25% pool</div>
+        <div class="pg-sub" style="color:#FFD93D">25% pool</div>
       </div>
       <div class="pg-box pg-bingo">
-        <div class="pg-lbl" style="color:rgba(180,79,255,.7)">🎱 Bingo</div>
+        <div class="pg-lbl" style="color:#C080FF">🎱 BINGO</div>
         <div class="pg-val" style="color:#C080FF" id="l-pz-bingo">-</div>
-        <div style="font-size:.58rem;color:#4A3318;margin-top:1px">75% pool</div>
+        <div class="pg-sub" style="color:#C080FF">75% pool</div>
       </div>
       <div class="pg-box pg-tbola">
-        <div class="pg-lbl" style="color:rgba(0,152,234,.7)">◆ TBOLA</div>
+        <div class="pg-lbl" style="color:#40B8FF">◆ $TBOLA</div>
         <div class="pg-val" style="color:#40B8FF" id="l-pz-tbola">-</div>
-        <div style="font-size:.58rem;color:#4A3318;margin-top:1px">per card</div>
+        <div class="pg-sub" style="color:#40B8FF">per card</div>
       </div>
     </div>
   </div>
