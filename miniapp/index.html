@@ -480,6 +480,73 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .utag{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:50px;flex-shrink:0}
 .utag-d{background:rgba(107,96,0,.3);color:#C4B040;border:1px solid #5A5000}
 .utag-l{background:rgba(42,28,10,.5);color:#4A3318;border:1px solid #3D2810}
+
+/* ── LINE BANNER ── */
+.line-banner{position:fixed;top:0;left:0;right:0;z-index:400;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 20px;
+  background:linear-gradient(135deg,#8B6000,#CC8800,#FFD700,#CC8800,#8B6000);
+  border-bottom:4px solid #FFE566;
+  box-shadow:0 4px 20px rgba(255,184,0,.6);
+  transform:translateY(-100%);opacity:0;pointer-events:none}
+.line-banner.show{animation:lineBannerIn .25s ease forwards}
+.line-banner.hide{animation:lineBannerOut .3s .8s ease forwards}
+@keyframes lineBannerIn{to{transform:translateY(0);opacity:1}}
+@keyframes lineBannerOut{to{transform:translateY(-100%);opacity:0}}
+.line-banner-icon{font-size:1.6rem;animation:lineIconBounce .4s ease infinite alternate}
+@keyframes lineIconBounce{from{transform:scale(.9)}to{transform:scale(1.15)}}
+.line-banner-text{font-family:'Clash',sans-serif;font-weight:700;font-size:1.1rem;color:#3D1A00;
+  text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.line-banner-prize{font-family:'Clash',sans-serif;font-weight:700;font-size:.85rem;
+  color:#5A2A00;background:rgba(0,0,0,.15);border-radius:50px;padding:3px 10px}
+
+/* ── BINGO SHAKE ── */
+@keyframes bingoShake{
+  0%{transform:translate(0,0) rotate(0)}
+  15%{transform:translate(-6px,3px) rotate(-2deg)}
+  30%{transform:translate(6px,-3px) rotate(2deg)}
+  45%{transform:translate(-4px,2px) rotate(-1deg)}
+  60%{transform:translate(4px,-2px) rotate(1deg)}
+  75%{transform:translate(-2px,1px) rotate(0)}
+  100%{transform:translate(0,0) rotate(0)}}
+.bingo-shake{animation:bingoShake .5s ease}
+
+/* ── BINGO BANNER ── */
+.bingo-banner{position:fixed;top:0;left:0;right:0;z-index:400;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 20px;
+  background:linear-gradient(135deg,#1A5A00,#2ECC71,#1A9A50,#2ECC71,#1A5A00);
+  border-bottom:4px solid #5AFF8A;
+  box-shadow:0 4px 24px rgba(46,204,113,.7);
+  transform:translateY(-100%);opacity:0;pointer-events:none}
+.bingo-banner.show{animation:lineBannerIn .2s ease forwards}
+.bingo-banner.hide{animation:lineBannerOut .35s 1.2s ease forwards}
+.bingo-banner-icon{font-size:2rem;animation:bingoBounce .35s ease infinite alternate}
+@keyframes bingoBounce{from{transform:scale(.85) rotate(-8deg)}to{transform:scale(1.2) rotate(8deg)}}
+.bingo-banner-text{font-family:'Clash',sans-serif;font-weight:700;font-size:1.3rem;color:#003310;
+  text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.bingo-banner-prize{font-family:'Clash',sans-serif;font-weight:700;font-size:.9rem;
+  color:#004A18;background:rgba(0,0,0,.15);border-radius:50px;padding:3px 12px}
+
+/* ── MINOR LEVEL UP TOAST ── */
+.lv-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
+  z-index:450;opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#2A1C0E,#3D2B1A);
+  border:2px solid #FFB800;border-radius:50px;
+  padding:8px 18px 8px 12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.6),0 0 16px rgba(255,184,0,.3)}
+.lv-toast.show{animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) forwards}
+.lv-toast.hide{animation:toastOut .3s 2s ease forwards}
+@keyframes toastIn{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-16px)}}
+.lv-toast-badge{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(145deg,#FFD93D,#FF8C00);
+  border:2px solid #FFE566;display:flex;align-items:center;
+  justify-content:center;font-size:.75rem;font-weight:700;color:#3D1A00;
+  font-family:'Clash',sans-serif;flex-shrink:0}
+.lv-toast-text{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;color:#FFD93D}
+.lv-toast-sub{font-family:'Clash',sans-serif;font-size:.7rem;color:#8B6340}
 </style>
 </head>
 <body>
@@ -1136,6 +1203,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   <div class="lvup-btn" onclick="closeLvUp()">Incredible!</div>
 </div>
 
+<!-- LINE BANNER -->
+<div class="line-banner" id="line-banner">
+  <div class="line-banner-icon">📏</div>
+  <div class="line-banner-text">Line Complete!</div>
+  <div class="line-banner-prize" id="line-banner-prize">+250 Stars</div>
+</div>
+
+<!-- BINGO BANNER -->
+<div class="bingo-banner" id="bingo-banner">
+  <div class="bingo-banner-icon">🎱</div>
+  <div class="bingo-banner-text">BINGO!</div>
+  <div class="bingo-banner-prize" id="bingo-banner-prize">+750 Stars</div>
+</div>
+
+<!-- MINOR LEVEL UP TOAST -->
+<div class="lv-toast" id="lv-toast">
+  <div class="lv-toast-badge" id="lv-toast-badge">2</div>
+  <div>
+    <div class="lv-toast-text" id="lv-toast-text">Level 2!</div>
+    <div class="lv-toast-sub">Keep playing to unlock rewards</div>
+  </div>
+</div>
+
 <!-- WIN OVERLAY -->
 <div class="wov" id="wov">
   <div class="conf" id="conf"></div>
@@ -1440,9 +1530,14 @@ function showWin(type){
   update('bc-games', user.games)
   // Only show overlay for bingo — line just highlights
   if(type==='bingo'){
-    spawnConf()
-    document.getElementById('wov').classList.add('show')
-    if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
+    showBingoBanner('+'+prizeFmt)
+    setTimeout(()=>{
+      spawnConf()
+      document.getElementById('wov').classList.add('show')
+      if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
+    }, 900)
+  } else {
+    showLineBanner('+'+prizeFmt)
   }
 }
 
@@ -1515,8 +1610,14 @@ function closeLvUp(){
 }
 
 function checkLevelUp(oldXp, newXp, level) {
-  const threshold = LEVEL_THRESHOLDS.find(t=>t.lv===level)
-  if(threshold) setTimeout(()=>showLevelUp(level), 800)
+  const isMilestone = LEVEL_THRESHOLDS.find(t=>t.lv===level)
+  if(isMilestone) {
+    // Big celebration overlay for milestone levels
+    setTimeout(()=>showLevelUp(level), 900)
+  } else {
+    // Simple toast for regular level ups
+    setTimeout(()=>showMinorLevelUp(level), 400)
+  }
 }
 
 function awardXp(amount) {
@@ -1527,6 +1628,62 @@ function awardXp(amount) {
     user.level++
     checkLevelUp(0, user.xp, user.level)
   }
+}
+
+function showLineBanner(prize) {
+  const el = document.getElementById('line-banner')
+  const pr = document.getElementById('line-banner-prize')
+  if(pr) pr.textContent = prize
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 400)
+  }, 800)
+  if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium')
+}
+
+function showBingoBanner(prize) {
+  const el = document.getElementById('bingo-banner')
+  const pr = document.getElementById('bingo-banner-prize')
+  if(pr) pr.textContent = prize
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  // Shake all bingo cards
+  document.querySelectorAll('.bcwrap').forEach(c=>{
+    c.classList.remove('bingo-shake')
+    void c.offsetWidth
+    c.classList.add('bingo-shake')
+    setTimeout(()=>c.classList.remove('bingo-shake'), 600)
+  })
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 400)
+  }, 1200)
+}
+
+function showMinorLevelUp(lv) {
+  const el = document.getElementById('lv-toast')
+  const badge = document.getElementById('lv-toast-badge')
+  const text = document.getElementById('lv-toast-text')
+  if(badge) badge.textContent = lv
+  if(text) text.textContent = 'Level ' + lv + '!'
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 350)
+  }, 2000)
+  if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
 }
 
 function closeWin(){
