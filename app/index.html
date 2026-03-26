@@ -783,6 +783,134 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   <div id="lb-list"></div>
 </div>
 
+<!-- CREATE ROOM -->
+<div class="screen" id="s-create">
+  <div class="stone-header">
+    <div class="topbar">
+      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Create Private Room</div>
+      <div style="width:60px"></div>
+    </div>
+  </div>
+  <div style="padding:14px 12px;display:flex;flex-direction:column;gap:10px">
+
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Currency</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div onclick="selectCur(this,'stars')" data-cur="stars"
+          style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
+            background:rgba(255,184,0,.2);border:2px solid #FFB800;transition:all .15s">
+          <div style="font-size:1.2rem">⭐</div>
+          <div style="font-size:.78rem;font-weight:700;color:#FFD93D;margin-top:3px">Stars</div>
+        </div>
+        <div onclick="selectCur(this,'ton')" data-cur="ton"
+          style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+          <div style="font-size:1.2rem">💎</div>
+          <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:3px">TON</div>
+        </div>
+        <div onclick="selectCur(this,'free')" data-cur="free"
+          style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+          <div style="font-size:1.2rem">🏕️</div>
+          <div style="font-size:.78rem;font-weight:700;color:#5AFF5A;margin-top:3px">Free</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wood-panel" style="padding:16px" id="cr-price-wrap">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Card Price</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
+        <div onclick="selectPrice(this,50)" data-price="50"
+          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:#FFD93D">50 ⭐</div>
+        <div onclick="selectPrice(this,100)" data-price="100"
+          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">100 ⭐</div>
+        <div onclick="selectPrice(this,200)" data-price="200"
+          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">200 ⭐</div>
+        <div onclick="selectPrice(this,500)" data-price="500"
+          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">500 ⭐</div>
+      </div>
+    </div>
+
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340">Max Players</div>
+        <div style="font-size:1.1rem;font-weight:700;color:#FFD93D" id="cr-players-val">10</div>
+      </div>
+      <input type="range" min="2" max="20" value="10" id="cr-players"
+        oninput="document.getElementById('cr-players-val').textContent=this.value;updateRoomPreview()"
+        style="width:100%;accent-color:#FFB800;height:6px">
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#5A3D1A;margin-top:4px"><span>2</span><span>20</span></div>
+    </div>
+
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Password (optional)</div>
+      <input type="text" id="cr-password" placeholder="Leave empty for open room" maxlength="20"
+        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
+          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
+          outline:none;box-sizing:border-box">
+    </div>
+
+    <div class="stone-panel" style="padding:14px">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:8px">Preview</div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <span style="font-size:.82rem;color:#8B6340">Your earnings (2%)</span>
+        <span style="font-size:.85rem;font-weight:700;color:#FFD93D" id="cr-earn-preview">1 ⭐ per card</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0">
+        <span style="font-size:.82rem;color:#8B6340">Prize pool (53%)</span>
+        <span style="font-size:.85rem;font-weight:700;color:#FFE0A0" id="cr-pool-preview">265 ⭐ max</span>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" onclick="createRoom()" style="padding:14px;font-size:1rem">⚔ Create Room & Get Code</button>
+  </div>
+</div>
+
+<!-- ENTER CODE -->
+<div class="screen" id="s-join">
+  <div class="stone-header">
+    <div class="topbar">
+      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">🔑 Enter Room Code</div>
+      <div style="width:60px"></div>
+    </div>
+  </div>
+  <div style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:.88rem;color:#8B6340;text-align:center;line-height:1.6;max-width:280px">
+      Enter the 6-character code your friend shared to join their private room.
+    </div>
+    <div class="wood-panel" style="padding:24px 20px;width:100%;text-align:center">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:14px">Room Code</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="code-boxes">
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+      </div>
+      <input type="text" id="join-code" maxlength="6" placeholder="Type code here"
+        oninput="updateCodeBoxes(this.value)"
+        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
+          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:1.1rem;
+          text-align:center;letter-spacing:6px;text-transform:uppercase;
+          outline:none;box-sizing:border-box">
+    </div>
+    <div style="font-size:.75rem;color:#5A3D1A">Code is 6 characters — letters and numbers</div>
+    <button class="btn btn-gold" onclick="joinRoom()" style="padding:14px;font-size:1rem;width:100%">🔑 Join Room</button>
+  </div>
+</div>
+
 <!-- SQUAD SCREEN -->
 <div class="screen" id="s-squad">
   <div class="stone-header">
