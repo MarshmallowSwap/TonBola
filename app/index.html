@@ -579,36 +579,48 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 </div>
 
 <!-- GAME -->
-<div class="screen" id="sg">
-  <div class="ghdr">
-    <div>
-      <div style="font-size:.9rem;font-weight:700;color:#FFE0A0" id="g-rm">Stars Room</div>
-      <div style="font-size:.67rem;color:#6B4423" id="g-di">0 numbers drawn</div>
+<div class="screen" id="sg" style="overflow:hidden;flex-direction:column">
+  <!-- STICKY TOP: header + ball machine + prizes -->
+  <div id="g-top" style="flex-shrink:0">
+    <div class="ghdr">
+      <div>
+        <div style="font-size:.9rem;font-weight:700;color:#FFE0A0" id="g-rm">Stars Room</div>
+        <div style="font-size:.67rem;color:#6B4423" id="g-di">0 numbers drawn</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <div style="font-size:.68rem;color:#6B4423">Next in</div>
+        <div class="cdring" id="g-cd">5</div>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:5px">
-      <div style="font-size:.68rem;color:#6B4423">Next in</div>
-      <div class="cdring" id="g-cd">5</div>
+
+    <div class="bmach">
+      <div class="bml">⚔ Live Draw</div>
+      <div class="barea" id="g-balls">
+        <!-- placeholder balls before first draw -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;opacity:.35">
+          <div style="font-size:2rem">🎱</div>
+          <div style="font-size:.68rem;color:#6B4423;font-family:'Fredoka',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
+        </div>
+      </div>
+      <div class="dcount" id="g-dc">Get ready — first number coming up!</div>
+    </div>
+
+    <div class="prow">
+      <div class="pb pbl">
+        <div class="pblbl" style="color:rgba(255,184,0,.6)">📏 Line Prize</div>
+        <div class="pbv" style="color:#FFD93D" id="g-lp">-</div>
+      </div>
+      <div class="pb pbb">
+        <div class="pblbl" style="color:rgba(180,79,255,.6)">🎱 Full House</div>
+        <div class="pbv" style="color:#C080FF" id="g-bp">-</div>
+      </div>
     </div>
   </div>
 
-  <div class="bmach">
-    <div class="bml">⚔ Live Draw</div>
-    <div class="barea" id="g-balls"></div>
-    <div class="dcount" id="g-dc">Waiting for first number...</div>
+  <!-- SCROLLABLE: bingo cards only -->
+  <div style="flex:1;overflow-y:auto;overflow-x:hidden" id="g-cards-scroll">
+    <div id="g-cards"></div>
   </div>
-
-  <div class="prow">
-    <div class="pb pbl">
-      <div class="pblbl" style="color:rgba(255,184,0,.6)">📏 Line Prize</div>
-      <div class="pbv" style="color:#FFD93D" id="g-lp">-</div>
-    </div>
-    <div class="pb pbb">
-      <div class="pblbl" style="color:rgba(180,79,255,.6)">🎱 Full House</div>
-      <div class="pbv" style="color:#C080FF" id="g-bp">-</div>
-    </div>
-  </div>
-
-  <div id="g-cards"></div>
 </div>
 
 <!-- PROFILE -->
@@ -766,7 +778,13 @@ function startGame(){
   renderCards()
   if(timer)clearInterval(timer)
   const cdEl=document.getElementById('g-cd')
-  timer=setInterval(()=>{cd--;if(cdEl)cdEl.textContent=cd;if(cd<=0){cd=5;drawN()}},1000)
+  const cdEl2=document.getElementById('g-cd2')
+  timer=setInterval(()=>{
+    cd--
+    if(cdEl)cdEl.textContent=cd
+    if(cdEl2)cdEl2.textContent=cd
+    if(cd<=0){cd=5;drawN()}
+  },1000)
 }
 
 function drawN(){
@@ -777,6 +795,7 @@ function drawN(){
 function renderBalls(){
   const el=document.getElementById('g-balls');if(!el)return
   const last=drawn.slice(-5)
+  if(drawn.length===1){el.innerHTML=''}  // clear placeholder on first draw
   el.innerHTML=last.map((n,i)=>{
     const isNew=i===last.length-1,col=BC[n%6],sz=isNew?'lg':i===last.length-2?'md':'sm'
     const txtCol=(col==='c2'||col==='c4')?'color:#1A0A00':'color:#fff'
