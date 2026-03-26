@@ -461,7 +461,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 <div class="screen active" id="sh">
   <div class="stone-header">
     <div class="topbar">
-      <div class="t-av" id="h-av">T</div>
+      <div style="position:relative;flex-shrink:0">
+        <div class="t-av" id="h-av">T</div>
+        <div id="h-lv-badge" style="position:absolute;bottom:-4px;right:-4px;
+          width:18px;height:18px;border-radius:50%;
+          background:#3A7A24;border:2px solid #1A0F08;
+          display:flex;align-items:center;justify-content:center;font-size:.6rem">🏕️</div>
+      </div>
       <div>
         <div class="t-name" id="h-name">TonPlayer</div>
         <div style="font-size:.67rem;color:#6B4423" id="h-user"></div>
@@ -687,12 +693,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     </div>
   </div>
   <div class="phero">
-    <div class="pav" id="p-av" onclick="openAvatarPicker('user')"
-      style="cursor:pointer;position:relative">
-      <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;
-        border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FFB800);
-        border:2px solid #3D1A00;display:flex;align-items:center;
-        justify-content:center;font-size:.65rem">✏️</div>
+    <div style="position:relative;display:inline-block;margin:0 auto 10px">
+      <div class="pav" id="p-av" onclick="openAvatarPicker('user')"
+        style="cursor:pointer;margin:0">
+        <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;
+          border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FFB800);
+          border:2px solid #3D1A00;display:flex;align-items:center;
+          justify-content:center;font-size:.65rem">✏️</div>
+      </div>
+      <div id="p-lv-badge" style="position:absolute;top:-4px;right:-4px;
+        width:28px;height:28px;border-radius:50%;
+        border:2px solid #1A0F08;
+        display:flex;align-items:center;justify-content:center;font-size:.9rem;
+        background:#3A7A24;box-shadow:0 0 8px rgba(0,0,0,.5)">🏕️</div>
     </div>
     <div class="pname" id="p-nm">TonPlayer</div>
     <div class="pusername" id="p-usr"></div>
@@ -1111,6 +1124,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#1A0F08')}catch(e){};try{tg.setBackgroundColor('#1A0F08')}catch(e){}}
 
+// Level icon — badge shown next to avatar
+function getLevelIcon(lv){
+  if(lv>=75) return{icon:'🎱',color:'#FFD700',label:'Grand Master'}
+  if(lv>=51) return{icon:'💎',color:'#8B2FFF',label:'Legend'}
+  if(lv>=50) return{icon:'🃏',color:'#3D9EFF',label:'Free Card'}
+  if(lv>=31) return{icon:'🏅',color:'#2ECC71',label:'Master'}
+  if(lv>=30) return{icon:'⚡',color:'#0090CC',label:'Double XP'}
+  if(lv>=20) return{icon:'👑',color:'#CC2200',label:'VIP'}
+  if(lv>=16) return{icon:'🔥',color:'#CC5500',label:'Expert'}
+  if(lv>=10) return{icon:'⭐',color:'#CC8800',label:'Gold'}
+  if(lv>=6)  return{icon:'⚔️',color:'#4080CC',label:'Player'}
+  return      {icon:'🏕️',color:'#3A7A24',label:'Rookie'}
+}
+
 function getTgUser(){return{
   id:tg?.initDataUnsafe?.user?.id||0,
   name:tg?.initDataUnsafe?.user?.first_name||tg?.initDataUnsafe?.user?.username||'Warrior',
@@ -1149,6 +1176,10 @@ function initHome(){
   document.getElementById('bc-streak').textContent=user.streak+'d'
   document.getElementById('bc-games').textContent=user.games
   document.getElementById('bc-wins').textContent=user.wins
+  // Level badge
+  const lvInfo = getLevelIcon(user.level)
+  const hbadge = document.getElementById('h-lv-badge')
+  if(hbadge){hbadge.textContent=lvInfo.icon;hbadge.style.background=lvInfo.color+'33';hbadge.style.borderColor=lvInfo.color+'88'}
   setInterval(()=>{
     const ids=['rp-free','rp-stars','rp-ton','rp-vip'],bases=[8,26,8,3]
     ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=bases[i]+Math.floor(Math.random()*7)})
@@ -1360,6 +1391,9 @@ function renderProfile(){
   const pu=document.getElementById('p-usr');if(pu)pu.textContent=user.username?'@'+user.username:''
   document.getElementById('p-lv').textContent='Level '+user.level
   document.getElementById('p-tbola').textContent=user.tbola.toLocaleString()+' $TBOLA'
+  const lvInfo = getLevelIcon(user.level)
+  const pbadge = document.getElementById('p-lv-badge')
+  if(pbadge){pbadge.textContent=lvInfo.icon;pbadge.style.background=lvInfo.color+'44';pbadge.style.borderColor=lvInfo.color}
   document.getElementById('p-str').textContent=user.streak
   document.getElementById('p-gm').textContent=user.games
   document.getElementById('p-wins').textContent=user.wins
@@ -1958,23 +1992,30 @@ function renderSquad() {
 }
 
 function renderSquadList() {
+  const medals = ['🥇','🥈','🥉']
   const squads = [
-    {name:'TON Wolves',icon:'🐺',members:18,max:20,score:48000,open:true},
-    {name:'Crystal Guild',icon:'💎',members:15,max:20,score:38800,open:true},
-    {name:'Stone Legion',icon:'⚔️',members:12,max:15,score:32100,open:true},
-    {name:'Lucky Seven',icon:'🍀',members:9,max:10,score:28900,open:false},
-    {name:'Dragon Fire',icon:'🐉',members:14,max:20,score:24400,open:true},
-    {name:'Moon Raiders',icon:'🌙',members:11,max:15,score:21200,open:true},
+    {rank:1,name:'TON Wolves', icon:'🐺',members:18,max:20,score:48000,open:true},
+    {rank:2,name:'Crystal Guild',icon:'💎',members:15,max:20,score:38800,open:true},
+    {rank:3,name:'Stone Legion',icon:'⚔️',members:12,max:15,score:32100,open:true},
+    {rank:4,name:'Lucky Seven', icon:'🍀',members:9, max:10,score:28900,open:false},
+    {rank:5,name:'Dragon Fire',  icon:'🐉',members:14,max:20,score:24400,open:true},
+    {rank:6,name:'Moon Raiders', icon:'🌙',members:11,max:15,score:21200,open:true},
   ]
   return squads.map(s=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
       background:linear-gradient(135deg,#1E1005,#130A02);
       border:2px solid ${s.open?'#3A5C1A':'#3D2810'};border-radius:12px;margin-bottom:6px">
+      <!-- Rank medal -->
+      <div style="width:24px;text-align:center;font-size:1rem;flex-shrink:0">
+        ${s.rank<=3 ? medals[s.rank-1] : '<span style="font-size:.8rem;font-weight:700;color:#5A3D1A">'+s.rank+'</span>'}
+      </div>
       <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;
         background:linear-gradient(145deg,#3A2810,#1A1005);border:2px solid #6B4423;
         display:flex;align-items:center;justify-content:center;font-size:1.2rem">${s.icon}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.88rem;font-weight:700;color:#FFE0A0">${s.name}</div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.88rem;font-weight:700;color:#FFE0A0">${s.name}</span>
+        </div>
         <div style="font-size:.7rem;color:#5A3D1A">${s.members}/${s.max} members · ${s.score.toLocaleString()} pts</div>
       </div>
       ${s.open
