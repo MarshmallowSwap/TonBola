@@ -1894,23 +1894,54 @@ function renderLb(tab) {
     data = LBD[tab]?.[lbCurrency] || LBD[tab]?.stars || []
   }
 
+  // Clone to avoid mutating original
+  data = [...data]
+
+  // Inject current user if not already in list
+  const myName = user.name || 'You'
+  const myScore = user.tbola || 0
+  const alreadyIn = data.some(r => r.n === myName)
+  if(!alreadyIn && myScore > 0) {
+    // Find where user would rank
+    const insertAt = data.findIndex(r => r.s < myScore)
+    const myEntry = {
+      r: insertAt === -1 ? data.length+1 : insertAt+1,
+      n: myName,
+      s: myScore,
+      p: isSquads ? (mySquad ? mySquad.name : 'No squad') : (lbCurrency==='stars' ? 'Your score' : 'Your score'),
+      col: 'radial-gradient(circle,#CC8800,#8B6000)',
+      av: user.avatar || '😊',
+      isMe: true
+    }
+    if(insertAt === -1) data.push(myEntry)
+    else data.splice(insertAt, 0, myEntry)
+    // Recalculate ranks
+    data.forEach((r,i) => r.r = i+1)
+  }
+
   const medals = ['🥇','🥈','🥉']
   document.getElementById('lb-list').innerHTML = data.map(row => `
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
-      border-bottom:1px solid rgba(107,68,35,.15);cursor:default">
+      border-bottom:1px solid rgba(107,68,35,.15);cursor:default;
+      ${row.isMe ? 'background:rgba(255,184,0,.08);border-left:3px solid #FFB800;' : ''}">
       <div style="font-size:1rem;font-weight:700;width:26px;text-align:center;flex-shrink:0;
-        color:${row.r<=3?'#FFD93D':'#5A3D1A'}">${medals[row.r-1]||row.r}</div>
+        color:${row.r<=3?'#FFD93D':row.isMe?'#FFB800':'#5A3D1A'}">${medals[row.r-1]||row.r}</div>
       <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;
         display:flex;align-items:center;justify-content:center;
         font-size:1.1rem;background:${row.col};
-        border:2px solid rgba(0,0,0,.4);
-        box-shadow:0 2px 6px rgba(0,0,0,.5)">${row.av||row.n[0]}</div>
+        border:${row.isMe?'3px solid #FFB800':'2px solid rgba(0,0,0,.4)'};
+        box-shadow:${row.isMe?'0 0 10px rgba(255,184,0,.5)':'0 2px 6px rgba(0,0,0,.5)'}">
+        ${row.av||row.n[0]}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.875rem;font-weight:700;color:#FFE0A0;
-          white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${row.n}</div>
+        <div style="font-size:.875rem;font-weight:700;
+          color:${row.isMe?'#FFD93D':'#FFE0A0'};
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          ${row.n}${row.isMe?' 👈':''}
+        </div>
         <div style="font-size:.7rem;color:#5A3D1A">${row.p||''}</div>
       </div>
-      <div style="font-size:.95rem;font-weight:700;color:#FFD93D;flex-shrink:0">${row.s.toLocaleString()}</div>
+      <div style="font-size:.95rem;font-weight:700;
+        color:${row.isMe?'#FFD93D':'#FFD93D'};flex-shrink:0">${row.s.toLocaleString()}</div>
     </div>`).join('')
 }
 
