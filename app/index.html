@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TonBola</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:   #FF3CAC;
+  --yellow: #FFD93D;
+  --teal:   #00F5C8;
+  --coral:  #FF6B35;
+  --purple: #8B2FFF;
+  --blue:   #3D9EFF;
+  --bg:     var(--tg-theme-bg-color, #060514);
+  --bg2:    var(--tg-theme-secondary-bg-color, #0E0C22);
+  --text:   var(--tg-theme-text-color, #ffffff);
+  --hint:   var(--tg-theme-hint-color, rgba(255,255,255,0.5));
+  --btn:    var(--tg-theme-button-color, #FF3CAC);
+  --r:      14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+.f{font-family:'Fredoka',sans-serif;font-weight:700}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  display:none;flex-direction:column;padding-bottom:80px}
+.screen.active{display:flex}
+
+/* ── BOTTOM NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--bg2);border-top:1px solid rgba(255,255,255,.08);
+  display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 4px;cursor:pointer;transition:opacity .15s;border:none;
+  background:transparent;color:var(--hint);font-size:10px;font-family:'Plus Jakarta Sans',sans-serif}
+.nav-btn.active{color:var(--yellow)}
+.nav-btn svg{width:22px;height:22px;stroke-width:1.8}
+
+/* ── HEADER ── */
+.header{padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:1.4rem;class:f}
+.logo{font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;
+  background:linear-gradient(130deg,var(--yellow),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ── CARDS ── */
+.card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r);padding:14px 16px;margin:0 12px 10px}
+.card-sm{padding:10px 14px;margin:0 12px 8px}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;border-radius:50px;border:none;cursor:pointer;
+  font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;
+  transition:transform .12s,opacity .15s;-webkit-user-select:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(130deg,var(--yellow),var(--coral));color:#07041a}
+.btn-teal{background:linear-gradient(130deg,var(--teal),var(--blue));color:#07041a}
+.btn-purple{background:linear-gradient(130deg,var(--purple),var(--pink));color:#fff}
+.btn-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text)}
+.btn-sm{padding:9px 18px;font-size:.9rem;width:auto;border-radius:50px}
+
+/* ── PILL ── */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.5px}
+.pill-live{background:rgba(0,245,200,.12);color:var(--teal);border:1px solid rgba(0,245,200,.2)}
+.pill-stars{background:rgba(255,217,61,.1);color:var(--yellow);border:1px solid rgba(255,217,61,.2)}
+.pill-ton{background:rgba(61,158,255,.1);color:var(--blue);border:1px solid rgba(61,158,255,.2)}
+.pill-free{background:rgba(139,47,255,.1);color:#c080ff;border:1px solid rgba(139,47,255,.2)}
+
+/* ── HOME SCREEN ── */
+.balance-box{margin:8px 12px 14px;padding:18px 20px;
+  background:linear-gradient(130deg,rgba(255,217,61,.1),rgba(255,60,172,.08));
+  border:1px solid rgba(255,217,61,.18);border-radius:var(--r)}
+.balance-label{font-size:.75rem;color:var(--hint);letter-spacing:.5px;text-transform:uppercase}
+.balance-amount{font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;
+  color:var(--yellow);margin:2px 0 8px;line-height:1}
+.balance-row{display:flex;gap:12px}
+.balance-stat{font-size:.8rem;color:var(--hint)}
+.balance-stat strong{color:var(--text);font-weight:600}
+
+.section-title{font-size:.72rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--hint);padding:8px 16px 6px}
+
+.room-card{margin:0 12px 10px;border-radius:var(--r);padding:14px 16px;
+  border:1px solid rgba(255,255,255,.08);cursor:pointer;
+  transition:transform .12s,border-color .15s;position:relative;overflow:hidden}
+.room-card:active{transform:scale(.98)}
+.room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.room-card.free::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
+.room-card.stars::before{background:linear-gradient(90deg,var(--yellow),var(--coral))}
+.room-card.ton::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
+.room-card.vip::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
+.room-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.room-name{font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600}
+.room-meta{display:flex;gap:8px;align-items:center;margin-top:6px}
+.room-players{font-size:.8rem;color:var(--hint);display:flex;align-items:center;gap:4px}
+.room-price{font-family:'Fredoka',sans-serif;font-size:.95rem;font-weight:600}
+.room-next{font-size:.75rem;color:var(--hint);margin-top:4px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;
+  animation:blink 1.2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── GAME SCREEN ── */
+.draw-box{margin:8px 12px 6px;padding:14px 16px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r);text-align:center}
+.draw-label{font-size:.72rem;color:var(--hint);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.draw-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.ball{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:'Fredoka',sans-serif;font-size:1rem;
+  font-weight:700;color:#fff;flex-shrink:0}
+.ball.b1{background:linear-gradient(145deg,var(--pink),#b5147a)}
+.ball.b2{background:linear-gradient(145deg,var(--blue),#1761ce)}
+.ball.b3{background:linear-gradient(145deg,var(--coral),#c03608)}
+.ball.b4{background:linear-gradient(145deg,var(--purple),#520eb5)}
+.ball.b5{background:linear-gradient(145deg,var(--teal),#00967a);color:#071a14}
+.ball.b6{background:linear-gradient(145deg,var(--yellow),#d9a800);color:#0d0800}
+.ball.new{width:52px;height:52px;font-size:1.2rem;
+  animation:pop .35s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 0 20px rgba(255,217,61,.4)}
+.ball.small{width:32px;height:32px;font-size:.8rem}
+.ball.marked{opacity:.35}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+
+.draw-next{font-size:.75rem;color:var(--hint);margin-top:8px}
+
+.bingo-card-wrap{margin:0 12px 10px}
+.bingo-card-title{font-size:.72rem;color:var(--hint);letter-spacing:.5px;
+  text-transform:uppercase;margin-bottom:6px;display:flex;justify-content:space-between}
+.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.bingo-cell{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-family:'Fredoka',sans-serif;font-size:.9rem;
+  font-weight:700;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  transition:background .2s,border-color .2s,transform .15s;cursor:default}
+.bingo-cell.marked{background:linear-gradient(145deg,var(--teal),var(--blue));
+  border-color:var(--teal);color:#071a14;transform:scale(1.06)}
+.bingo-cell.line-win{background:linear-gradient(145deg,var(--yellow),var(--coral));
+  border-color:var(--yellow);color:#07041a}
+
+.prize-info{margin:0 12px 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prize-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:10px 12px;text-align:center}
+.prize-label{font-size:.7rem;color:var(--hint);margin-bottom:3px}
+.prize-val{font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700}
+
+.players-row{padding:4px 16px 8px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.players-row::-webkit-scrollbar{display:none}
+.player-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(145deg,var(--purple),var(--pink));
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;
+  font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,.1)}
+
+/* ── WIN OVERLAY ── */
+.win-overlay{position:fixed;inset:0;z-index:200;background:rgba(6,5,20,.9);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px}
+.win-overlay.show{display:flex}
+.win-emoji{font-size:5rem;margin-bottom:16px;animation:bounce .6s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.win-title{font-family:'Fredoka',sans-serif;font-size:2.4rem;font-weight:700;margin-bottom:8px}
+.win-amount{font-family:'Fredoka',sans-serif;font-size:1.6rem;margin-bottom:6px}
+.win-tbola{font-size:1rem;color:var(--yellow);margin-bottom:24px}
+
+/* ── LOBBY SCREEN ── */
+.cards-selector{margin:0 12px 12px;display:flex;gap:8px;justify-content:center}
+.cards-num{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;
+  background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);
+  cursor:pointer;transition:all .15s}
+.cards-num.selected{background:var(--yellow);border-color:var(--yellow);color:#07041a}
+.lobby-players{margin:0 12px 12px}
+.lobby-player{display:flex;align-items:center;gap:10px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.lobby-player:last-child{border-bottom:none}
+.lobby-player-name{font-size:.875rem;font-weight:500;flex:1}
+.lobby-player-cards{font-size:.8rem;color:var(--hint)}
+
+/* ── PROFILE SCREEN ── */
+.avatar-big{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;
+  background:linear-gradient(145deg,var(--purple),var(--pink));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;
+  border:3px solid rgba(255,255,255,.15)}
+.xp-bar-wrap{background:rgba(255,255,255,.07);border-radius:50px;height:8px;
+  margin:8px 0 4px;overflow:hidden}
+.xp-bar{height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 12px 10px}
+.stat-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:10px;text-align:center}
+.stat-n{font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--yellow)}
+.stat-l{font-size:.72rem;color:var(--hint);margin-top:2px}
+
+/* ── LEADERBOARD ── */
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.lb-rank{font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;
+  width:28px;text-align:center;flex-shrink:0}
+.lb-name{flex:1;font-size:.875rem;font-weight:500}
+.lb-score{font-family:'Fredoka',sans-serif;font-size:.95rem;font-weight:700;color:var(--yellow)}
+.lb-tabs{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;scrollbar-width:none}
+.lb-tab{padding:6px 14px;border-radius:50px;font-size:.8rem;font-weight:600;
+  border:1px solid rgba(255,255,255,.1);color:var(--hint);cursor:pointer;
+  white-space:nowrap;transition:all .15s}
+.lb-tab.active{background:var(--yellow);color:#07041a;border-color:var(--yellow)}
+
+/* ── COUNTDOWN ── */
+.cd{font-size:.75rem;color:var(--hint);display:flex;align-items:center;gap:4px}
+.cd-num{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ── HOME ─────────────────────────────────────────── -->
+<div class="screen active" id="s-home">
+  <div class="header">
+    <div class="logo">TonBola</div>
+    <div style="font-size:.8rem;color:var(--hint)" id="h-username">@user</div>
+  </div>
+
+  <div class="balance-box">
+    <div class="balance-label">$TBOLA Balance</div>
+    <div class="balance-amount" id="h-tbola">0</div>
+    <div class="balance-row">
+      <div class="balance-stat">Lv <strong id="h-level">1</strong></div>
+      <div class="balance-stat">🔥 Streak <strong id="h-streak">0</strong>d</div>
+      <div class="balance-stat">🎮 <strong id="h-games">0</strong> games</div>
+    </div>
+  </div>
+
+  <div class="section-title">Open Rooms</div>
+
+  <div class="room-card free" onclick="openLobby('free')">
+    <div class="room-header">
+      <div class="room-name">Free Room</div>
+      <span class="pill pill-free">FREE</span>
+    </div>
+    <div class="room-meta">
+      <div class="room-players"><span class="dot"></span> <span id="r-free-players">12</span> players</div>
+      <div class="room-price" style="color:#c080ff">1 free card/day</div>
+    </div>
+    <div class="room-next">Wins $TBOLA tokens · No Stars needed</div>
+  </div>
+
+  <div class="room-card stars" onclick="openLobby('stars')">
+    <div class="room-header">
+      <div class="room-name">Stars Room</div>
+      <span class="pill pill-stars">⭐ STARS</span>
+    </div>
+    <div class="room-meta">
+      <div class="room-players"><span class="dot"></span> <span id="r-stars-players">38</span> players</div>
+      <div class="room-price" style="color:var(--yellow)">100 Stars / card</div>
+    </div>
+    <div class="room-next">Prize pool in Stars · Next game in <span id="r-stars-cd" class="cd-num">4:32</span></div>
+  </div>
+
+  <div class="room-card ton" onclick="openLobby('ton')">
+    <div class="room-header">
+      <div class="room-name">TON Room</div>
+      <span class="pill pill-ton">TON</span>
+    </div>
+    <div class="room-meta">
+      <div class="room-players"><span class="dot"></span> <span id="r-ton-players">14</span> players</div>
+      <div class="room-price" style="color:var(--blue)">0.1 TON / card</div>
+    </div>
+    <div class="room-next">Prize pool in TON · Real crypto out instantly</div>
+  </div>
+
+  <div class="room-card vip" onclick="openLobby('vip')">
+    <div class="room-header">
+      <div class="room-name">VIP TON Room</div>
+      <span class="pill" style="background:rgba(255,60,172,.1);color:var(--pink);border:1px solid rgba(255,60,172,.2)">VIP · Lv.20+</span>
+    </div>
+    <div class="room-meta">
+      <div class="room-players"><span class="dot"></span> <span id="r-vip-players">6</span> players</div>
+      <div class="room-price" style="color:var(--pink)">1 TON / card</div>
+    </div>
+    <div class="room-next">High stakes · Max prize pools · +300 $TBOLA/card</div>
+  </div>
+
+  <div class="section-title" style="margin-top:4px">Private Room</div>
+  <div style="padding:0 12px 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <button class="btn btn-ghost" onclick="showScreen('s-create')">+ Create Room</button>
+    <button class="btn btn-ghost" onclick="showScreen('s-join')">Enter Code</button>
+  </div>
+</div>
+
+<!-- ── LOBBY ─────────────────────────────────────────── -->
+<div class="screen" id="s-lobby">
+  <div class="header">
+    <button class="btn btn-ghost btn-sm" onclick="showScreen('s-home')" style="width:auto;padding:7px 14px">← Back</button>
+    <div id="l-room-name" style="font-family:'Fredoka',sans-serif;font-size:1.1rem">Stars Room</div>
+    <span class="pill pill-live"><span class="dot"></span> LIVE</span>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:.8rem;color:var(--hint)">Prize pool</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;color:var(--yellow)" id="l-pool">2,400 Stars</div>
+    </div>
+    <div style="display:flex;justify-content:space-between">
+      <div style="font-size:.8rem;color:var(--hint)">Players: <strong id="l-players" style="color:var(--text)">8/20</strong></div>
+      <div style="font-size:.8rem;color:var(--hint)">Starts in: <strong id="l-countdown" style="color:var(--text);font-family:'Fredoka',sans-serif">1:48</strong></div>
+    </div>
+  </div>
+
+  <div class="section-title">Choose your cards</div>
+  <div class="cards-selector" id="cards-selector">
+    <div class="cards-num selected" onclick="selectCards(1)">1</div>
+    <div class="cards-num" onclick="selectCards(2)">2</div>
+    <div class="cards-num" onclick="selectCards(3)">3</div>
+    <div class="cards-num" onclick="selectCards(5)">5</div>
+    <div class="cards-num" onclick="selectCards(10)">10</div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <div style="font-size:.8rem;color:var(--hint);margin-bottom:4px">You'll pay</div>
+    <div style="font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700" id="l-cost">100 Stars</div>
+    <div style="font-size:.78rem;color:var(--yellow);margin-top:2px" id="l-tbola-earn">+50 $TBOLA</div>
+  </div>
+
+  <div class="section-title">Players in lobby</div>
+  <div class="lobby-players card" id="l-players-list">
+    <div class="lobby-player">
+      <div class="player-avatar">T</div>
+      <div class="lobby-player-name">TonPlayer_1</div>
+      <div class="lobby-player-cards">2 cards</div>
+    </div>
+    <div class="lobby-player">
+      <div class="player-avatar" style="background:linear-gradient(145deg,var(--teal),var(--blue));color:#071a14">A</div>
+      <div class="lobby-player-name">Alice_TON</div>
+      <div class="lobby-player-cards">3 cards</div>
+    </div>
+    <div class="lobby-player">
+      <div class="player-avatar" style="background:linear-gradient(145deg,var(--coral),var(--pink))">M</div>
+      <div class="lobby-player-name">MaxBingo</div>
+      <div class="lobby-player-cards">1 card</div>
+    </div>
+  </div>
+
+  <div style="padding:8px 12px 16px">
+    <button class="btn btn-primary" onclick="joinGame()" id="l-join-btn">Buy Cards & Join</button>
+  </div>
+</div>
+
+<!-- ── GAME ──────────────────────────────────────────── -->
+<div class="screen" id="s-game">
+  <div class="header">
+    <div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem" id="g-room-name">Stars Room</div>
+      <div class="cd"><span class="dot"></span> Next draw in <span class="cd-num" id="g-countdown">5</span>s</div>
+    </div>
+    <span class="pill pill-live"><span class="dot"></span> LIVE</span>
+  </div>
+
+  <!-- players avatars -->
+  <div class="players-row" id="g-players"></div>
+
+  <!-- draw box -->
+  <div class="draw-box">
+    <div class="draw-label">Live draw</div>
+    <div class="draw-row" id="g-drawn">
+      <!-- balls populated by JS -->
+    </div>
+    <div class="draw-next" id="g-draw-next">Waiting for next number...</div>
+  </div>
+
+  <!-- prize info -->
+  <div class="prize-info">
+    <div class="prize-item">
+      <div class="prize-label">Line prize</div>
+      <div class="prize-val" id="g-line-prize" style="color:var(--yellow)">600 Stars</div>
+    </div>
+    <div class="prize-item">
+      <div class="prize-label">Full house</div>
+      <div class="prize-val" id="g-bingo-prize" style="color:var(--pink)">1,800 Stars</div>
+    </div>
+  </div>
+
+  <!-- bingo cards -->
+  <div id="g-cards-container"></div>
+</div>
+
+<!-- ── PROFILE ───────────────────────────────────────── -->
+<div class="screen" id="s-profile">
+  <div class="header">
+    <div class="logo">TonBola</div>
+    <button class="btn btn-ghost btn-sm" onclick="copyRefLink()" style="width:auto;padding:7px 14px;font-size:.8rem">🔗 Invite</button>
+  </div>
+
+  <div class="card" style="text-align:center;margin-top:4px">
+    <div class="avatar-big" id="p-avatar">T</div>
+    <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700" id="p-name">TonPlayer</div>
+    <div style="font-size:.8rem;color:var(--hint);margin-bottom:10px" id="p-username">@username</div>
+    <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--hint);margin-bottom:4px">
+      <span>Lv <strong id="p-level" style="color:var(--text)">1</strong> · <span id="p-xp">0</span> XP</strong></span>
+      <span id="p-next-xp">Next level: 100 XP</span>
+    </div>
+    <div class="xp-bar-wrap"><div class="xp-bar" id="p-xp-bar" style="width:0%"></div></div>
+    <div style="font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;color:var(--yellow);margin-top:10px" id="p-tbola">0 $TBOLA</div>
+    <div style="font-size:.78rem;color:var(--hint)">🔥 <span id="p-streak">0</span>-day streak</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-n" id="p-games">0</div><div class="stat-l">Games</div></div>
+    <div class="stat-box"><div class="stat-n" id="p-wins">0</div><div class="stat-l">Wins</div></div>
+    <div class="stat-box"><div class="stat-n" id="p-cards">0</div><div class="stat-l">Cards</div></div>
+  </div>
+
+  <div class="section-title">Your referral link</div>
+  <div class="card" onclick="copyRefLink()" style="cursor:pointer">
+    <div style="font-size:.78rem;color:var(--teal);word-break:break-all" id="p-reflink">t.me/TonBolaBot_bot?start=ref_0</div>
+    <div style="font-size:.75rem;color:var(--hint);margin-top:5px">Tap to copy · Earn 5% of friends' $TBOLA forever</div>
+  </div>
+
+  <div class="section-title">Unlocks</div>
+  <div id="p-unlocks" style="padding:0 12px 10px;display:flex;flex-direction:column;gap:6px"></div>
+</div>
+
+<!-- ── LEADERBOARD ─────────────────────────────────── -->
+<div class="screen" id="s-leaderboard">
+  <div class="header">
+    <div class="logo">TonBola</div>
+    <div style="font-size:.8rem;color:var(--hint)">Top players</div>
+  </div>
+
+  <div class="lb-tabs">
+    <div class="lb-tab active" onclick="setLbTab('weekly',this)">Weekly</div>
+    <div class="lb-tab" onclick="setLbTab('monthly',this)">Monthly</div>
+    <div class="lb-tab" onclick="setLbTab('squads',this)">Squads</div>
+    <div class="lb-tab" onclick="setLbTab('alltime',this)">All Time</div>
+  </div>
+
+  <div id="lb-list"></div>
+</div>
+
+<!-- ── WIN OVERLAY ─────────────────────────────────── -->
+<div class="win-overlay" id="win-overlay">
+  <div class="win-emoji" id="w-emoji">🎉</div>
+  <div class="win-title" id="w-title">BINGO!</div>
+  <div class="win-amount" id="w-amount" style="color:var(--yellow)">+1,800 Stars</div>
+  <div class="win-tbola" id="w-tbola">+500 $TBOLA earned</div>
+  <button class="btn btn-primary" style="max-width:280px" onclick="closeWin()">Collect Prize</button>
+</div>
+
+<!-- ── BOTTOM NAV ─────────────────────────────────── -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showScreen('s-home');setNav(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Play
+  </button>
+  <button class="nav-btn" onclick="showScreen('s-leaderboard');setNav(this);loadLeaderboard()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    Ranks
+  </button>
+  <button class="nav-btn" onclick="showScreen('s-profile');setNav(this);loadProfile()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profile
+  </button>
+</nav>
+
+<script>
+// ── TELEGRAM WEBAPP INIT ──────────────────────────────
+const tg = window.Telegram?.WebApp
+if (tg) {
+  tg.ready()
+  tg.expand()
+  tg.setHeaderColor('#060514')
+  tg.setBackgroundColor('#060514')
+}
+
+const BOT_URL = 'https://t.me/TonBolaBot_bot'
+const API_URL = '' // backend URL when ready
+
+// ── USER STATE ────────────────────────────────────────
+const user = {
+  id:       tg?.initDataUnsafe?.user?.id || 0,
+  name:     tg?.initDataUnsafe?.user?.first_name || 'Player',
+  username: tg?.initDataUnsafe?.user?.username || 'user',
+  tbola:    0, level: 1, xp: 0, streak: 0,
+  games: 0, wins: 0, cards: 0,
+}
+
+// ── GAME STATE ────────────────────────────────────────
+let currentRoom = 'stars'
+let selectedCards = 1
+let drawnNumbers = []
+let myCards = []
+let gameInterval = null
+let countdown = 5
+
+// ── SCREEN MANAGEMENT ─────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+}
+function setNav(btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+}
+
+// ── HOME ──────────────────────────────────────────────
+function initHome() {
+  document.getElementById('h-username').textContent = `@${user.username}`
+  document.getElementById('h-tbola').textContent = user.tbola.toLocaleString()
+  document.getElementById('h-level').textContent = user.level
+  document.getElementById('h-streak').textContent = user.streak
+  document.getElementById('h-games').textContent = user.games
+
+  // Simulate live player counts
+  setInterval(() => {
+    const ids = ['r-free-players','r-stars-players','r-ton-players','r-vip-players']
+    const bases = [10,30,10,4]
+    ids.forEach((id,i) => {
+      const el = document.getElementById(id)
+      if (el) el.textContent = bases[i] + Math.floor(Math.random()*8)
+    })
+  }, 8000)
+
+  // Room countdown
+  let roomSec = 272
+  setInterval(() => {
+    roomSec = (roomSec - 1 + 300) % 300
+    const m = Math.floor(roomSec/60)
+    const s = roomSec%60
+    const el = document.getElementById('r-stars-cd')
+    if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`
+  }, 1000)
+}
+
+// ── LOBBY ─────────────────────────────────────────────
+const ROOM_CONFIG = {
+  free:  { name:'Free Room',     currency:'free',  price:0,   priceLabel:'Free',        tbola:10 },
+  stars: { name:'Stars Room',    currency:'stars', price:100, priceLabel:'100 Stars',   tbola:50 },
+  ton:   { name:'TON Room',      currency:'ton',   price:0.1, priceLabel:'0.1 TON',     tbola:100 },
+  vip:   { name:'VIP TON Room',  currency:'ton',   price:1,   priceLabel:'1 TON',       tbola:300 },
+}
+
+function openLobby(roomType) {
+  currentRoom = roomType
+  const cfg = ROOM_CONFIG[roomType]
+  document.getElementById('l-room-name').textContent = cfg.name
+  selectedCards = 1
+  updateCardCost()
+  showScreen('s-lobby')
+
+  // Lobby countdown
+  let lSec = 108
+  const lInt = setInterval(() => {
+    lSec--
+    if (lSec <= 0) { clearInterval(lInt); return }
+    const m = Math.floor(lSec/60)
+    const s = lSec%60
+    const el = document.getElementById('l-countdown')
+    if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`
+  }, 1000)
+}
+
+function selectCards(n) {
+  selectedCards = n
+  document.querySelectorAll('.cards-num').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.textContent) === n)
+  })
+  updateCardCost()
+}
+
+function updateCardCost() {
+  const cfg = ROOM_CONFIG[currentRoom]
+  const el = document.getElementById('l-cost')
+  const te = document.getElementById('l-tbola-earn')
+  if (cfg.currency === 'free') {
+    el.textContent = 'Free'
+  } else if (cfg.currency === 'stars') {
+    el.textContent = `${cfg.price * selectedCards} Stars`
+  } else {
+    el.textContent = `${(cfg.price * selectedCards).toFixed(2)} TON`
+  }
+  if (te) te.textContent = `+${cfg.tbola * selectedCards} $TBOLA`
+}
+
+function joinGame() {
+  const cfg = ROOM_CONFIG[currentRoom]
+  if (cfg.currency === 'stars' && tg?.showPopup) {
+    tg.showPopup({
+      title: 'Confirm Purchase',
+      message: `Buy ${selectedCards} card${selectedCards>1?'s':''} for ${cfg.price*selectedCards} Stars?`,
+      buttons: [
+        { id: 'confirm', type: 'default', text: 'Buy & Play' },
+        { id: 'cancel',  type: 'cancel' },
+      ]
+    }, (id) => { if (id === 'confirm') startGame() })
+  } else {
+    startGame()
+  }
+}
+
+// ── GAME ──────────────────────────────────────────────
+const BALL_COLORS = ['b1','b2','b3','b4','b5','b6']
+
+function generateCard() {
+  const pool = Array.from({length:90},(_,i)=>i+1)
+  return pool.sort(()=>Math.random()-.5).slice(0,15).sort((a,b)=>a-b)
+}
+
+function startGame() {
+  showScreen('s-game')
+  drawnNumbers = []
+  myCards = Array.from({length:selectedCards}, generateCard)
+  countdown = 5
+
+  document.getElementById('g-room-name').textContent = ROOM_CONFIG[currentRoom].name
+
+  // Prize display
+  const cfg = ROOM_CONFIG[currentRoom]
+  const poolSize = cfg.currency === 'stars'
+    ? `${Math.floor(cfg.price * 16 * 0.55)} Stars`
+    : cfg.currency === 'free' ? '$TBOLA' : `${(cfg.price*16*0.55).toFixed(2)} TON`
+  document.getElementById('g-line-prize').textContent = cfg.currency==='free' ? '250 $TBOLA' : poolSize.replace(/[\d.]+/, v => (parseFloat(v)*0.25).toFixed(cfg.currency==='ton'?2:0))
+  document.getElementById('g-bingo-prize').textContent = cfg.currency==='free' ? '750 $TBOLA' : poolSize.replace(/[\d.]+/, v => (parseFloat(v)*0.75).toFixed(cfg.currency==='ton'?2:0))
+
+  renderCards()
+  renderPlayers()
+
+  // Draw interval
+  if (gameInterval) clearInterval(gameInterval)
+  const cdEl = document.getElementById('g-countdown')
+
+  const tick = setInterval(() => {
+    countdown--
+    if (cdEl) cdEl.textContent = countdown
+    if (countdown <= 0) {
+      countdown = 5
+      drawNumber()
+    }
+  }, 1000)
+  gameInterval = tick
+}
+
+function drawNumber() {
+  const available = Array.from({length:90},(_,i)=>i+1).filter(n=>!drawnNumbers.includes(n))
+  if (!available.length) return
+
+  const n = available[Math.floor(Math.random()*available.length)]
+  drawnNumbers.push(n)
+
+  renderDrawn()
+  updateCards(n)
+
+  // Check wins
+  checkWins()
+}
+
+function renderDrawn() {
+  const el = document.getElementById('g-drawn')
+  if (!el) return
+  const last5 = drawnNumbers.slice(-6)
+  el.innerHTML = last5.map((n,i) => {
+    const isNew = i === last5.length-1
+    const color = BALL_COLORS[n % 6]
+    return `<div class="ball ${color}${isNew?' new':''}${i<last5.length-1?' small':''}">${n}</div>`
+  }).join('')
+  if (last5.length > 1) el.insertAdjacentHTML('beforeend','') // refresh
+  const nextEl = document.getElementById('g-draw-next')
+  if (nextEl) nextEl.textContent = `${drawnNumbers.length} numbers drawn · ${90-drawnNumbers.length} remaining`
+}
+
+function renderCards() {
+  const cont = document.getElementById('g-cards-container')
+  if (!cont) return
+  cont.innerHTML = myCards.map((card,ci) => `
+    <div class="bingo-card-wrap">
+      <div class="bingo-card-title">
+        <span>Card ${ci+1}</span>
+        <span id="card-status-${ci}" style="color:var(--hint)">Playing...</span>
+      </div>
+      <div class="bingo-grid" id="card-${ci}">
+        ${card.map(n=>`<div class="bingo-cell" id="c${ci}-${n}">${n}</div>`).join('')}
+      </div>
+    </div>
+  `).join('')
+}
+
+function updateCards(newNum) {
+  myCards.forEach((card,ci) => {
+    if (card.includes(newNum)) {
+      const cell = document.getElementById(`c${ci}-${newNum}`)
+      if (cell) cell.classList.add('marked')
+    }
+  })
+}
+
+function checkWins() {
+  myCards.forEach((card,ci) => {
+    const marked = drawnNumbers.filter(n => card.includes(n))
+    // Check line (rows of 5)
+    for (let r=0; r<3; r++) {
+      const row = card.slice(r*5, r*5+5)
+      if (row.every(n => drawnNumbers.includes(n))) {
+        const statusEl = document.getElementById(`card-status-${ci}`)
+        if (statusEl && statusEl.textContent === 'Playing...') {
+          statusEl.textContent = '📏 Line!'
+          statusEl.style.color = 'var(--yellow)'
+          row.forEach(n => {
+            const cell = document.getElementById(`c${ci}-${n}`)
+            if (cell) cell.classList.add('line-win')
+          })
+          // Don't show win overlay for line in demo — just highlight
+        }
+      }
+    }
+    // Check bingo
+    if (marked.length >= 15) {
+      clearInterval(gameInterval)
+      showWin('bingo', ci)
+    }
+  })
+}
+
+function renderPlayers() {
+  const el = document.getElementById('g-players')
+  if (!el) return
+  const names = ['You','Alice','Max','Bob','Sara','Tom','Leo','Nina']
+  const colors = [
+    'background:linear-gradient(145deg,var(--purple),var(--pink))',
+    'background:linear-gradient(145deg,var(--teal),var(--blue));color:#071a14',
+    'background:linear-gradient(145deg,var(--coral),var(--pink))',
+    'background:linear-gradient(145deg,var(--yellow),var(--coral));color:#07041a',
+    'background:linear-gradient(145deg,var(--blue),var(--purple))',
+    'background:linear-gradient(145deg,var(--pink),var(--coral))',
+    'background:linear-gradient(145deg,var(--teal),var(--yellow));color:#07041a',
+    'background:linear-gradient(145deg,var(--purple),var(--blue))',
+  ]
+  el.innerHTML = names.map((n,i)=>`
+    <div class="player-avatar" style="${colors[i]}">${n[0]}</div>
+  `).join('')
+}
+
+function showWin(type, cardIndex) {
+  const cfg = ROOM_CONFIG[currentRoom]
+  const overlay = document.getElementById('win-overlay')
+  document.getElementById('w-emoji').textContent = type==='bingo'?'🎱':'📏'
+  document.getElementById('w-title').textContent = type==='bingo'?'BINGO!':'LINE!'
+  const prize = type==='bingo'
+    ? (cfg.currency==='stars'?'1,800 Stars':cfg.currency==='free'?'750 $TBOLA':'0.54 TON')
+    : (cfg.currency==='stars'?'600 Stars':cfg.currency==='free'?'250 $TBOLA':'0.18 TON')
+  document.getElementById('w-amount').textContent = `+${prize}`
+  document.getElementById('w-tbola').textContent = `+${type==='bingo'?500:100} $TBOLA earned`
+  overlay.classList.add('show')
+
+  if (tg?.HapticFeedback) {
+    tg.HapticFeedback.notificationOccurred('success')
+  }
+}
+
+function closeWin() {
+  document.getElementById('win-overlay').classList.remove('show')
+  showScreen('s-home')
+}
+
+// ── PROFILE ───────────────────────────────────────────
+function loadProfile() {
+  document.getElementById('p-avatar').textContent = user.name[0].toUpperCase()
+  document.getElementById('p-name').textContent = user.name
+  document.getElementById('p-username').textContent = `@${user.username}`
+  document.getElementById('p-level').textContent = user.level
+  document.getElementById('p-xp').textContent = user.xp
+  document.getElementById('p-tbola').textContent = `${user.tbola.toLocaleString()} $TBOLA`
+  document.getElementById('p-streak').textContent = user.streak
+  document.getElementById('p-games').textContent = user.games
+  document.getElementById('p-wins').textContent = user.wins
+  document.getElementById('p-cards').textContent = user.cards
+
+  const xpPct = (user.xp % 100)
+  document.getElementById('p-xp-bar').style.width = xpPct + '%'
+  document.getElementById('p-next-xp').textContent = `Next: ${100 - xpPct} XP`
+  document.getElementById('p-reflink').textContent = `t.me/TonBolaBot_bot?start=ref_${user.id}`
+
+  // Unlocks
+  const unlocks = [
+    { lv:10,  label:'Gold Cards', desc:'+5% win rate', done: user.level>=10 },
+    { lv:20,  label:'VIP Rooms',  desc:'Higher stakes', done: user.level>=20 },
+    { lv:30,  label:'Double XP',  desc:'Weekends 2×', done: user.level>=30 },
+    { lv:50,  label:'Free Card',  desc:'Daily card', done: user.level>=50 },
+    { lv:75,  label:'Legend Avatar', desc:'Exclusive frame', done: user.level>=75 },
+  ]
+  document.getElementById('p-unlocks').innerHTML = unlocks.map(u=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+      border-radius:10px;opacity:${u.done?1:.5}">
+      <div style="width:36px;height:36px;border-radius:50%;
+        background:${u.done?'linear-gradient(145deg,var(--teal),var(--blue))':'rgba(255,255,255,.06)'};
+        display:flex;align-items:center;justify-content:center;font-size:.8rem;
+        color:${u.done?'#071a14':'var(--hint)'}">Lv${u.lv}</div>
+      <div style="flex:1">
+        <div style="font-size:.875rem;font-weight:600">${u.label}</div>
+        <div style="font-size:.78rem;color:var(--hint)">${u.desc}</div>
+      </div>
+      <div style="font-size:1rem">${u.done?'✅':'🔒'}</div>
+    </div>
+  `).join('')
+}
+
+function copyRefLink() {
+  const link = `https://t.me/TonBolaBot_bot?start=ref_${user.id}`
+  if (tg?.switchInlineQuery) {
+    tg.switchInlineQuery(`Join TonBola and earn $TBOLA! ${link}`)
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(link)
+    if (tg?.showPopup) tg.showPopup({title:'Copied!',message:'Referral link copied to clipboard.',buttons:[{type:'ok'}]})
+  }
+}
+
+// ── LEADERBOARD ───────────────────────────────────────
+const LB_DATA = {
+  weekly: [
+    {rank:1,name:'CryptoKing',score:12400,prize:'1,800 Stars'},
+    {rank:2,name:'TonWizard',score:9800, prize:'1,080 Stars'},
+    {rank:3,name:'BingoMaster',score:8200,prize:'720 Stars'},
+    {rank:4,name:'LuckyBall_99',score:7100,prize:'300 Stars'},
+    {rank:5,name:'SatoshiBingo',score:6400,prize:'300 Stars'},
+    {rank:6,name:'Alice_TON',score:5900, prize:'180 Stars'},
+    {rank:7,name:'MaxPlay',score:5200,prize:'180 Stars'},
+    {rank:8,name:'BallDrop',score:4800,prize:'180 Stars'},
+    {rank:9,name:'TonHunter',score:4400,prize:'180 Stars'},
+    {rank:10,name:'BingoBot',score:4100,prize:'180 Stars'},
+  ],
+  monthly: [],
+  squads: [
+    {rank:1,name:'TON Wolves',score:48000,prize:'Top Squad'},
+    {rank:2,name:'Bingo Gang',score:41200,prize:'2nd Place'},
+    {rank:3,name:'Stars Club',score:38800,prize:'3rd Place'},
+    {rank:4,name:'Lucky Seven',score:32100,prize:'Top 10'},
+    {rank:5,name:'CryptoHerd',score:28900,prize:'Top 10'},
+  ],
+  alltime: [],
+}
+
+function loadLeaderboard() {
+  setLbTab('weekly', document.querySelector('.lb-tab'))
+}
+
+function setLbTab(tab, el) {
+  document.querySelectorAll('.lb-tab').forEach(b=>b.classList.remove('active'))
+  if(el) el.classList.add('active')
+
+  const data = LB_DATA[tab] || LB_DATA.weekly
+  const medals = ['🥇','🥈','🥉']
+  document.getElementById('lb-list').innerHTML = data.map(row=>`
+    <div class="lb-row">
+      <div class="lb-rank" style="color:${row.rank<=3?'var(--yellow)':'var(--hint)'}">${medals[row.rank-1]||row.rank}</div>
+      <div>
+        <div class="lb-name">${row.name}</div>
+        <div style="font-size:.75rem;color:var(--hint)">${row.prize||''}</div>
+      </div>
+      <div class="lb-score">${row.score.toLocaleString()}</div>
+    </div>
+  `).join('') || '<div style="padding:24px;text-align:center;color:var(--hint)">No data yet</div>'
+}
+
+// ── INIT ──────────────────────────────────────────────
+initHome()
+loadLeaderboard()
+</script>
+</body>
+</html>
