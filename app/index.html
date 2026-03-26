@@ -1327,7 +1327,7 @@ const LB_LABELS = {
 const POOL_BASE = {
   weekly:  { stars:{val:48200,  unit:'⭐'},   ton:{val:4.82, unit:'TON'}, tbola:{val:284000, unit:'$TBOLA'}, label:'This week · resets Monday' },
   monthly: { stars:{val:186400, unit:'⭐'},   ton:{val:18.6, unit:'TON'}, tbola:{val:920000, unit:'$TBOLA'}, label:'This month · resets 1st' },
-  squads:  { stars:{val:0,      unit:'⭐'},   ton:{val:1.84, unit:'TON'}, tbola:{val:142000, unit:'$TBOLA'}, label:'Squad fund · resets Monday' },
+  squads:  { stars:{val:24100, unit:'⭐'},   ton:{val:1.84, unit:'TON'}, tbola:{val:142000, unit:'$TBOLA'}, label:'Squad fund · resets Monday' },
   alltime: { stars:{val:1284400,unit:'⭐'},   ton:{val:48.2, unit:'TON'}, tbola:{val:4820000,unit:'$TBOLA'}, label:'Cumulative all time' }
 }
 
@@ -1433,11 +1433,25 @@ function renderPoolBanner(tab) {
       </div>`
     return
   } else if(isSquads) {
-    boxes = [
-      {label:'💎 TON Pool',    color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',            sub:'top squads share'},
-      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'},
-    ]
+    // Squads fund comes from ALL rooms (Stars + TON) — show all 3
     grid.style.gridTemplateColumns = '1fr 1fr'
+    grid.innerHTML = `
+      <div style="background:rgba(255,184,0,.1);border:1.5px solid rgba(255,184,0,.3);border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#FFD93D;margin-bottom:5px;opacity:.85">⭐ Stars Pool</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#FFD93D;text-shadow:0 0 12px rgba(255,184,0,.5)">${Math.floor(POOL_BASE.squads.stars.val + poolGrowth.stars).toLocaleString()} ⭐</div>
+        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">top squads share</div>
+      </div>
+      <div style="background:rgba(61,158,255,.1);border:1.5px solid rgba(61,158,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px;opacity:.85">💎 TON Pool</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
+        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">top squads share</div>
+      </div>
+      <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center;grid-column:1/-1;max-width:200px;margin:0 auto;width:100%">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px;opacity:.85">◆ $TBOLA Pool</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
+        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">airdrop snapshot</div>
+      </div>`
+    return
   } else if(lbCurrency === 'stars') {
     boxes = [
       {label:'⭐ Stars Pool',  color:'#FFD93D', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
