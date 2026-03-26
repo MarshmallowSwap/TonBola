@@ -175,10 +175,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   border-bottom:3px solid #6B4423;padding:10px 12px;
   display:flex;align-items:center;justify-content:space-between}
 .lpool{text-align:center;padding:14px 16px;
-  background:linear-gradient(135deg,#1E1005,#130A02);
+  background-image:url(assets/panel-stone.png);
+  background-size:100% 100%;background-repeat:no-repeat;
   margin:8px 10px;border-radius:var(--r);
-  border:2px solid #8B6340;
-  box-shadow:0 4px 0 #0A0602,inset 0 0 20px rgba(255,184,0,.05)}
+  border:none;
+  box-shadow:0 4px 0 #0A0602}
 .pl{font-size:.62rem;font-weight:700;text-transform:uppercase;
   letter-spacing:1px;color:#8B6340;margin-bottom:3px}
 .pa{font-size:2rem;font-weight:700;color:#FFD93D;
@@ -228,12 +229,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
 /* BALL MACHINE */
 .bmach{margin:8px 10px;padding:14px;
-  background:linear-gradient(135deg,#1E1005,#0E0803);
-  border-radius:18px;border:3px solid #6B4423;text-align:center;
+  background-image:url(assets/panel-stone.png);
+  background-size:100% 100%;background-repeat:no-repeat;
+  border-radius:18px;border:none;text-align:center;
   position:relative;overflow:hidden;
-  box-shadow:0 6px 0 #0A0602,inset 0 0 30px rgba(0,0,0,.5)}
-.bmach::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,#8B6340,#FFD700,#C4933F,#FFD700,#8B6340)}
+  box-shadow:0 6px 0 #0A0602}
+.bmach::before{display:none}
 .bml{font-size:.62rem;font-weight:700;letter-spacing:1px;
   text-transform:uppercase;color:#6B4423;margin-bottom:8px}
 .barea{display:flex;align-items:center;justify-content:center;gap:6px;
@@ -274,9 +275,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
 /* ── PRIZE ROW ── */
 .prow{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:5px 10px}
-.pb{padding:9px;border-radius:12px;text-align:center;border:2px solid}
-.pbl{background:rgba(255,184,0,.06);border-color:#6B4A00}
-.pbb{background:rgba(180,79,255,.06);border-color:#5A2080}
+.pb{padding:9px;border-radius:12px;text-align:center;border:none;
+  background-image:url(assets/panel-wood.png);
+  background-size:100% 100%;background-repeat:no-repeat;
+  box-shadow:0 4px 0 rgba(0,0,0,.4)}
+.pbl{}
+.pbb{}
 .pblbl{font-size:.6rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px}
 .pbv{font-size:.95rem;font-weight:700}
 
