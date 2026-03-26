@@ -87,15 +87,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 .section-title{font-size:.72rem;font-weight:700;letter-spacing:1px;
   text-transform:uppercase;color:var(--hint);padding:8px 16px 6px}
 
-.room-card{margin:0 12px 10px;border-radius:var(--r);padding:14px 16px;
-  border:1px solid rgba(255,255,255,.08);cursor:pointer;
-  transition:transform .12s,border-color .15s;position:relative;overflow:visible;min-height:0}
-.room-card:active{transform:scale(.98)}
-.room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.room-card.free::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
-.room-card.stars::before{background:linear-gradient(90deg,var(--yellow),var(--coral))}
-.room-card.ton::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
-.room-card.vip::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
+.room-card{margin:0 12px 10px;border-radius:var(--r);padding:14px 16px 16px;
+  border:2px solid rgba(255,255,255,.1);cursor:pointer;
+  transition:transform .12s,border-color .15s,background .15s;
+  position:relative;overflow:visible}
+.room-card:active{transform:scale(.97)}
+.room-card::before{display:none}
+.room-card.free{border-color:rgba(139,47,255,.55);background:rgba(139,47,255,.07)}
+.room-card.stars{border-color:rgba(255,217,61,.55);background:rgba(255,217,61,.06)}
+.room-card.ton{border-color:rgba(61,158,255,.55);background:rgba(61,158,255,.06)}
+.room-card.vip{border-color:rgba(255,60,172,.55);background:rgba(255,60,172,.06)}
 .room-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
 .room-name{font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600}
 .room-meta{display:flex;gap:8px;align-items:center;margin-top:6px}
