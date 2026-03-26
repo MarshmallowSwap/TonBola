@@ -753,17 +753,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
       <div style="font-size:.65rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
     </div>
     <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
-      <div id="lt-weekly"  class="ltb ltb-on">Weekly</div>
-      <div id="lt-monthly" class="ltb">Monthly</div>
-      <div id="lt-squads"  class="ltb">Squads</div>
-      <div id="lt-alltime" class="ltb">All Time</div>
+      <div id="lt-weekly"  class="ltb ltb-on" onclick="setTab('weekly')">Weekly</div>
+      <div id="lt-monthly" class="ltb" onclick="setTab('monthly')">Monthly</div>
+      <div id="lt-squads"  class="ltb" onclick="setTab('squads')">Squads</div>
+      <div id="lt-alltime" class="ltb" onclick="setTab('alltime')">All Time</div>
     </div>
   </div>
 
   <!-- CURRENCY SUB-TABS -->
   <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 4px;background:#1A0F08">
-    <div id="lc-stars" class="ltb ltb-sm ltb-on">⭐ Stars</div>
-    <div id="lc-ton"   class="ltb ltb-sm">💎 TON</div>
+    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')">⭐ Stars</div>
+    <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')">💎 TON</div>
   </div>
 
   <!-- POOL BANNER -->
@@ -1338,6 +1338,18 @@ function setTabStyle(id, on){
   if(on) el.classList.add('ltb-on'); else el.classList.remove('ltb-on')
 }
 
+function setTab(tab){
+  lbTab = tab
+  ;['weekly','monthly','squads','alltime'].forEach(t=>setTabStyle('lt-'+t, t===tab))
+  // hide currency tabs for squads
+  const ctabs = document.getElementById('lb-currency-tabs')
+  if(ctabs) ctabs.style.display = tab==='squads' ? 'none' : 'flex'
+  renderLb(tab)
+  const label = document.getElementById('lb-reset-label')
+  if(label) label.textContent = LB_LABELS[tab]||''
+  renderPoolBanner(tab)
+}
+
 function setCurrency(cur) {
   lbCurrency = cur
   setTabStyle('lc-stars', cur==='stars')
@@ -1452,20 +1464,7 @@ setInterval(()=>{
 
 initHome();renderLb('weekly');renderPoolBanner('weekly')
 
-// Attach touch+click to leaderboard tabs — Telegram WebView safe
-;[
-  ['lt-weekly',  ()=>setTab('weekly')],
-  ['lt-monthly', ()=>setTab('monthly')],
-  ['lt-squads',  ()=>setTab('squads')],
-  ['lt-alltime', ()=>setTab('alltime')],
-  ['lc-stars',   ()=>setCurrency('stars')],
-  ['lc-ton',     ()=>setCurrency('ton')],
-].forEach(([id, fn])=>{
-  const el = document.getElementById(id)
-  if(!el) return
-  el.addEventListener('touchend', e=>{ e.preventDefault(); fn() }, {passive:false})
-  el.addEventListener('click', fn)
-})
+
 
 // ── PRIVATE ROOM VARS ──
 let crCurrency='stars', crPrice=50
