@@ -806,7 +806,7 @@ function updateCost(){
 function genCard(){return Array.from({length:90},(_,i)=>i+1).sort(()=>Math.random()-.5).slice(0,15).sort((a,b)=>a-b)}
 
 function startGame(){
-  go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5
+  go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const fmt=v=>c.cur==='stars'?Math.floor(v)+' Stars':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
@@ -866,17 +866,24 @@ function renderCards(){
 
 function markC(n){cards.forEach((card,ci)=>{if(card.includes(n)){const el=document.getElementById(`c${ci}-${n}`);if(el)el.classList.add('mk')}})}
 
+let gameOver=false
 function checkW(){
+  if(gameOver) return
   cards.forEach((card,ci)=>{
+    if(gameOver) return
     for(let r=0;r<3;r++){
       const row=card.slice(r*5,r*5+5)
       if(row.every(n=>drawn.includes(n))){
         const cs=document.getElementById(`cs-${ci}`)
-        if(cs&&cs.classList.contains('bcs-p')){cs.textContent='Line! 📏';cs.className='bcs bcs-l'
-          row.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk');el.classList.add('lh')}})}
+        if(cs&&cs.classList.contains('bcs-p')){
+          cs.textContent='Line! 📏';cs.className='bcs bcs-l'
+          row.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk');el.classList.add('lh')}})
+          showWin('line')
+        }
       }
     }
-    if(card.every(n=>drawn.includes(n))){
+    if(!gameOver && card.every(n=>drawn.includes(n))){
+      gameOver=true
       clearInterval(timer)
       card.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk','lh');el.classList.add('bh')}})
       const cs=document.getElementById(`cs-${ci}`);if(cs){cs.textContent='BINGO! 🎱';cs.className='bcs bcs-b'}
@@ -896,12 +903,23 @@ function showWin(type){
   document.getElementById('wt').textContent=type==='bingo'?'BINGO!':'LINE!'
   document.getElementById('wamt').textContent='+'+prizeFmt
   document.getElementById('wtbola').textContent='+'+tbolaWon+' $TBOLA earned'
-  user.tbola+=tbolaWon;user.wins+=(type==='bingo'?1:0);user.lines+=(type==='line'?1:0);user.games+=1;user.cards+=nCards
-  const hb=document.getElementById('h-tbola');if(hb)hb.textContent=user.tbola.toLocaleString()
-  const bcb=document.getElementById('bc-tbola');if(bcb)bcb.textContent=user.tbola.toLocaleString()
-  const bw=document.getElementById('bc-wins');if(bw)bw.textContent=user.wins
-  spawnConf();document.getElementById('wov').classList.add('show')
-  if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
+  user.tbola+=tbolaWon
+  user.wins+=(type==='bingo'?1:0)
+  user.lines+=(type==='line'?1:0)
+  user.games+=1
+  user.cards+=nCards
+  // Update ALL balance displays immediately
+  const update=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val}
+  update('h-tbola', user.tbola.toLocaleString())
+  update('bc-tbola', user.tbola.toLocaleString())
+  update('bc-wins', user.wins)
+  update('bc-games', user.games)
+  // Only show overlay for bingo — line just highlights
+  if(type==='bingo'){
+    spawnConf()
+    document.getElementById('wov').classList.add('show')
+    if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
+  }
 }
 
 function spawnConf(){
