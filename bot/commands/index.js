@@ -23,7 +23,7 @@ export async function handleStart(ctx) {
     : `✅ Daily login claimed! 🔥 Streak: ${streak} days (+${streak >= 7 ? 'BONUS' : '5 $TBOLA'})`
 
   const keyboard = new InlineKeyboard()
-    .webApp('🎱  Open TonBola', `${MINIAPP_URL}/app/index.html`)
+    .webApp('🎱  Open TonBola', `https://t.me/TonBolaBot_bot/play`)
 
   await ctx.reply(
     `🎱 *Welcome to TonBola*, ${user.first_name}!\n\n` +

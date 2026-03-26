@@ -73,7 +73,7 @@ bot.start({
         menu_button: {
           type: 'web_app',
           text: '🎱 Play TonBola',
-          web_app: { url: `${process.env.MINIAPP_URL}/app/index.html` }
+          web_app: { url: `https://t.me/TonBolaBot_bot/play` }
         }
       })
       console.log('✅ Menu button set')
