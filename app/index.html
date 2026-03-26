@@ -24,28 +24,23 @@
   --gold:#FFB800;--gold2:#FFD93D;--brown:#8B4513;--stone:#5A4A3A;
   --crystal-blue:#4FC3FF;--crystal-gold:#FFD700;--crystal-purple:#B44FFF;
   --ton:#0098EA;--ton2:#40B8FF;
-  --dark:#1A0F08;--dark2:#241508;--dark3:#2E1B0A;
+  --dark:#000;--dark2:#050505;--dark3:#0A0A0A;
   --green:#2A5C1A;--green2:#3A7A24;
   --red:#8B1A1A;--red2:#B22222;
   --r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:var(--dark);
+html,body{height:100%;overflow:hidden;background:#000;
   font-family:'Clash',sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ── */
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
-  display:none;flex-direction:column;padding-bottom:76px;z-index:1}
+  display:none;flex-direction:column;padding-bottom:76px;z-index:1;background:#000}
 .screen.active{display:flex}
 ::-webkit-scrollbar{display:none}
 
 /* ── FANTASY BG ── */
-body::before{content:'';position:fixed;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,69,19,.4) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(42,92,26,.3) 0%,transparent 55%),
-    linear-gradient(180deg,#1A0F08 0%,#0E0805 100%);
-}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── STONE HEADER ── */
 .stone-header{
@@ -879,7 +874,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
   </div>
 
   <!-- CURRENCY SUB-TABS -->
-  <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:#1A0F08">
+  <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:#000">
     <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">⭐ Stars</div>
     <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')" style="justify-content:center">💎 TON</div>
   </div>
@@ -1267,7 +1262,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
 <script>
 const tg=window.Telegram?.WebApp
-if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#1A0F08')}catch(e){};try{tg.setBackgroundColor('#1A0F08')}catch(e){}}
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
 
 // Level icon — badge shown next to avatar
 function getLevelIcon(lv){
