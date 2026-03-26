@@ -428,7 +428,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .ltb{flex-shrink:0;border-radius:50px;font-weight:700;cursor:pointer;
   border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
   color:#8B6340;font-family:'Clash',sans-serif;padding:7px 14px;font-size:.8rem;
-  box-shadow:0 3px 0 #0A0602;transition:all .15s;-webkit-tap-highlight-color:transparent}
+  box-shadow:0 3px 0 #0A0602;-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;
+  display:inline-flex;align-items:center;white-space:nowrap}
 .ltb-sm{padding:5px 12px;font-size:.75rem;box-shadow:0 2px 0 #0A0602}
 .ltb-on{border-color:#FFB800!important;
   background:linear-gradient(180deg,#FFD93D,#FFB800)!important;
@@ -740,33 +742,34 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 </div>
 
 <!-- LEADERBOARD -->
-<div class="screen" id="slb">
+<div class="screen" id="slb" style="overflow:hidden;display:none;flex-direction:column">
 
-  <div style="background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-    border-bottom:3px solid #6B4423;padding:10px 12px 0;
-    box-shadow:0 3px 12px rgba(0,0,0,.5);flex-shrink:0">
+  <!-- NON-SCROLLING TOP SECTION -->
+  <div style="flex-shrink:0;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+    border-bottom:3px solid #6B4423;padding:10px 12px 6px">
     <div style="display:flex;align-items:center;margin-bottom:10px">
       <div style="font-size:1rem;font-weight:700;color:#FFE0A0">🏆 Leaderboard</div>
       <div style="flex:1"></div>
       <div style="font-size:.65rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
     </div>
-    <!-- MAIN TABS -->
-    <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px">
-      <button id="lt-weekly"  onclick="setTab('weekly')"  class="ltb ltb-on" >Weekly</button>
-      <button id="lt-monthly" onclick="setTab('monthly')" class="ltb">Monthly</button>
-      <button id="lt-squads"  onclick="setTab('squads')"  class="ltb">Squads</button>
-      <button id="lt-alltime" onclick="setTab('alltime')" class="ltb">All Time</button>
+    <!-- MAIN TABS — inline divs, no button tag issues -->
+    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none">
+      <div id="lt-weekly"  onclick="setTab('weekly')"  class="ltb ltb-on">Weekly</div>
+      <div id="lt-monthly" onclick="setTab('monthly')" class="ltb">Monthly</div>
+      <div id="lt-squads"  onclick="setTab('squads')"  class="ltb">Squads</div>
+      <div id="lt-alltime" onclick="setTab('alltime')" class="ltb">All Time</div>
     </div>
   </div>
 
   <!-- CURRENCY SUB-TABS -->
-  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 4px;flex-shrink:0">
-    <button id="lc-stars" onclick="setCurrency('stars')" class="ltb ltb-sm ltb-on">⭐ Stars</button>
-    <button id="lc-ton"   onclick="setCurrency('ton')"   class="ltb ltb-sm">💎 TON</button>
+  <div id="lb-currency-tabs" style="flex-shrink:0;display:flex;gap:6px;padding:8px 10px 4px;
+    background:linear-gradient(180deg,#2A1C0E,#1E1005)">
+    <div id="lc-stars" onclick="setCurrency('stars')" class="ltb ltb-sm ltb-on">⭐ Stars</div>
+    <div id="lc-ton"   onclick="setCurrency('ton')"   class="ltb ltb-sm">💎 TON</div>
   </div>
 
   <!-- POOL BANNER -->
-  <div style="margin:0 10px 8px;border-radius:12px;flex-shrink:0;
+  <div style="flex-shrink:0;margin:6px 10px;border-radius:12px;
     background:linear-gradient(135deg,#1E1005,#130A02);
     border:2px solid #6B4423;padding:10px 12px">
     <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
@@ -778,7 +781,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="lb-pool-grid"></div>
   </div>
 
-  <div id="lb-list"></div>
+  <!-- SCROLLABLE LIST ONLY -->
+  <div style="flex:1;overflow-y:auto;overflow-x:hidden" id="lb-list"></div>
+
 </div>
 
 <!-- SQUAD SCREEN -->
