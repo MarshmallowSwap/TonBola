@@ -19,7 +19,7 @@ export async function handleStart(ctx) {
   const { alreadyClaimed, streak } = await handleDailyLogin(tgUser.id)
 
   const keyboard = new InlineKeyboard()
-    .webApp('🎱 Play TonBola', `${MINIAPP_URL}/game`)
+    .webApp('🎱 Play TonBola', `${MINIAPP_URL}/app`)
     .row()
     .webApp('👤 My Profile', `${MINIAPP_URL}/profile`)
     .text('👥 My Squad', 'squad_menu')
