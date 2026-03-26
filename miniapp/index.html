@@ -991,27 +991,33 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
       </div>
     </div>
 
-    <!-- Fee notice -->
-    <div style="background:linear-gradient(135deg,#001A2A,#000E1A);
-      border:2px solid #0060A0;border-radius:12px;padding:14px 16px;
-      display:flex;align-items:center;gap:12px">
-      <div style="font-size:2rem;flex-shrink:0">💎</div>
-      <div style="flex:1">
-        <div style="font-size:.9rem;font-weight:700;color:#40B8FF;margin-bottom:2px">
-          Squad Creation Fee
-        </div>
-        <div style="font-size:.78rem;color:rgba(64,184,255,.6);line-height:1.5">
-          One-time fee to prevent spam squads.<br>Goes into the weekly squad prize pool.
-        </div>
+    <!-- Fee selector -->
+    <div class="stone-panel" style="padding:14px">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;
+        text-transform:uppercase;color:#8B6340;margin-bottom:4px">Creation Fee</div>
+      <div style="font-size:.75rem;color:#4A3318;margin-bottom:12px;line-height:1.5">
+        One-time fee — goes into the weekly squad prize pool.
       </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:1.4rem;font-weight:700;color:#40B8FF;
-          text-shadow:0 0 12px rgba(64,184,255,.6)">0.5</div>
-        <div style="font-size:.7rem;color:rgba(64,184,255,.5);font-weight:700">TON</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="squad-fee-options">
+        <div id="sf-ton" onclick="selectSquadFee('ton')"
+          style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
+            background:rgba(0,152,234,.15);border:2px solid #0098EA;transition:all .15s">
+          <div style="font-size:1.6rem;font-weight:700;color:#40B8FF;line-height:1">0.5</div>
+          <div style="font-size:.75rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 TON</div>
+          <div style="font-size:.65rem;color:rgba(64,184,255,.5);margin-top:3px">~$1.50</div>
+        </div>
+        <div id="sf-stars" onclick="selectSquadFee('stars')"
+          style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+          <div style="font-size:1.6rem;font-weight:700;color:#FFD93D;line-height:1">500</div>
+          <div style="font-size:.75rem;font-weight:700;color:#FFD93D;margin-top:2px">⭐ Stars</div>
+          <div style="font-size:.65rem;color:rgba(255,217,61,.4);margin-top:3px">~$5.00</div>
+        </div>
       </div>
     </div>
 
-    <button class="btn btn-gold" onclick="createSquad()" style="padding:14px;font-size:1rem">
+    <button class="btn btn-gold" id="squad-create-btn"
+      onclick="createSquad()" style="padding:14px;font-size:1rem">
       💎 Pay 0.5 TON & Create Squad
     </button>
   </div>
@@ -1921,21 +1927,42 @@ function renderSquad() {
   }
 }
 
+let squadFee = 'ton' // 'ton' or 'stars'
+
+function selectSquadFee(cur) {
+  squadFee = cur
+  const tonEl   = document.getElementById('sf-ton')
+  const starsEl = document.getElementById('sf-stars')
+  const btn     = document.getElementById('squad-create-btn')
+  if(cur === 'ton') {
+    tonEl.style.background   = 'rgba(0,152,234,.15)'
+    tonEl.style.borderColor  = '#0098EA'
+    starsEl.style.background = 'rgba(0,0,0,.2)'
+    starsEl.style.borderColor= 'rgba(255,255,255,.1)'
+    btn.textContent = '💎 Pay 0.5 TON & Create Squad'
+  } else {
+    starsEl.style.background = 'rgba(255,184,0,.15)'
+    starsEl.style.borderColor= '#FFB800'
+    tonEl.style.background   = 'rgba(0,0,0,.2)'
+    tonEl.style.borderColor  = 'rgba(255,255,255,.1)'
+    btn.textContent = '⭐ Pay 500 Stars & Create Squad'
+  }
+}
+
 function createSquad() {
   const name = document.getElementById('squad-name')?.value.trim()
   if(!name) {
     if(tg?.showPopup) tg.showPopup({title:'Missing name',message:'Please enter a squad name.',buttons:[{type:'ok'}]})
     return
   }
-  // Show fee confirmation
+  const feeStr = squadFee === 'ton' ? '0.5 TON' : '500 Stars'
+  const feeIcon = squadFee === 'ton' ? '💎' : '⭐'
   if(tg?.showPopup) {
     tg.showPopup({
-      title:'💎 Confirm Payment',
-      message:'Creating "'+name+'" costs 0.5 TON (one-time fee).\n\nThis goes directly into the weekly squad prize pool.',
-      buttons:[{id:'pay',type:'default',text:'Pay 0.5 TON ✓'},{type:'cancel',text:'Cancel'}]
-    }, (id) => {
-      if(id === 'pay') _doCreateSquad(name)
-    })
+      title: feeIcon+' Confirm Payment',
+      message: 'Creating "'+name+'" costs '+feeStr+' (one-time).\n\nThis goes into the weekly squad prize pool.',
+      buttons:[{id:'pay',type:'default',text:'Pay '+feeStr+' ✓'},{type:'cancel',text:'Cancel'}]
+    }, (id) => { if(id==='pay') _doCreateSquad(name) })
     return
   }
   _doCreateSquad(name)
@@ -1955,9 +1982,10 @@ function _doCreateSquad(name) {
   if(psub) psub.textContent = '1 member · Captain'
   if(picon) picon.textContent = squadAvatar
   const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
+  const feeStr = squadFee === 'ton' ? '0.5 TON' : '500 Stars'
   if(tg?.showPopup) {
     tg.showPopup({title:'⚔ Squad Created!',
-      message:'"'+name+'" is ready!\n\nShare this code with friends:\n🔑 '+code+'\n\n0.5 TON added to squad prize pool.',
+      message:'"'+name+'" is ready!\n\nShare this code:\n🔑 '+code+'\n\n'+feeStr+' added to squad prize pool.',
       buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); renderSquad() })
   } else {
     go('s-squad'); renderSquad()
