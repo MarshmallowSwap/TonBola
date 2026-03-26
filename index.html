@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TonBola — Live multiplayer Bingo on Telegram. Win real TON every game. Buy cards, mark numbers, cash out instantly.">
+<meta property="og:title" content="TonBola — Win Real TON Playing Bingo on Telegram">
+<meta property="og:description" content="Live multiplayer bingo. Real TON prizes. Every 5 minutes. No wallet setup needed.">
+<meta property="og:image" content="/public/og-image.png">
+<title>TonBola — Live Bingo on Telegram · Win Real TON</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:    #FF3CAC;
+  --yellow:  #FFD93D;
+  --teal:    #00F5C8;
+  --coral:   #FF6B35;
+  --purple:  #8B2FFF;
+  --blue:    #3D9EFF;
+  --dark:    #060514;
+  --dark2:   #0E0C22;
+  --dark3:   #171430;
+  --glass:   rgba(255,255,255,0.055);
+  --glass-b: rgba(255,255,255,0.11);
+  --radius:  16px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Plus Jakarta Sans', sans-serif;
+  background:var(--dark);
+  color:#fff;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── TYPOGRAPHY ── */
+.f-display { font-family:'Fredoka', sans-serif; font-weight:700; line-height:1.05; }
+.f-xl  { font-size:clamp(3rem, 7.5vw, 6.8rem); }
+.f-lg  { font-size:clamp(2rem, 4.5vw, 3.6rem); }
+.f-md  { font-size:clamp(1.4rem, 3vw, 2.2rem); }
+.muted { color:rgba(255,255,255,.62); line-height:1.7; }
+.muted-sm { color:rgba(255,255,255,.42); font-size:.875rem; line-height:1.6; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  padding:1rem 2rem;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(6,5,20,.88);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.logo { font-family:'Fredoka',sans-serif; font-size:1.8rem; font-weight:700;
+  background:linear-gradient(130deg,var(--yellow),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.nav-links { display:flex; align-items:center; gap:2rem; }
+.nav-links a { font-size:.875rem; font-weight:500; color:rgba(255,255,255,.55);
+  text-decoration:none; transition:color .2s; }
+.nav-links a:hover { color:#fff; }
+.btn-play {
+  padding:.55rem 1.5rem; border-radius:50px; font-size:.875rem; font-weight:600;
+  background:linear-gradient(130deg,var(--pink),var(--purple));
+  color:#fff; border:none; cursor:pointer; text-decoration:none;
+  transition:opacity .2s, transform .15s;
+  box-shadow:0 0 20px rgba(255,60,172,.3);
+}
+.btn-play:hover { opacity:.87; transform:translateY(-1px); }
+
+/* ── HERO ── */
+#hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:8rem 1.5rem 5rem;
+  overflow:hidden;
+}
+.hero-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 65% 55% at 18% 28%, rgba(139,47,255,.22) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 48% at 82% 68%, rgba(255,60,172,.18) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 38% at 50% 95%, rgba(0,245,200,.11) 0%, transparent 55%);
+}
+#ballCanvas { position:absolute; inset:0; pointer-events:none; }
+
+/* live badge */
+.live-badge {
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.45rem 1.1rem; border-radius:50px; margin-bottom:1.8rem;
+  background:rgba(255,217,61,.1); border:1px solid rgba(255,217,61,.28);
+  font-size:.78rem; font-weight:700; color:var(--yellow); letter-spacing:.6px;
+  animation:fadeUp .65s ease both;
+}
+.live-dot { width:7px; height:7px; border-radius:50%; background:var(--yellow);
+  animation:pulse 1.4s ease infinite; }
+
+.hero-title { position:relative; z-index:1; animation:fadeUp .75s .08s ease both; }
+.hero-title .c-pink  { color:var(--pink); }
+.hero-title .c-yellow{ color:var(--yellow); }
+.hero-title .c-teal  { color:var(--teal); }
+
+.hero-sub { max-width:570px; margin:1.5rem auto 2.8rem; font-size:1.1rem;
+  animation:fadeUp .75s .18s ease both; }
+
+.hero-ctas { display:flex; gap:.9rem; justify-content:center; flex-wrap:wrap;
+  animation:fadeUp .75s .28s ease both; }
+.btn-primary {
+  padding:.9rem 2.5rem; border-radius:50px; font-size:1rem; font-weight:700;
+  font-family:'Fredoka',sans-serif;
+  background:linear-gradient(130deg,var(--yellow),var(--coral));
+  color:#07041A; border:none; cursor:pointer; text-decoration:none;
+  transition:transform .15s, box-shadow .15s;
+  box-shadow:0 0 28px rgba(255,217,61,.3);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 46px rgba(255,217,61,.48); }
+.btn-ghost {
+  padding:.9rem 2.5rem; border-radius:50px; font-size:1rem; font-weight:600;
+  font-family:'Fredoka',sans-serif;
+  background:var(--glass); border:1px solid var(--glass-b); color:#fff;
+  cursor:pointer; text-decoration:none; backdrop-filter:blur(10px);
+  transition:background .2s, transform .15s;
+}
+.btn-ghost:hover { background:rgba(255,255,255,.09); transform:translateY(-2px); }
+
+/* extraction widget */
+.extraction-box {
+  position:relative; z-index:1;
+  margin:3.2rem auto 0; max-width:420px;
+  background:var(--glass); border:1px solid var(--glass-b);
+  border-radius:20px; padding:1.4rem 1.8rem;
+  backdrop-filter:blur(22px);
+  animation:fadeUp .75s .36s ease both;
+}
+.ext-label { font-size:.72rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:rgba(255,255,255,.38); margin-bottom:.9rem; }
+.ext-row { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; justify-content:center; }
+.ball {
+  width:46px; height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:700; color:#fff;
+  flex-shrink:0;
+}
+.ball.b1 { background:linear-gradient(140deg,var(--pink),#b5147a); }
+.ball.b2 { background:linear-gradient(140deg,var(--blue),#1761ce); }
+.ball.b3 { background:linear-gradient(140deg,var(--coral),#c03608); }
+.ball.b4 { background:linear-gradient(140deg,var(--purple),#520eb5); }
+.ball.b5 { background:linear-gradient(140deg,var(--teal),#00967a); color:#071a14; }
+.ball.b6 { background:linear-gradient(140deg,var(--yellow),#d9a800); color:#0d0800; }
+.ball.ball-new { width:56px; height:56px; font-size:1.25rem;
+  animation:ballPop .38s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 0 22px rgba(255,217,61,.45); }
+.ext-sep { font-size:1.1rem; color:rgba(255,255,255,.2); }
+.ext-next { font-size:.78rem; color:rgba(255,255,255,.35); margin-top:.7rem; text-align:center; }
+
+/* ── STATS ── */
+.stats-bar {
+  background:var(--dark2);
+  border-top:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:2rem 1.5rem;
+  display:flex; justify-content:center; gap:0; flex-wrap:wrap;
+}
+.stat { padding:0 3rem; text-align:center;
+  border-right:1px solid rgba(255,255,255,.06); }
+.stat:last-child { border-right:none; }
+.stat-n { font-family:'Fredoka',sans-serif; font-size:2.3rem; font-weight:700;
+  background:linear-gradient(130deg,var(--yellow),var(--coral));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat-l { font-size:.75rem; font-weight:600; color:rgba(255,255,255,.38);
+  letter-spacing:.6px; text-transform:uppercase; margin-top:.15rem; }
+
+/* ── SECTIONS ── */
+section { padding:6rem 1.5rem; }
+.wrap { max-width:1100px; margin:0 auto; }
+.pill {
+  display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:1.4px;
+  text-transform:uppercase; padding:.32rem .85rem; border-radius:50px; margin-bottom:.9rem;
+}
+.pill-teal   { background:rgba(0,245,200,.1);   color:var(--teal);   border:1px solid rgba(0,245,200,.2); }
+.pill-pink   { background:rgba(255,60,172,.12); color:var(--pink);   border:1px solid rgba(255,60,172,.22); }
+.pill-yellow { background:rgba(255,217,61,.1);  color:var(--yellow); border:1px solid rgba(255,217,61,.22); }
+.pill-purple { background:rgba(139,47,255,.12); color:#c080ff;       border:1px solid rgba(139,47,255,.22); }
+
+/* ── HOW IT WORKS ── */
+#how { background:var(--dark2); }
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.25rem; margin-top:3.5rem; }
+.step {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
+  border-radius:20px; padding:2rem 1.7rem;
+  transition:transform .2s, border-color .2s;
+}
+.step:hover { transform:translateY(-4px); border-color:rgba(255,255,255,.14); }
+.step-n { font-family:'Fredoka',sans-serif; font-size:3.2rem; font-weight:700;
+  line-height:1; margin-bottom:.9rem; }
+.step-n.s1 { color:var(--pink); }   .step-n.s2 { color:var(--yellow); }
+.step-n.s3 { color:var(--teal); }   .step-n.s4 { color:var(--coral); }
+.step h3 { font-family:'Fredoka',sans-serif; font-size:1.35rem; font-weight:600; margin-bottom:.5rem; }
+.step p { font-size:.875rem; line-height:1.65; color:rgba(255,255,255,.55); }
+
+/* ── FEATURES ── */
+.feats { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:1.25rem; margin-top:3.5rem; }
+.feat {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
+  border-radius:20px; padding:1.7rem; overflow:hidden; position:relative;
+  transition:transform .2s;
+}
+.feat:hover { transform:translateY(-4px); }
+.feat::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
+.feat.fp::before { background:linear-gradient(90deg,var(--pink),var(--purple)); }
+.feat.fy::before { background:linear-gradient(90deg,var(--yellow),var(--coral)); }
+.feat.ft::before { background:linear-gradient(90deg,var(--teal),var(--blue)); }
+.feat.fc::before { background:linear-gradient(90deg,var(--coral),var(--pink)); }
+.feat.fpu::before{ background:linear-gradient(90deg,var(--purple),var(--blue)); }
+.feat.fb::before { background:linear-gradient(90deg,var(--blue),var(--teal)); }
+.feat-tag { font-size:.68rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  margin-bottom:.7rem; opacity:.55; }
+.feat h3 { font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:600; margin-bottom:.5rem; }
+.feat p { font-size:.855rem; line-height:1.65; color:rgba(255,255,255,.55); }
+.feat-chip {
+  display:inline-block; margin-top:.9rem; padding:.38rem .75rem;
+  border-radius:8px; font-size:.78rem; font-weight:600;
+}
+.chip-y  { background:rgba(255,217,61,.1);  color:var(--yellow); }
+.chip-t  { background:rgba(0,245,200,.1);   color:var(--teal); }
+.chip-pk { background:rgba(255,60,172,.1);  color:var(--pink); }
+.chip-c  { background:rgba(255,107,53,.1);  color:var(--coral); }
+.chip-pu { background:rgba(139,47,255,.12); color:#c080ff; }
+.chip-b  { background:rgba(61,158,255,.1);  color:var(--blue); }
+
+/* ── PRIZES ── */
+#prizes { background:var(--dark2); }
+.prize-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:3.5rem; }
+@media(max-width:768px){ .prize-grid { grid-template-columns:1fr; } }
+.prize-card {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
+  border-radius:22px; padding:2rem;
+}
+.card-title { font-family:'Fredoka',sans-serif; font-size:1.15rem; font-weight:600;
+  color:rgba(255,255,255,.75); margin-bottom:1.4rem; }
+.p-row { display:flex; align-items:center; gap:.9rem; padding:.75rem .9rem;
+  border-radius:10px; margin-bottom:.45rem; transition:background .15s; }
+.p-row:hover { background:rgba(255,255,255,.03); }
+.p-rank { font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:700; width:76px; flex-shrink:0; }
+.p-track { flex:1; height:7px; background:rgba(255,255,255,.07); border-radius:4px; overflow:hidden; }
+.p-fill  { height:100%; border-radius:4px; }
+.p-pct   { font-family:'Fredoka',sans-serif; font-size:.95rem; font-weight:700; width:38px; text-align:right; flex-shrink:0; }
+.eco-row { display:flex; align-items:center; justify-content:space-between;
+  padding:.7rem 0; border-bottom:1px solid rgba(255,255,255,.045); }
+.eco-row:last-child { border-bottom:none; }
+.eco-left { display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:rgba(255,255,255,.6); }
+.eco-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.eco-pct  { font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:700; }
+.eco-note {
+  margin-top:1.1rem; padding:.85rem 1rem;
+  background:rgba(0,245,200,.06); border:1px solid rgba(0,245,200,.14); border-radius:10px;
+  font-size:.8rem; color:rgba(0,245,200,.75); line-height:1.6;
+}
+
+/* ── PROGRESSION ── */
+#progression { background:var(--dark); }
+.lvl-scroll { display:flex; gap:.45rem; overflow-x:auto; padding:.25rem 0 .75rem;
+  scrollbar-width:none; margin:2.5rem 0; }
+.lvl-scroll::-webkit-scrollbar { display:none; }
+.lvl-pill {
+  flex-shrink:0; padding:.55rem 1.15rem; border-radius:50px; white-space:nowrap;
+  font-family:'Fredoka',sans-serif; font-size:.9rem; font-weight:600;
+  border:1.5px solid rgba(255,255,255,.1); color:rgba(255,255,255,.42); cursor:default;
+}
+.lvl-pill.on { color:#07041a; border-color:transparent; }
+.lp0.on{background:var(--teal)}   .lp1.on{background:var(--blue)}
+.lp2.on{background:var(--purple)} .lp3.on{background:var(--pink)}
+.lp4.on{background:var(--coral)}  .lp5.on{background:var(--yellow)}
+
+.unlocks { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:.9rem; }
+.unlock {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
+  border-radius:14px; padding:1.15rem 1.3rem;
+}
+.ul-lv  { font-size:.68rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+  margin-bottom:.35rem; opacity:.45; }
+.unlock h4 { font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:600; margin-bottom:.25rem; }
+.unlock p  { font-size:.8rem; color:rgba(255,255,255,.45); line-height:1.55; }
+
+/* ── TOKEN ── */
+#token {
+  background:var(--dark2); position:relative; overflow:hidden;
+}
+#token::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 55% 55% at 50% 0%, rgba(139,47,255,.18) 0%, transparent 65%);
+}
+.tok-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; position:relative; z-index:1; }
+@media(max-width:768px){ .tok-grid { grid-template-columns:1fr; } }
+.tok-box {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
+  border-radius:22px; padding:2rem;
+}
+.tok-row { display:flex; align-items:center; gap:.7rem; margin-bottom:.65rem; }
+.tok-dot { width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+.tok-label{ font-size:.875rem; color:rgba(255,255,255,.6); flex:1; }
+.tok-track{ flex:1; height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
+.tok-fill { height:100%; border-radius:3px; }
+.tok-pct  { font-family:'Fredoka',sans-serif; font-size:.95rem; font-weight:700; min-width:32px; text-align:right; }
+
+.timeline { margin-top:1.8rem; }
+.tl { display:flex; gap:1rem; margin-bottom:1.5rem; }
+.tl-left { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+.tl-dot  { width:13px; height:13px; border-radius:50%; margin-top:4px; }
+.tl-line { width:2px; flex:1; background:rgba(255,255,255,.08); margin-top:5px; }
+.tl:last-child .tl-line { display:none; }
+.tl-body h4 { font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:600; margin-bottom:.2rem; }
+.tl-body p  { font-size:.83rem; color:rgba(255,255,255,.48); line-height:1.55; }
+.tl-phase {
+  display:inline-block; font-size:.68rem; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:.18rem .55rem; border-radius:50px; margin-bottom:.3rem;
+}
+
+/* ── REFERRAL ── */
+#referral { background:var(--dark); }
+.ref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr));
+  gap:1.1rem; margin-top:3rem; }
+.ref-card {
+  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
+  border-radius:18px; padding:1.7rem; text-align:center;
+  transition:transform .2s;
+}
+.ref-card:hover { transform:translateY(-4px); }
+.ref-tier { font-size:.68rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:.75rem; opacity:.5; }
+.ref-pct  { font-family:'Fredoka',sans-serif; font-size:2.9rem; font-weight:700; line-height:1.1; margin-bottom:.3rem; }
+.ref-name { font-family:'Fredoka',sans-serif; font-size:1.15rem; font-weight:600; margin-bottom:.3rem; }
+.ref-desc { font-size:.8rem; color:rgba(255,255,255,.4); line-height:1.5; }
+
+/* ── FINAL CTA ── */
+#cta {
+  background:var(--dark2); text-align:center; padding:7.5rem 1.5rem;
+  position:relative; overflow:hidden;
+}
+#cta::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 75% 60% at 50% 50%, rgba(255,60,172,.13) 0%, transparent 62%);
+}
+.cta-inner { position:relative; z-index:1; }
+.cta-inner p { max-width:480px; margin:.9rem auto 2.5rem; color:rgba(255,255,255,.58); font-size:1.05rem; line-height:1.7; }
+.cta-btns { display:flex; gap:.9rem; justify-content:center; flex-wrap:wrap; }
+
+/* ── FOOTER ── */
+footer {
+  background:var(--dark); padding:2.5rem 1.5rem;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+}
+.footer-logo { font-family:'Fredoka',sans-serif; font-size:1.4rem; font-weight:700;
+  background:linear-gradient(130deg,var(--yellow),var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.footer-links { display:flex; gap:1.5rem; flex-wrap:wrap; }
+.footer-links a { font-size:.82rem; color:rgba(255,255,255,.38); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:rgba(255,255,255,.78); }
+.footer-copy { font-size:.78rem; color:rgba(255,255,255,.22); }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp  { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.55;transform:scale(.82)} }
+@keyframes ballPop { from{opacity:0;transform:scale(.35)} to{opacity:1;transform:scale(1)} }
+
+.aos { opacity:0; transform:translateY(28px); transition:opacity .65s, transform .65s; }
+.aos.show { opacity:1; transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px) { .nav-links { display:none; } }
+@media(max-width:580px) {
+  .stat { border-right:none; border-bottom:1px solid rgba(255,255,255,.05);
+    padding:1rem 2rem; width:100%; }
+  .stat:last-child { border-bottom:none; }
+  .stats-bar { flex-direction:column; align-items:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">TonBola</div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#prizes">Prizes</a>
+    <a href="#token">Token</a>
+    <a href="#referral">Referral</a>
+  </div>
+  <a href="https://t.me/tonbola_bot" class="btn-play">Play Free</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <canvas id="ballCanvas"></canvas>
+
+  <div class="live-badge">
+    <span class="live-dot"></span>
+    LIVE ON TELEGRAM · POWERED BY TON
+  </div>
+
+  <h1 class="f-display f-xl hero-title">
+    Bingo that actually<br>
+    <span class="c-pink">pays</span> you.<br>
+    <span class="c-yellow">Every</span> <span class="c-teal">game.</span>
+  </h1>
+
+  <p class="muted hero-sub" style="font-size:1.1rem">
+    Buy cards, call numbers, win <strong style="color:#fff">real TON</strong> — no future airdrop promises, no waiting. Instant prize pool every 5 minutes.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="https://t.me/tonbola_bot" class="btn-primary">Play Free on Telegram</a>
+    <a href="#token" class="btn-ghost">Join the Presale</a>
+  </div>
+
+  <div class="extraction-box">
+    <div class="ext-label">Live Draw · Game in Progress</div>
+    <div class="ext-row" id="extRow">
+      <div class="ball b2">14</div>
+      <div class="ball b5">31</div>
+      <div class="ball b1">67</div>
+      <div class="ball b3">8</div>
+      <div class="ball b4">52</div>
+      <div class="ext-sep">→</div>
+      <div class="ball b6 ball-new" id="newBall">23</div>
+    </div>
+    <div class="ext-next">Next number in <span id="countdown">5</span>s</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-n" data-count="127400">0</div><div class="stat-l">Games Played</div></div>
+  <div class="stat"><div class="stat-n" data-ton="48200">0 TON</div><div class="stat-l">Distributed in Prizes</div></div>
+  <div class="stat"><div class="stat-n" data-count="31900">0</div><div class="stat-l">Active Players</div></div>
+  <div class="stat"><div class="stat-n">~5 min</div><div class="stat-l">Between Games</div></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+<div class="wrap">
+  <span class="pill pill-teal aos">How it works</span>
+  <h2 class="f-display f-lg aos">Simple as bingo.<br>Powerful as blockchain.</h2>
+  <p class="muted aos" style="max-width:540px;margin-top:.75rem">Zero friction. Open Telegram, buy cards, follow the draw. If you win, TON lands in your wallet in seconds.</p>
+
+  <div class="steps">
+    <div class="step aos">
+      <div class="step-n s1">01</div>
+      <h3>Open the bot</h3>
+      <p>Launch @TonBola on Telegram. No downloads, no complicated wallets — your Telegram account is all you need to start playing right now.</p>
+    </div>
+    <div class="step aos">
+      <div class="step-n s2">02</div>
+      <h3>Buy your cards</h3>
+      <p>Enter a lobby and buy 1 to 10 cards with Telegram Stars or TON. Each card boosts your odds. Every card also earns you $TBOLA tokens.</p>
+    </div>
+    <div class="step aos">
+      <div class="step-n s3">03</div>
+      <h3>Play live</h3>
+      <p>One number every 5 seconds. Follow the draw in real time with other players. The chat explodes when someone hits a line. Pure tension.</p>
+    </div>
+    <div class="step aos">
+      <div class="step-n s4">04</div>
+      <h3>Cash out instantly</h3>
+      <p>First to call a line or a full house? The prize pool hits your Telegram Wallet in TON immediately. No delays, no bureaucracy.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background:var(--dark)">
+<div class="wrap">
+  <span class="pill pill-pink aos">Why TonBola</span>
+  <h2 class="f-display f-lg aos">Not your average<br>Telegram game.</h2>
+
+  <div class="feats">
+    <div class="feat fy aos">
+      <div class="feat-tag" style="color:var(--yellow)">Instant prizes</div>
+      <h3>Win TON today, not in 6 months</h3>
+      <p>55% of every card sold goes straight into the live prize pool. When you win, TON arrives immediately — no future token, no promises.</p>
+      <span class="feat-chip chip-y">55% → instant prize pool</span>
+    </div>
+    <div class="feat ft aos">
+      <div class="feat-tag" style="color:var(--teal)">Progression</div>
+      <h3>Level up, unlock real advantages</h3>
+      <p>6 levels from Rookie to Grand Master. Each tier unlocks golden cards with higher win probability, VIP rooms, and exclusive boosters.</p>
+      <span class="feat-chip chip-t">Lv.10 → Gold cards +5% win rate</span>
+    </div>
+    <div class="feat fp aos">
+      <div class="feat-tag" style="color:var(--pink)">$TBOLA Token</div>
+      <h3>Earn tokens while you play</h3>
+      <p>Every game, every win, every daily login builds your $TBOLA balance. The token is backed by real revenue — not pure speculation.</p>
+      <span class="feat-chip chip-pk">Presale coming · Airdrop guaranteed</span>
+    </div>
+    <div class="feat fc aos">
+      <div class="feat-tag" style="color:var(--coral)">Leaderboard</div>
+      <h3>Weekly & monthly prize pools</h3>
+      <p>Top 50 every week, top 100 every month. The prize fund accumulates card by card — it's never invented at distribution time.</p>
+      <span class="feat-chip chip-c">Season fund → 3 months of buildup</span>
+    </div>
+    <div class="feat fpu aos">
+      <div class="feat-tag" style="color:#c080ff">Seasons</div>
+      <h3>Every month something new begins</h3>
+      <p>Fresh theme, exclusive seasonal prizes, leaderboard resets. Your personal level never resets. Guaranteed FOMO at season end.</p>
+      <span class="feat-chip chip-pu">Unique seasonal badges & avatars</span>
+    </div>
+    <div class="feat fb aos">
+      <div class="feat-tag" style="color:var(--blue)">Referral</div>
+      <h3>Invite friends. Earn forever.</h3>
+      <p>5% of your direct referrals' tokens — for life. 3-level system. Influencer program with up to 15% commission on every purchase.</p>
+      <span class="feat-chip chip-b">Paid in $TBOLA automatically</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PRIZES -->
+<section id="prizes">
+<div class="wrap">
+  <span class="pill pill-yellow aos">Prizes &amp; economy</span>
+  <h2 class="f-display f-lg aos">Every Star you spend<br>has a precise destination.</h2>
+
+  <div class="prize-grid">
+    <div class="prize-card aos">
+      <div class="card-title">Weekly leaderboard — prize distribution</div>
+      <div class="p-row">
+        <span class="p-rank" style="color:var(--yellow)">1st place</span>
+        <div class="p-track"><div class="p-fill" style="width:48%;background:linear-gradient(90deg,var(--yellow),var(--coral))"></div></div>
+        <span class="p-pct" style="color:var(--yellow)">30%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:#aaa">2nd place</span>
+        <div class="p-track"><div class="p-fill" style="width:28.8%;background:#888"></div></div>
+        <span class="p-pct" style="color:#aaa">18%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:var(--coral)">3rd place</span>
+        <div class="p-track"><div class="p-fill" style="width:19.2%;background:var(--coral)"></div></div>
+        <span class="p-pct" style="color:var(--coral)">12%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:var(--teal)">4th–5th</span>
+        <div class="p-track"><div class="p-fill" style="width:16%;background:var(--teal)"></div></div>
+        <span class="p-pct" style="color:var(--teal)">10%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:var(--blue)">6th–10th</span>
+        <div class="p-track"><div class="p-fill" style="width:24%;background:var(--blue)"></div></div>
+        <span class="p-pct" style="color:var(--blue)">15%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:#c080ff">11th–25th</span>
+        <div class="p-track"><div class="p-fill" style="width:16%;background:var(--purple)"></div></div>
+        <span class="p-pct" style="color:#c080ff">10%</span>
+      </div>
+      <div class="p-row">
+        <span class="p-rank" style="color:rgba(255,255,255,.35)">26th–50th</span>
+        <div class="p-track"><div class="p-fill" style="width:8%;background:rgba(255,255,255,.25)"></div></div>
+        <span class="p-pct" style="color:rgba(255,255,255,.35)">5%</span>
+      </div>
+    </div>
+
+    <div class="prize-card aos">
+      <div class="card-title">Where every Star you pay goes</div>
+      <div class="eco-row">
+        <div class="eco-left"><div class="eco-dot" style="background:var(--teal)"></div>Live prize pool</div>
+        <div class="eco-pct" style="color:var(--teal)">55%</div>
+      </div>
+      <div class="eco-row">
+        <div class="eco-left"><div class="eco-dot" style="background:var(--purple)"></div>Developer</div>
+        <div class="eco-pct" style="color:#c080ff">32%</div>
+      </div>
+      <div class="eco-row">
+        <div class="eco-left"><div class="eco-dot" style="background:var(--yellow)"></div>$TBOLA token fund</div>
+        <div class="eco-pct" style="color:var(--yellow)">8%</div>
+      </div>
+      <div class="eco-row">
+        <div class="eco-left"><div class="eco-dot" style="background:var(--coral)"></div>Leaderboard fund</div>
+        <div class="eco-pct" style="color:var(--coral)">3%</div>
+      </div>
+      <div class="eco-row">
+        <div class="eco-left"><div class="eco-dot" style="background:rgba(255,255,255,.25)"></div>Platform fees</div>
+        <div class="eco-pct" style="color:rgba(255,255,255,.35)">2%</div>
+      </div>
+      <div class="eco-note">
+        The $TBOLA token fund is backed by real revenue. Every token distributed as a reward is covered by Stars actually collected — never minted from thin air.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROGRESSION -->
+<section id="progression">
+<div class="wrap">
+  <span class="pill pill-purple aos">Progression system</span>
+  <h2 class="f-display f-lg aos">Grow. Unlock.<br>Dominate the leaderboard.</h2>
+  <p class="muted aos" style="max-width:520px;margin-top:.75rem">Your level never resets. Every game moves you closer to permanent unlocks that give you a real edge.</p>
+
+  <div class="lvl-scroll">
+    <div class="lvl-pill lp0 on">Rookie Lv.1</div>
+    <div class="lvl-pill lp1 on">Player Lv.6</div>
+    <div class="lvl-pill lp2 on">Expert Lv.16</div>
+    <div class="lvl-pill lp3 on">Master Lv.31</div>
+    <div class="lvl-pill lp4 on">Legend Lv.51</div>
+    <div class="lvl-pill lp5 on">Grand Master Lv.76</div>
+  </div>
+
+  <div class="unlocks">
+    <div class="unlock aos"><div class="ul-lv">Level 10</div><h4>Gold Cards</h4><p>+5% win probability on every game. Permanently.</p></div>
+    <div class="unlock aos"><div class="ul-lv">Level 20</div><h4>VIP Rooms</h4><p>Access exclusive lobbies with prize pools up to 3× standard.</p></div>
+    <div class="unlock aos"><div class="ul-lv">Level 30</div><h4>Double XP</h4><p>Every weekend you earn XP at double speed.</p></div>
+    <div class="unlock aos"><div class="ul-lv">Level 50</div><h4>Daily Free Card</h4><p>One free card every day, forever. Play at zero cost daily.</p></div>
+    <div class="unlock aos"><div class="ul-lv">Level 75</div><h4>Legend Avatar</h4><p>Exclusive avatar visible to all players in every lobby.</p></div>
+    <div class="unlock aos"><div class="ul-lv">Season</div><h4>Seasonal Badge</h4><p>A unique badge every season. Unrepeatable — gone when the month ends.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- TOKEN -->
+<section id="token">
+<div class="wrap">
+  <div class="tok-grid">
+    <div class="aos">
+      <span class="pill pill-purple">$TBOLA Token</span>
+      <h2 class="f-display f-lg" style="margin:.6rem 0 1rem">Not hype.<br>Real revenue.</h2>
+      <p class="muted" style="margin-bottom:1.5rem">$TBOLA is fuelled by every card sold in the game. It has real value before it ever lists on an exchange.</p>
+      <div class="timeline">
+        <div class="tl">
+          <div class="tl-left"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <span class="tl-phase" style="background:rgba(0,245,200,.1);color:var(--teal)">Now · Live</span>
+            <h4>Game active</h4>
+            <p>Play, accumulate $TBOLA — the fund grows daily with real revenue.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="tl-left"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <span class="tl-phase" style="background:rgba(255,217,61,.1);color:var(--yellow)">Phase 2 · Month 4</span>
+            <h4>Public presale</h4>
+            <p>20% of supply at a fixed price. Top players get whitelist priority.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="tl-left"><div class="tl-dot" style="background:var(--pink)"></div></div>
+          <div class="tl-body">
+            <span class="tl-phase" style="background:rgba(255,60,172,.1);color:var(--pink)">Phase 3 · Month 6</span>
+            <h4>TGE + Airdrop</h4>
+            <p>Listed on STON.fi. Airdrop distributed proportional to accumulated $TBOLA.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tok-box aos">
+      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:1.4rem;color:rgba(255,255,255,.75)">$TBOLA Tokenomics · 1B supply</div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:var(--teal)"></div>
+        <span class="tok-label">Player airdrop</span>
+        <div class="tok-track"><div class="tok-fill" style="width:100%;background:var(--teal)"></div></div>
+        <span class="tok-pct" style="color:var(--teal)">40%</span>
+      </div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:var(--yellow)"></div>
+        <span class="tok-label">Public presale</span>
+        <div class="tok-track"><div class="tok-fill" style="width:50%;background:var(--yellow)"></div></div>
+        <span class="tok-pct" style="color:var(--yellow)">20%</span>
+      </div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:var(--blue)"></div>
+        <span class="tok-label">DEX liquidity</span>
+        <div class="tok-track"><div class="tok-fill" style="width:37.5%;background:var(--blue)"></div></div>
+        <span class="tok-pct" style="color:var(--blue)">15%</span>
+      </div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:var(--purple)"></div>
+        <span class="tok-label">Team (24m vesting)</span>
+        <div class="tok-track"><div class="tok-fill" style="width:37.5%;background:var(--purple)"></div></div>
+        <span class="tok-pct" style="color:#c080ff">15%</span>
+      </div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:var(--coral)"></div>
+        <span class="tok-label">Marketing</span>
+        <div class="tok-track"><div class="tok-fill" style="width:12.5%;background:var(--coral)"></div></div>
+        <span class="tok-pct" style="color:var(--coral)">5%</span>
+      </div>
+      <div class="tok-row">
+        <div class="tok-dot" style="background:rgba(255,255,255,.25)"></div>
+        <span class="tok-label">Reserve</span>
+        <div class="tok-track"><div class="tok-fill" style="width:12.5%;background:rgba(255,255,255,.25)"></div></div>
+        <span class="tok-pct" style="color:rgba(255,255,255,.35)">5%</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- REFERRAL -->
+<section id="referral">
+<div class="wrap">
+  <span class="pill pill-pink aos">Referral program</span>
+  <h2 class="f-display f-lg aos">Invite friends.<br>Earn forever.</h2>
+  <p class="muted aos" style="max-width:500px;margin-top:.75rem">Every time one of your referrals buys a card, you receive $TBOLA automatically — in real time, via TON smart contract. Forever.</p>
+
+  <div class="ref-grid">
+    <div class="ref-card aos">
+      <div class="ref-tier">Standard user</div>
+      <div class="ref-pct" style="color:var(--teal)">5%</div>
+      <div class="ref-name">Level 1</div>
+      <div class="ref-desc">On tokens earned by your direct referrals</div>
+    </div>
+    <div class="ref-card aos">
+      <div class="ref-tier" style="color:var(--coral)">Nano Influencer</div>
+      <div class="ref-pct" style="color:var(--coral)">7%</div>
+      <div class="ref-name">1k–10k followers</div>
+      <div class="ref-desc">+ exclusive in-game badge</div>
+    </div>
+    <div class="ref-card aos" style="border-color:rgba(255,217,61,.18)">
+      <div class="ref-tier" style="color:var(--yellow)">Micro Influencer ★</div>
+      <div class="ref-pct" style="color:var(--yellow)">10%</div>
+      <div class="ref-name">10k–100k followers</div>
+      <div class="ref-desc">+ monthly token bonus + exclusive character</div>
+    </div>
+    <div class="ref-card aos">
+      <div class="ref-tier" style="color:var(--pink)">Macro Influencer</div>
+      <div class="ref-pct" style="color:var(--pink)">15%</div>
+      <div class="ref-name">100k+ followers</div>
+      <div class="ref-desc">+ custom deal + co-marketing</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="cta">
+  <div class="cta-inner">
+    <h2 class="f-display f-lg aos">Ready to win<br><span style="color:var(--yellow)">real TON</span>?</h2>
+    <p class="aos">The next game starts in a few minutes.<br>No wallet setup, no credit card. Just Telegram.</p>
+    <div class="cta-btns aos">
+      <a href="https://t.me/tonbola_bot" class="btn-primary">Play Free on Telegram</a>
+      <a href="#token" class="btn-ghost">Join the Presale</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">TonBola</div>
+  <div class="footer-links">
+    <a href="https://t.me/tonbola_community">Telegram</a>
+    <a href="#">Twitter / X</a>
+    <a href="#">Whitepaper</a>
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+  </div>
+  <div class="footer-copy">© 2025 TonBola · Built on TON</div>
+</footer>
+
+<script>
+/* ── FLOATING BALLS ── */
+const canvas = document.getElementById('ballCanvas');
+const ctx    = canvas.getContext('2d');
+const COLORS = ['#FF3CAC','#FFD93D','#00F5C8','#FF6B35','#8B2FFF','#3D9EFF'];
+
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+const balls = Array.from({length:30}, ()=>({
+  x:Math.random()*window.innerWidth,
+  y:Math.random()*window.innerHeight,
+  r:16+Math.random()*20,
+  color:COLORS[Math.floor(Math.random()*COLORS.length)],
+  vx:(Math.random()-.5)*.55,
+  vy:(Math.random()-.5)*.55,
+  num:Math.floor(Math.random()*90)+1,
+  alpha:.1+Math.random()*.16,
+}));
+
+(function loop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  balls.forEach(b=>{
+    b.x+=b.vx; b.y+=b.vy;
+    if(b.x<-b.r) b.x=canvas.width+b.r;
+    if(b.x>canvas.width+b.r) b.x=-b.r;
+    if(b.y<-b.r) b.y=canvas.height+b.r;
+    if(b.y>canvas.height+b.r) b.y=-b.r;
+    ctx.save();
+    ctx.globalAlpha=b.alpha;
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    ctx.fillStyle=b.color; ctx.fill();
+    ctx.globalAlpha=b.alpha*1.7;
+    ctx.fillStyle='#fff';
+    ctx.font=`700 ${Math.floor(b.r*.68)}px Fredoka,sans-serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(b.num,b.x,b.y);
+    ctx.restore();
+  });
+  requestAnimationFrame(loop);
+})();
+
+/* ── LIVE DRAW DEMO ── */
+const ballColors = ['b1','b2','b3','b4','b5','b6'];
+const drawn = [14,31,67,8,52];
+let cd = 5;
+
+function nextDraw(){
+  let n; do{ n=Math.floor(Math.random()*90)+1; }while(drawn.includes(n));
+  drawn.push(n); if(drawn.length>7) drawn.shift();
+  const el=document.getElementById('newBall');
+  el.className='ball '+ballColors[Math.floor(Math.random()*ballColors.length)]+' ball-new';
+  el.textContent=n; cd=5;
+}
+setInterval(()=>{
+  cd--;
+  const el=document.getElementById('countdown');
+  if(el) el.textContent=cd;
+  if(cd<=0) nextDraw();
+},1000);
+
+/* ── COUNTER ANIMATION ── */
+function animNum(el,target,suffix){
+  let start=null;
+  const run=ts=>{
+    if(!start) start=ts;
+    const p=Math.min((ts-start)/2000,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=Math.floor(e*target).toLocaleString('en-US')+(suffix?' '+suffix:'');
+    if(p<1) requestAnimationFrame(run);
+  };
+  requestAnimationFrame(run);
+}
+
+/* ── SCROLL OBSERVER ── */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    e.target.classList.add('show');
+    if(e.target.dataset.count) animNum(e.target, +e.target.dataset.count);
+    if(e.target.dataset.ton)   animNum(e.target, +e.target.dataset.ton, 'TON');
+    io.unobserve(e.target);
+  });
+},{threshold:.14});
+
+document.querySelectorAll('.aos,[data-count],[data-ton]').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
