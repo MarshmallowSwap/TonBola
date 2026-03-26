@@ -737,180 +737,52 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
       <div style="font-size:.68rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
     </div>
   </div>
-  <!-- MAIN TABS -->
-  <div style="display:flex;gap:5px;padding:8px 10px 4px;overflow-x:auto;scrollbar-width:none">
-    <div class="lbt on" id="lt-weekly"  onclick="setTab('weekly',this)" style="flex-shrink:0">Weekly</div>
-    <div class="lbt"    id="lt-monthly" onclick="setTab('monthly',this)" style="flex-shrink:0">Monthly</div>
-    <div class="lbt"    id="lt-squads"  onclick="setTab('squads',this)" style="flex-shrink:0">Squads</div>
-    <div class="lbt"    id="lt-alltime" onclick="setTab('alltime',this)" style="flex-shrink:0">All Time</div>
+
+  <!-- MAIN TABS ROW -->
+  <div style="display:flex;gap:6px;padding:10px 10px 0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+    <button id="lt-weekly"  onclick="setTab('weekly')"
+      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
+        border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);
+        color:#3D1A00;box-shadow:0 3px 0 #7A5200;font-family:'Clash',sans-serif;cursor:pointer">Weekly</button>
+    <button id="lt-monthly" onclick="setTab('monthly')"
+      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
+        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">Monthly</button>
+    <button id="lt-squads"  onclick="setTab('squads')"
+      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
+        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">Squads</button>
+    <button id="lt-alltime" onclick="setTab('alltime')"
+      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
+        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">All Time</button>
   </div>
 
-  <!-- CURRENCY SUB-TABS — visible only for weekly/monthly/alltime -->
-  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:2px 10px 6px">
-    <div class="lbt on" id="lc-stars" onclick="setCurrency('stars')"
-      style="font-size:.75rem;padding:5px 12px;flex-shrink:0">
-      ⭐ Stars
-    </div>
-    <div class="lbt" id="lc-ton" onclick="setCurrency('ton')"
-      style="font-size:.75rem;padding:5px 12px;flex-shrink:0">
-      💎 TON
-    </div>
+  <!-- CURRENCY SUB-TABS -->
+  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 0">
+    <button id="lc-stars" onclick="setCurrency('stars')"
+      style="flex-shrink:0;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700;
+        border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);
+        color:#3D1A00;box-shadow:0 2px 0 #7A5200;font-family:'Clash',sans-serif;cursor:pointer">⭐ Stars</button>
+    <button id="lc-ton" onclick="setCurrency('ton')"
+      style="flex-shrink:0;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700;
+        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+        color:#8B6340;box-shadow:0 2px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">💎 TON</button>
   </div>
 
-  <!-- LIVE PRIZE POOL BANNER -->
-  <div style="margin:0 10px 8px;border-radius:14px;overflow:hidden;
+  <!-- POOL BANNER -->
+  <div style="margin:8px 10px 6px;border-radius:12px;
     background:linear-gradient(135deg,#1E1005,#130A02);
-    border:2px solid #6B4423;
-    box-shadow:0 4px 0 #0A0602">
-    <div style="background:linear-gradient(90deg,#2E1A08,#1E1005);
-      padding:7px 14px;border-bottom:1px solid rgba(107,68,35,.3);
-      display:flex;align-items:center;gap:6px">
+    border:2px solid #6B4423;padding:10px 12px">
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
       <span class="live-dot"></span>
-      <span style="font-size:.65rem;font-weight:700;letter-spacing:1px;
-        text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
-      <span style="font-size:.62rem;color:#4A3318;margin-left:auto" id="lb-pool-label">This week · resets Monday</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
+      <span style="font-size:.6rem;color:#4A3318;margin-left:auto" id="lb-pool-label">This week</span>
     </div>
-    <div style="padding:10px 12px">
-      <div style="display:grid;gap:8px" id="lb-pool-grid"></div>
-    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="lb-pool-grid"></div>
   </div>
 
-  <div id="lb-list"></div>
-</div>
-
-<!-- CREATE ROOM -->
-<div class="screen" id="s-create">
-  <div class="stone-header">
-    <div class="topbar">
-      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Create Private Room</div>
-      <div style="width:60px"></div>
-    </div>
-  </div>
-
-  <div style="padding:14px 12px;display:flex;flex-direction:column;gap:10px">
-
-    <!-- Currency -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Currency</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="cr-currency">
-        <div class="cur-btn sel" data-cur="stars" onclick="selectCur(this,'stars')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(255,184,0,.2);border:2px solid var(--gold);transition:all .15s">
-          <div style="font-size:1.2rem">⭐</div>
-          <div style="font-size:.78rem;font-weight:700;color:#FFD93D;margin-top:3px">Stars</div>
-        </div>
-        <div class="cur-btn" data-cur="ton" onclick="selectCur(this,'ton')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
-          <div style="font-size:1.2rem">💎</div>
-          <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:3px">TON</div>
-        </div>
-        <div class="cur-btn" data-cur="free" onclick="selectCur(this,'free')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
-          <div style="font-size:1.2rem">🏕️</div>
-          <div style="font-size:.78rem;font-weight:700;color:#5AFF5A;margin-top:3px">Free</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card Price -->
-    <div class="wood-panel" style="padding:16px" id="cr-price-wrap">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Card Price</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
-        <div class="price-btn sel" data-price="50" onclick="selectPrice(this,50)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(255,184,0,.2);border:2px solid var(--gold);color:#FFD93D;transition:all .15s">50 ⭐</div>
-        <div class="price-btn" data-price="100" onclick="selectPrice(this,100)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">100 ⭐</div>
-        <div class="price-btn" data-price="200" onclick="selectPrice(this,200)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">200 ⭐</div>
-        <div class="price-btn" data-price="500" onclick="selectPrice(this,500)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">500 ⭐</div>
-      </div>
-    </div>
-
-    <!-- Max Players -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340">Max Players</div>
-        <div style="font-size:1.1rem;font-weight:700;color:#FFD93D" id="cr-players-val">10</div>
-      </div>
-      <input type="range" min="2" max="20" value="10" id="cr-players"
-        oninput="document.getElementById('cr-players-val').textContent=this.value"
-        style="width:100%;accent-color:#FFB800;height:6px">
-      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#5A3D1A;margin-top:4px">
-        <span>2</span><span>20</span>
-      </div>
-    </div>
-
-    <!-- Password (optional) -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Password (optional)</div>
-      <input type="text" id="cr-password" placeholder="Leave empty for open room"
-        maxlength="20"
-        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
-          outline:none;box-sizing:border-box">
-    </div>
-
-    <!-- Preview -->
-    <div class="stone-panel" style="padding:14px">
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:8px">Room Preview</div>
-      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.82rem;color:#8B6340">Your earnings (2%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#FFD93D" id="cr-earn-preview">1 ⭐ per card</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.82rem;color:#8B6340">Prize pool (53%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#FFE0A0" id="cr-pool-preview">265 ⭐ max</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:5px 0">
-        <span style="font-size:.82rem;color:#8B6340">$TBOLA per card</span>
-        <span style="font-size:.85rem;font-weight:700;color:#FFD93D">+50 $TBOLA</span>
-      </div>
-    </div>
-
-    <button class="btn btn-gold" onclick="createRoom()" style="padding:14px;font-size:1rem">⚔ Create Room & Get Code</button>
-  </div>
-</div>
-
-<!-- ENTER CODE -->
-<div class="screen" id="s-join">
-  <div class="stone-header">
-    <div class="topbar">
-      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">🔑 Enter Room Code</div>
-      <div style="width:60px"></div>
-    </div>
-  </div>
-
-  <div style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:16px">
-    <div style="font-size:.9rem;color:#8B6340;text-align:center;line-height:1.6;max-width:280px">
-      Enter the 6-character code shared by your friend to join their private room.
-    </div>
-
-    <!-- Code input -->
-    <div class="wood-panel" style="padding:24px 20px;width:100%;text-align:center">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:14px">Room Code</div>
-      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="code-boxes">
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-      </div>
-      <input type="text" id="join-code" maxlength="6" placeholder="Type code here"
-        oninput="updateCodeBoxes(this.value)"
-        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:1.1rem;
-          text-align:center;letter-spacing:6px;text-transform:uppercase;
-          outline:none;box-sizing:border-box">
-    </div>
-
-    <!-- Keyboard shortcut hint -->
-    <div style="font-size:.75rem;color:#5A3D1A;text-align:center">
-      Code is 6 characters — letters and numbers
-    </div>
-
-    <button class="btn btn-gold" onclick="joinRoom()" style="padding:14px;font-size:1rem;width:100%">🔑 Join Room</button>
-  </div>
+  <div id="lb-list" style="padding-bottom:8px"></div>
 </div>
 
 <!-- SQUAD SCREEN -->
@@ -1464,10 +1336,22 @@ const POOL_BASE = {
 let poolGrowth = {stars:0, ton:0, tbola:0}
 let currentTab = 'weekly'
 
+const BTN_ON  = 'border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;box-shadow:0 2px 0 #7A5200'
+const BTN_OFF = 'border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);color:#8B6340;box-shadow:0 2px 0 #0A0602'
+const MTAB_ON  = 'border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;box-shadow:0 3px 0 #7A5200'
+const MTAB_OFF = 'border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);color:#8B6340;box-shadow:0 3px 0 #0A0602'
+
+function setTabStyle(id, on, isMini){
+  const el = document.getElementById(id)
+  if(!el) return
+  const base = `flex-shrink:0;padding:${isMini?'5px 14px':'7px 14px'};border-radius:50px;font-size:${isMini?'.75rem':'.8rem'};font-weight:700;font-family:'Clash',sans-serif;cursor:pointer;`
+  el.style.cssText = base + (on ? (isMini?BTN_ON:MTAB_ON) : (isMini?BTN_OFF:MTAB_OFF))
+}
+
 function setCurrency(cur) {
   lbCurrency = cur
-  document.getElementById('lc-stars')?.classList.toggle('on', cur==='stars')
-  document.getElementById('lc-ton')?.classList.toggle('on', cur==='ton')
+  setTabStyle('lc-stars', cur==='stars', true)
+  setTabStyle('lc-ton',   cur==='ton',   true)
   renderLb(lbTab)
   renderPoolBanner(lbTab)
 }
@@ -1577,6 +1461,13 @@ setInterval(()=>{
 }, 8000)
 
 initHome();renderLb('weekly')
+// init lb styles
+setTimeout(()=>{
+  setTabStyle('lt-weekly',true,false);setTabStyle('lt-monthly',false,false)
+  setTabStyle('lt-squads',false,false);setTabStyle('lt-alltime',false,false)
+  setTabStyle('lc-stars',true,true);setTabStyle('lc-ton',false,true)
+  renderPoolBanner('weekly')
+},100)
 
 // ── PRIVATE ROOM VARS ──
 let crCurrency='stars', crPrice=50
