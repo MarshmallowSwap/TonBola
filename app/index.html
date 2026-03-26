@@ -424,6 +424,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .lbsc{font-size:.95rem;font-weight:700;color:#FFD93D;
   text-shadow:0 0 8px rgba(255,184,0,.4)}
 
+/* leaderboard tab buttons */
+.ltb{flex-shrink:0;border-radius:50px;font-weight:700;cursor:pointer;
+  border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+  color:#8B6340;font-family:'Clash',sans-serif;padding:7px 14px;font-size:.8rem;
+  box-shadow:0 3px 0 #0A0602;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.ltb-sm{padding:5px 12px;font-size:.75rem;box-shadow:0 2px 0 #0A0602}
+.ltb-on{border-color:#FFB800!important;
+  background:linear-gradient(180deg,#FFD93D,#FFB800)!important;
+  color:#3D1A00!important;box-shadow:0 3px 0 #7A5200!important}
+.ltb-sm.ltb-on{box-shadow:0 2px 0 #7A5200!important}
+
 /* ── BOTTOM NAV ── */
 .nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
   background:linear-gradient(180deg,#2A1C0E,#1E1005);
@@ -730,59 +741,44 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
 <!-- LEADERBOARD -->
 <div class="screen" id="slb">
-  <div class="stone-header">
-    <div class="topbar">
+
+  <div style="background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+    border-bottom:3px solid #6B4423;padding:10px 12px 0;
+    box-shadow:0 3px 12px rgba(0,0,0,.5);flex-shrink:0">
+    <div style="display:flex;align-items:center;margin-bottom:10px">
       <div style="font-size:1rem;font-weight:700;color:#FFE0A0">🏆 Leaderboard</div>
       <div style="flex:1"></div>
-      <div style="font-size:.68rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
+      <div style="font-size:.65rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
+    </div>
+    <!-- MAIN TABS -->
+    <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px">
+      <button id="lt-weekly"  onclick="setTab('weekly')"  class="ltb ltb-on" >Weekly</button>
+      <button id="lt-monthly" onclick="setTab('monthly')" class="ltb">Monthly</button>
+      <button id="lt-squads"  onclick="setTab('squads')"  class="ltb">Squads</button>
+      <button id="lt-alltime" onclick="setTab('alltime')" class="ltb">All Time</button>
     </div>
   </div>
 
-  <!-- MAIN TABS ROW -->
-  <div style="display:flex;gap:6px;padding:10px 10px 0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-    <button id="lt-weekly"  onclick="setTab('weekly')"
-      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
-        border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);
-        color:#3D1A00;box-shadow:0 3px 0 #7A5200;font-family:'Clash',sans-serif;cursor:pointer">Weekly</button>
-    <button id="lt-monthly" onclick="setTab('monthly')"
-      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
-        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">Monthly</button>
-    <button id="lt-squads"  onclick="setTab('squads')"
-      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
-        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">Squads</button>
-    <button id="lt-alltime" onclick="setTab('alltime')"
-      style="flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:700;
-        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-        color:#8B6340;box-shadow:0 3px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">All Time</button>
-  </div>
-
   <!-- CURRENCY SUB-TABS -->
-  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 0">
-    <button id="lc-stars" onclick="setCurrency('stars')"
-      style="flex-shrink:0;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700;
-        border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);
-        color:#3D1A00;box-shadow:0 2px 0 #7A5200;font-family:'Clash',sans-serif;cursor:pointer">⭐ Stars</button>
-    <button id="lc-ton" onclick="setCurrency('ton')"
-      style="flex-shrink:0;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700;
-        border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-        color:#8B6340;box-shadow:0 2px 0 #0A0602;font-family:'Clash',sans-serif;cursor:pointer">💎 TON</button>
+  <div id="lb-currency-tabs" style="display:flex;gap:6px;padding:8px 10px 4px;flex-shrink:0">
+    <button id="lc-stars" onclick="setCurrency('stars')" class="ltb ltb-sm ltb-on">⭐ Stars</button>
+    <button id="lc-ton"   onclick="setCurrency('ton')"   class="ltb ltb-sm">💎 TON</button>
   </div>
 
   <!-- POOL BANNER -->
-  <div style="margin:8px 10px 6px;border-radius:12px;
+  <div style="margin:0 10px 8px;border-radius:12px;flex-shrink:0;
     background:linear-gradient(135deg,#1E1005,#130A02);
     border:2px solid #6B4423;padding:10px 12px">
     <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
       <span class="live-dot"></span>
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;
+        text-transform:uppercase;color:#8B6340">Live Prize Pool</span>
       <span style="font-size:.6rem;color:#4A3318;margin-left:auto" id="lb-pool-label">This week</span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="lb-pool-grid"></div>
   </div>
 
-  <div id="lb-list" style="padding-bottom:8px"></div>
+  <div id="lb-list"></div>
 </div>
 
 <!-- SQUAD SCREEN -->
@@ -1336,22 +1332,15 @@ const POOL_BASE = {
 let poolGrowth = {stars:0, ton:0, tbola:0}
 let currentTab = 'weekly'
 
-const BTN_ON  = 'border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;box-shadow:0 2px 0 #7A5200'
-const BTN_OFF = 'border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);color:#8B6340;box-shadow:0 2px 0 #0A0602'
-const MTAB_ON  = 'border:2px solid #FFB800;background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;box-shadow:0 3px 0 #7A5200'
-const MTAB_OFF = 'border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);color:#8B6340;box-shadow:0 3px 0 #0A0602'
-
-function setTabStyle(id, on, isMini){
-  const el = document.getElementById(id)
-  if(!el) return
-  const base = `flex-shrink:0;padding:${isMini?'5px 14px':'7px 14px'};border-radius:50px;font-size:${isMini?'.75rem':'.8rem'};font-weight:700;font-family:'Clash',sans-serif;cursor:pointer;`
-  el.style.cssText = base + (on ? (isMini?BTN_ON:MTAB_ON) : (isMini?BTN_OFF:MTAB_OFF))
+function setTabStyle(id, on){
+  const el=document.getElementById(id); if(!el) return
+  if(on) el.classList.add('ltb-on'); else el.classList.remove('ltb-on')
 }
 
 function setCurrency(cur) {
   lbCurrency = cur
-  setTabStyle('lc-stars', cur==='stars', true)
-  setTabStyle('lc-ton',   cur==='ton',   true)
+  setTabStyle('lc-stars', cur==='stars')
+  setTabStyle('lc-ton',   cur==='ton')
   renderLb(lbTab)
   renderPoolBanner(lbTab)
 }
@@ -1460,14 +1449,7 @@ setInterval(()=>{
   }
 }, 8000)
 
-initHome();renderLb('weekly')
-// init lb styles
-setTimeout(()=>{
-  setTabStyle('lt-weekly',true,false);setTabStyle('lt-monthly',false,false)
-  setTabStyle('lt-squads',false,false);setTabStyle('lt-alltime',false,false)
-  setTabStyle('lc-stars',true,true);setTabStyle('lc-ton',false,true)
-  renderPoolBanner('weekly')
-},100)
+initHome();renderLb('weekly');renderPoolBanner('weekly')
 
 // ── PRIVATE ROOM VARS ──
 let crCurrency='stars', crPrice=50
