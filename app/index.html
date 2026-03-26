@@ -732,7 +732,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     <div class="topbar">
       <div style="font-size:1rem;font-weight:700;color:#FFE0A0">🏆 Leaderboard</div>
       <div style="flex:1"></div>
-      <div style="font-size:.68rem;color:#5A3D1A">Resets Monday</div>
+      <div style="font-size:.68rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
     </div>
   </div>
   <div class="lbtabs">
@@ -1337,36 +1337,78 @@ function copyRef(){
 
 const LBD={
   weekly:[
-    {r:1,n:'CryptoKnight',s:12400,p:'1,800 Stars',col:'radial-gradient(#CC8800,#8B6000)'},
-    {r:2,n:'TonWarlord',s:9800,p:'1,080 Stars',col:'radial-gradient(#808080,#505050)'},
-    {r:3,n:'BingoSage',s:8200,p:'720 Stars',col:'radial-gradient(#CD7F32,#8B4513)'},
-    {r:4,n:'LuckyArcher',s:7100,p:'300 Stars',col:'radial-gradient(#0060A0,#003060)'},
-    {r:5,n:'SatoshiKnight',s:6400,p:'300 Stars',col:'radial-gradient(#8B2200,#5A1000)'},
-    {r:6,n:'Alice_TON',s:5900,p:'180 Stars',col:'radial-gradient(#2A5C1A,#1A3A0A)'},
-    {r:7,n:'MaxBlade',s:5200,p:'180 Stars',col:'radial-gradient(#5A2D8B,#3A1A5A)'},
+    {r:1,n:'CryptoKnight',s:12400,p:'🥇 1,800 Stars prize',col:'radial-gradient(#CC8800,#8B6000)',av:'⚔️'},
+    {r:2,n:'TonWarlord',s:9800,p:'🥈 1,080 Stars prize',col:'radial-gradient(#808080,#505050)',av:'🗡️'},
+    {r:3,n:'BingoSage',s:8200,p:'🥉 720 Stars prize',col:'radial-gradient(#CD7F32,#8B4513)',av:'🧙'},
+    {r:4,n:'LuckyArcher',s:7100,p:'300 Stars prize',col:'radial-gradient(#0060A0,#003060)',av:'🏹'},
+    {r:5,n:'SatoshiKnight',s:6400,p:'300 Stars prize',col:'radial-gradient(#8B2200,#5A1000)',av:'🛡️'},
+    {r:6,n:'Alice_TON',s:5900,p:'180 Stars prize',col:'radial-gradient(#2A5C1A,#1A3A0A)',av:'🦊'},
+    {r:7,n:'MaxBlade',s:5200,p:'180 Stars prize',col:'radial-gradient(#5A2D8B,#3A1A5A)',av:'⚡'},
+    {r:8,n:'BallDrop99',s:4800,p:'180 Stars prize',col:'radial-gradient(#1A5C8B,#0A3060)',av:'🎯'},
+    {r:9,n:'TonHunter',s:4400,p:'180 Stars prize',col:'radial-gradient(#8B5500,#5A3000)',av:'🔥'},
+    {r:10,n:'BingoBot',s:4100,p:'180 Stars prize',col:'radial-gradient(#3A8B2A,#1A5A10)',av:'🐉'},
+  ],
+  monthly:[
+    {r:1,n:'CryptoKnight',s:48200,p:'🥇 Season champion',col:'radial-gradient(#CC8800,#8B6000)',av:'⚔️'},
+    {r:2,n:'TonWarlord',s:41800,p:'🥈 Runner-up',col:'radial-gradient(#808080,#505050)',av:'🗡️'},
+    {r:3,n:'BingoSage',s:38400,p:'🥉 3rd place',col:'radial-gradient(#CD7F32,#8B4513)',av:'🧙'},
+    {r:4,n:'LuckyArcher',s:31200,p:'Top 5',col:'radial-gradient(#0060A0,#003060)',av:'🏹'},
+    {r:5,n:'SatoshiKnight',s:28900,p:'Top 5',col:'radial-gradient(#8B2200,#5A1000)',av:'🛡️'},
+    {r:6,n:'Alice_TON',s:24600,p:'Top 10',col:'radial-gradient(#2A5C1A,#1A3A0A)',av:'🦊'},
+    {r:7,n:'MaxBlade',s:21200,p:'Top 10',col:'radial-gradient(#5A2D8B,#3A1A5A)',av:'⚡'},
+    {r:8,n:'BallDrop99',s:19800,p:'Top 10',col:'radial-gradient(#1A5C8B,#0A3060)',av:'🎯'},
+    {r:9,n:'TonHunter',s:17400,p:'Top 10',col:'radial-gradient(#8B5500,#5A3000)',av:'🔥'},
+    {r:10,n:'BingoBot',s:15100,p:'Top 10',col:'radial-gradient(#3A8B2A,#1A5A10)',av:'🐉'},
   ],
   squads:[
-    {r:1,n:'TON Wolves 🐺',s:48000,p:'30% pool',col:'radial-gradient(#CC8800,#8B6000)'},
-    {r:2,n:'Iron Clan 🛡️',s:41200,p:'18% pool',col:'radial-gradient(#808080,#505050)'},
-    {r:3,n:'Crystal Guild 💎',s:38800,p:'12% pool',col:'radial-gradient(#0060A0,#003060)'},
-    {r:4,n:'Stone Legion ⚔',s:32100,p:'5% pool',col:'radial-gradient(#3A7A24,#1A4010)'},
+    {r:1,n:'TON Wolves 🐺',s:48000,p:'🥇 30% squad pool · 18 members',col:'radial-gradient(#CC8800,#8B6000)',av:'🐺'},
+    {r:2,n:'Iron Clan 🛡️',s:41200,p:'🥈 18% squad pool · 20 members',col:'radial-gradient(#808080,#505050)',av:'🛡️'},
+    {r:3,n:'Crystal Guild 💎',s:38800,p:'🥉 12% squad pool · 15 members',col:'radial-gradient(#0060A0,#003060)',av:'💎'},
+    {r:4,n:'Stone Legion ⚔',s:32100,p:'5% pool · 12 members',col:'radial-gradient(#3A7A24,#1A4010)',av:'⚔️'},
+    {r:5,n:'Lucky Seven 🍀',s:28900,p:'5% pool · 9 members',col:'radial-gradient(#8B2200,#5A1000)',av:'🍀'},
+    {r:6,n:'Dragon Fire 🐉',s:24400,p:'Top 10 · 14 members',col:'radial-gradient(#5A2D8B,#3A1A5A)',av:'🐉'},
+    {r:7,n:'Moon Raiders 🌙',s:21200,p:'Top 10 · 11 members',col:'radial-gradient(#1A5C8B,#0A3060)',av:'🌙'},
+  ],
+  alltime:[
+    {r:1,n:'CryptoKnight',s:284000,p:'👑 All-time legend',col:'radial-gradient(#CC8800,#8B6000)',av:'⚔️'},
+    {r:2,n:'TonWarlord',s:241800,p:'Hall of Fame',col:'radial-gradient(#808080,#505050)',av:'🗡️'},
+    {r:3,n:'BingoSage',s:198400,p:'Hall of Fame',col:'radial-gradient(#CD7F32,#8B4513)',av:'🧙'},
+    {r:4,n:'LuckyArcher',s:171200,p:'Elite',col:'radial-gradient(#0060A0,#003060)',av:'🏹'},
+    {r:5,n:'SatoshiKnight',s:158900,p:'Elite',col:'radial-gradient(#8B2200,#5A1000)',av:'🛡️'},
+    {r:6,n:'Alice_TON',s:134600,p:'Veteran',col:'radial-gradient(#2A5C1A,#1A3A0A)',av:'🦊'},
+    {r:7,n:'MaxBlade',s:121200,p:'Veteran',col:'radial-gradient(#5A2D8B,#3A1A5A)',av:'⚡'},
+    {r:8,n:'BallDrop99',s:109800,p:'Veteran',col:'radial-gradient(#1A5C8B,#0A3060)',av:'🎯'},
+    {r:9,n:'TonHunter',s:97400,p:'Veteran',col:'radial-gradient(#8B5500,#5A3000)',av:'🔥'},
+    {r:10,n:'BingoBot',s:85100,p:'Veteran',col:'radial-gradient(#3A8B2A,#1A5A10)',av:'🐉'},
   ]
 }
-LBD.monthly=[...LBD.weekly].map(r=>({...r,s:r.s*4}))
-LBD.alltime=[...LBD.weekly].map(r=>({...r,s:r.s*12}))
+
+const LB_LABELS={weekly:'Resets Monday',monthly:'Resets 1st of month',squads:'Resets Monday',alltime:'Never resets'}
 
 function renderLb(tab){
-  const data=LBD[tab]||LBD.weekly,medals=['🥇','🥈','🥉']
+  const data=LBD[tab]||LBD.weekly
+  const medals=['🥇','🥈','🥉']
+  const isSquad = tab==='squads'
   document.getElementById('lb-list').innerHTML=data.map(row=>`
-    <div class="lbrow">
-      <div style="font-size:1rem;font-weight:700;width:28px;text-align:center;flex-shrink:0;color:${row.r<=3?'#FFD93D':'#5A3D1A'}">${medals[row.r-1]||row.r}</div>
-      <div class="lbav" style="background:${row.col}">${row.n[0]}</div>
-      <div style="flex:1;min-width:0"><div class="lbnm">${row.n}</div><div class="lbsub">${row.p||''}</div></div>
+    <div class="lbrow" style="padding:10px 12px;border-bottom:1px solid rgba(107,68,35,.15)">
+      <div style="font-size:1rem;font-weight:700;width:28px;text-align:center;flex-shrink:0;
+        color:${row.r<=3?'#FFD93D':'#5A3D1A'}">${medals[row.r-1]||row.r}</div>
+      <div class="lbav" style="background:${row.col};font-size:1rem">${row.av||row.n[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div class="lbnm">${row.n}</div>
+        <div class="lbsub" style="color:#5A3D1A">${row.p||''}</div>
+      </div>
       <div class="lbsc">${row.s.toLocaleString()}</div>
     </div>`).join('')
 }
 
-function setTab(tab,el){document.querySelectorAll('.lbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderLb(tab)}
+function setTab(tab,el){
+  document.querySelectorAll('.lbt').forEach(b=>b.classList.remove('on'))
+  el.classList.add('on')
+  renderLb(tab)
+  const label=document.getElementById('lb-reset-label')
+  if(label) label.textContent=LB_LABELS[tab]||''
+}
 
 initHome();renderLb('weekly')
 
