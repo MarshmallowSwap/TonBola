@@ -3,1188 +3,764 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="TonBola — Live multiplayer Bingo on Telegram. Win real TON every game. Buy cards, mark numbers, cash out instantly.">
-<meta property="og:title" content="TonBola — Win Real TON Playing Bingo on Telegram">
-<meta property="og:description" content="Live multiplayer bingo. Real TON prizes. Every 5 minutes. No wallet setup needed.">
-<meta property="og:image" content="/public/og-image.png">
-<title>TonBola — Live Bingo on Telegram · Win Real TON</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<meta name="description" content="TonBola — Live multiplayer Bingo on Telegram. Win real TON & Stars every game.">
+<title>TonBola — Live Bingo on TON Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --pink:    #FF3CAC;
-  --yellow:  #FFD93D;
-  --teal:    #00F5C8;
-  --coral:   #FF6B35;
-  --purple:  #8B2FFF;
-  --blue:    #3D9EFF;
-  --dark:    #060514;
-  --dark2:   #0E0C22;
-  --dark3:   #171430;
-  --glass:   rgba(255,255,255,0.055);
-  --glass-b: rgba(255,255,255,0.11);
-  --radius:  16px;
+  --gold:#FFD93D;--gold2:#FFB800;--gold3:#FF8C00;
+  --brown:#4A2800;--brown2:#2E1600;
+  --wood:#8B5A2B;--wood2:#6B3A1A;
+  --stone:#5A5248;--stone2:#3A3228;
+  --green:#2A6A0A;--green2:#1A4A06;--green3:#3A8A14;
+  --teal:#00C8A0;--blue:#1A80E8;--pink:#FF3CAC;
+  --ton:#0098EA;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'Plus Jakarta Sans', sans-serif;
-  background:var(--dark);
-  color:#fff;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Fredoka',sans-serif;background:#1A3A06;overflow-x:hidden;cursor:default}
 
-/* ── TYPOGRAPHY ── */
-.f-display { font-family:'Fredoka', sans-serif; font-weight:700; line-height:1.05; }
-.f-xl  { font-size:clamp(3rem, 7.5vw, 6.8rem); }
-.f-lg  { font-size:clamp(2rem, 4.5vw, 3.6rem); }
-.f-md  { font-size:clamp(1.4rem, 3vw, 2.2rem); }
-.muted { color:rgba(255,255,255,.62); line-height:1.7; }
-.muted-sm { color:rgba(255,255,255,.42); font-size:.875rem; line-height:1.6; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#1A2A08}
+::-webkit-scrollbar-thumb{background:#6B4423;border-radius:4px}
+
+/* ── FOREST BG ── */
+.forest-bg {
+  position:fixed;inset:0;z-index:-2;
+  background:
+    linear-gradient(180deg,
+      #0A1E04 0%,
+      #142808 20%,
+      #1A3A0A 45%,
+      #0E2206 70%,
+      #081408 100%);
+}
+.forest-bg::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%,rgba(42,106,10,.3) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 60%,rgba(26,74,6,.25) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 90%,rgba(10,30,4,.4) 0%,transparent 50%);
+}
+/* Floating particles */
+.particle{position:fixed;border-radius:50%;animation:float-up var(--d,8s) var(--delay,0s) ease-in-out infinite;opacity:0;pointer-events:none;z-index:-1}
+@keyframes float-up{0%{opacity:0;transform:translateY(100vh) scale(0)}20%{opacity:.6}80%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1.5)}}
 
 /* ── NAV ── */
-nav {
-  position:fixed; top:0; left:0; right:0; z-index:200;
-  padding:1rem 2rem;
-  display:flex; align-items:center; justify-content:space-between;
-  background:rgba(6,5,20,.88);
-  backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(255,255,255,.055);
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:linear-gradient(180deg,rgba(20,10,4,.98),rgba(20,10,4,.85));
+  border-bottom:4px solid #4A2800;
+  padding:0 24px;
+  box-shadow:0 4px 0 #1A0800,0 6px 20px rgba(0,0,0,.5);
 }
-.logo { font-family:'Fredoka',sans-serif; font-size:1.8rem; font-weight:700;
-  background:linear-gradient(130deg,var(--yellow),var(--pink));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.nav-links { display:flex; align-items:center; gap:2rem; }
-.nav-links a { font-size:.875rem; font-weight:500; color:rgba(255,255,255,.55);
-  text-decoration:none; transition:color .2s; }
-.nav-links a:hover { color:#fff; }
-.btn-play {
-  padding:.55rem 1.5rem; border-radius:50px; font-size:.875rem; font-weight:600;
-  background:linear-gradient(130deg,var(--pink),var(--purple));
-  color:#fff; border:none; cursor:pointer; text-decoration:none;
-  transition:opacity .2s, transform .15s;
-  box-shadow:0 0 20px rgba(255,60,172,.3);
-}
-.btn-play:hover { opacity:.87; transform:translateY(-1px); }
+nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6B4423,#FFD700,#C4933F,#FFD700,#6B4423);opacity:.5}
+.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:24px}
+.nav-logo{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;
+  color:#FFD93D;text-shadow:0 0 20px rgba(255,184,0,.5),3px 3px 0 #7A5200,-1px -1px 0 rgba(0,0,0,.5);
+  letter-spacing:-1px;cursor:pointer}
+.nav-logo span{color:#FF4444;text-shadow:0 0 20px rgba(255,68,68,.4),3px 3px 0 #8B0000}
+.nav-links{display:flex;gap:6px;margin-left:auto}
+.nav-link{padding:6px 14px;border-radius:50px;font-size:.85rem;font-weight:700;
+  color:rgba(255,220,150,.7);text-decoration:none;
+  transition:all .2s;letter-spacing:.3px}
+.nav-link:hover{color:#FFD93D;background:rgba(255,184,0,.1)}
+.nav-cta{
+  padding:8px 20px;border-radius:50px;font-size:.9rem;font-weight:700;
+  background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;
+  border:3px solid #FFE566;text-decoration:none;
+  box-shadow:0 4px 0 #8B6000,0 6px 12px rgba(0,0,0,.4);
+  transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;gap:6px}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 0 #8B6000,0 8px 16px rgba(0,0,0,.4)}
+.nav-cta:active{transform:translateY(2px);box-shadow:0 2px 0 #8B6000}
+
+/* ── STONE DIVIDER ── */
+.stone-divider{
+  position:relative;height:32px;overflow:visible;
+  background:linear-gradient(180deg,#4A3822 0%,#3A2810 50%,#2E1E08 100%);
+  border-top:3px solid #6B4A28;border-bottom:3px solid #1A0E04;
+  z-index:10}
+.stone-divider::before,.stone-divider::after{
+  content:'';position:absolute;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,transparent,#FFD700,#C4933F,#FFD700,transparent);opacity:.3}
+.stone-divider::before{top:-1px}.stone-divider::after{bottom:-1px}
+
+/* ── STONE PANEL ── */
+.stone-panel{
+  background:linear-gradient(135deg,#3A3228 0%,#2E2620 40%,#252018 70%,#3A3228 100%);
+  border:4px solid #1A1408;border-radius:8px;
+  box-shadow:0 8px 0 #0A0804,0 10px 30px rgba(0,0,0,.6),
+    inset 0 2px 0 rgba(255,255,255,.08),inset 0 -2px 0 rgba(0,0,0,.4);
+  position:relative;overflow:hidden}
+.stone-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,#4A3828,#7A6040,#C4933F,#FFD700,#C4933F,#7A6040,#4A3828);opacity:.5}
+
+/* ── WOOD PANEL ── */
+.wood-panel{
+  background:
+    repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0px,transparent 3px,rgba(0,0,0,.06) 8px,transparent 12px),
+    linear-gradient(135deg,#8A5228 0%,#5A2E10 20%,#7A4520 40%,#5A2C0E 60%,#7A4520 80%,#5A2E10 100%);
+  border:5px solid #2E1206;border-radius:8px;
+  box-shadow:0 8px 0 #1A0A04,0 10px 30px rgba(0,0,0,.6),
+    inset 0 2px 0 rgba(255,255,255,.12),inset 0 -2px 0 rgba(0,0,0,.5);
+  position:relative}
+.wood-panel::before{
+  content:'';position:absolute;top:4px;left:4px;width:16px;height:16px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
+  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
+.wood-panel::after{
+  content:'';position:absolute;top:4px;right:4px;width:16px;height:16px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
+  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
+.nail-bl,.nail-br{position:absolute;bottom:4px;width:16px;height:16px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
+  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
+.nail-bl{left:4px}.nail-br{right:4px}
+
+/* ── GOLD PANEL ── */
+.gold-panel{
+  background:linear-gradient(145deg,#C8A820,#8B7010,#B09020,#6B5200,#AA8A10,#C4A020);
+  border:5px solid #FFD700;border-radius:8px;
+  box-shadow:0 8px 0 #5A4A00,0 0 40px rgba(255,184,0,.2),0 10px 30px rgba(0,0,0,.6),
+    inset 0 2px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.4);
+  position:relative}
+.gem{position:absolute;width:18px;height:18px;z-index:5}
+.gem svg{width:18px;height:18px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
+
+/* ── BUTTONS ── */
+.btn-gold{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 32px;border-radius:50px;border:none;cursor:pointer;
+  font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(180deg,#FFE566 0%,#FFD93D 40%,#FFB800 100%);
+  color:#3D1A00;border:3px solid #FFE566;
+  box-shadow:0 6px 0 #8B6000,0 8px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);
+  text-shadow:0 1px 0 rgba(255,255,255,.3);
+  transition:transform .1s,box-shadow .1s;text-decoration:none}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 9px 0 #8B6000,0 12px 24px rgba(0,0,0,.5)}
+.btn-gold:active{transform:translateY(4px);box-shadow:0 2px 0 #8B6000}
+
+.btn-stone{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 28px;border-radius:50px;border:none;cursor:pointer;
+  font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(180deg,#7A7060,#5A5040);
+  color:#FFE0A0;border:3px solid #9A9080;
+  box-shadow:0 5px 0 #2A2418,0 7px 16px rgba(0,0,0,.5);
+  transition:transform .1s,box-shadow .1s;text-decoration:none}
+.btn-stone:hover{transform:translateY(-2px)}
+.btn-stone:active{transform:translateY(3px);box-shadow:0 2px 0 #2A2418}
 
 /* ── HERO ── */
-#hero {
-  position:relative; min-height:100vh;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:8rem 1.5rem 5rem;
-  overflow:hidden;
-}
-.hero-glow {
-  position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(ellipse 65% 55% at 18% 28%, rgba(139,47,255,.22) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 48% at 82% 68%, rgba(255,60,172,.18) 0%, transparent 65%),
-    radial-gradient(ellipse 45% 38% at 50% 95%, rgba(0,245,200,.11) 0%, transparent 55%);
-}
-#ballCanvas { position:absolute; inset:0; pointer-events:none; }
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:100px 24px 60px;text-align:center;
+  position:relative;overflow:hidden}
 
-/* live badge */
-.live-badge {
-  display:inline-flex; align-items:center; gap:.5rem;
-  padding:.45rem 1.1rem; border-radius:50px; margin-bottom:1.8rem;
-  background:rgba(255,217,61,.1); border:1px solid rgba(255,217,61,.28);
-  font-size:.78rem; font-weight:700; color:var(--yellow); letter-spacing:.6px;
-  animation:fadeUp .65s ease both;
-}
-.live-dot { width:7px; height:7px; border-radius:50%; background:var(--yellow);
-  animation:pulse 1.4s ease infinite; }
+/* Background trees SVG */
+.tree{position:absolute;bottom:0;opacity:.3;pointer-events:none}
 
-.hero-title { position:relative; z-index:1; animation:fadeUp .75s .08s ease both; }
-.hero-title .c-pink  { color:var(--pink); }
-.hero-title .c-yellow{ color:var(--yellow); }
-.hero-title .c-teal  { color:var(--teal); }
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:50px;margin-bottom:24px;
+  background:rgba(0,200,160,.1);border:2px solid rgba(0,200,160,.3);
+  font-size:.82rem;font-weight:700;color:var(--teal);letter-spacing:1px;
+  animation:fadeUp .6s ease both}
+.hero-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);
+  animation:pulse-d 1.2s ease infinite;box-shadow:0 0 8px var(--teal)}
+@keyframes pulse-d{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
 
-.hero-sub { max-width:570px; margin:1.5rem auto 2.8rem; font-size:1.1rem;
-  animation:fadeUp .75s .18s ease both; }
+.hero-title{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:clamp(3rem,8vw,6.5rem);line-height:1;
+  margin-bottom:8px;
+  animation:fadeUp .7s .1s ease both}
+.hero-title .t1{
+  display:block;color:#FFD93D;
+  text-shadow:4px 4px 0 #7A5200,6px 6px 0 rgba(0,0,0,.4),0 0 60px rgba(255,184,0,.3);
+  -webkit-text-stroke:1.5px #4A2800}
+.hero-title .t2{
+  display:block;color:#FF4444;
+  text-shadow:4px 4px 0 #8B0000,6px 6px 0 rgba(0,0,0,.4);
+  font-size:75%;-webkit-text-stroke:1px #5A0000}
 
-.hero-ctas { display:flex; gap:.9rem; justify-content:center; flex-wrap:wrap;
-  animation:fadeUp .75s .28s ease both; }
-.btn-primary {
-  padding:.9rem 2.5rem; border-radius:50px; font-size:1rem; font-weight:700;
-  font-family:'Fredoka',sans-serif;
-  background:linear-gradient(130deg,var(--yellow),var(--coral));
-  color:#07041A; border:none; cursor:pointer; text-decoration:none;
-  transition:transform .15s, box-shadow .15s;
-  box-shadow:0 0 28px rgba(255,217,61,.3);
-}
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 46px rgba(255,217,61,.48); }
-.btn-ghost {
-  padding:.9rem 2.5rem; border-radius:50px; font-size:1rem; font-weight:600;
-  font-family:'Fredoka',sans-serif;
-  background:var(--glass); border:1px solid var(--glass-b); color:#fff;
-  cursor:pointer; text-decoration:none; backdrop-filter:blur(10px);
-  transition:background .2s, transform .15s;
-}
-.btn-ghost:hover { background:rgba(255,255,255,.09); transform:translateY(-2px); }
+.hero-sub{
+  font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,220,150,.8);
+  max-width:580px;line-height:1.6;margin:16px auto 36px;
+  animation:fadeUp .7s .2s ease both;
+  text-shadow:0 2px 8px rgba(0,0,0,.8)}
 
-/* extraction widget */
-.extraction-box {
-  position:relative; z-index:1;
-  margin:3.2rem auto 0; max-width:420px;
-  background:var(--glass); border:1px solid var(--glass-b);
-  border-radius:20px; padding:1.4rem 1.8rem;
-  backdrop-filter:blur(22px);
-  animation:fadeUp .75s .36s ease both;
-}
-.ext-label { font-size:.72rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
-  color:rgba(255,255,255,.38); margin-bottom:.9rem; }
-.ext-row { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; justify-content:center; }
-.ball {
-  width:46px; height:46px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:700; color:#fff;
-  flex-shrink:0;
-}
-.ball.b1 { background:linear-gradient(140deg,var(--pink),#b5147a); }
-.ball.b2 { background:linear-gradient(140deg,var(--blue),#1761ce); }
-.ball.b3 { background:linear-gradient(140deg,var(--coral),#c03608); }
-.ball.b4 { background:linear-gradient(140deg,var(--purple),#520eb5); }
-.ball.b5 { background:linear-gradient(140deg,var(--teal),#00967a); color:#071a14; }
-.ball.b6 { background:linear-gradient(140deg,var(--yellow),#d9a800); color:#0d0800; }
-.ball.ball-new { width:56px; height:56px; font-size:1.25rem;
-  animation:ballPop .38s cubic-bezier(.34,1.56,.64,1) both;
-  box-shadow:0 0 22px rgba(255,217,61,.45); }
-.ext-sep { font-size:1.1rem; color:rgba(255,255,255,.2); }
-.ext-next { font-size:.78rem; color:rgba(255,255,255,.35); margin-top:.7rem; text-align:center; }
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp .7s .3s ease both}
 
-/* ── STATS ── */
-.stats-bar {
-  background:var(--dark2);
-  border-top:1px solid rgba(255,255,255,.05);
-  border-bottom:1px solid rgba(255,255,255,.05);
-  padding:2rem 1.5rem;
-  display:flex; justify-content:center; gap:0; flex-wrap:wrap;
-}
-.stat { padding:0 3rem; text-align:center;
-  border-right:1px solid rgba(255,255,255,.06); }
-.stat:last-child { border-right:none; }
-.stat-n { font-family:'Fredoka',sans-serif; font-size:2.3rem; font-weight:700;
-  background:linear-gradient(130deg,var(--yellow),var(--coral));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.stat-l { font-size:.75rem; font-weight:600; color:rgba(255,255,255,.38);
-  letter-spacing:.6px; text-transform:uppercase; margin-top:.15rem; }
+/* FLOATING BALLS hero */
+.hero-balls{position:absolute;inset:0;pointer-events:none}
+.hball{position:absolute;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;
+  animation:hfloat var(--d,5s) var(--dl,0s) ease-in-out infinite alternate;
+  box-shadow:0 4px 0 rgba(0,0,0,.4),inset -3px -3px 8px rgba(0,0,0,.3),
+    inset 2px 2px 6px rgba(255,255,255,.25)}
+.hball::after{content:'';position:absolute;top:12%;left:18%;width:30%;height:20%;
+  border-radius:50%;background:rgba(255,255,255,.35);filter:blur(2px)}
+@keyframes hfloat{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-20px) rotate(5deg)}}
 
 /* ── SECTIONS ── */
-section { padding:6rem 1.5rem; }
-.wrap { max-width:1100px; margin:0 auto; }
-.pill {
-  display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:1.4px;
-  text-transform:uppercase; padding:.32rem .85rem; border-radius:50px; margin-bottom:.9rem;
-}
-.pill-teal   { background:rgba(0,245,200,.1);   color:var(--teal);   border:1px solid rgba(0,245,200,.2); }
-.pill-pink   { background:rgba(255,60,172,.12); color:var(--pink);   border:1px solid rgba(255,60,172,.22); }
-.pill-yellow { background:rgba(255,217,61,.1);  color:var(--yellow); border:1px solid rgba(255,217,61,.22); }
-.pill-purple { background:rgba(139,47,255,.12); color:#c080ff;       border:1px solid rgba(139,47,255,.22); }
+section{padding:80px 24px;position:relative}
+.wrap{max-width:1100px;margin:0 auto}
+
+/* Section badge */
+.s-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 16px;border-radius:50px;margin-bottom:16px;
+  font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  border:2px solid}
+
+/* Section title */
+.s-title{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:12px;
+  color:#FFE0A0;text-shadow:3px 3px 0 rgba(0,0,0,.5);-webkit-text-stroke:.5px #4A2800}
+.s-sub{font-size:1rem;color:rgba(255,200,120,.6);line-height:1.7;max-width:560px}
 
 /* ── HOW IT WORKS ── */
-#how { background:var(--dark2); }
-.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.25rem; margin-top:3.5rem; }
-.step {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
-  border-radius:20px; padding:2rem 1.7rem;
-  transition:transform .2s, border-color .2s;
-}
-.step:hover { transform:translateY(-4px); border-color:rgba(255,255,255,.14); }
-.step-n { font-family:'Fredoka',sans-serif; font-size:3.2rem; font-weight:700;
-  line-height:1; margin-bottom:.9rem; }
-.step-n.s1 { color:var(--pink); }   .step-n.s2 { color:var(--yellow); }
-.step-n.s3 { color:var(--teal); }   .step-n.s4 { color:var(--coral); }
-.step h3 { font-family:'Fredoka',sans-serif; font-size:1.35rem; font-weight:600; margin-bottom:.5rem; }
-.step p { font-size:.875rem; line-height:1.65; color:rgba(255,255,255,.55); }
+#how{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:48px}
+.step{padding:28px 24px;text-align:center;position:relative;
+  animation:fadeUp .6s ease both}
+.step-num{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
+  font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 0 rgba(0,0,0,.4),inset -2px -2px 6px rgba(0,0,0,.3)}
+.step h3{font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:8px;
+  text-shadow:0 2px 4px rgba(0,0,0,.6)}
+.step p{font-size:.88rem;color:rgba(255,200,120,.6);line-height:1.6}
 
-/* ── FEATURES ── */
-.feats { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:1.25rem; margin-top:3.5rem; }
-.feat {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
-  border-radius:20px; padding:1.7rem; overflow:hidden; position:relative;
-  transition:transform .2s;
-}
-.feat:hover { transform:translateY(-4px); }
-.feat::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
-.feat.fp::before { background:linear-gradient(90deg,var(--pink),var(--purple)); }
-.feat.fy::before { background:linear-gradient(90deg,var(--yellow),var(--coral)); }
-.feat.ft::before { background:linear-gradient(90deg,var(--teal),var(--blue)); }
-.feat.fc::before { background:linear-gradient(90deg,var(--coral),var(--pink)); }
-.feat.fpu::before{ background:linear-gradient(90deg,var(--purple),var(--blue)); }
-.feat.fb::before { background:linear-gradient(90deg,var(--blue),var(--teal)); }
-.feat-tag { font-size:.68rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
-  margin-bottom:.7rem; opacity:.55; }
-.feat h3 { font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:600; margin-bottom:.5rem; }
-.feat p { font-size:.855rem; line-height:1.65; color:rgba(255,255,255,.55); }
-.feat-chip {
-  display:inline-block; margin-top:.9rem; padding:.38rem .75rem;
-  border-radius:8px; font-size:.78rem; font-weight:600;
-}
-.chip-y  { background:rgba(255,217,61,.1);  color:var(--yellow); }
-.chip-t  { background:rgba(0,245,200,.1);   color:var(--teal); }
-.chip-pk { background:rgba(255,60,172,.1);  color:var(--pink); }
-.chip-c  { background:rgba(255,107,53,.1);  color:var(--coral); }
-.chip-pu { background:rgba(139,47,255,.12); color:#c080ff; }
-.chip-b  { background:rgba(61,158,255,.1);  color:var(--blue); }
+/* ── ROOMS ── */
+#rooms{background:linear-gradient(180deg,#142A08 0%,#0E2206 100%)}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+.room-card{padding:20px;border-radius:10px;cursor:pointer;
+  transition:transform .2s;position:relative;overflow:hidden}
+.room-card:hover{transform:translateY(-6px)}
+.room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:2px 2px 0 0}
+.room-icon-wrap{width:60px;height:60px;border-radius:14px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  border:3px solid;box-shadow:0 4px 0 rgba(0,0,0,.4),inset -2px -2px 6px rgba(0,0,0,.3)}
+.room-name{font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:4px;
+  text-shadow:0 2px 4px rgba(0,0,0,.6)}
+.room-desc{font-size:.82rem;color:rgba(255,200,120,.55);line-height:1.5;margin-bottom:14px}
+.room-footer-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0 0;border-top:2px solid rgba(255,255,255,.07)}
+.room-players{font-size:.78rem;color:rgba(255,200,120,.5);display:flex;align-items:center;gap:5px}
+.room-prize{font-size:.9rem;font-weight:700}
+.ldot{width:6px;height:6px;border-radius:50%;background:#3AFF8A;
+  box-shadow:0 0 6px #3AFF8A;animation:pd 1.2s ease infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
+.room-badge{padding:4px 10px;border-radius:50px;font-size:.68rem;font-weight:700;
+  letter-spacing:.5px;border:2px solid;position:absolute;top:16px;right:16px}
 
-/* ── PRIZES ── */
-#prizes { background:var(--dark2); }
-.prize-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:3.5rem; }
-@media(max-width:768px){ .prize-grid { grid-template-columns:1fr; } }
-.prize-card {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
-  border-radius:22px; padding:2rem;
-}
-.card-title { font-family:'Fredoka',sans-serif; font-size:1.15rem; font-weight:600;
-  color:rgba(255,255,255,.75); margin-bottom:1.4rem; }
-.p-row { display:flex; align-items:center; gap:.9rem; padding:.75rem .9rem;
-  border-radius:10px; margin-bottom:.45rem; transition:background .15s; }
-.p-row:hover { background:rgba(255,255,255,.03); }
-.p-rank { font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:700; width:76px; flex-shrink:0; }
-.p-track { flex:1; height:7px; background:rgba(255,255,255,.07); border-radius:4px; overflow:hidden; }
-.p-fill  { height:100%; border-radius:4px; }
-.p-pct   { font-family:'Fredoka',sans-serif; font-size:.95rem; font-weight:700; width:38px; text-align:right; flex-shrink:0; }
-.eco-row { display:flex; align-items:center; justify-content:space-between;
-  padding:.7rem 0; border-bottom:1px solid rgba(255,255,255,.045); }
-.eco-row:last-child { border-bottom:none; }
-.eco-left { display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:rgba(255,255,255,.6); }
-.eco-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
-.eco-pct  { font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:700; }
-.eco-note {
-  margin-top:1.1rem; padding:.85rem 1rem;
-  background:rgba(0,245,200,.06); border:1px solid rgba(0,245,200,.14); border-radius:10px;
-  font-size:.8rem; color:rgba(0,245,200,.75); line-height:1.6;
-}
-
-/* ── PROGRESSION ── */
-#progression { background:var(--dark); }
-.lvl-scroll { display:flex; gap:.45rem; overflow-x:auto; padding:.25rem 0 .75rem;
-  scrollbar-width:none; margin:2.5rem 0; }
-.lvl-scroll::-webkit-scrollbar { display:none; }
-.lvl-pill {
-  flex-shrink:0; padding:.55rem 1.15rem; border-radius:50px; white-space:nowrap;
-  font-family:'Fredoka',sans-serif; font-size:.9rem; font-weight:600;
-  border:1.5px solid rgba(255,255,255,.1); color:rgba(255,255,255,.42); cursor:default;
-}
-.lvl-pill.on { color:#07041a; border-color:transparent; }
-.lp0.on{background:var(--teal)}   .lp1.on{background:var(--blue)}
-.lp2.on{background:var(--purple)} .lp3.on{background:var(--pink)}
-.lp4.on{background:var(--coral)}  .lp5.on{background:var(--yellow)}
-
-.unlocks { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:.9rem; }
-.unlock {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
-  border-radius:14px; padding:1.15rem 1.3rem;
-}
-.ul-lv  { font-size:.68rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
-  margin-bottom:.35rem; opacity:.45; }
-.unlock h4 { font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:600; margin-bottom:.25rem; }
-.unlock p  { font-size:.8rem; color:rgba(255,255,255,.45); line-height:1.55; }
+/* ── EARN ── */
+#earn{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
+.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:40px}
+.earn-panel{padding:24px}
+.earn-title{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.earn-row{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.earn-row:last-child{border-bottom:none}
+.earn-row .label{font-size:.88rem;color:rgba(255,200,120,.6)}
+.earn-row .value{font-size:.95rem;font-weight:700;color:#FFD93D}
 
 /* ── TOKEN ── */
-#token {
-  background:var(--dark2); position:relative; overflow:hidden;
-}
-#token::before {
-  content:''; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 55% 55% at 50% 0%, rgba(139,47,255,.18) 0%, transparent 65%);
-}
-.tok-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; position:relative; z-index:1; }
-@media(max-width:768px){ .tok-grid { grid-template-columns:1fr; } }
-.tok-box {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.07);
-  border-radius:22px; padding:2rem;
-}
-.tok-row { display:flex; align-items:center; gap:.7rem; margin-bottom:.65rem; }
-.tok-dot { width:11px; height:11px; border-radius:3px; flex-shrink:0; }
-.tok-label{ font-size:.875rem; color:rgba(255,255,255,.6); flex:1; }
-.tok-track{ flex:1; height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
-.tok-fill { height:100%; border-radius:3px; }
-.tok-pct  { font-family:'Fredoka',sans-serif; font-size:.95rem; font-weight:700; min-width:32px; text-align:right; }
+#token{background:linear-gradient(180deg,#142A08 0%,#0E2206 100%)}
+.tok-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+@media(max-width:700px){.tok-grid{grid-template-columns:1fr}}
+.timeline{display:flex;flex-direction:column;gap:20px;margin-top:24px}
+.tl-item{display:flex;gap:14px}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;margin-top:4px;border:2px solid rgba(0,0,0,.3);flex-shrink:0}
+.tl-line{width:3px;flex:1;background:rgba(255,255,255,.08);margin-top:6px;border-radius:2px}
+.tl-item:last-child .tl-line{display:none}
+.tl-phase{font-size:.68rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 8px;border-radius:50px;margin-bottom:4px;display:inline-block}
+.tl-body h4{font-size:1rem;font-weight:700;color:#FFE0A0;margin-bottom:2px}
+.tl-body p{font-size:.82rem;color:rgba(255,200,120,.55);line-height:1.5}
 
-.timeline { margin-top:1.8rem; }
-.tl { display:flex; gap:1rem; margin-bottom:1.5rem; }
-.tl-left { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
-.tl-dot  { width:13px; height:13px; border-radius:50%; margin-top:4px; }
-.tl-line { width:2px; flex:1; background:rgba(255,255,255,.08); margin-top:5px; }
-.tl:last-child .tl-line { display:none; }
-.tl-body h4 { font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:600; margin-bottom:.2rem; }
-.tl-body p  { font-size:.83rem; color:rgba(255,255,255,.48); line-height:1.55; }
-.tl-phase {
-  display:inline-block; font-size:.68rem; font-weight:700; letter-spacing:.5px;
-  text-transform:uppercase; padding:.18rem .55rem; border-radius:50px; margin-bottom:.3rem;
-}
+.tok-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tok-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;border:2px solid rgba(0,0,0,.3)}
+.tok-label{font-size:.88rem;color:rgba(255,200,120,.6);flex:1}
+.tok-bar{flex:1;height:8px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;
+  border:1px solid rgba(0,0,0,.3)}
+.tok-fill{height:100%;border-radius:4px}
+.tok-pct{font-family:'Fredoka',sans-serif;font-size:.95rem;font-weight:700;min-width:32px;text-align:right}
 
 /* ── REFERRAL ── */
-#referral { background:var(--dark); }
-.ref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr));
-  gap:1.1rem; margin-top:3rem; }
-.ref-card {
-  background:var(--dark3); border:1px solid rgba(255,255,255,.065);
-  border-radius:18px; padding:1.7rem; text-align:center;
-  transition:transform .2s;
-}
-.ref-card:hover { transform:translateY(-4px); }
-.ref-tier { font-size:.68rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:.75rem; opacity:.5; }
-.ref-pct  { font-family:'Fredoka',sans-serif; font-size:2.9rem; font-weight:700; line-height:1.1; margin-bottom:.3rem; }
-.ref-name { font-family:'Fredoka',sans-serif; font-size:1.15rem; font-weight:600; margin-bottom:.3rem; }
-.ref-desc { font-size:.8rem; color:rgba(255,255,255,.4); line-height:1.5; }
+#referral{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px}
+.ref-card{padding:24px;text-align:center;border-radius:10px}
+.ref-pct{font-family:'Nunito',sans-serif;font-weight:900;font-size:3rem;line-height:1;margin-bottom:4px}
+.ref-name{font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:4px}
+.ref-desc{font-size:.8rem;color:rgba(255,200,120,.5);line-height:1.5}
 
 /* ── FINAL CTA ── */
-#cta {
-  background:var(--dark2); text-align:center; padding:7.5rem 1.5rem;
-  position:relative; overflow:hidden;
-}
-#cta::before {
-  content:''; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 75% 60% at 50% 50%, rgba(255,60,172,.13) 0%, transparent 62%);
-}
-.cta-inner { position:relative; z-index:1; }
-.cta-inner p { max-width:480px; margin:.9rem auto 2.5rem; color:rgba(255,255,255,.58); font-size:1.05rem; line-height:1.7; }
-.cta-btns { display:flex; gap:.9rem; justify-content:center; flex-wrap:wrap; }
+#cta{
+  background:linear-gradient(180deg,#142A08 0%,#0E1A04 100%);
+  text-align:center;padding:100px 24px}
+.cta-inner h2{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:clamp(2.2rem,5vw,4rem);color:#FFD93D;
+  text-shadow:4px 4px 0 #7A5200,0 0 40px rgba(255,184,0,.3);
+  -webkit-text-stroke:1px #4A2800;margin-bottom:16px}
+.cta-inner p{color:rgba(255,200,120,.65);font-size:1.05rem;
+  max-width:480px;margin:0 auto 36px;line-height:1.7}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 
 /* ── FOOTER ── */
-footer {
-  background:var(--dark); padding:2.5rem 1.5rem;
-  border-top:1px solid rgba(255,255,255,.05);
-  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
-}
-.footer-logo { font-family:'Fredoka',sans-serif; font-size:1.4rem; font-weight:700;
-  background:linear-gradient(130deg,var(--yellow),var(--pink));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.footer-links { display:flex; gap:1.5rem; flex-wrap:wrap; }
-.footer-links a { font-size:.82rem; color:rgba(255,255,255,.38); text-decoration:none; transition:color .2s; }
-.footer-links a:hover { color:rgba(255,255,255,.78); }
-.footer-copy { font-size:.78rem; color:rgba(255,255,255,.22); }
+footer{
+  background:linear-gradient(180deg,#0E1A04,#060E02);
+  border-top:4px solid #2E1A08;
+  padding:32px 24px}
+.footer-inner{max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.5rem;
+  color:#FFD93D;text-shadow:2px 2px 0 #7A5200;letter-spacing:-1px}
+.footer-logo span{color:#FF4444}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap}
+.footer-links a{font-size:.82rem;color:rgba(255,200,120,.4);text-decoration:none;
+  transition:color .2s}
+.footer-links a:hover{color:rgba(255,200,120,.8)}
+.footer-copy{font-size:.78rem;color:rgba(255,200,120,.25)}
 
-/* ── KEYFRAMES ── */
-@keyframes fadeUp  { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-@keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.55;transform:scale(.82)} }
-@keyframes ballPop { from{opacity:0;transform:scale(.35)} to{opacity:1;transform:scale(1)} }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.aos{opacity:0;transform:translateY(32px);transition:opacity .65s,transform .65s}
+.aos.show{opacity:1;transform:translateY(0)}
 
-.aos { opacity:0; transform:translateY(28px); transition:opacity .65s, transform .65s; }
-.aos.show { opacity:1; transform:translateY(0); }
+/* ── STAT BAR ── */
+.stats-bar{
+  background:linear-gradient(180deg,#2E1A08,#1E1004);
+  border-top:4px solid #4A2800;border-bottom:4px solid #1A0A04;
+  padding:20px 24px;
+  box-shadow:inset 0 4px 16px rgba(0,0,0,.4)}
+.stats-inner{max-width:1100px;margin:0 auto;
+  display:flex;justify-content:space-around;flex-wrap:wrap;gap:8px}
+.stat{text-align:center;padding:0 24px}
+.stat-n{font-family:'Nunito',sans-serif;font-weight:900;font-size:2.2rem;
+  color:#FFD93D;line-height:1;
+  text-shadow:2px 2px 0 #7A5200,0 0 20px rgba(255,184,0,.3)}
+.stat-l{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,200,120,.45);margin-top:4px}
+.stat-div{width:3px;height:40px;background:rgba(255,255,255,.07);border-radius:2px;align-self:center}
 
 /* ── RESPONSIVE ── */
-@media(max-width:900px) { .nav-links { display:none; } }
-@media(max-width:580px) {
-  .stat { border-right:none; border-bottom:1px solid rgba(255,255,255,.05);
-    padding:1rem 2rem; width:100%; }
-  .stat:last-child { border-bottom:none; }
-  .stats-bar { flex-direction:column; align-items:center; }
-}
+@media(max-width:900px){.nav-links{display:none}}
+@media(max-width:600px){
+  .stats-inner{gap:0}.stat{padding:8px 12px;width:50%}
+  .stat-div{display:none}}
 </style>
 </head>
 <body>
 
+<div class="forest-bg"></div>
+
+<!-- floating particles -->
+<div class="particle" style="width:4px;height:4px;background:#FFD93D;left:10%;--d:12s;--delay:0s"></div>
+<div class="particle" style="width:3px;height:3px;background:#3AFF8A;left:25%;--d:9s;--delay:2s"></div>
+<div class="particle" style="width:5px;height:5px;background:#40B8FF;left:45%;--d:14s;--delay:1s"></div>
+<div class="particle" style="width:3px;height:3px;background:#FFD93D;left:65%;--d:11s;--delay:3s"></div>
+<div class="particle" style="width:4px;height:4px;background:#FF8080;left:80%;--d:10s;--delay:1.5s"></div>
+<div class="particle" style="width:3px;height:3px;background:#C080FF;left:90%;--d:13s;--delay:4s"></div>
+
 <!-- NAV -->
 <nav>
-  <div class="logo">TonBola</div>
-  <div class="nav-links">
-    <a href="#how">How it works</a>
-    <a href="#rooms">Rooms</a>
-    <a href="#private-rooms">Private</a>
-    <a href="#squads">Squads</a>
-    <a href="#earn">Earn $TBOLA</a>
-    <a href="#token">Token</a>
-    <a href="#referral">Referral</a>
+  <div class="nav-inner">
+    <div class="nav-logo">Ton<span>B</span>ola</div>
+    <div class="nav-links">
+      <a href="#how" class="nav-link">How to Play</a>
+      <a href="#rooms" class="nav-link">Rooms</a>
+      <a href="#earn" class="nav-link">Earn $TBOLA</a>
+      <a href="#token" class="nav-link">Token</a>
+      <a href="#referral" class="nav-link">Referral</a>
+    </div>
+    <a href="https://t.me/TonBolaBot_bot/play" class="nav-cta">
+      ⚔ Play Free
+    </a>
   </div>
-  <a href="https://t.me/tonbola_bot" class="btn-play">Play Free</a>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-glow"></div>
-  <canvas id="ballCanvas"></canvas>
+  <!-- background trees -->
+  <svg class="tree" style="left:-40px;width:220px" viewBox="0 0 200 400" fill="none">
+    <path d="M100 10 L180 200 L130 200 L160 320 L100 320 L100 400 L100 320 L40 320 L70 200 L20 200 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
+    <path d="M100 10 L175 195 L125 195 L155 310 L100 310 Z" fill="#2A6A0A" opacity=".5"/>
+  </svg>
+  <svg class="tree" style="right:-30px;width:180px;bottom:40px" viewBox="0 0 200 400" fill="none">
+    <path d="M100 20 L175 210 L125 210 L155 330 L100 330 L100 400 L100 330 L45 330 L75 210 L25 210 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
+  </svg>
+  <svg class="tree" style="left:8%;width:120px;bottom:20px;opacity:.15" viewBox="0 0 200 400" fill="none">
+    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
+  </svg>
+  <svg class="tree" style="right:12%;width:140px;bottom:0;opacity:.12" viewBox="0 0 200 400" fill="none">
+    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
+  </svg>
 
-  <div class="live-badge">
-    <span class="live-dot"></span>
+  <!-- floating balls -->
+  <div class="hero-balls">
+    <div class="hball" style="width:72px;height:72px;font-size:1.5rem;color:#fff;top:18%;left:8%;--d:4.5s;--dl:0s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">17</div>
+    <div class="hball" style="width:56px;height:56px;font-size:1.15rem;color:#FFD700;top:30%;left:4%;--d:5.5s;--dl:1s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">42</div>
+    <div class="hball" style="width:64px;height:64px;font-size:1.3rem;color:#3AFF8A;top:55%;left:6%;--d:6s;--dl:.5s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">8</div>
+    <div class="hball" style="width:80px;height:80px;font-size:1.7rem;color:#FF8080;top:15%;right:8%;--d:5s;--dl:.8s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">63</div>
+    <div class="hball" style="width:52px;height:52px;font-size:1.1rem;color:#40B8FF;top:40%;right:5%;--d:4s;--dl:1.5s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">31</div>
+    <div class="hball" style="width:60px;height:60px;font-size:1.25rem;color:#C080FF;top:65%;right:7%;--d:6.5s;--dl:.3s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">75</div>
+    <div class="hball" style="width:44px;height:44px;font-size:.95rem;color:#FFD93D;top:72%;left:12%;--d:5.8s;--dl:2s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">54</div>
+  </div>
+
+  <div class="hero-badge">
+    <span class="hero-dot"></span>
     LIVE ON TELEGRAM · POWERED BY TON
   </div>
 
-  <h1 class="f-display f-xl hero-title">
-    Bingo that actually<br>
-    <span class="c-pink">pays</span> you.<br>
-    <span class="c-yellow">Stars</span> or <span class="c-teal">TON.</span>
+  <h1 class="hero-title">
+    <span class="t1">TonBola</span>
+    <span class="t2">Win Real TON</span>
   </h1>
 
-  <p class="muted hero-sub" style="font-size:1.1rem">
-    Play with <strong style="color:var(--yellow)">Telegram Stars</strong> or <strong style="color:var(--blue)">TON</strong> — win in the same currency you paid. Instant prize pool every 5 minutes. No conversion, no waiting.
+  <p class="hero-sub">
+    Live multiplayer bingo every 5 minutes. Buy cards with Stars or TON, mark numbers, win prizes instantly. No wallet setup — just Telegram.
   </p>
 
   <div class="hero-ctas">
-    <a href="https://t.me/tonbola_bot" class="btn-primary">Play Free on Telegram</a>
-    <a href="#token" class="btn-ghost">Join the Presale</a>
-  </div>
-
-  <div class="extraction-box">
-    <div class="ext-label">Live Draw · Game in Progress</div>
-    <div class="ext-row" id="extRow">
-      <div class="ball b2">14</div>
-      <div class="ball b5">31</div>
-      <div class="ball b1">67</div>
-      <div class="ball b3">8</div>
-      <div class="ball b4">52</div>
-      <div class="ext-sep">→</div>
-      <div class="ball b6 ball-new" id="newBall">23</div>
-    </div>
-    <div class="ext-next">Next number in <span id="countdown">5</span>s</div>
+    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 36px">
+      ⚔ Enter the Arena!
+    </a>
+    <a href="#token" class="btn-stone" style="font-size:1rem;padding:14px 28px">
+      💎 Join Presale
+    </a>
   </div>
 </section>
 
-<!-- STATS -->
+<!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="stat"><div class="stat-n" data-count="127400">0</div><div class="stat-l">Games Played</div></div>
-  <div class="stat"><div class="stat-n" data-ton="48200">0 TON</div><div class="stat-l">Paid Out in TON</div></div>
-  <div class="stat"><div class="stat-n" data-count="312000">0</div><div class="stat-l">Stars Paid Out</div></div>
-  <div class="stat"><div class="stat-n" data-count="31900">0</div><div class="stat-l">Active Players</div></div>
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-n" data-count="127400">0</div><div class="stat-l">Games Played</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-n" data-ton="48200">0 TON</div><div class="stat-l">Paid Out</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-n" data-count="312000">0</div><div class="stat-l">Stars Paid Out</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-n" data-count="31900">0</div><div class="stat-l">Active Warriors</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-n">~5 min</div><div class="stat-l">Between Games</div></div>
+  </div>
 </div>
 
 <!-- HOW IT WORKS -->
 <section id="how">
 <div class="wrap">
-  <span class="pill pill-teal aos">How it works</span>
-  <h2 class="f-display f-lg aos">Simple as bingo.<br>Powerful as blockchain.</h2>
-  <p class="muted aos" style="max-width:540px;margin-top:.75rem">Zero friction. Open Telegram, buy cards, follow the draw. If you win, TON lands in your wallet in seconds.</p>
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="s-badge aos" style="background:rgba(0,200,160,.1);border-color:rgba(0,200,160,.3);color:var(--teal)">⚔ How to Play</span>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Simple as Bingo.<br>Powerful as TON.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Zero friction. Open Telegram, choose your room, mark numbers, collect prizes.</p>
 
   <div class="steps">
-    <div class="step aos">
-      <div class="step-n s1">01</div>
-      <h3>Open the bot</h3>
-      <p>Launch @TonBola on Telegram. No downloads, no complicated wallets — your Telegram account is all you need to start playing right now.</p>
+    <div class="step wood-panel aos" style="animation-delay:.1s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#FFD700">1</div>
+      <h3>Open the Bot</h3>
+      <p>Launch @TonBolaBot_bot on Telegram. No downloads, no complicated wallets — your account is all you need.</p>
     </div>
-    <div class="step aos">
-      <div class="step-n s2">02</div>
-      <h3>Buy your cards</h3>
-      <p>Enter a lobby and buy 1 to 10 cards with Telegram Stars or TON. Each card boosts your odds. Every card also earns you $TBOLA tokens.</p>
+    <div class="step wood-panel aos" style="animation-delay:.2s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#3AFF8A">2</div>
+      <h3>Choose Your Room</h3>
+      <p>Free, Stars, TON or VIP. Same currency in, same currency out. No conversions, no surprises.</p>
     </div>
-    <div class="step aos">
-      <div class="step-n s3">03</div>
-      <h3>Play live</h3>
-      <p>One number every 5 seconds. Follow the draw in real time with other players. The chat explodes when someone hits a line. Pure tension.</p>
+    <div class="step wood-panel aos" style="animation-delay:.3s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#40B8FF">3</div>
+      <h3>Play Live</h3>
+      <p>One number every 5 seconds. Watch the draw live with other players. Tension builds with every call.</p>
     </div>
-    <div class="step aos">
-      <div class="step-n s4">04</div>
-      <h3>Cash out instantly</h3>
-      <p>First to call a line or a full house? Win in a Stars room → prizes in Stars. Win in a TON room → prizes in TON. Same currency in, same currency out.</p>
+    <div class="step wood-panel aos" style="animation-delay:.4s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#FF8080">4</div>
+      <h3>Collect Instantly</h3>
+      <p>Line = 25% of the pool. Full house = 75%. Prize hits your wallet immediately. No delays.</p>
     </div>
   </div>
 </div>
 </section>
+
+<div class="stone-divider"></div>
 
 <!-- ROOMS -->
-<section id="rooms" style="background:var(--dark2)">
+<section id="rooms">
 <div class="wrap">
-  <span class="pill pill-yellow aos">Choose your room</span>
-  <h2 class="f-display f-lg aos">Pay in Stars, win in Stars.<br>Pay in TON, win in TON.</h2>
-  <p class="muted aos" style="max-width:560px;margin-top:.75rem">Two separate economies — zero conversion friction. Every prize pool is self-funded by the same currency used to buy cards. Always.</p>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:3rem">
-
-    <!-- FREE -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem;position:relative;overflow:hidden" class="aos">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(255,255,255,.3),rgba(255,255,255,.1))"></div>
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.8rem">Free Room</div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;color:#fff;margin-bottom:.4rem">Free</div>
-      <div style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:1.2rem">1 free card/day · No purchase needed</div>
-      <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:1rem">
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Prize</span><span style="color:#fff;font-weight:600">$TBOLA tokens</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Cards per game</span><span style="color:#fff;font-weight:600">1 (free daily)</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Players</span><span style="color:#fff;font-weight:600">Open to all</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);display:flex;justify-content:space-between"><span>$TBOLA earn</span><span style="color:var(--yellow);font-weight:600">+10 per game</span></div>
-      </div>
-      <div style="margin-top:1rem;padding:.6rem .8rem;background:rgba(255,255,255,.04);border-radius:8px;font-size:.77rem;color:rgba(255,255,255,.4)">
-        Perfect entry point. No wallet needed.
-      </div>
-    </div>
-
-    <!-- STARS -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,217,61,.2);border-radius:20px;padding:1.8rem;position:relative;overflow:hidden" class="aos">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--yellow),var(--coral))"></div>
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--yellow);margin-bottom:.8rem">Stars Room</div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;color:var(--yellow);margin-bottom:.4rem">Telegram Stars</div>
-      <div style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:1.2rem">Buy with Apple Pay · Google Pay · Card</div>
-      <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:1rem">
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Card price</span><span style="color:var(--yellow);font-weight:600">50–500 Stars</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Prize pool</span><span style="color:var(--yellow);font-weight:600">55% in Stars</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Win payout</span><span style="color:var(--yellow);font-weight:600">Stars → your account</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);display:flex;justify-content:space-between"><span>$TBOLA earn</span><span style="color:var(--yellow);font-weight:600">+50 per card</span></div>
-      </div>
-      <div style="margin-top:1rem;padding:.6rem .8rem;background:rgba(255,217,61,.06);border-radius:8px;font-size:.77rem;color:rgba(255,217,61,.65)">
-        Easiest to start. No crypto wallet required.
-      </div>
-    </div>
-
-    <!-- TON -->
-    <div style="background:var(--dark3);border:1px solid rgba(61,158,255,.22);border-radius:20px;padding:1.8rem;position:relative;overflow:hidden" class="aos">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--teal))"></div>
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--blue);margin-bottom:.8rem">TON Room</div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;color:var(--blue);margin-bottom:.4rem">TON</div>
-      <div style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:1.2rem">Real crypto · Instant on-chain payout</div>
-      <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:1rem">
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Card price</span><span style="color:var(--blue);font-weight:600">0.05–0.5 TON</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Prize pool</span><span style="color:var(--blue);font-weight:600">55% in TON</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Win payout</span><span style="color:var(--blue);font-weight:600">TON → your wallet</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);display:flex;justify-content:space-between"><span>$TBOLA earn</span><span style="color:var(--yellow);font-weight:600">+100 per card</span></div>
-      </div>
-      <div style="margin-top:1rem;padding:.6rem .8rem;background:rgba(61,158,255,.06);border-radius:8px;font-size:.77rem;color:rgba(61,158,255,.65)">
-        Higher stakes. Bigger pools. Real crypto out.
-      </div>
-    </div>
-
-    <!-- VIP TON -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,60,172,.22);border-radius:20px;padding:1.8rem;position:relative;overflow:hidden" class="aos">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--purple))"></div>
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--pink);margin-bottom:.8rem">VIP TON Room · Lv.20+</div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;color:var(--pink);margin-bottom:.4rem">High Stakes</div>
-      <div style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:1.2rem">Exclusive · Level 20 unlock required</div>
-      <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:1rem">
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Card price</span><span style="color:var(--pink);font-weight:600">1–5 TON</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Prize pool</span><span style="color:var(--pink);font-weight:600">55% in TON</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.5rem;display:flex;justify-content:space-between"><span>Win payout</span><span style="color:var(--pink);font-weight:600">TON → your wallet</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.55);display:flex;justify-content:space-between"><span>$TBOLA earn</span><span style="color:var(--yellow);font-weight:600">+300 per card</span></div>
-      </div>
-      <div style="margin-top:1rem;padding:.6rem .8rem;background:rgba(255,60,172,.06);border-radius:8px;font-size:.77rem;color:rgba(255,60,172,.65)">
-        Max prize pools. Only the best players get in.
-      </div>
-    </div>
-
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="s-badge aos" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.3);color:var(--gold)">⚔ Choose Your Arena</span>
   </div>
+  <h2 class="s-title aos" style="text-align:center">Pay in Stars, Win in Stars.<br>Pay in TON, Win in TON.</h2>
 
-  <!-- key rule callout -->
-  <div style="margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem" class="aos">
-    <div style="background:var(--dark3);border:1px solid rgba(0,245,200,.14);border-radius:16px;padding:1.4rem;display:flex;align-items:flex-start;gap:1rem">
-      <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,245,200,.1);border:1px solid rgba(0,245,200,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--teal)">1</div>
-      <div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;margin-bottom:.3rem">Same currency in, same currency out</div>
-        <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.55">Stars rooms pay prizes in Stars. TON rooms pay prizes in TON. No conversion, no exchange rate risk, no delays.</div>
+  <div class="room-grid">
+    <div class="room-card stone-panel aos">
+      <div class="room-badge" style="background:rgba(42,92,26,.3);color:#5AFF5A;border-color:#2A5C1A">FREE</div>
+      <div class="room-icon-wrap" style="background:radial-gradient(circle,#2A5C1A,#0E2A06);border-color:#2A5C1A">🏕️</div>
+      <div class="room-name">Free Room</div>
+      <div class="room-desc">1 free card every day. No purchase needed. Win $TBOLA tokens every game.</div>
+      <div class="room-footer-row">
+        <div class="room-players"><span class="ldot"></span> ~14 warriors</div>
+        <div class="room-prize" style="color:#5AFF5A">$TBOLA prizes</div>
       </div>
     </div>
-    <div style="background:var(--dark3);border:1px solid rgba(255,217,61,.14);border-radius:16px;padding:1.4rem;display:flex;align-items:flex-start;gap:1rem">
-      <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,217,61,.08);border:1px solid rgba(255,217,61,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--yellow)">2</div>
-      <div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;margin-bottom:.3rem">$TBOLA earned in every room</div>
-        <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.55">Regardless of which room you play, you always earn $TBOLA. TON rooms earn more tokens — higher stakes, higher rewards.</div>
+    <div class="room-card stone-panel aos" style="animation-delay:.1s">
+      <div class="room-badge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">⭐ STARS</div>
+      <div class="room-icon-wrap" style="background:radial-gradient(circle,#5A4A00,#2A2200);border-color:#8B7000">⭐</div>
+      <div class="room-name">Stars Room</div>
+      <div class="room-desc">Pay Telegram Stars, win Stars. Apple Pay, Google Pay, card — all accepted.</div>
+      <div class="room-footer-row">
+        <div class="room-players"><span class="ldot"></span> ~36 warriors</div>
+        <div class="room-prize" style="color:#FFD93D">100 Stars / card</div>
+      </div>
+    </div>
+    <div class="room-card stone-panel aos" style="animation-delay:.2s">
+      <div class="room-badge" style="background:rgba(0,96,160,.25);color:#40B8FF;border-color:#0060A0">💎 TON</div>
+      <div class="room-icon-wrap" style="background:radial-gradient(circle,#003060,#001020);border-color:#0060A0">💎</div>
+      <div class="room-name">TON Room</div>
+      <div class="room-desc">Real crypto in, real crypto out. Prize hits your TON wallet instantly on-chain.</div>
+      <div class="room-footer-row">
+        <div class="room-players"><span class="ldot"></span> ~11 warriors</div>
+        <div class="room-prize" style="color:#40B8FF">0.1 TON / card</div>
+      </div>
+    </div>
+    <div class="room-card stone-panel aos" style="animation-delay:.3s">
+      <div class="room-badge" style="background:rgba(139,34,0,.25);color:#FF8060;border-color:#8B2200">👑 VIP</div>
+      <div class="room-icon-wrap" style="background:radial-gradient(circle,#5A1000,#200600);border-color:#8B2200">👑</div>
+      <div class="room-name">VIP TON Room</div>
+      <div class="room-desc">High stakes. Level 20+ required. Legendary prize pools, elite players only.</div>
+      <div class="room-footer-row">
+        <div class="room-players"><span class="ldot"></span> ~4 warriors</div>
+        <div class="room-prize" style="color:#FF8060">1 TON / card</div>
       </div>
     </div>
   </div>
 
-</div>
-</section>
-
-<!-- FEATURES -->
-<section id="features" style="background:var(--dark)">
-<div class="wrap">
-  <span class="pill pill-pink aos">Why TonBola</span>
-  <h2 class="f-display f-lg aos">Not your average<br>Telegram game.</h2>
-
-  <div class="feats">
-    <div class="feat fy aos">
-      <div class="feat-tag" style="color:var(--yellow)">Instant prizes</div>
-      <h3>Win TON today, not in 6 months</h3>
-      <p>55% of every card sold goes straight into the live prize pool. When you win, TON arrives immediately — no future token, no promises.</p>
-      <span class="feat-chip chip-y">55% → instant prize pool</span>
+  <!-- private rooms callout -->
+  <div class="wood-panel aos" style="margin-top:24px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+    <div class="nail-bl"></div><div class="nail-br"></div>
+    <div>
+      <div style="font-size:1.3rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">⚔ Private Battle Rooms</div>
+      <div style="font-size:.9rem;color:rgba(255,200,120,.55);max-width:500px;line-height:1.6">
+        Create a private room, set the rules, share your link — and earn 2% of every card sold in your room. Challenge your clan.
+      </div>
     </div>
-    <div class="feat ft aos">
-      <div class="feat-tag" style="color:var(--teal)">Progression</div>
-      <h3>Level up, unlock real advantages</h3>
-      <p>6 levels from Rookie to Grand Master. Each tier unlocks golden cards with higher win probability, VIP rooms, and exclusive boosters.</p>
-      <span class="feat-chip chip-t">Lv.10 → Gold cards +5% win rate</span>
-    </div>
-    <div class="feat fp aos">
-      <div class="feat-tag" style="color:var(--pink)">$TBOLA Token</div>
-      <h3>Earn tokens while you play</h3>
-      <p>Every game, every win, every daily login builds your $TBOLA balance. The token is backed by real revenue — not pure speculation.</p>
-      <span class="feat-chip chip-pk">Presale coming · Airdrop guaranteed</span>
-    </div>
-    <div class="feat fc aos">
-      <div class="feat-tag" style="color:var(--coral)">Leaderboard</div>
-      <h3>Weekly & monthly prize pools</h3>
-      <p>Top 50 every week, top 100 every month. The prize fund accumulates card by card — it's never invented at distribution time.</p>
-      <span class="feat-chip chip-c">Season fund → 3 months of buildup</span>
-    </div>
-    <div class="feat fpu aos">
-      <div class="feat-tag" style="color:#c080ff">Seasons</div>
-      <h3>Every month something new begins</h3>
-      <p>Fresh theme, exclusive seasonal prizes, leaderboard resets. Your personal level never resets. Guaranteed FOMO at season end.</p>
-      <span class="feat-chip chip-pu">Unique seasonal badges & avatars</span>
-    </div>
-    <div class="feat fb aos">
-      <div class="feat-tag" style="color:var(--blue)">Referral</div>
-      <h3>Invite friends. Earn forever.</h3>
-      <p>5% of your direct referrals' tokens — for life. 3-level system. Influencer program with up to 15% commission on every purchase.</p>
-      <span class="feat-chip chip-b">Paid in $TBOLA automatically</span>
-    </div>
+    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.95rem;padding:12px 24px;flex-shrink:0">
+      ⚔ Create Room
+    </a>
   </div>
 </div>
 </section>
 
-<!-- PRIZES -->
-<section id="prizes">
-<div class="wrap">
-  <span class="pill pill-yellow aos">Prizes &amp; economy</span>
-  <h2 class="f-display f-lg aos">Same currency in,<br>same currency out. Always.</h2>
-  <p class="muted aos" style="max-width:540px;margin-top:.75rem">Stars rooms self-fund their prize pool in Stars. TON rooms self-fund in TON. Two separate economies — zero conversion risk.</p>
-
-  <div class="prize-grid">
-    <div class="prize-card aos">
-      <div class="card-title">Weekly leaderboard — prize distribution</div>
-      <div class="p-row">
-        <span class="p-rank" style="color:var(--yellow)">1st place</span>
-        <div class="p-track"><div class="p-fill" style="width:48%;background:linear-gradient(90deg,var(--yellow),var(--coral))"></div></div>
-        <span class="p-pct" style="color:var(--yellow)">30%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:#aaa">2nd place</span>
-        <div class="p-track"><div class="p-fill" style="width:28.8%;background:#888"></div></div>
-        <span class="p-pct" style="color:#aaa">18%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:var(--coral)">3rd place</span>
-        <div class="p-track"><div class="p-fill" style="width:19.2%;background:var(--coral)"></div></div>
-        <span class="p-pct" style="color:var(--coral)">12%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:var(--teal)">4th–5th</span>
-        <div class="p-track"><div class="p-fill" style="width:16%;background:var(--teal)"></div></div>
-        <span class="p-pct" style="color:var(--teal)">10%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:var(--blue)">6th–10th</span>
-        <div class="p-track"><div class="p-fill" style="width:24%;background:var(--blue)"></div></div>
-        <span class="p-pct" style="color:var(--blue)">15%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:#c080ff">11th–25th</span>
-        <div class="p-track"><div class="p-fill" style="width:16%;background:var(--purple)"></div></div>
-        <span class="p-pct" style="color:#c080ff">10%</span>
-      </div>
-      <div class="p-row">
-        <span class="p-rank" style="color:rgba(255,255,255,.35)">26th–50th</span>
-        <div class="p-track"><div class="p-fill" style="width:8%;background:rgba(255,255,255,.25)"></div></div>
-        <span class="p-pct" style="color:rgba(255,255,255,.35)">5%</span>
-      </div>
-    </div>
-
-    <div class="prize-card aos">
-      <div class="card-title">Where every Star you pay goes</div>
-      <div class="eco-row">
-        <div class="eco-left"><div class="eco-dot" style="background:var(--teal)"></div>Live prize pool</div>
-        <div class="eco-pct" style="color:var(--teal)">55%</div>
-      </div>
-      <div class="eco-row">
-        <div class="eco-left"><div class="eco-dot" style="background:var(--purple)"></div>Developer</div>
-        <div class="eco-pct" style="color:#c080ff">32%</div>
-      </div>
-      <div class="eco-row">
-        <div class="eco-left"><div class="eco-dot" style="background:var(--yellow)"></div>$TBOLA token fund</div>
-        <div class="eco-pct" style="color:var(--yellow)">8%</div>
-      </div>
-      <div class="eco-row">
-        <div class="eco-left"><div class="eco-dot" style="background:var(--coral)"></div>Leaderboard fund</div>
-        <div class="eco-pct" style="color:var(--coral)">3%</div>
-      </div>
-      <div class="eco-row">
-        <div class="eco-left"><div class="eco-dot" style="background:rgba(255,255,255,.25)"></div>Platform fees</div>
-        <div class="eco-pct" style="color:rgba(255,255,255,.35)">2%</div>
-      </div>
-      <div class="eco-note">
-        The $TBOLA token fund is backed by real revenue. Every token distributed as a reward is covered by Stars actually collected — never minted from thin air.
-      </div>
-    </div>
-  </div>
-</div>
-</section>
-
-<!-- PROGRESSION -->
-<section id="progression">
-<div class="wrap">
-  <span class="pill pill-purple aos">Progression system</span>
-  <h2 class="f-display f-lg aos">Grow. Unlock.<br>Dominate the leaderboard.</h2>
-  <p class="muted aos" style="max-width:520px;margin-top:.75rem">Your level never resets. Every game moves you closer to permanent unlocks that give you a real edge.</p>
-
-  <div class="lvl-scroll">
-    <div class="lvl-pill lp0 on">Rookie Lv.1</div>
-    <div class="lvl-pill lp1 on">Player Lv.6</div>
-    <div class="lvl-pill lp2 on">Expert Lv.16</div>
-    <div class="lvl-pill lp3 on">Master Lv.31</div>
-    <div class="lvl-pill lp4 on">Legend Lv.51</div>
-    <div class="lvl-pill lp5 on">Grand Master Lv.76</div>
-  </div>
-
-  <div class="unlocks">
-    <div class="unlock aos"><div class="ul-lv">Level 10</div><h4>Gold Cards</h4><p>+5% win probability on every game. Permanently.</p></div>
-    <div class="unlock aos"><div class="ul-lv">Level 20</div><h4>VIP Rooms</h4><p>Access exclusive lobbies with prize pools up to 3× standard.</p></div>
-    <div class="unlock aos"><div class="ul-lv">Level 30</div><h4>Double XP</h4><p>Every weekend you earn XP at double speed.</p></div>
-    <div class="unlock aos"><div class="ul-lv">Level 50</div><h4>Daily Free Card</h4><p>One free card every day, forever. Play at zero cost daily.</p></div>
-    <div class="unlock aos"><div class="ul-lv">Level 75</div><h4>Legend Avatar</h4><p>Exclusive avatar visible to all players in every lobby.</p></div>
-    <div class="unlock aos"><div class="ul-lv">Season</div><h4>Seasonal Badge</h4><p>A unique badge every season. Unrepeatable — gone when the month ends.</p></div>
-  </div>
-</div>
-</section>
+<div class="stone-divider"></div>
 
 <!-- EARN TBOLA -->
-<section id="earn" style="background:var(--dark2)">
+<section id="earn">
 <div class="wrap">
-  <span class="pill pill-yellow aos">Earn $TBOLA</span>
-  <h2 class="f-display f-lg aos">Every action earns you<br><span style="color:var(--yellow)">$TBOLA tokens.</span></h2>
-  <p class="muted aos" style="max-width:540px;margin-top:.75rem">You don't need to win to earn. Every interaction with TonBola accumulates $TBOLA — automatically, in real time, no extra steps.</p>
-
-  <!-- big earn table -->
-  <div style="margin-top:3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1.25rem">
-
-    <!-- Playing -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,217,61,.15);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--yellow);margin-bottom:1rem">Playing</div>
-      <div class="earn-row" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Buy 1 card</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--yellow)">+50 $TBOLA</span>
-      </div>
-      <div class="earn-row" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Play a full game</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--yellow)">+10 $TBOLA</span>
-      </div>
-      <div class="earn-row" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Win a line</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--yellow)">+100 $TBOLA</span>
-      </div>
-      <div class="earn-row" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Win a full house (Bingo!)</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--yellow)">+500 $TBOLA</span>
-      </div>
-      <div class="earn-row" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Play in a VIP room</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--yellow)">+200 $TBOLA</span>
-      </div>
-      <div style="margin-top:1rem;padding:.7rem .9rem;background:rgba(255,217,61,.07);border-radius:10px;font-size:.78rem;color:rgba(255,217,61,.7);line-height:1.55">
-        Every card bought = 50 $TBOLA regardless of outcome. Just playing earns you tokens.
-      </div>
-    </div>
-
-    <!-- Daily & Streaks -->
-    <div style="background:var(--dark3);border:1px solid rgba(0,245,200,.13);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);margin-bottom:1rem">Daily &amp; Streaks</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Daily login</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--teal)">+5 $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">7-day streak</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--teal)">+100 $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">30-day streak</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--teal)">+500 $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">100-day streak</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--teal)">+3,000 $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Weekend double XP (Lv.30+)</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--teal)">2×</span>
-      </div>
-      <div style="margin-top:1rem;padding:.7rem .9rem;background:rgba(0,245,200,.06);border-radius:10px;font-size:.78rem;color:rgba(0,245,200,.65);line-height:1.55">
-        Missing one day resets the streak — but your accumulated $TBOLA is yours forever.
-      </div>
-    </div>
-
-    <!-- Referral & Social -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,60,172,.13);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--pink);margin-bottom:1rem">Referral &amp; Social</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Invite a friend</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--pink)">+500 $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Friend buys a card (L1)</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--pink)">5% of their $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">Their friend plays (L2)</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--pink)">2% of their $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">L3 chain</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--pink)">1% of their $TBOLA</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0">
-        <span style="font-size:.9rem;color:rgba(255,255,255,.65)">5 active referrals</span>
-        <span style="font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--pink)">+2,000 $TBOLA</span>
-      </div>
-      <div style="margin-top:1rem;padding:.7rem .9rem;background:rgba(255,60,172,.07);border-radius:10px;font-size:.78rem;color:rgba(255,60,172,.7);line-height:1.55">
-        Referral commissions are paid automatically via smart contract — every time, forever.
-      </div>
-    </div>
-
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="s-badge aos" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.3);color:var(--gold)">◆ Earn $TBOLA</span>
   </div>
+  <h2 class="s-title aos" style="text-align:center">Every Action Earns Tokens.<br>Win or Not.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">You don't need to win to earn $TBOLA. Every card, every game, every day builds your balance for the airdrop.</p>
 
-  <!-- Achievement milestones row -->
-  <div style="margin-top:1.5rem;background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:1.8rem" class="aos">
-    <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:1.2rem">Achievement milestones</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem">
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--yellow)">+200</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">10 games played</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--yellow)">+1,000</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">100 games played</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--yellow)">+5,000</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">1,000 games played</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--coral)">+1,500</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">Top 10 weekly leaderboard</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--coral)">+8,000</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">Top 3 monthly leaderboard</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;color:var(--purple)">+20,000</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.2rem">Season champion</div>
-      </div>
+  <div class="earn-grid">
+    <div class="earn-panel wood-panel aos">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="earn-title" style="color:#FFD93D">⚔ Playing</div>
+      <div class="earn-row"><span class="label">Buy 1 card</span><span class="value">+50 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Play a full game</span><span class="value">+10 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Win a line</span><span class="value">+100 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Win full house (Bingo!)</span><span class="value">+500 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Play in VIP room</span><span class="value">+200 $TBOLA</span></div>
+    </div>
+    <div class="earn-panel wood-panel aos" style="animation-delay:.15s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="earn-title" style="color:#3AFF8A">🔥 Daily & Streaks</div>
+      <div class="earn-row"><span class="label">Daily login</span><span class="value">+5 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">7-day streak</span><span class="value">+100 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">30-day streak</span><span class="value">+500 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">100-day streak</span><span class="value">+3,000 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Lv.30+ weekend</span><span class="value">2× XP</span></div>
+    </div>
+    <div class="earn-panel wood-panel aos" style="animation-delay:.3s">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="earn-title" style="color:#FF8080">🏹 Referral</div>
+      <div class="earn-row"><span class="label">Invite a friend</span><span class="value">+500 $TBOLA</span></div>
+      <div class="earn-row"><span class="label">Friend buys cards (L1)</span><span class="value">5% of their TBOLA</span></div>
+      <div class="earn-row"><span class="label">Their friend (L2)</span><span class="value">2% forever</span></div>
+      <div class="earn-row"><span class="label">L3 chain</span><span class="value">1% forever</span></div>
+      <div class="earn-row"><span class="label">5 active referrals</span><span class="value">+2,000 $TBOLA</span></div>
     </div>
   </div>
 
-  <!-- simulation box -->
-  <div style="margin-top:1.5rem;background:linear-gradient(130deg,rgba(255,217,61,.08),rgba(139,47,255,.08));border:1px solid rgba(255,217,61,.18);border-radius:20px;padding:1.8rem 2rem" class="aos">
-    <div style="font-family:'Fredoka',sans-serif;font-size:1.15rem;font-weight:600;margin-bottom:1.1rem">Example: casual player · 30 days</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
-      <div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:.3rem">3 games/day × 2 cards</div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--yellow)">9,000 $TBOLA</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3)">cards alone</div>
+  <!-- simulation -->
+  <div class="gold-panel aos" style="margin-top:20px;padding:28px 32px">
+    <div class="gem tl" style="position:absolute;top:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+    <div class="gem tr" style="position:absolute;top:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem bl" style="position:absolute;bottom:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem br" style="position:absolute;bottom:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+    <div style="font-size:1.2rem;font-weight:700;color:#3D1A00;margin-bottom:20px;text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.2)">⚔ Casual Player · 30 Days · Zero Wins</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+        <div style="font-size:1.3rem;font-weight:700;color:#FFD93D">9,000</div>
+        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">3 games/day × 2 cards</div>
       </div>
-      <div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:.3rem">30-day login streak</div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--teal)">+650 $TBOLA</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3)">daily bonus + streak</div>
+      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+        <div style="font-size:1.3rem;font-weight:700;color:#3AFF8A">+650</div>
+        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">30-day login streak</div>
       </div>
-      <div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:.3rem">5 friends invited</div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--pink)">+4,500 $TBOLA</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3)">referral bonuses</div>
+      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+        <div style="font-size:1.3rem;font-weight:700;color:#FF8080">+4,500</div>
+        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">5 friends invited</div>
       </div>
-      <div style="border-left:1px solid rgba(255,255,255,.1);padding-left:1rem">
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:.3rem">Total in 30 days</div>
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;color:#fff">~14,150 $TBOLA</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.35)">without winning a single game</div>
+      <div style="text-align:center;background:rgba(0,0,0,.3);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
+        <div style="font-size:1.8rem;font-weight:900;color:#3D1A00;font-family:'Nunito',sans-serif">~14,150</div>
+        <div style="font-size:.75rem;color:rgba(0,0,0,.55);font-weight:700">$TBOLA in 30 days</div>
       </div>
     </div>
   </div>
-
 </div>
 </section>
 
-<!-- PRIVATE ROOMS -->
-<section id="private-rooms" style="background:var(--dark)">
-<div class="wrap">
-  <span class="pill pill-purple aos">Private rooms</span>
-  <h2 class="f-display f-lg aos">Create your room.<br>Invite your crew.</h2>
-  <p class="muted aos" style="max-width:560px;margin-top:.75rem">Challenge friends to a private game in seconds. Set your rules, share one link, and play. The creator earns 2% of every card sold in their room.</p>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3rem">
-
-    <!-- Create flow -->
-    <div style="background:var(--dark3);border:1px solid rgba(139,47,255,.2);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#c080ff;margin-bottom:1.1rem">Creating a room</div>
-      <div style="display:flex;flex-direction:column;gap:.75rem">
-        <div style="display:flex;align-items:center;gap:.9rem">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,47,255,.15);border:1px solid rgba(139,47,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:.85rem;color:#c080ff;flex-shrink:0">1</div>
-          <span style="font-size:.88rem;color:rgba(255,255,255,.7)">Choose currency: Stars or TON</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.9rem">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,47,255,.15);border:1px solid rgba(139,47,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:.85rem;color:#c080ff;flex-shrink:0">2</div>
-          <span style="font-size:.88rem;color:rgba(255,255,255,.7)">Set card price and max players (2–20)</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.9rem">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,47,255,.15);border:1px solid rgba(139,47,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:.85rem;color:#c080ff;flex-shrink:0">3</div>
-          <span style="font-size:.88rem;color:rgba(255,255,255,.7)">Optional: add a password</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.9rem">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,47,255,.15);border:1px solid rgba(139,47,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:.85rem;color:#c080ff;flex-shrink:0">4</div>
-          <span style="font-size:.88rem;color:rgba(255,255,255,.7)">Get your unique link and share it</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.9rem">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,245,200,.12);border:1px solid rgba(0,245,200,.2);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:.85rem;color:var(--teal);flex-shrink:0">5</div>
-          <span style="font-size:.88rem;color:rgba(255,255,255,.7)">Start when everyone's in — or auto-start</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Creator perks -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,217,61,.15);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--yellow);margin-bottom:1.1rem">Creator perks</div>
-      <div style="margin-bottom:1.2rem">
-        <div style="font-family:'Fredoka',sans-serif;font-size:2.4rem;font-weight:700;color:var(--yellow);line-height:1">2%</div>
-        <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-top:.2rem">of every card sold in your room</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:.6rem">
-        <div style="font-size:.85rem;color:rgba(255,255,255,.65);display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:.6rem">
-          <span>10 players × 2 cards × 100 Stars</span>
-          <span style="color:var(--yellow);font-weight:600">+40 Stars</span>
-        </div>
-        <div style="font-size:.85rem;color:rgba(255,255,255,.65);display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:.6rem">
-          <span>20 players × 3 cards × 0.1 TON</span>
-          <span style="color:var(--yellow);font-weight:600">+0.12 TON</span>
-        </div>
-        <div style="font-size:.85rem;color:rgba(255,255,255,.65);display:flex;justify-content:space-between">
-          <span>Also earns $TBOLA as normal player</span>
-          <span style="color:var(--teal);font-weight:600">always</span>
-        </div>
-      </div>
-      <div style="margin-top:1rem;padding:.65rem .85rem;background:rgba(255,217,61,.06);border-radius:8px;font-size:.78rem;color:rgba(255,217,61,.65)">
-        Host also plays if they buy cards. Creator fee is separate from prize pool.
-      </div>
-    </div>
-
-  </div>
-
-  <!-- private room types -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.25rem" class="aos">
-    <div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.2rem;text-align:center">
-      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:.3rem">Friends night</div>
-      <div style="font-size:.8rem;color:rgba(255,255,255,.45)">2–10 players · low stakes · just for fun</div>
-    </div>
-    <div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.2rem;text-align:center">
-      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:.3rem">Community event</div>
-      <div style="font-size:.8rem;color:rgba(255,255,255,.45)">Up to 20 players · channel host runs it</div>
-    </div>
-    <div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.2rem;text-align:center">
-      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:.3rem">High stakes duel</div>
-      <div style="font-size:.8rem;color:rgba(255,255,255,.45)">2–4 players · max card price · winner takes all</div>
-    </div>
-    <div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.2rem;text-align:center">
-      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:.3rem">Squad practice</div>
-      <div style="font-size:.8rem;color:rgba(255,255,255,.45)">Internal squad warm-up before tournaments</div>
-    </div>
-  </div>
-
-</div>
-</section>
-
-<!-- SQUADS -->
-<section id="squads" style="background:var(--dark2)">
-<div class="wrap">
-  <span class="pill pill-teal aos">Squads</span>
-  <h2 class="f-display f-lg aos">Play together.<br>Win together.</h2>
-  <p class="muted aos" style="max-width:560px;margin-top:.75rem">Form a squad of up to 20 players. Your combined weekly score earns a squad prize — distributed automatically to every member based on their contribution.</p>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem">
-
-    <!-- Squad anatomy -->
-    <div style="background:var(--dark3);border:1px solid rgba(0,245,200,.15);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);margin-bottom:1.1rem">Squad anatomy</div>
-      <div style="display:flex;flex-direction:column;gap:.7rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Max members</span>
-          <span style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--teal)">20 players</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Captain bonus</span>
-          <span style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--pink)">+10% of squad prize</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Squad fund source</span>
-          <span style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--yellow)">2% per member card</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Inactive member payout</span>
-          <span style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,.3)">0 — play to earn</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0">
-          <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Leaderboards</span>
-          <span style="font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--blue)">Weekly + Monthly</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Distribution formula -->
-    <div style="background:var(--dark3);border:1px solid rgba(255,217,61,.15);border-radius:20px;padding:1.8rem" class="aos">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--yellow);margin-bottom:1.1rem">Prize distribution formula</div>
-      <div style="display:flex;flex-direction:column;gap:.9rem">
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:.35rem">
-            <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Equal share (participation)</span>
-            <span style="font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--teal);font-weight:700">40%</span>
-          </div>
-          <div style="height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">
-            <div style="width:100%;height:100%;background:var(--teal);border-radius:3px"></div>
-          </div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.25rem">Split equally among all members who played</div>
-        </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:.35rem">
-            <span style="font-size:.875rem;color:rgba(255,255,255,.65)">XP earned that week</span>
-            <span style="font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--purple);font-weight:700">35%</span>
-          </div>
-          <div style="height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">
-            <div style="width:87.5%;height:100%;background:var(--purple);border-radius:3px"></div>
-          </div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.25rem">Proportional to your XP vs total squad XP</div>
-        </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:.35rem">
-            <span style="font-size:.875rem;color:rgba(255,255,255,.65)">Cards bought that week</span>
-            <span style="font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--yellow);font-weight:700">25%</span>
-          </div>
-          <div style="height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">
-            <div style="width:62.5%;height:100%;background:var(--yellow);border-radius:3px"></div>
-          </div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.25rem">Proportional to cards you bought vs squad total</div>
-        </div>
-      </div>
-      <div style="margin-top:1.1rem;padding:.65rem .85rem;background:rgba(255,217,61,.06);border-radius:8px;font-size:.78rem;color:rgba(255,217,61,.65);line-height:1.55">
-        Formula rewards both casual players (equal share) and dedicated ones (XP + cards). No single metric dominates.
-      </div>
-    </div>
-
-  </div>
-
-  <!-- squad leaderboard prize pools -->
-  <div style="margin-top:1.25rem;background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:1.8rem" class="aos">
-    <div style="font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:1.2rem">Squad leaderboard prize pools</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:var(--yellow)">Top 1 squad</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.25rem">30% of weekly squad fund</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:.15rem">distributed to all 20 members</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:#aaa">Top 2–3 squads</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.25rem">20% + 12% of fund</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:.15rem">per squad</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:var(--teal)">Top 4–10 squads</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.25rem">5% each of fund</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:.15rem">38% total split 7 ways</div>
-      </div>
-      <div style="text-align:center;padding:.9rem;background:rgba(255,255,255,.03);border-radius:12px">
-        <div style="font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:var(--purple)">$TBOLA bonus</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.25rem">Top squad every month</div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:.15rem">gets season badge NFT</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-</section>
+<div class="stone-divider"></div>
 
 <!-- TOKEN -->
 <section id="token">
 <div class="wrap">
-  <div class="tok-grid">
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="s-badge aos" style="background:rgba(139,47,255,.12);border-color:rgba(139,47,255,.3);color:#C080FF">◆ $TBOLA Token</span>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Not Hype. Real Revenue.</h2>
+
+  <div class="tok-grid" style="margin-top:40px">
     <div class="aos">
-      <span class="pill pill-purple">$TBOLA Token</span>
-      <h2 class="f-display f-lg" style="margin:.6rem 0 1rem">Not hype.<br>Real revenue.</h2>
-      <p class="muted" style="margin-bottom:1.5rem">$TBOLA is fuelled by every card sold in the game. It has real value before it ever lists on an exchange.</p>
       <div class="timeline">
-        <div class="tl">
-          <div class="tl-left"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot" style="background:#3AFF8A;box-shadow:0 0 10px #3AFF8A"></div>
+            <div class="tl-line"></div>
+          </div>
           <div class="tl-body">
-            <span class="tl-phase" style="background:rgba(0,245,200,.1);color:var(--teal)">Now · Live</span>
+            <span class="tl-phase" style="background:rgba(58,255,138,.1);color:#3AFF8A;border:1px solid rgba(58,255,138,.25)">Now · Live</span>
             <h4>Game active</h4>
-            <p>Play, accumulate $TBOLA — the fund grows daily with real revenue.</p>
+            <p>Play, accumulate $TBOLA — the fund grows daily with real revenue from every card sold.</p>
           </div>
         </div>
-        <div class="tl">
-          <div class="tl-left"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-line"></div></div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot" style="background:#FFD93D;box-shadow:0 0 10px #FFD93D"></div>
+            <div class="tl-line"></div>
+          </div>
           <div class="tl-body">
-            <span class="tl-phase" style="background:rgba(255,217,61,.1);color:var(--yellow)">Phase 2 · Month 4</span>
-            <h4>Public presale</h4>
+            <span class="tl-phase" style="background:rgba(255,217,61,.1);color:#FFD93D;border:1px solid rgba(255,217,61,.25)">Phase 2 · Month 4</span>
+            <h4>Public Presale</h4>
             <p>20% of supply at a fixed price. Top players get whitelist priority.</p>
           </div>
         </div>
-        <div class="tl">
-          <div class="tl-left"><div class="tl-dot" style="background:var(--pink)"></div></div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot" style="background:#FF8080;box-shadow:0 0 10px #FF8080"></div>
+          </div>
           <div class="tl-body">
-            <span class="tl-phase" style="background:rgba(255,60,172,.1);color:var(--pink)">Phase 3 · Month 6</span>
+            <span class="tl-phase" style="background:rgba(255,128,128,.1);color:#FF8080;border:1px solid rgba(255,128,128,.25)">Phase 3 · Month 6</span>
             <h4>TGE + Airdrop</h4>
-            <p>Listed on STON.fi. Airdrop distributed proportional to accumulated $TBOLA.</p>
+            <p>Listed on STON.fi. Airdrop distributed proportional to your accumulated $TBOLA balance.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="tok-box aos">
-      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:1.4rem;color:rgba(255,255,255,.75)">$TBOLA Tokenomics · 1B supply</div>
+    <div class="stone-panel aos" style="padding:24px">
+      <div style="font-size:1rem;font-weight:700;color:rgba(255,220,150,.6);margin-bottom:20px">$TBOLA · 1,000,000,000 supply</div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:var(--teal)"></div>
+        <div class="tok-dot" style="background:#3AFF8A"></div>
         <span class="tok-label">Player airdrop</span>
-        <div class="tok-track"><div class="tok-fill" style="width:100%;background:var(--teal)"></div></div>
-        <span class="tok-pct" style="color:var(--teal)">40%</span>
+        <div class="tok-bar"><div class="tok-fill" style="width:100%;background:#3AFF8A"></div></div>
+        <span class="tok-pct" style="color:#3AFF8A">40%</span>
       </div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:var(--yellow)"></div>
+        <div class="tok-dot" style="background:#FFD93D"></div>
         <span class="tok-label">Public presale</span>
-        <div class="tok-track"><div class="tok-fill" style="width:50%;background:var(--yellow)"></div></div>
-        <span class="tok-pct" style="color:var(--yellow)">20%</span>
+        <div class="tok-bar"><div class="tok-fill" style="width:50%;background:#FFD93D"></div></div>
+        <span class="tok-pct" style="color:#FFD93D">20%</span>
       </div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:var(--blue)"></div>
+        <div class="tok-dot" style="background:#40B8FF"></div>
         <span class="tok-label">DEX liquidity</span>
-        <div class="tok-track"><div class="tok-fill" style="width:37.5%;background:var(--blue)"></div></div>
-        <span class="tok-pct" style="color:var(--blue)">15%</span>
+        <div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#40B8FF"></div></div>
+        <span class="tok-pct" style="color:#40B8FF">15%</span>
       </div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:var(--purple)"></div>
+        <div class="tok-dot" style="background:#C080FF"></div>
         <span class="tok-label">Team (24m vesting)</span>
-        <div class="tok-track"><div class="tok-fill" style="width:37.5%;background:var(--purple)"></div></div>
-        <span class="tok-pct" style="color:#c080ff">15%</span>
+        <div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#C080FF"></div></div>
+        <span class="tok-pct" style="color:#C080FF">15%</span>
       </div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:var(--coral)"></div>
+        <div class="tok-dot" style="background:#FF8060"></div>
         <span class="tok-label">Marketing</span>
-        <div class="tok-track"><div class="tok-fill" style="width:12.5%;background:var(--coral)"></div></div>
-        <span class="tok-pct" style="color:var(--coral)">5%</span>
+        <div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:#FF8060"></div></div>
+        <span class="tok-pct" style="color:#FF8060">5%</span>
       </div>
       <div class="tok-row">
-        <div class="tok-dot" style="background:rgba(255,255,255,.25)"></div>
+        <div class="tok-dot" style="background:rgba(255,255,255,.3)"></div>
         <span class="tok-label">Reserve</span>
-        <div class="tok-track"><div class="tok-fill" style="width:12.5%;background:rgba(255,255,255,.25)"></div></div>
+        <div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:rgba(255,255,255,.3)"></div></div>
         <span class="tok-pct" style="color:rgba(255,255,255,.35)">5%</span>
+      </div>
+      <div style="margin-top:16px;padding:12px 14px;background:rgba(58,255,138,.06);border:1.5px solid rgba(58,255,138,.18);border-radius:8px;font-size:.8rem;color:rgba(58,255,138,.65);line-height:1.6">
+        8% of every card sold goes into the $TBOLA fund. Every token is backed by real game revenue — never minted from thin air.
       </div>
     </div>
   </div>
 </div>
 </section>
 
+<div class="stone-divider"></div>
+
 <!-- REFERRAL -->
 <section id="referral">
 <div class="wrap">
-  <span class="pill pill-pink aos">Referral program</span>
-  <h2 class="f-display f-lg aos">Invite friends.<br>Earn forever.</h2>
-  <p class="muted aos" style="max-width:500px;margin-top:.75rem">Every time one of your referrals buys a card, you receive $TBOLA automatically — in real time, via TON smart contract. Forever.</p>
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="s-badge aos" style="background:rgba(255,60,172,.1);border-color:rgba(255,60,172,.3);color:#FF8080">🏹 Referral Program</span>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Invite Friends.<br>Earn Forever.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">Every time your referral buys a card, you receive $TBOLA automatically — via TON smart contract, in real time, for life.</p>
 
   <div class="ref-grid">
-    <div class="ref-card aos">
-      <div class="ref-tier">Standard user</div>
-      <div class="ref-pct" style="color:var(--teal)">5%</div>
-      <div class="ref-name">Level 1</div>
-      <div class="ref-desc">On tokens earned by your direct referrals</div>
+    <div class="ref-card stone-panel aos">
+      <div class="ref-pct" style="color:#3AFF8A">5%</div>
+      <div class="ref-name">Direct Referral</div>
+      <div class="ref-desc">On every $TBOLA your direct referrals earn. Level 1 — forever.</div>
     </div>
-    <div class="ref-card aos">
-      <div class="ref-tier" style="color:var(--coral)">Nano Influencer</div>
-      <div class="ref-pct" style="color:var(--coral)">7%</div>
-      <div class="ref-name">1k–10k followers</div>
-      <div class="ref-desc">+ exclusive in-game badge</div>
+    <div class="ref-card stone-panel aos" style="animation-delay:.1s">
+      <div class="ref-pct" style="color:#FF8060">7%</div>
+      <div class="ref-name">Nano Influencer</div>
+      <div class="ref-desc">1k–10k followers + exclusive in-game badge.</div>
     </div>
-    <div class="ref-card aos" style="border-color:rgba(255,217,61,.18)">
-      <div class="ref-tier" style="color:var(--yellow)">Micro Influencer ★</div>
-      <div class="ref-pct" style="color:var(--yellow)">10%</div>
-      <div class="ref-name">10k–100k followers</div>
-      <div class="ref-desc">+ monthly token bonus + exclusive character</div>
+    <div class="ref-card stone-panel aos" style="animation-delay:.2s;border-color:#FFD700!important">
+      <div class="ref-pct" style="color:#FFD93D">10%</div>
+      <div class="ref-name">Micro Influencer ★</div>
+      <div class="ref-desc">10k–100k followers + monthly bonus + exclusive character.</div>
     </div>
-    <div class="ref-card aos">
-      <div class="ref-tier" style="color:var(--pink)">Macro Influencer</div>
-      <div class="ref-pct" style="color:var(--pink)">15%</div>
-      <div class="ref-name">100k+ followers</div>
-      <div class="ref-desc">+ custom deal + co-marketing</div>
+    <div class="ref-card stone-panel aos" style="animation-delay:.3s">
+      <div class="ref-pct" style="color:#FF8080">15%</div>
+      <div class="ref-name">Macro Influencer</div>
+      <div class="ref-desc">100k+ followers + custom deal + co-marketing.</div>
     </div>
   </div>
 </div>
@@ -1192,115 +768,87 @@ footer {
 
 <!-- FINAL CTA -->
 <section id="cta">
-  <div class="cta-inner">
-    <h2 class="f-display f-lg aos">Ready to win<br><span style="color:var(--yellow)">real TON</span>?</h2>
-    <p class="aos">The next game starts in a few minutes.<br>No wallet setup, no credit card. Just Telegram.</p>
-    <div class="cta-btns aos">
-      <a href="https://t.me/tonbola_bot" class="btn-primary">Play Free on Telegram</a>
-      <a href="#token" class="btn-ghost">Join the Presale</a>
+  <div class="cta-inner wrap">
+    <!-- decorative balls -->
+    <div style="position:relative;height:80px;margin-bottom:16px">
+      <div style="position:absolute;left:50%;transform:translateX(-200px);width:60px;height:60px;
+        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
+        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
+        font-size:1.3rem;font-weight:700;color:#FFD700;
+        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
+        animation:hfloat 4s ease-in-out infinite alternate">7</div>
+      <div style="position:absolute;left:50%;transform:translateX(-100px);width:80px;height:80px;
+        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
+        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
+        font-size:1.7rem;font-weight:700;color:#3AFF8A;
+        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
+        animation:hfloat 5s .5s ease-in-out infinite alternate">42</div>
+      <div style="position:absolute;left:50%;transform:translateX(20px);width:70px;height:70px;
+        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
+        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
+        font-size:1.5rem;font-weight:700;color:#40B8FF;
+        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
+        animation:hfloat 4.5s 1s ease-in-out infinite alternate">88</div>
+      <div style="position:absolute;left:50%;transform:translateX(120px);width:55px;height:55px;
+        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
+        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
+        font-size:1.1rem;font-weight:700;color:#FF8080;
+        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
+        animation:hfloat 3.5s .3s ease-in-out infinite alternate">23</div>
+    </div>
+
+    <h2>Ready to Win Real TON?</h2>
+    <p>The next game starts in a few minutes. No wallet setup, no credit card. Just Telegram.</p>
+    <div class="cta-btns">
+      <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 40px">
+        ⚔ Enter the Arena!
+      </a>
+      <a href="#token" class="btn-stone" style="font-size:1rem;padding:14px 32px">
+        💎 Join Presale
+      </a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">TonBola</div>
-  <div class="footer-links">
-    <a href="https://t.me/tonbola_community">Telegram</a>
-    <a href="#">Twitter / X</a>
-    <a href="#">Whitepaper</a>
-    <a href="#">Terms</a>
-    <a href="#">Privacy</a>
+  <div class="footer-inner">
+    <div class="footer-logo">Ton<span>B</span>ola</div>
+    <div class="footer-links">
+      <a href="https://t.me/tonbola_community">Telegram</a>
+      <a href="#">Twitter / X</a>
+      <a href="#">Whitepaper</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+    </div>
+    <div class="footer-copy">© 2025 TonBola · Built on TON</div>
   </div>
-  <div class="footer-copy">© 2025 TonBola · Built on TON</div>
 </footer>
 
 <script>
-/* ── FLOATING BALLS ── */
-const canvas = document.getElementById('ballCanvas');
-const ctx    = canvas.getContext('2d');
-const COLORS = ['#FF3CAC','#FFD93D','#00F5C8','#FF6B35','#8B2FFF','#3D9EFF'];
+// AOS observer
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return
+    e.target.classList.add('show')
+    if(e.target.dataset.count) animNum(e.target, +e.target.dataset.count)
+    if(e.target.dataset.ton)   animNum(e.target, +e.target.dataset.ton, 'TON')
+    io.unobserve(e.target)
+  })
+},{threshold:.12})
+document.querySelectorAll('.aos,[data-count],[data-ton]').forEach(el => io.observe(el))
 
-function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-resize(); window.addEventListener('resize', resize);
-
-const balls = Array.from({length:30}, ()=>({
-  x:Math.random()*window.innerWidth,
-  y:Math.random()*window.innerHeight,
-  r:16+Math.random()*20,
-  color:COLORS[Math.floor(Math.random()*COLORS.length)],
-  vx:(Math.random()-.5)*.55,
-  vy:(Math.random()-.5)*.55,
-  num:Math.floor(Math.random()*90)+1,
-  alpha:.1+Math.random()*.16,
-}));
-
-(function loop(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  balls.forEach(b=>{
-    b.x+=b.vx; b.y+=b.vy;
-    if(b.x<-b.r) b.x=canvas.width+b.r;
-    if(b.x>canvas.width+b.r) b.x=-b.r;
-    if(b.y<-b.r) b.y=canvas.height+b.r;
-    if(b.y>canvas.height+b.r) b.y=-b.r;
-    ctx.save();
-    ctx.globalAlpha=b.alpha;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-    ctx.fillStyle=b.color; ctx.fill();
-    ctx.globalAlpha=b.alpha*1.7;
-    ctx.fillStyle='#fff';
-    ctx.font=`700 ${Math.floor(b.r*.68)}px Fredoka,sans-serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(b.num,b.x,b.y);
-    ctx.restore();
-  });
-  requestAnimationFrame(loop);
-})();
-
-/* ── LIVE DRAW DEMO ── */
-const ballColors = ['b1','b2','b3','b4','b5','b6'];
-const drawn = [14,31,67,8,52];
-let cd = 5;
-
-function nextDraw(){
-  let n; do{ n=Math.floor(Math.random()*90)+1; }while(drawn.includes(n));
-  drawn.push(n); if(drawn.length>7) drawn.shift();
-  const el=document.getElementById('newBall');
-  el.className='ball '+ballColors[Math.floor(Math.random()*ballColors.length)]+' ball-new';
-  el.textContent=n; cd=5;
+function animNum(el, target, suffix='') {
+  let start = null
+  const run = ts => {
+    if(!start) start = ts
+    const p = Math.min((ts - start) / 1800, 1)
+    const e = 1 - Math.pow(1-p, 3)
+    el.textContent = Math.floor(e * target).toLocaleString('en-US') + (suffix?' '+suffix:'')
+    if(p < 1) requestAnimationFrame(run)
+  }
+  requestAnimationFrame(run)
 }
-setInterval(()=>{
-  cd--;
-  const el=document.getElementById('countdown');
-  if(el) el.textContent=cd;
-  if(cd<=0) nextDraw();
-},1000);
-
-/* ── COUNTER ANIMATION ── */
-function animNum(el,target,suffix){
-  let start=null;
-  const run=ts=>{
-    if(!start) start=ts;
-    const p=Math.min((ts-start)/2000,1);
-    const e=1-Math.pow(1-p,3);
-    el.textContent=Math.floor(e*target).toLocaleString('en-US')+(suffix?' '+suffix:'');
-    if(p<1) requestAnimationFrame(run);
-  };
-  requestAnimationFrame(run);
-}
-
-/* ── SCROLL OBSERVER ── */
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(!e.isIntersecting) return;
-    e.target.classList.add('show');
-    if(e.target.dataset.count) animNum(e.target, +e.target.dataset.count);
-    if(e.target.dataset.ton)   animNum(e.target, +e.target.dataset.ton, 'TON');
-    io.unobserve(e.target);
-  });
-},{threshold:.14});
-
-document.querySelectorAll('.aos,[data-count],[data-ton]').forEach(el=>io.observe(el));
 </script>
 </body>
 </html>
