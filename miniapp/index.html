@@ -1277,6 +1277,8 @@ function getLevelIcon(lv){
   return      {icon:'🏕️',color:'#3A7A24',label:'Rookie'}
 }
 
+let isGameActive = false  // true = game running, blocks new lobby entry
+
 function getTgUser(){return{
   id:tg?.initDataUnsafe?.user?.id||0,
   name:tg?.initDataUnsafe?.user?.first_name||tg?.initDataUnsafe?.user?.username||'Warrior',
@@ -1340,7 +1342,7 @@ function initHome(){
 
 function openLobby(r){
   // Block if game in progress
-  if(!gameOver && drawn.length > 0){
+  if(isGameActive){
     if(tg?.showPopup) tg.showPopup({
       title:'⚔ Game in Progress!',
       message:'You already have an active game.\nFinish it before starting a new one!',
@@ -1396,6 +1398,8 @@ function restoreGameState(){
     drawn.forEach(n => markC(n))
     document.getElementById('g-rm').textContent = ROOMS[curRoom].name
     document.getElementById('game-bar').style.display='block'
+    isGameActive = true
+    setRoomCardsEnabled(false)
     // restart draw timer
     if(timer) clearInterval(timer)
     const cdEl=document.getElementById('g-cd')
@@ -1412,6 +1416,7 @@ function restoreGameState(){
 function startGame(){
   go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
   document.getElementById('game-bar').style.display='block'
+  isGameActive = true
   setRoomCardsEnabled(false)
   saveGameState()
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
@@ -1496,6 +1501,7 @@ function checkW(){
       clearInterval(timer)
       document.getElementById('game-bar').style.display='none'
       sessionStorage.removeItem('tbgame')
+      isGameActive = false
       setRoomCardsEnabled(true)
       card.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk','lh');el.classList.add('bh')}})
       const cs=document.getElementById(`cs-${ci}`);if(cs){cs.textContent='BINGO! 🎱';cs.className='bcs bcs-b'}
@@ -1690,6 +1696,7 @@ function closeWin(){
   document.getElementById('wov').classList.remove('show')
   document.getElementById('game-bar').style.display='none'
   sessionStorage.removeItem('tbgame')
+  isGameActive = false
   setRoomCardsEnabled(true)
   go('sh');setNav('nb-h')
 }
