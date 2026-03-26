@@ -541,8 +541,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 
   <div class="sec">Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
-    <button class="btn btn-stone">⚔ Create Room</button>
-    <button class="btn btn-stone">🔑 Enter Code</button>
+    <button class="btn btn-stone" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
+    <button class="btn btn-stone" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
   </div>
 </div>
 
@@ -716,6 +716,141 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
     <div class="lbt" onclick="setTab('alltime',this)">All Time</div>
   </div>
   <div id="lb-list"></div>
+</div>
+
+<!-- CREATE ROOM -->
+<div class="screen" id="s-create">
+  <div class="stone-header">
+    <div class="topbar">
+      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Create Private Room</div>
+      <div style="width:60px"></div>
+    </div>
+  </div>
+
+  <div style="padding:14px 12px;display:flex;flex-direction:column;gap:10px">
+
+    <!-- Currency -->
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Currency</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="cr-currency">
+        <div class="cur-btn sel" data-cur="stars" onclick="selectCur(this,'stars')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(255,184,0,.2);border:2px solid var(--gold);transition:all .15s">
+          <div style="font-size:1.2rem">⭐</div>
+          <div style="font-size:.78rem;font-weight:700;color:#FFD93D;margin-top:3px">Stars</div>
+        </div>
+        <div class="cur-btn" data-cur="ton" onclick="selectCur(this,'ton')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+          <div style="font-size:1.2rem">💎</div>
+          <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:3px">TON</div>
+        </div>
+        <div class="cur-btn" data-cur="free" onclick="selectCur(this,'free')" style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+          <div style="font-size:1.2rem">🏕️</div>
+          <div style="font-size:.78rem;font-weight:700;color:#5AFF5A;margin-top:3px">Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Price -->
+    <div class="wood-panel" style="padding:16px" id="cr-price-wrap">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Card Price</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
+        <div class="price-btn sel" data-price="50" onclick="selectPrice(this,50)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(255,184,0,.2);border:2px solid var(--gold);color:#FFD93D;transition:all .15s">50 ⭐</div>
+        <div class="price-btn" data-price="100" onclick="selectPrice(this,100)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">100 ⭐</div>
+        <div class="price-btn" data-price="200" onclick="selectPrice(this,200)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">200 ⭐</div>
+        <div class="price-btn" data-price="500" onclick="selectPrice(this,500)" style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0;transition:all .15s">500 ⭐</div>
+      </div>
+    </div>
+
+    <!-- Max Players -->
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340">Max Players</div>
+        <div style="font-size:1.1rem;font-weight:700;color:#FFD93D" id="cr-players-val">10</div>
+      </div>
+      <input type="range" min="2" max="20" value="10" id="cr-players"
+        oninput="document.getElementById('cr-players-val').textContent=this.value"
+        style="width:100%;accent-color:#FFB800;height:6px">
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#5A3D1A;margin-top:4px">
+        <span>2</span><span>20</span>
+      </div>
+    </div>
+
+    <!-- Password (optional) -->
+    <div class="wood-panel" style="padding:16px">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Password (optional)</div>
+      <input type="text" id="cr-password" placeholder="Leave empty for open room"
+        maxlength="20"
+        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
+          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
+          outline:none;box-sizing:border-box">
+    </div>
+
+    <!-- Preview -->
+    <div class="stone-panel" style="padding:14px">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:8px">Room Preview</div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <span style="font-size:.82rem;color:#8B6340">Your earnings (2%)</span>
+        <span style="font-size:.85rem;font-weight:700;color:#FFD93D" id="cr-earn-preview">1 ⭐ per card</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <span style="font-size:.82rem;color:#8B6340">Prize pool (53%)</span>
+        <span style="font-size:.85rem;font-weight:700;color:#FFE0A0" id="cr-pool-preview">265 ⭐ max</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0">
+        <span style="font-size:.82rem;color:#8B6340">$TBOLA per card</span>
+        <span style="font-size:.85rem;font-weight:700;color:#FFD93D">+50 $TBOLA</span>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" onclick="createRoom()" style="padding:14px;font-size:1rem">⚔ Create Room & Get Code</button>
+  </div>
+</div>
+
+<!-- ENTER CODE -->
+<div class="screen" id="s-join">
+  <div class="stone-header">
+    <div class="topbar">
+      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">🔑 Enter Room Code</div>
+      <div style="width:60px"></div>
+    </div>
+  </div>
+
+  <div style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:.9rem;color:#8B6340;text-align:center;line-height:1.6;max-width:280px">
+      Enter the 6-character code shared by your friend to join their private room.
+    </div>
+
+    <!-- Code input -->
+    <div class="wood-panel" style="padding:24px 20px;width:100%;text-align:center">
+      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:14px">Room Code</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="code-boxes">
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+      </div>
+      <input type="text" id="join-code" maxlength="6" placeholder="Type code here"
+        oninput="updateCodeBoxes(this.value)"
+        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
+          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:1.1rem;
+          text-align:center;letter-spacing:6px;text-transform:uppercase;
+          outline:none;box-sizing:border-box">
+    </div>
+
+    <!-- Keyboard shortcut hint -->
+    <div style="font-size:.75rem;color:#5A3D1A;text-align:center">
+      Code is 6 characters — letters and numbers
+    </div>
+
+    <button class="btn btn-gold" onclick="joinRoom()" style="padding:14px;font-size:1rem;width:100%">🔑 Join Room</button>
+  </div>
 </div>
 
 <!-- WIN OVERLAY -->
@@ -1075,6 +1210,112 @@ function renderLb(tab){
 function setTab(tab,el){document.querySelectorAll('.lbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderLb(tab)}
 
 initHome();renderLb('weekly')
+
+// ── PRIVATE ROOM VARS ──
+let crCurrency='stars', crPrice=50
+
+function selectCur(el, cur){
+  crCurrency=cur
+  document.querySelectorAll('.cur-btn').forEach(b=>{
+    b.style.background='rgba(0,0,0,.2)'
+    b.style.borderColor='rgba(255,255,255,.1)'
+  })
+  el.style.background=cur==='stars'?'rgba(255,184,0,.2)':cur==='ton'?'rgba(61,158,255,.2)':'rgba(58,255,138,.15)'
+  el.style.borderColor=cur==='stars'?'#FFB800':cur==='ton'?'#40B8FF':'#2A7A1A'
+  // Update price options
+  const priceWrap=document.getElementById('cr-price-wrap')
+  const pricesEl=document.getElementById('cr-prices')
+  if(cur==='free'){
+    priceWrap.style.opacity='.4';priceWrap.style.pointerEvents='none'
+  } else {
+    priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
+    const opts=cur==='stars'
+      ?[{v:50,l:'50 ⭐'},{v:100,l:'100 ⭐'},{v:200,l:'200 ⭐'},{v:500,l:'500 ⭐'}]
+      :[{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'}]
+    pricesEl.innerHTML=opts.map((o,i)=>`
+      <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
+        style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+          background:${i===0?'rgba(255,184,0,.2)':'rgba(0,0,0,.2)'};
+          border:2px solid ${i===0?'#FFB800':'rgba(255,255,255,.1)'};
+          color:${i===0?'#FFD93D':'#FFE0A0'};transition:all .15s">${o.l}</div>`).join('')
+    crPrice=opts[0].v
+  }
+  updateRoomPreview()
+}
+
+function selectPrice(el, price){
+  crPrice=price
+  document.querySelectorAll('.price-btn').forEach(b=>{
+    b.style.background='rgba(0,0,0,.2)';b.style.borderColor='rgba(255,255,255,.1)';b.style.color='#FFE0A0'
+  })
+  el.style.background='rgba(255,184,0,.2)';el.style.borderColor='#FFB800';el.style.color='#FFD93D'
+  updateRoomPreview()
+}
+
+function updateRoomPreview(){
+  const maxP=parseInt(document.getElementById('cr-players')?.value||10)
+  const earn=crCurrency==='free'?'+$TBOLA':crCurrency==='stars'?Math.round(crPrice*.02)+' ⭐ per card':(crPrice*.02).toFixed(3)+' TON/card'
+  const pool=crCurrency==='free'?'$TBOLA':crCurrency==='stars'?Math.round(crPrice*maxP*.53)+' ⭐':(crPrice*maxP*.53).toFixed(2)+' TON'
+  const ep=document.getElementById('cr-earn-preview');if(ep)ep.textContent=earn
+  const pp=document.getElementById('cr-pool-preview');if(pp)pp.textContent=pool+' max'
+}
+document.getElementById('cr-players')?.addEventListener('input', updateRoomPreview)
+
+function generateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('')
+}
+
+function createRoom(){
+  const code=generateCode()
+  const pw=document.getElementById('cr-password')?.value||''
+  const maxP=document.getElementById('cr-players')?.value||10
+  // Show created room popup
+  const msg=`Room created!\n\nCode: ${code}\n\nShare this with your friends to join.${pw?'\nPassword: '+pw:''}`
+  if(tg?.showPopup){
+    tg.showPopup({title:'⚔ Room Ready!',message:msg,
+      buttons:[{id:'copy',type:'default',text:'📋 Copy Code'},{id:'ok',type:'ok'}]},
+      (id)=>{
+        if(id==='copy'&&navigator.clipboard) navigator.clipboard.writeText(code)
+        // Enter the lobby as creator
+        curRoom=crCurrency==='free'?'free':crCurrency==='ton'?'ton':'stars'
+        openLobby(curRoom)
+      })
+  } else {
+    alert(msg)
+    curRoom=crCurrency==='free'?'free':crCurrency==='ton'?'ton':'stars'
+    openLobby(curRoom)
+  }
+}
+
+function updateCodeBoxes(val){
+  val=val.toUpperCase().replace(/[^A-Z0-9]/g,'')
+  document.getElementById('join-code').value=val
+  const boxes=document.querySelectorAll('.code-box')
+  boxes.forEach((b,i)=>{
+    b.textContent=val[i]||''
+    b.style.borderColor=val[i]?'#FFB800':'#4A3318'
+    b.style.background=val[i]?'rgba(255,184,0,.1)':'rgba(0,0,0,.3)'
+  })
+}
+
+function joinRoom(){
+  const code=document.getElementById('join-code')?.value.toUpperCase()
+  if(!code||code.length!==6){
+    if(tg?.showPopup) tg.showPopup({title:'❌ Invalid Code',message:'Please enter a 6-character room code.',buttons:[{type:'ok'}]})
+    return
+  }
+  // In demo: just open stars lobby with the code
+  // In production: API call to validate code and get room details
+  if(tg?.showPopup){
+    tg.showPopup({title:'🔑 Joining Room '+code,
+      message:'Connecting to private room...\n\nIn the live version this will connect you to the exact room with your friend.',
+      buttons:[{id:'ok',type:'default',text:'Enter Lobby'}]},
+      ()=>{ curRoom='stars'; openLobby('stars') })
+  } else {
+    curRoom='stars'; openLobby('stars')
+  }
+}
 // Restore active game if user left and came back
 setTimeout(()=>{ restoreGameState() }, 300)
 </script>
