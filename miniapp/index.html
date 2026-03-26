@@ -1215,6 +1215,19 @@ function setNav(id){
   document.querySelectorAll('.screen').forEach(s=>s.style.paddingBottom=barVisible?'136px':'76px')
 }
 
+function setRoomCardsEnabled(enabled){
+  document.querySelectorAll('.rc').forEach(card=>{
+    card.style.opacity = enabled ? '1' : '.45'
+    card.style.filter  = enabled ? '' : 'grayscale(.4)'
+    card.style.pointerEvents = enabled ? '' : 'auto' // keep clickable to show warning
+  })
+  // Also update Play nav icon with indicator
+  const nbh = document.getElementById('nb-h')
+  if(nbh){
+    nbh.querySelector('.ni').textContent = enabled ? '⚔' : '🎱'
+  }
+}
+
 function initHome(){
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
@@ -1236,6 +1249,16 @@ function initHome(){
 }
 
 function openLobby(r){
+  // Block if game in progress
+  if(!gameOver && drawn.length > 0){
+    if(tg?.showPopup) tg.showPopup({
+      title:'⚔ Game in Progress!',
+      message:'You already have an active game.\nFinish it before starting a new one!',
+      buttons:[{id:'back',type:'default',text:'Back to Game'},{type:'cancel',text:'Dismiss'}]
+    },(id)=>{ if(id==='back'){ go('sg'); setNav('nb-h') } })
+    else alert('Game in progress! Finish it first.')
+    return
+  }
   curRoom=r;nCards=1
   document.getElementById('l-nm').textContent=ROOMS[r].name
   updateCost();go('sl')
@@ -1299,6 +1322,7 @@ function restoreGameState(){
 function startGame(){
   go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
   document.getElementById('game-bar').style.display='block'
+  setRoomCardsEnabled(false)
   saveGameState()
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const fmt=v=>c.cur==='stars'?Math.floor(v)+' Stars':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
@@ -1382,6 +1406,7 @@ function checkW(){
       clearInterval(timer)
       document.getElementById('game-bar').style.display='none'
       sessionStorage.removeItem('tbgame')
+      setRoomCardsEnabled(true)
       card.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk','lh');el.classList.add('bh')}})
       const cs=document.getElementById(`cs-${ci}`);if(cs){cs.textContent='BINGO! 🎱';cs.className='bcs bcs-b'}
       setTimeout(()=>showWin('bingo'),600)
@@ -1508,6 +1533,7 @@ function closeWin(){
   document.getElementById('wov').classList.remove('show')
   document.getElementById('game-bar').style.display='none'
   sessionStorage.removeItem('tbgame')
+  setRoomCardsEnabled(true)
   go('sh');setNav('nb-h')
 }
 
