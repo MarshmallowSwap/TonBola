@@ -1449,57 +1449,44 @@ function renderPoolBanner(tab) {
   const base = POOL_BASE[tab]
   const lbl = document.getElementById('lb-pool-label')
   if(lbl) lbl.textContent = base.label
-
   const grid = document.getElementById('lb-pool-grid')
   if(!grid) return
 
-  const stars = base.stars + (tab==='weekly'?poolGrowth.stars:tab==='monthly'?poolGrowth.stars*4:0)
-  const ton   = base.ton   + (tab==='squads'?poolGrowth.ton:0)
-  const tbola = base.tbola + poolGrowth.tbola
+  const stars  = Math.floor(base.stars  + (tab==='weekly'?poolGrowth.stars:tab==='monthly'?poolGrowth.stars*4:0))
+  const ton    = parseFloat((base.ton   + (tab==='squads'?poolGrowth.ton:0)).toFixed(2))
+  const tbola  = Math.floor(base.tbola  + poolGrowth.tbola)
 
-  const boxes = []
-
-  if(base.stars > 0 || stars > 0) boxes.push({
-    label:'⭐ Stars Pool', color:'#FFD93D',
-    bg:'rgba(255,184,0,.08)', border:'rgba(255,184,0,.25)',
-    value: Math.floor(stars).toLocaleString()+' Stars',
-    sub: tab==='weekly'?'Top 10 share':'Top 10 share'
-  })
-  if(base.ton > 0 || ton > 0) boxes.push({
-    label:'💎 TON Pool', color:'#40B8FF',
-    bg:'rgba(61,158,255,.08)', border:'rgba(61,158,255,.25)',
-    value: ton.toFixed(2)+' TON',
-    sub: 'Top squads share'
-  })
-  if(base.tbola > 0) boxes.push({
-    label:'◆ $TBOLA Pool', color:'#FFD93D',
-    bg:'rgba(255,184,0,.06)', border:'rgba(255,184,0,.2)',
-    value: Math.floor(tbola).toLocaleString(),
-    sub: 'Airdrop snapshot'
-  })
-
-  // alltime shows total distributed
-  if(tab==='alltime') {
-    grid.style.gridTemplateColumns = 'repeat(3,1fr)'
-    grid.innerHTML = [
-      {label:'⭐ Total Stars', color:'#FFD93D', bg:'rgba(255,184,0,.08)', border:'rgba(255,184,0,.25)', value:'1,284,400', sub:'paid out ever'},
-      {label:'💎 Total TON',   color:'#40B8FF', bg:'rgba(61,158,255,.08)', border:'rgba(61,158,255,.25)', value:'48.2 TON', sub:'paid out ever'},
-      {label:'◆ $TBOLA Given',color:'#C080FF', bg:'rgba(192,128,255,.08)', border:'rgba(192,128,255,.2)', value:Math.floor(tbola).toLocaleString(), sub:'accumulated'},
-    ].map(b=>`
-      <div style="background:${b.bg};border:1.5px solid ${b.border};border-radius:10px;padding:10px 8px;text-align:center">
-        <div style="font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${b.color};margin-bottom:4px;opacity:.8">${b.label}</div>
-        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${b.color};line-height:1.1;text-shadow:0 0 10px ${b.color}55">${b.value}</div>
-        <div style="font-size:.62rem;color:#4A3318;margin-top:2px">${b.sub}</div>
-      </div>`).join('')
-    return
+  const configs = {
+    weekly: [
+      {label:'⭐ Stars Pool',  color:'#FFD93D', bg:'rgba(255,184,0,.1)',  border:'rgba(255,184,0,.3)',  value: stars.toLocaleString()+' ⭐', sub:'Top 10 players share'},
+      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value: tbola.toLocaleString(),       sub:'Airdrop snapshot'},
+    ],
+    monthly: [
+      {label:'⭐ Stars Pool',  color:'#FFD93D', bg:'rgba(255,184,0,.1)',  border:'rgba(255,184,0,.3)',  value: stars.toLocaleString()+' ⭐', sub:'Top 10 monthly share'},
+      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value: tbola.toLocaleString(),       sub:'Season airdrop'},
+    ],
+    squads: [
+      {label:'💎 TON Pool',    color:'#40B8FF', bg:'rgba(61,158,255,.1)',  border:'rgba(61,158,255,.3)',  value: ton+' TON',                  sub:'Top squads share'},
+      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value: tbola.toLocaleString(),       sub:'Airdrop snapshot'},
+    ],
+    alltime: [
+      {label:'⭐ Total Stars', color:'#FFD93D', bg:'rgba(255,184,0,.1)',  border:'rgba(255,184,0,.3)',  value:'1,284,400 ⭐', sub:'paid out ever'},
+      {label:'💎 Total TON',  color:'#40B8FF', bg:'rgba(61,158,255,.1)',  border:'rgba(61,158,255,.3)',  value:'48.2 TON',    sub:'paid out ever'},
+      {label:'◆ $TBOLA',     color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value: tbola.toLocaleString(), sub:'accumulated'},
+    ]
   }
 
-  grid.style.gridTemplateColumns = boxes.length===1?'1fr':boxes.length===2?'1fr 1fr':'repeat(3,1fr)'
-  grid.innerHTML = boxes.map(b=>`
-    <div style="background:${b.bg};border:1.5px solid ${b.border};border-radius:10px;padding:10px 8px;text-align:center">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${b.color};margin-bottom:4px;opacity:.8">${b.label}</div>
-      <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${b.color};line-height:1.1;text-shadow:0 0 10px ${b.color}55" id="pool-val-${b.label.replace(/[^a-z]/gi,'')}">${b.value}</div>
-      <div style="font-size:.62rem;color:#4A3318;margin-top:2px">${b.sub}</div>
+  const boxes = configs[tab] || configs.weekly
+  grid.style.gridTemplateColumns = boxes.length === 3 ? 'repeat(3,1fr)' : '1fr 1fr'
+  grid.innerHTML = boxes.map(b => `
+    <div style="background:${b.bg};border:1.5px solid ${b.border};
+      border-radius:10px;padding:10px 8px;text-align:center">
+      <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;
+        text-transform:uppercase;color:${b.color};margin-bottom:5px;opacity:.9">${b.label}</div>
+      <div style="font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
+        color:${b.color};line-height:1.1;
+        text-shadow:0 0 12px ${b.color}66">${b.value}</div>
+      <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">${b.sub}</div>
     </div>`).join('')
 }
 
