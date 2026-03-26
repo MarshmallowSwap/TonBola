@@ -275,44 +275,97 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;border-radius:4px;overflow:hidden}
 
 /* ── PARCHMENT card (Free room) ── */
-.card-parchment{background:linear-gradient(135deg,#E8D5A0,#D4BC80,#C8A860);
-  border:3px solid #8B6820;border-radius:6px;padding:8px;
-  box-shadow:3px 4px 8px rgba(0,0,0,.6),inset 0 0 20px rgba(120,80,0,.2)}
-.card-parchment::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
-  width:60%;height:8px;background:linear-gradient(90deg,transparent,#C8A040,transparent);
-  border-radius:50%}
-.card-parchment .bc{background:rgba(120,80,0,.1);border:1.5px solid rgba(120,80,0,.3);
-  color:#5A3500;border-radius:4px;font-size:.8rem;font-weight:700}
+.card-parchment{
+  background-color:#D4B483;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(180deg,transparent 0px,rgba(180,130,60,.06) 1px,transparent 2px),
+    linear-gradient(160deg,#E8D4A0 0%,#D4B878 30%,#C8A860 55%,#D8BE88 80%,#E0CC98 100%);
+  border:0 solid transparent;border-radius:2px;padding:10px 8px 14px;
+  position:relative;
+  box-shadow:3px 5px 12px rgba(0,0,0,.7),inset 0 0 30px rgba(100,60,0,.15)}
+.card-parchment::before{content:'';position:absolute;top:-6px;left:50%;
+  transform:translateX(-50%);width:55%;height:12px;
+  background:radial-gradient(ellipse,#C8A040 0%,#A07020 60%,transparent 100%);
+  border-radius:50%;z-index:2}
+.card-parchment::after{content:'';position:absolute;inset:0;border-radius:2px;
+  background:linear-gradient(90deg,
+    rgba(100,60,0,.18) 0%,transparent 12%,
+    transparent 88%,rgba(100,60,0,.15) 100%)}
+.card-parchment .bc{background:rgba(160,100,20,.12);
+  border:1px solid rgba(140,90,20,.35);
+  color:#4A2800;font-size:.82rem;font-weight:700;font-style:italic;
+  text-shadow:0 1px 0 rgba(255,220,150,.4)}
 
-/* ── WOOD card (Stars room) ── */
-.card-wood{background:linear-gradient(160deg,#6B3A1A 0%,#5A2E10 25%,#7A4520 50%,#5A2E10 75%,#6B3A1A 100%);
-  border:3px solid #3A1A08;border-radius:4px;padding:8px;
-  box-shadow:3px 5px 10px rgba(0,0,0,.7),inset 0 0 15px rgba(0,0,0,.3);
-  position:relative}
-.card-wood::after{content:'';position:absolute;top:4px;right:4px;width:8px;height:8px;
-  border-radius:50%;background:radial-gradient(#888,#555);border:1px solid #333}
-.card-wood::before{content:'';position:absolute;top:4px;left:4px;width:8px;height:8px;
-  border-radius:50%;background:radial-gradient(#888,#555);border:1px solid #333}
-.card-wood .bc{background:rgba(0,0,0,.25);border:1.5px solid rgba(0,0,0,.4);
-  color:#FFD07A;border-radius:3px;font-size:.82rem;font-weight:700;
-  text-shadow:0 1px 2px rgba(0,0,0,.8)}
+/* ── WOOD PLANK card (Stars room) ── */
+.card-wood{
+  background-color:#6B3A1A;
+  background-image:
+    repeating-linear-gradient(90deg,transparent 0px,rgba(0,0,0,.04) 1px,transparent 2px),
+    repeating-linear-gradient(180deg,
+      rgba(255,255,255,.04) 0px,transparent 3px,
+      rgba(0,0,0,.06) 8px,transparent 12px,
+      rgba(255,255,255,.03) 18px,transparent 22px),
+    linear-gradient(180deg,#7A4828 0%,#5A3010 18%,#7A4520 35%,#5A2E0E 52%,#7A4520 68%,#603218 85%,#5A2E10 100%);
+  border:4px solid #3A1A08;border-radius:3px;padding:9px 8px;
+  position:relative;
+  box-shadow:4px 6px 14px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.1),
+    inset 0 -1px 0 rgba(0,0,0,.4)}
+.card-wood::before{content:'';position:absolute;top:5px;left:5px;width:10px;height:10px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#AAA,#555);
+  border:1.5px solid #222;box-shadow:0 1px 3px rgba(0,0,0,.6);z-index:3}
+.card-wood::after{content:'';position:absolute;top:5px;right:5px;width:10px;height:10px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#AAA,#555);
+  border:1.5px solid #222;box-shadow:0 1px 3px rgba(0,0,0,.6);z-index:3}
+.card-wood .bc{background:rgba(0,0,0,.28);border:1px solid rgba(0,0,0,.5);
+  color:#FFD07A;font-size:.82rem;font-weight:700;border-radius:2px;
+  text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 6px rgba(255,184,0,.2)}
+.card-wood-bottom-rivets{position:absolute;bottom:5px;left:5px;right:5px;
+  display:flex;justify-content:space-between;pointer-events:none;z-index:3}
+.rivet{width:10px;height:10px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#AAA,#555);
+  border:1.5px solid #222;box-shadow:0 1px 3px rgba(0,0,0,.6)}
 
 /* ── STONE TABLET card (TON room) ── */
-.card-stone{background:linear-gradient(135deg,#7A7060,#6A6050,#5A5040);
-  border:3px solid #3A3028;border-radius:4px;padding:8px;
-  box-shadow:3px 5px 10px rgba(0,0,0,.7),inset 0 0 20px rgba(0,0,0,.3)}
-.card-stone .bc{background:rgba(0,0,0,.25);border:1.5px solid rgba(0,0,0,.35);
-  color:#40CCFF;border-radius:2px;font-size:.82rem;font-weight:700;
-  text-shadow:0 0 6px rgba(64,204,255,.6)}
+.card-stone{
+  background-color:#6A6458;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E"),
+    linear-gradient(135deg,#7A7468 0%,#6A6458 40%,#585248 70%,#686258 100%);
+  border:4px solid #3A3428;border-radius:3px;padding:9px 8px;
+  position:relative;
+  box-shadow:4px 6px 14px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 0 20px rgba(0,0,0,.3)}
+.card-stone::before{content:'';position:absolute;top:0;left:22%;width:56%;height:4px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  border-radius:0 0 50% 50%}
+.card-stone::after{content:'';position:absolute;top:35%;right:6px;width:2px;height:25%;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.4),transparent);
+  border-radius:1px}
+.card-stone .bc{background:rgba(0,0,0,.3);border:1px solid rgba(0,0,0,.5);
+  color:#40CCFF;font-size:.82rem;font-weight:700;border-radius:1px;
+  text-shadow:0 0 8px rgba(64,204,255,.7),0 1px 0 rgba(0,0,0,.8)}
 
-/* ── GOLD METAL card (VIP room) ── */
-.card-gold{background:linear-gradient(135deg,#8B6E00,#6B5200,#AA8A10,#6B5200,#8B6E00);
-  border:3px solid #FFD700;border-radius:4px;padding:8px;
-  box-shadow:3px 5px 10px rgba(0,0,0,.7),0 0 20px rgba(255,184,0,.2),
-    inset 0 0 15px rgba(0,0,0,.4)}
-.card-gold .bc{background:rgba(0,0,0,.3);border:1.5px solid rgba(255,215,0,.25);
-  color:#FFE040;border-radius:3px;font-size:.82rem;font-weight:700;
-  text-shadow:0 0 6px rgba(255,184,0,.7)}
+/* ── GOLD PLATE card (VIP room) ── */
+.card-gold{
+  background-color:#8B7010;
+  background-image:
+    repeating-linear-gradient(45deg,transparent 0px,rgba(255,255,255,.04) 1px,transparent 2px),
+    repeating-linear-gradient(-45deg,transparent 0px,rgba(0,0,0,.04) 1px,transparent 2px),
+    linear-gradient(160deg,#C8A820 0%,#8B7010 20%,#AA9020 40%,#6B5200 55%,#AA8A10 72%,#C4A020 88%,#8B7010 100%);
+  border:4px solid #FFD700;border-radius:3px;padding:9px 8px;
+  position:relative;
+  box-shadow:4px 6px 14px rgba(0,0,0,.8),0 0 20px rgba(255,184,0,.25),
+    inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 25px rgba(0,0,0,.35)}
+.card-gold::before{content:'';position:absolute;top:5px;left:5px;width:10px;height:10px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE066,#AA8000);
+  border:1.5px solid #FFDD00;box-shadow:0 0 6px rgba(255,220,0,.5);z-index:3}
+.card-gold::after{content:'';position:absolute;top:5px;right:5px;width:10px;height:10px;
+  border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE066,#AA8000);
+  border:1.5px solid #FFDD00;box-shadow:0 0 6px rgba(255,220,0,.5);z-index:3}
+.card-gold .bc{background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.3);
+  color:#FFE040;font-size:.82rem;font-weight:700;border-radius:2px;
+  text-shadow:0 0 8px rgba(255,184,0,.8),0 1px 0 rgba(0,0,0,.8)}
 
 /* ── shared marked/win states ── */
 .bc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
@@ -849,15 +902,22 @@ function renderCards(){
   const labelMap={free:'📜 Card',stars:'🪵 Card',ton:'🗿 Card',vip:'👑 Card'}
   const cardStyle=styleMap[curRoom]||'card-stone'
   const cardLabel=labelMap[curRoom]||'Card'
+  const extras={
+    'card-wood':`<div style="position:absolute;bottom:5px;left:5px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#AAA,#555);border:1.5px solid #222;box-shadow:0 1px 3px rgba(0,0,0,.6);z-index:3"></div><div style="position:absolute;bottom:5px;right:5px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#AAA,#555);border:1.5px solid #222;box-shadow:0 1px 3px rgba(0,0,0,.6);z-index:3"></div>`,
+    'card-stone':`<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;opacity:.1;pointer-events:none;z-index:0;color:#40CCFF">▽</div>`,
+    'card-gold':`<div style="position:absolute;bottom:5px;left:5px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE066,#AA8000);border:1.5px solid #FFDD00;box-shadow:0 0 6px rgba(255,220,0,.5);z-index:3"></div><div style="position:absolute;bottom:5px;right:5px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE066,#AA8000);border:1.5px solid #FFDD00;box-shadow:0 0 6px rgba(255,220,0,.5);z-index:3"></div>`,
+    'card-parchment':''
+  }
   cont.innerHTML=cards.map((card,ci)=>`
     <div class="bcwrap">
       <div class="bct">
         <div class="bcl">${cardLabel} ${ci+1}</div>
         <div class="bcs bcs-p" id="cs-${ci}">Playing</div>
       </div>
-      <div class="${cardStyle}" style="position:relative;border-radius:6px">
-        <div class="bgrid">
-        ${card.map(n=>`<div class="bc" id="c${ci}-${n}">${n}</div>`).join('')}
+      <div class="${cardStyle}" style="position:relative">
+        ${extras[cardStyle]||''}
+        <div class="bgrid" style="position:relative;z-index:1">
+          ${card.map(n=>`<div class="bc" id="c${ci}-${n}">${n}</div>`).join('')}
         </div>
       </div>
     </div>`).join('')
