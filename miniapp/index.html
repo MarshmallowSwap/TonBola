@@ -163,6 +163,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .live-dot{width:5px;height:5px;border-radius:50%;background:#3AFF8A;
   animation:pd 1.2s ease infinite;box-shadow:0 0 6px #3AFF8A}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .rprz{font-size:.78rem;font-weight:700}
 
 /* ── CRYSTAL decorations (CSS only) ── */
@@ -729,6 +730,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 </div>
 
 <!-- NAV -->
+<div id="game-bar" style="display:none;position:fixed;bottom:76px;left:0;right:0;z-index:99;
+  background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
+  border-top:2px solid #6B4423;border-bottom:2px solid #1A0E04;
+  padding:8px 12px;cursor:pointer;animation:slideUp .3s ease"
+  onclick="go('sg');setNav('nb-h')">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+    <div style="width:8px;height:8px;border-radius:50%;background:#3AFF8A;
+      box-shadow:0 0 8px #3AFF8A;animation:pd 1.2s ease infinite"></div>
+    <span style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#FFE0A0">
+      Game in progress — tap to return to your cards
+    </span>
+    <span style="font-size:1rem">🎱</span>
+  </div>
+</div>
 <nav class="nav">
   <button class="nb on" id="nb-h" onclick="go('sh');setNav('nb-h')"><div class="ni">⚔</div>Play</button>
   <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');renderLb('weekly')"><div class="ni">🏆</div>Ranks</button>
@@ -759,7 +774,13 @@ const BC=['c1','c2','c3','c4','c5','c6']
 let curRoom='stars',nCards=1,drawn=[],cards=[],timer=null,cd=5
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
-function setNav(id){document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));document.getElementById(id)?.classList.add('on')}
+function setNav(id){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'))
+  document.getElementById(id)?.classList.add('on')
+  // Adjust screen padding if game bar is showing
+  const barVisible = document.getElementById('game-bar').style.display==='block'
+  document.querySelectorAll('.screen').forEach(s=>s.style.paddingBottom=barVisible?'136px':'76px')
+}
 
 function initHome(){
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
@@ -807,6 +828,7 @@ function genCard(){return Array.from({length:90},(_,i)=>i+1).sort(()=>Math.rando
 
 function startGame(){
   go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
+  document.getElementById('game-bar').style.display='block'
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const fmt=v=>c.cur==='stars'?Math.floor(v)+' Stars':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
@@ -885,6 +907,7 @@ function checkW(){
     if(!gameOver && card.every(n=>drawn.includes(n))){
       gameOver=true
       clearInterval(timer)
+      document.getElementById('game-bar').style.display='none'
       card.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk','lh');el.classList.add('bh')}})
       const cs=document.getElementById(`cs-${ci}`);if(cs){cs.textContent='BINGO! 🎱';cs.className='bcs bcs-b'}
       setTimeout(()=>showWin('bingo'),600)
@@ -932,7 +955,11 @@ function spawnConf(){
   }).join('')
 }
 
-function closeWin(){document.getElementById('wov').classList.remove('show');go('sh');setNav('nb-h')}
+function closeWin(){
+  document.getElementById('wov').classList.remove('show')
+  document.getElementById('game-bar').style.display='none'
+  go('sh');setNav('nb-h')
+}
 
 function renderProfile(){
   const av=document.getElementById('p-av');if(av)av.textContent=user.name[0].toUpperCase()
