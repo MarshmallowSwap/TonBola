@@ -826,9 +826,43 @@ function updateCost(){
 
 function genCard(){return Array.from({length:90},(_,i)=>i+1).sort(()=>Math.random()-.5).slice(0,15).sort((a,b)=>a-b)}
 
+function saveGameState(){
+  if(gameOver) return sessionStorage.removeItem('tbgame')
+  sessionStorage.setItem('tbgame', JSON.stringify({
+    room:curRoom, nCards, drawn, cards, cd
+  }))
+}
+
+function restoreGameState(){
+  try{
+    const s = sessionStorage.getItem('tbgame')
+    if(!s) return false
+    const g = JSON.parse(s)
+    curRoom=g.room; nCards=g.nCards; drawn=g.drawn; cards=g.cards; gameOver=false
+    go('sg')
+    renderCards()
+    renderBalls()
+    // restore marks
+    drawn.forEach(n => markC(n))
+    document.getElementById('g-rm').textContent = ROOMS[curRoom].name
+    document.getElementById('game-bar').style.display='block'
+    // restart draw timer
+    if(timer) clearInterval(timer)
+    const cdEl=document.getElementById('g-cd')
+    const cdEl2=document.getElementById('g-cd2')
+    cd=5
+    timer=setInterval(()=>{
+      cd--;if(cdEl)cdEl.textContent=cd;if(cdEl2)cdEl2.textContent=cd
+      if(cd<=0){cd=5;saveGameState();drawN()}
+    },1000)
+    return true
+  } catch(e){ sessionStorage.removeItem('tbgame'); return false }
+}
+
 function startGame(){
   go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
   document.getElementById('game-bar').style.display='block'
+  saveGameState()
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const fmt=v=>c.cur==='stars'?Math.floor(v)+' Stars':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
@@ -848,7 +882,7 @@ function startGame(){
 
 function drawN(){
   const av=Array.from({length:90},(_,i)=>i+1).filter(n=>!drawn.includes(n));if(!av.length)return
-  const n=av[Math.floor(Math.random()*av.length)];drawn.push(n);renderBalls();markC(n);checkW()
+  const n=av[Math.floor(Math.random()*av.length)];drawn.push(n);renderBalls();markC(n);checkW();saveGameState()
 }
 
 function renderBalls(){
@@ -908,6 +942,7 @@ function checkW(){
       gameOver=true
       clearInterval(timer)
       document.getElementById('game-bar').style.display='none'
+      sessionStorage.removeItem('tbgame')
       card.forEach(n=>{const el=document.getElementById(`c${ci}-${n}`);if(el){el.classList.remove('mk','lh');el.classList.add('bh')}})
       const cs=document.getElementById(`cs-${ci}`);if(cs){cs.textContent='BINGO! 🎱';cs.className='bcs bcs-b'}
       setTimeout(()=>showWin('bingo'),600)
@@ -958,6 +993,7 @@ function spawnConf(){
 function closeWin(){
   document.getElementById('wov').classList.remove('show')
   document.getElementById('game-bar').style.display='none'
+  sessionStorage.removeItem('tbgame')
   go('sh');setNav('nb-h')
 }
 
@@ -1039,6 +1075,8 @@ function renderLb(tab){
 function setTab(tab,el){document.querySelectorAll('.lbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderLb(tab)}
 
 initHome();renderLb('weekly')
+// Restore active game if user left and came back
+setTimeout(()=>{ restoreGameState() }, 300)
 </script>
 </body>
 </html>
