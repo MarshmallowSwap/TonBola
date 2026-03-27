@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
+<link rel="preload" as="image" href="assets/token-tbola.png">
 <link rel="preload" as="image" href="assets/btn-stone.png">
 <link rel="preload" as="image" href="assets/icon-free.png">
 <link rel="preload" as="image" href="assets/icon-vip.png">
@@ -640,7 +641,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <div class="bal-top">
         <div>
           <div class="bal-lbl">$TBOLA Balance</div>
-          <div class="bal-amt" id="bc-tbola">505</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <img src="assets/token-tbola.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">
+            <div class="bal-amt" id="bc-tbola">505</div>
+          </div>
           <div style="font-size:.7rem;color:#5A3D1A;margin-top:2px">Airdrop coming soon ⚔</div>
         </div>
         <div class="lv-badge">
