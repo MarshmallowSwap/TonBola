@@ -13,10 +13,6 @@
 <link rel="preload" as="image" href="assets/icon-vip.png">
 <link rel="preload" as="image" href="assets/icon-ton.png">
 <link rel="preload" as="image" href="assets/icon-star.png">
-<link rel="preload" as="image" href="assets/rc-free.png">
-<link rel="preload" as="image" href="assets/rc-stars.png">
-<link rel="preload" as="image" href="assets/rc-ton.png">
-<link rel="preload" as="image" href="assets/rc-vip.png">
 <link rel="preload" as="image" href="assets/bal-card.png">
 <link rel="preload" as="image" href="assets/ball-blue.png">
 <link rel="preload" as="image" href="assets/ball-gold.png">
@@ -127,15 +123,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   text-shadow:0 1px 0 rgba(255,255,255,.3)}
 .btn-gold:disabled,.btn-gold[disabled]{background:linear-gradient(180deg,#5A4A20,#3A2E10)!important;color:rgba(255,200,80,.5)!important;border-color:#4A3A18!important;box-shadow:0 3px 0 #1A1408!important}
 .btn-stone{
-  background-image:url(assets/btn-stone.png);
-  background-size:100% 100%;background-repeat:no-repeat;
-  background-color:transparent!important;
-  color:#3D1A00;border:none!important;outline:none!important;
-  box-shadow:none!important;-webkit-appearance:none;appearance:none;
+  background:linear-gradient(180deg,#5A4230,#3A2818);
+  color:#FFE0A0;border:2px solid #8B6340!important;outline:none!important;
+  box-shadow:0 3px 0 #1A0C04;-webkit-appearance:none;appearance:none;
   border-radius:8px;
   padding:14px 12px;font-size:.82rem;
-  text-shadow:0 1px 0 rgba(255,220,150,.5);font-weight:700;
-  min-height:52px;white-space:nowrap}
+  font-weight:700;min-height:52px;white-space:nowrap}
 .btn-sm{padding:7px 12px;font-size:.8rem;width:auto}
 .btn-back{background:linear-gradient(180deg,#5A3D1A,#3D2810);
   color:#FFD093;border:2px solid #7A5228;
@@ -195,10 +188,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 5px 0 rgba(0,0,0,.6);
   height:130px;
   display:flex;flex-direction:column;position:relative;justify-content:space-between}
-.rc.free{background-image:url(assets/rc-free.png)}
-.rc.stars{background-image:url(assets/rc-stars.png)}
-.rc.ton{background-image:url(assets/rc-ton.png)}
-.rc.vip{background-image:url(assets/rc-vip.png)}
+.rc.free{background:linear-gradient(135deg,#1A3A0A,#0E2006);border:2px solid #2A6A0A!important}
+.rc.stars{background:linear-gradient(135deg,#1A1A1A,#0E0E0E);border:2px solid #555!important}
+.rc.ton{background:linear-gradient(135deg,#003060,#001A40);border:2px solid #0060A0!important}
+.rc.vip{background:linear-gradient(135deg,#3A2800,#1E1400);border:2px solid #C4933F!important}
 .rc:active{transform:scale(.97) translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.5)}
 
 
@@ -383,10 +376,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   border:none!important;box-shadow:0 6px 20px rgba(0,0,0,.8)!important;
   container-type:inline-size}
 
-.card-parchment{background-image:url(assets/card-wood.png)}
-.card-wood{background-image:url(assets/card-stone.png)}
-.card-stone{background-image:url(assets/card-bronze.png)}
-.card-gold{background-image:url(assets/card-gold.png)}
+.card-parchment{background:linear-gradient(135deg,#4A2E10,#2E1A08);border:2px solid #6B4423}
+.card-wood{background:linear-gradient(135deg,#3A3228,#252018);border:2px solid #5A5248}
+.card-stone{background:linear-gradient(135deg,#5A3A1A,#3A2010);border:2px solid #8B6040}
+.card-gold{background:linear-gradient(135deg,#4A3A00,#2E2200);border:2px solid #C4933F}
 
 .card-parchment .bc{background:transparent;border:none;
   color:#2A1000;font-size:4.5cqw;font-weight:700;font-style:italic;
@@ -681,7 +674,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div>
           <div class="bal-lbl">$TBOLA Balance</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <img src="assets/token-tbola.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">
+            <div style="font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;color:#C4933F;flex-shrink:0;text-shadow:0 1px 2px rgba(0,0,0,.8)">$TBOLA</div>
             <div class="bal-amt" id="bc-tbola">505</div>
           </div>
           <div style="font-size:.7rem;color:#5A3D1A;margin-top:2px">Airdrop coming soon ⚔</div>
@@ -797,9 +790,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#FFE0A0" id="hub-name">Tommy</div>
         <div style="font-size:.65rem;color:#6B4423">@Tommyall</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);
         border-radius:50px;padding:4px 10px;border:1.5px solid rgba(255,184,0,.2)">
-        <img src="assets/token-tbola.png" style="width:18px;height:18px;object-fit:contain">
+        <span style="font-family:'Clash',sans-serif;font-size:.72rem;font-weight:700;color:#C4933F">$TBOLA</span>
         <span style="font-family:'Clash',sans-serif;font-size:.82rem;font-weight:700;color:#FFD93D" id="hub-tbola">505</span>
       </div>
     </div>
@@ -1222,7 +1215,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
   <!-- Warrior Pass -->
   <div onclick="showWarriorPass()" style="margin:0 10px 8px;cursor:pointer;
-    background-image:url(assets/bal-card.png);background-size:100% 100%;
+    background:linear-gradient(135deg,#2A2010,#1A1408);border:2px solid rgba(196,147,63,.3);
     border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;
     box-shadow:0 4px 0 rgba(0,0,0,.5)">
     <div style="font-size:2rem">⚔️</div>
