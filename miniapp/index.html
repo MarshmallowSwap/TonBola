@@ -847,8 +847,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <button class="spin-btn" onclick="addSpins(1)">+1</button>
       <button class="spin-btn" onclick="addSpins(5)">+5</button>
       <button class="spin-btn" onclick="addSpins(10)">+10</button>
-      <button class="spin-btn" onclick="addSpins(50)">+50</button>
-      <button class="spin-btn" onclick="addSpins(100)">+100</button>
+      <button class="spin-btn" onclick="addSpins(50)" style="position:relative">+50<span style="position:absolute;top:-6px;right:-6px;background:#3AFF8A;color:#000;font-size:.4rem;font-weight:700;border-radius:3px;padding:1px 3px">-10%</span></button>
+      <button class="spin-btn" onclick="addSpins(100)" style="position:relative">+100<span style="position:absolute;top:-6px;right:-6px;background:#3AFF8A;color:#000;font-size:.4rem;font-weight:700;border-radius:3px;padding:1px 3px">-10%</span></button>
       <button class="spin-btn spin-btn-clear" onclick="clearSpins()">✕</button>
     </div>
     <!-- Selected spins display -->
@@ -874,13 +874,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       style="padding:8px;border-radius:8px;text-align:center;cursor:pointer;
         background:rgba(30,30,30,.5);border:2px solid #555;transition:all .15s">
       <div style="font-size:.75rem;font-weight:700;color:#CCC">◈ NOT</div>
-      <div style="font-size:.62rem;color:#888">500 NOT / spin</div>
+      <div style="font-size:.62rem;color:#888">250 NOT / spin</div>
     </div>
     <div id="w-cur-ton" onclick="setWheelCur('ton')"
       style="padding:8px;border-radius:8px;text-align:center;cursor:pointer;
         background:rgba(0,80,140,.2);border:2px solid #0098EA;transition:all .15s">
       <div style="font-size:.75rem;font-weight:700;color:#40B8FF">💎 TON</div>
-      <div style="font-size:.62rem;color:#1A6090">0.2 TON / spin</div>
+      <div style="font-size:.62rem;color:#1A6090">0.1 TON / spin</div>
     </div>
   </div>
 
@@ -2076,7 +2076,7 @@ let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 67.3
-let wheelPricePerSpin = {not:500, ton:0.2}
+let wheelPricePerSpin = {not:250, ton:0.1}
 
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
@@ -2143,9 +2143,12 @@ function updateWheelUI() {
   const total = wheelSpinsSelected * price
   const isTon = wheelCur === 'ton'
   document.getElementById('w-spin-count').textContent = wheelSpinsSelected
+  const discountW = wheelSpinsSelected >= 50 ? 0.9 : 1
+  const totalDisc = total * discountW
   if(wheelSpinsSelected > 0) {
-    document.getElementById('w-total-cost').textContent = isTon ?
-      total.toFixed(2)+' TON' : total.toLocaleString()+' NOT'
+    const costStr = isTon ? totalDisc.toFixed(2)+' TON' : Math.floor(totalDisc).toLocaleString()+' NOT'
+    const discTag = discountW < 1 ? ' <span style="color:#3AFF8A;font-size:.6rem">-10%</span>' : ''
+    document.getElementById('w-total-cost').innerHTML = costStr + discTag
   } else {
     document.getElementById('w-total-cost').textContent = '—'
   }
@@ -2153,8 +2156,10 @@ function updateWheelUI() {
   const btn = document.getElementById('w-start-btn')
   if(btn) {
     if(wheelSpinsSelected > 0) {
-      const costStr = isTon ? total.toFixed(2)+' TON' : total.toLocaleString()+' NOT'
-      btn.textContent = '🎡 Start & Pay — '+costStr
+      const discW = wheelSpinsSelected >= 50 ? 0.9 : 1
+      const costStr = isTon ? (total*discW).toFixed(2)+' TON' : Math.floor(total*discW).toLocaleString()+' NOT'
+      const discLabel = discW < 1 ? ' (-10%)' : ''
+      btn.textContent = '🎡 Start & Pay — '+costStr+discLabel
       btn.style.opacity='1'; btn.style.pointerEvents='auto'
     } else {
       btn.textContent = '🎡 Start & Pay — select spins first'
