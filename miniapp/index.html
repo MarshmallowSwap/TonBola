@@ -889,6 +889,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     <div class="sb"><div class="sbn" id="p-cd">6</div><div class="sbl">Cards</div></div>
   </div>
 
+  <!-- Warrior Pass -->
+  <div onclick="showWarriorPass()" style="margin:0 10px 8px;cursor:pointer;
+    background-image:url(assets/bal-card.png);background-size:100% 100%;
+    border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;
+    box-shadow:0 4px 0 rgba(0,0,0,.5)">
+    <div style="font-size:2rem">⚔️</div>
+    <div style="flex:1">
+      <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;
+        color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.9)">Warrior Pass</div>
+      <div style="font-size:.7rem;color:#8B6340;margin-top:1px">600 Stars · 3 TON / month</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#CC8800,#FF6A00);border-radius:50px;
+      padding:3px 10px;font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;
+      color:#fff">UPGRADE</div>
+  </div>
+
   <div class="sec">Squad</div>
   <div id="p-squad-section" style="padding:0 10px 8px">
     <div onclick="go('s-squad');setNav('nb-s');renderSquad()"
@@ -1296,6 +1312,90 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   </div>
 </div>
 
+<!-- WARRIOR PASS OVERLAY -->
+<div class="lvup-ov" id="wp-ov" style="overflow-y:auto">
+  <div class="lvup-flash"></div>
+  <div style="position:relative;z-index:10;width:100%;max-width:340px;margin:0 auto">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:3rem;margin-bottom:6px">⚔️</div>
+      <div style="font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:700;
+        background:linear-gradient(155deg,#fff 0%,#FFD93D 40%,#FF8C00 100%);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+        filter:drop-shadow(0 2px 8px rgba(255,184,0,.6))">Warrior Pass</div>
+      <div style="font-family:'Clash',sans-serif;font-size:.75rem;color:#8B6340;margin-top:4px">
+        Monthly subscription · Renews automatically
+      </div>
+    </div>
+
+    <!-- Benefits -->
+    <div style="background:rgba(0,0,0,.4);border:1.5px solid rgba(255,184,0,.2);
+      border-radius:16px;padding:14px;margin-bottom:14px">
+      <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+        letter-spacing:1.5px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">
+        ⚡ Monthly Benefits
+      </div>
+      ${[
+        ['🃏','Extra Free Cards','+2 free cards/day (3 total)'],
+        ['📈','Gold Card Boost','+5% win rate on every game'],
+        ['👑','VIP Access','VIP TON Room — no level req'],
+        ['💰','Double $TBOLA','2× all $TBOLA earned this month'],
+        ['🎖️','Exclusive Badge','Warrior badge on your profile'],
+      ].map(([icon,title,desc])=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
+          border-bottom:0.5px solid rgba(255,184,0,.1)">
+          <div style="font-size:1.3rem;flex-shrink:0">${icon}</div>
+          <div>
+            <div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;
+              color:#FFE0A0">${title}</div>
+            <div style="font-size:.7rem;color:#5A3D1A">${desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Currency selector -->
+    <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+      letter-spacing:1.2px;text-transform:uppercase;color:#8B6340;margin-bottom:8px">
+      Choose Payment
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"
+      id="wp-options">
+      <div id="wp-stars" onclick="selectWPCur('stars')"
+        style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
+          background:rgba(255,184,0,.12);border:2px solid #FFB800;transition:all .15s">
+        <div style="font-size:1.4rem;font-weight:700;color:#FFD93D;
+          font-family:'Clash',sans-serif">600</div>
+        <div style="font-size:.78rem;font-weight:700;color:#FFD93D;margin-top:2px">⭐ Stars</div>
+        <div style="font-size:.62rem;color:rgba(255,217,61,.5);margin-top:3px">~€4.40/mo</div>
+      </div>
+      <div id="wp-ton" onclick="selectWPCur('ton')"
+        style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
+          background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+        <div style="font-size:1.4rem;font-weight:700;color:#40B8FF;
+          font-family:'Clash',sans-serif">3</div>
+        <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 TON</div>
+        <div style="font-size:.62rem;color:rgba(64,184,255,.4);margin-top:3px">~€3.45/mo</div>
+      </div>
+    </div>
+
+    <!-- Subscribe button -->
+    <button id="wp-btn" class="btn btn-gold" onclick="subscribeWarriorPass()"
+      style="padding:14px;font-size:1rem;width:100%">
+      ⚔️ Subscribe — 600 Stars
+    </button>
+    <div style="font-family:'Clash',sans-serif;font-size:.65rem;color:#4A3318;
+      text-align:center;margin-top:8px">
+      Cancel anytime · No commitment
+    </div>
+    <button onclick="closeWarriorPass()"
+      style="background:none;border:none;color:#4A3318;font-family:'Clash',sans-serif;
+        font-size:.75rem;cursor:pointer;margin-top:8px;width:100%;padding:4px">
+      ✕ Close
+    </button>
+  </div>
+</div>
+
 <!-- WIN OVERLAY -->
 <div class="wov" id="wov">
   <div class="conf" id="conf"></div>
@@ -1688,6 +1788,56 @@ function showLevelUp(lv) {
   void ov.offsetWidth
   ov.classList.add('show')
   if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+
+let wpCur = 'stars'
+function selectWPCur(cur) {
+  wpCur = cur
+  const stars = document.getElementById('wp-stars')
+  const ton   = document.getElementById('wp-ton')
+  const btn   = document.getElementById('wp-btn')
+  if(cur === 'stars') {
+    stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#FFB800'
+    ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
+    btn.textContent = '⚔️ Subscribe — 600 Stars'
+  } else {
+    ton.style.background   = 'rgba(0,152,234,.12)'; ton.style.borderColor   = '#0098EA'
+    stars.style.background = 'rgba(0,0,0,.2)';      stars.style.borderColor = 'rgba(255,255,255,.1)'
+    btn.textContent = '⚔️ Subscribe — 3 TON'
+  }
+}
+function showWarriorPass() {
+  const ov = document.getElementById('wp-ov')
+  ov.classList.remove('show')
+  void ov.offsetWidth
+  ov.classList.add('show')
+  wpCur = 'stars'
+  selectWPCur('stars')
+}
+function closeWarriorPass() {
+  const ov = document.getElementById('wp-ov')
+  ov.style.transition='opacity .2s'; ov.style.opacity='0'
+  setTimeout(()=>{ ov.classList.remove('show'); ov.style.opacity=''; ov.style.transition='' }, 220)
+}
+function subscribeWarriorPass() {
+  const feeStr = wpCur === 'stars' ? '600 Stars' : '3 TON'
+  const icon   = wpCur === 'stars' ? '⭐' : '💎'
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'⚔️ Warrior Pass',
+      message:`Subscribe for ${feeStr}/month?\n\nYou will be charged ${icon} ${feeStr} now and automatically each month.`,
+      buttons:[{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
+    }, (id) => {
+      if(id==='pay') {
+        closeWarriorPass()
+        setTimeout(()=>{ if(tg?.showPopup) tg.showPopup({
+          title:'⚔️ Warrior Pass Active!',
+          message:'Welcome, Warrior!\n\nYour benefits are now active for 30 days.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge',
+          buttons:[{type:'ok'}]
+        }) }, 300)
+      }
+    })
+  }
 }
 
 function closeLvUp(){
