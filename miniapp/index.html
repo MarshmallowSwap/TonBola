@@ -838,7 +838,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         transform-origin:center center">
       <!-- Canvas segments overlay (semi-transparent on stone) -->
       <canvas id="wheel-canvas" width="280" height="280" style="position:absolute;inset:0;
-        border-radius:50%;z-index:2;opacity:.82"></canvas>
+        border-radius:50%;z-index:2;opacity:.9"></canvas>
       <!-- Center hub -->
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
         width:48px;height:48px;border-radius:50%;
@@ -2121,30 +2121,46 @@ function drawWheel(angle) {
   const canvas = document.getElementById('wheel-canvas')
   if(!canvas) return
   const ctx = canvas.getContext('2d')
-  const cx = 140, cy = 140, r = 136
+  const cx = 140, cy = 140, r = 132
   const arc = (2*Math.PI)/SEG_COUNT
   ctx.clearRect(0,0,280,280)
+
+  // Clip to circle
+  ctx.save()
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.clip()
+
   WHEEL_SEGMENTS.forEach((seg,i) => {
     const start = angle + i*arc - Math.PI/2
     const end   = start + arc
-    // Segment fill
+
+    // Semi-transparent tinted fill over stone
     ctx.beginPath(); ctx.moveTo(cx,cy)
     ctx.arc(cx,cy,r,start,end)
     ctx.closePath()
-    ctx.fillStyle = seg.color; ctx.fill()
-    ctx.strokeStyle='rgba(255,184,0,.3)'; ctx.lineWidth=2; ctx.stroke()
-    // Text
+    ctx.fillStyle = seg.color + 'BB' // ~73% opacity
+    ctx.fill()
+
+    // Divider lines
+    ctx.beginPath(); ctx.moveTo(cx,cy)
+    ctx.lineTo(cx + Math.cos(start)*r, cy + Math.sin(start)*r)
+    ctx.strokeStyle='rgba(255,184,0,.6)'; ctx.lineWidth=2; ctx.stroke()
+
+    // Label text
     ctx.save()
     ctx.translate(cx,cy)
     ctx.rotate(start + arc/2)
-    ctx.textAlign='right'; ctx.fillStyle=seg.textColor
-    ctx.font='bold 11px Clash,sans-serif'
-    ctx.fillText(seg.label, r-10, 4)
+    ctx.textAlign='right'
+    ctx.fillStyle = seg.textColor
+    ctx.font='bold 11px sans-serif'
+    ctx.shadowColor='rgba(0,0,0,.9)'; ctx.shadowBlur=4
+    ctx.fillText(seg.label, r-8, 4)
     ctx.restore()
   })
-  // Outer ring
+  ctx.restore()
+
+  // Circular border glow
   ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI)
-  ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.stroke()
+  ctx.strokeStyle='rgba(255,184,0,.4)'; ctx.lineWidth=3; ctx.stroke()
 }
 
 function setWheelCur(cur) {
