@@ -125,6 +125,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 5px 0 #7A5200,0 7px 0 rgba(0,0,0,.4);
   padding:13px 24px;font-size:1.05rem;width:100%;
   text-shadow:0 1px 0 rgba(255,255,255,.3)}
+.btn-gold:disabled,.btn-gold[disabled]{background:linear-gradient(180deg,#5A4A20,#3A2E10)!important;color:rgba(255,200,80,.5)!important;border-color:#4A3A18!important;box-shadow:0 3px 0 #1A1408!important}
 .btn-stone{
   background-image:url(assets/btn-stone.png);
   background-size:100% 100%;background-repeat:no-repeat;
@@ -838,7 +839,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         transform-origin:center center">
       <!-- Canvas segments overlay (semi-transparent on stone) -->
       <canvas id="wheel-canvas" width="280" height="280" style="position:absolute;inset:0;
-        border-radius:50%;z-index:2;opacity:.9"></canvas>
+        border-radius:50%;z-index:2;background:transparent"></canvas>
       <!-- Center hub -->
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
         width:48px;height:48px;border-radius:50%;
@@ -2133,11 +2134,12 @@ function drawWheel(angle) {
     const start = angle + i*arc - Math.PI/2
     const end   = start + arc
 
-    // Semi-transparent tinted fill over stone
+    // Very light tint over stone — mostly transparent
     ctx.beginPath(); ctx.moveTo(cx,cy)
     ctx.arc(cx,cy,r,start,end)
     ctx.closePath()
-    ctx.fillStyle = seg.color + 'BB' // ~73% opacity
+    // Convert hex color to rgba with low opacity
+    ctx.fillStyle = seg.color + '55' // ~33% opacity — stone shows through
     ctx.fill()
 
     // Divider lines
@@ -2217,10 +2219,10 @@ function updateWheelUI() {
       const costStr = isTon ? (total*discW).toFixed(2)+' TON' : Math.floor(total*discW).toLocaleString()+' NOT'
       const discLabel = discW < 1 ? ' (-10%)' : ''
       btn.textContent = '🎡 Start & Pay — '+costStr+discLabel
-      btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; btn.style.boxShadow=''; btn.style.pointerEvents='auto'
+      btn.removeAttribute('disabled'); btn.style.pointerEvents='auto'
     } else {
       btn.textContent = '🎡 Start & Pay — select spins first'
-      btn.style.background='linear-gradient(180deg,#3A3020,#252015)'; btn.style.color='rgba(255,220,100,.4)'; btn.style.borderColor='#4A3A20'; btn.style.boxShadow='0 3px 0 #1A1408'; btn.style.pointerEvents='none'
+      btn.setAttribute('disabled','true'); btn.style.pointerEvents='none'
     }
   }
   // Remaining spins
