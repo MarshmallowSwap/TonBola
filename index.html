@@ -35,18 +35,18 @@ body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:10px}
-::-webkit-scrollbar-track{background:#1A0E04}
-::-webkit-scrollbar-thumb{background:linear-gradient(#8B5A2B,#4A2800);border-radius:5px}
+::-webkit-scrollbar-track{background:#100C08}
+::-webkit-scrollbar-thumb{background:linear-gradient(#6B5A3A,#3A3020);border-radius:5px}
 
 /* ── BG ── */
 .bg-layer{
   position:fixed;inset:0;z-index:-3;
   background:
-    linear-gradient(180deg,#0A1E04 0%,#122606 15%,#1A3A0A 40%,#122008 70%,#0A1408 100%);
+    linear-gradient(180deg,#1A1610 0%,#252018 15%,#2E2820 40%,#201C14 70%,#141008 100%);
 }
 .bg-layer::after{
   content:'';position:fixed;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232A5C0A' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C4933F' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   opacity:.4;
 }
 
@@ -57,7 +57,7 @@ body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  background:linear-gradient(180deg,rgba(15,6,0,.97),rgba(15,6,0,.88));
+  background:linear-gradient(180deg,rgba(10,8,4,.97),rgba(10,8,4,.88));
   border-bottom:none;
 }
 .nav-border{
@@ -169,7 +169,7 @@ section{padding:80px 24px;position:relative}
 
 /* Stone panel */
 .stone-panel{
-  background:linear-gradient(135deg,#3A3228 0%,#2E2620 35%,#252018 65%,#3A3228 100%);
+  background:linear-gradient(135deg,#3A3028 0%,#2C2418 35%,#241C12 65%,#3A3028 100%);
   border:4px solid #1A1408;border-radius:10px;
   box-shadow:0 8px 0 #0A0804,0 10px 30px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.07);
   position:relative
@@ -199,7 +199,7 @@ section{padding:80px 24px;position:relative}
 /* ── DIVIDER (rope style) ── */
 .rope-divider{
   position:relative;height:28px;overflow:visible;
-  background:linear-gradient(180deg,#3A2510,#2A1808,#1E1006);
+  background:linear-gradient(180deg,#2E2418,#201810,#18100A);
   border-top:3px solid #6B4A28;border-bottom:3px solid #0E0804;z-index:10
 }
 .rope-divider::before{
@@ -347,7 +347,7 @@ section{padding:80px 24px;position:relative}
 /* ── WARRIOR PASS ── */
 .wp-benefits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
 .wp-benefit{
-  background:rgba(0,0,0,.2);border-radius:10px;padding:12px;
+  background:rgba(0,0,0,.25);border-radius:10px;padding:12px;
   display:flex;align-items:center;gap:10px;
   border:1px solid rgba(255,184,0,.12)
 }
@@ -456,7 +456,7 @@ footer{
 
 <!-- Floating particles -->
 <div class="ptcl" style="width:6px;height:6px;background:#FFD93D;left:15%;--d:9s;--dl:0s;box-shadow:0 0 6px #FFD93D"></div>
-<div class="ptcl" style="width:4px;height:4px;background:#3AFF8A;left:35%;--d:7s;--dl:2s;box-shadow:0 0 4px #3AFF8A"></div>
+<div class="ptcl" style="width:4px;height:4px;background:#C4933F;left:35%;--d:7s;--dl:2s;box-shadow:0 0 4px #C4933F"></div>
 <div class="ptcl" style="width:5px;height:5px;background:#40B8FF;left:60%;--d:11s;--dl:1s;box-shadow:0 0 5px #40B8FF"></div>
 <div class="ptcl" style="width:6px;height:6px;background:#FFD93D;left:80%;--d:8s;--dl:3s;box-shadow:0 0 6px #FFD93D"></div>
 <div class="ptcl" style="width:3px;height:3px;background:#FF8080;left:50%;--d:10s;--dl:.5s;box-shadow:0 0 4px #FF8080"></div>
@@ -502,17 +502,17 @@ footer{
   </div>
 
   <!-- Trees -->
-  <svg class="tree" style="left:-40px;width:220px;opacity:.35" viewBox="0 0 200 400" fill="none">
+  <svg class="tree" style="left:-40px;width:220px;opacity:.12" viewBox="0 0 200 400" fill="none">
     <path d="M100 10 L180 200 L130 200 L160 320 L100 320 L40 320 L70 200 L20 200 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
     <path d="M100 10 L175 195 L125 195 L155 310 L100 310 Z" fill="#2A6A0A" opacity=".5"/>
   </svg>
-  <svg class="tree" style="right:-30px;width:180px;bottom:40px;opacity:.3" viewBox="0 0 200 400" fill="none">
+  <svg class="tree" style="right:-30px;width:180px;bottom:40px;opacity:.1" viewBox="0 0 200 400" fill="none">
     <path d="M100 20 L175 210 L125 210 L155 330 L100 330 L45 330 L75 210 L25 210 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
   </svg>
-  <svg class="tree" style="left:6%;width:100px;bottom:10px;opacity:.15" viewBox="0 0 200 400" fill="none">
+  <svg class="tree" style="left:6%;width:100px;bottom:10px;opacity:.05" viewBox="0 0 200 400" fill="none">
     <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
   </svg>
-  <svg class="tree" style="right:10%;width:120px;bottom:0;opacity:.12" viewBox="0 0 200 400" fill="none">
+  <svg class="tree" style="right:10%;width:120px;bottom:0;opacity:.05" viewBox="0 0 200 400" fill="none">
     <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
   </svg>
 
@@ -851,15 +851,15 @@ footer{
     <div class="gem g-br"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
     <div style="font-size:1.1rem;font-weight:700;color:#3D1A00;margin-bottom:18px;text-align:center">⚔ Casual Player · 30 Days · Zero Wins</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
-      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FFD93D">9,000</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">3 games/day × 2 cards</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#3AFF8A">+650</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">30-day login streak</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FF8080">+4,500</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">5 friends invited</div>
       </div>
@@ -942,7 +942,7 @@ footer{
 <div class="rope-divider"></div>
 
 <!-- TRANSPARENCY -->
-<section id="transparency" style="background:rgba(0,0,0,.15)">
+<section id="transparency" style="background:rgba(0,0,0,.25)">
 <div class="wrap">
   <div class="sign-wrap aos">
     <div class="sign-chain"></div>
