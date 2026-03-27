@@ -104,10 +104,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .btn-stone{
   background-image:url(assets/btn-stone.png);
   background-size:100% 100%;background-repeat:no-repeat;
-  color:#3D1A00;border:none;
-  box-shadow:none;
-  padding:10px 18px;font-size:.88rem;
-  text-shadow:0 1px 0 rgba(255,220,150,.5);font-weight:700}
+  color:#3D1A00;border:none;outline:none;
+  box-shadow:none;-webkit-appearance:none;
+  padding:14px 20px;font-size:.95rem;
+  text-shadow:0 1px 0 rgba(255,220,150,.5);font-weight:700;
+  min-height:52px}
 .btn-sm{padding:7px 12px;font-size:.8rem;width:auto}
 .btn-back{background:linear-gradient(180deg,#5A3D1A,#3D2810);
   color:#FFD093;border:2px solid #7A5228;
@@ -711,8 +712,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
   <div class="sec">Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
-    <button class="btn btn-stone" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
-    <button class="btn btn-stone" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
+    <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
+    <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
   </div>
 </div>
 
