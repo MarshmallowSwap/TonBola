@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
+<link rel="preload" as="image" href="assets/icon-free.png">
 <link rel="preload" as="image" href="assets/icon-vip.png">
 <link rel="preload" as="image" href="assets/icon-ton.png">
 <link rel="preload" as="image" href="assets/icon-star.png">
@@ -649,7 +650,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="rooms">
     <div class="rc free" onclick="openLobby('free')">
       <div class="ri">
-        <div class="r-icon ri-free">🏕️</div>
+        <div class="r-icon ri-free" style="background-image:url(assets/icon-free.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">Free Room</div>
           <div class="rd">1 free card/day · Win $TBOLA</div>
