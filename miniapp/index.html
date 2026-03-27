@@ -653,7 +653,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 <body>
 
 <!-- HOME -->
-<div class="screen active" id="sh">
+<div class="screen" id="sh">
   <div class="stone-header">
     <div class="topbar">
       <div style="position:relative;flex-shrink:0">
@@ -786,11 +786,139 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 </div>
 
 
+<!-- GAME HUB -->
+<div class="screen active" id="s-hub">
+  <div class="stone-header">
+    <div class="topbar">
+      <div style="position:relative;flex-shrink:0">
+        <div class="t-av" id="hub-av">T</div>
+      </div>
+      <div style="flex:1;margin:0 10px">
+        <div style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#FFE0A0" id="hub-name">Tommy</div>
+        <div style="font-size:.65rem;color:#6B4423">@Tommyall</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);
+        border-radius:50px;padding:4px 10px;border:1.5px solid rgba(255,184,0,.2)">
+        <img src="assets/token-tbola.png" style="width:18px;height:18px;object-fit:contain">
+        <span style="font-family:'Clash',sans-serif;font-size:.82rem;font-weight:700;color:#FFD93D" id="hub-tbola">505</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Games grid -->
+  <div style="padding:10px 10px 80px;overflow-y:auto">
+
+    <!-- Section title -->
+    <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+      letter-spacing:2px;text-transform:uppercase;color:#6B4423;
+      margin-bottom:10px;padding:0 2px">⚔ Choose Your Game</div>
+
+    <!-- Bingo card -->
+    <div onclick="openBingo()" style="cursor:pointer;margin-bottom:10px;position:relative;
+      background-image:url(assets/rc-ton.png);background-size:100% 100%;
+      border-radius:12px;height:110px;display:flex;align-items:center;
+      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,0,0,.5);overflow:hidden">
+      <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🎱</div>
+      <div style="flex:1">
+        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">Bingo</div>
+        <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
+          Live draws every 5 min · NOT · TON · VIP
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
+            color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            ● LIVE
+          </span>
+          <span style="background:rgba(0,0,0,.3);color:#C4933F;font-size:.58rem;
+            padding:2px 7px;border-radius:50px" id="hub-bingo-players">~ players</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.55rem;color:#8B6340">Prize Pool</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+          color:#40B8FF;text-shadow:0 0 8px rgba(64,184,255,.4)" id="hub-bingo-pool">-- TON</div>
+      </div>
+    </div>
+
+    <!-- Fortune Wheel card -->
+    <div onclick="openWheel()" style="cursor:pointer;margin-bottom:10px;position:relative;
+      background-image:url(assets/rc-vip.png);background-size:100% 100%;
+      border-radius:12px;height:110px;display:flex;align-items:center;
+      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,0,0,.5);overflow:hidden">
+      <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🎡</div>
+      <div style="flex:1">
+        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+          color:#FFD93D;text-shadow:0 1px 4px rgba(0,0,0,.9)">Fortune Wheel</div>
+        <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
+          Spin to win · Jackpot pool · NOT · TON
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
+            color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            ● LIVE
+          </span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.55rem;color:#8B6340">🎰 Jackpot</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+          color:#FFD700;text-shadow:0 0 8px rgba(255,184,0,.5)" id="hub-jackpot">67.3 TON</div>
+      </div>
+    </div>
+
+    <!-- Scratch Cards — Coming Soon -->
+    <div style="margin-bottom:10px;position:relative;
+      background-image:url(assets/rc-free.png);background-size:100% 100%;
+      border-radius:12px;height:110px;display:flex;align-items:center;
+      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,0,0,.5);overflow:hidden;
+      filter:brightness(.6);cursor:not-allowed">
+      <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🃏</div>
+      <div style="flex:1">
+        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">Scratch Cards</div>
+        <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
+          Instant win · Gratta e vinci on TON
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
+            color:#FFD93D;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            🔜 COMING SOON
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PvP Battle — Coming Soon -->
+    <div style="margin-bottom:10px;position:relative;
+      background-image:url(assets/rc-stars.png);background-size:100% 100%;
+      border-radius:12px;height:110px;display:flex;align-items:center;
+      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,0,0,.5);overflow:hidden;
+      filter:brightness(.6);cursor:not-allowed">
+      <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">⚔️</div>
+      <div style="flex:1">
+        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">PvP Battle</div>
+        <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
+          Live 1v1 bingo · Challenge real players
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
+            color:#FFD93D;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            🔜 COMING SOON
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- FORTUNE WHEEL SCREEN -->
 <div class="screen" id="s-wheel" style="background-image:url(assets/wheel-bg.png);background-size:cover;background-position:center top;background-repeat:no-repeat;">
   <div class="stone-header" style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.3))">
     <div class="topbar">
-      <button class="btn btn-back btn-sm" onclick="go('sh');setNav('nb-h')">← Back</button>
+      <button class="btn btn-back btn-sm" onclick="go('s-hub');setNav('nb-h');initHub()">← Back</button>
       <div style="flex:1;text-align:center;font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;color:#FFE0A0">🎡 Fortune Wheel</div>
       <div style="display:flex;align-items:center;gap:6px">
         <img src="assets/token-tbola.png" style="width:22px;height:22px;object-fit:contain">
@@ -928,7 +1056,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 <div class="screen" id="sl">
   <div class="lobby-hdr">
     <div style="display:flex;align-items:center;gap:8px">
-      <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
+      <button class="btn btn-back btn-sm" onclick="go('s-hub');initHub()">← Back</button>
       <div>
         <div style="font-size:.95rem;font-weight:700;color:#FFE0A0" id="l-nm">NOT Room</div>
         <div style="font-size:.7rem;color:#6B4423">Starts in <span id="l-cd" style="color:#FFD93D;font-weight:700">1:48</span></div>
@@ -1626,7 +1754,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   </div>
 </div>
 <nav class="nav">
-  <button class="nb on" id="nb-h" onclick="go('sh');setNav('nb-h')"><div class="ni">⚔</div>Play</button>
+  <button class="nb on" id="nb-h" onclick="go('s-hub');setNav('nb-h');initHub()"><div class="ni">⚔</div>Play</button>
   <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');lbCurrency='stars';lbTab='weekly';renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
   <button class="nb" id="nb-s" onclick="go('s-squad');setNav('nb-s');renderSquad()"><div class="ni">👥</div>Squads</button>
   <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile()"><div class="ni">🛡️</div>Profile</button>
@@ -2050,6 +2178,35 @@ function subscribeWarriorPass() {
       }
     })
   }
+}
+
+function initHub() {
+  // Update hub user info
+  const u = user
+  const av = document.getElementById('hub-av')
+  const nm = document.getElementById('hub-name')
+  const tb = document.getElementById('hub-tbola')
+  if(av) av.textContent = u.avatar || u.name?.[0] || 'T'
+  if(nm) nm.textContent = u.name || 'Warrior'
+  if(tb) tb.textContent = formatTbola(u.tbola || 0)
+  // Update jackpot
+  const jp = document.getElementById('hub-jackpot')
+  if(jp) jp.textContent = wheelJackpot.toFixed(1) + ' TON'
+  // Update bingo players
+  const bp = document.getElementById('hub-bingo-players')
+  if(bp) bp.textContent = (Math.floor(Math.random()*40)+10) + ' warriors'
+}
+
+function openBingo() {
+  go('sh'); setNav('nb-h')
+}
+
+function openWheel() {
+  go('s-wheel'); setNav('nb-h')
+  drawWheel(0)
+  setWheelCur(wheelCur)
+  updateWheelUI()
+  document.getElementById('w-tbola').textContent = formatTbola(user.tbola||0)
 }
 
 function showTonFeeError() {
