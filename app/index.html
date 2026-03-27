@@ -2189,10 +2189,10 @@ function updateWheelUI() {
       const costStr = isTon ? (total*discW).toFixed(2)+' TON' : Math.floor(total*discW).toLocaleString()+' NOT'
       const discLabel = discW < 1 ? ' (-10%)' : ''
       btn.textContent = '🎡 Start & Pay — '+costStr+discLabel
-      btn.style.opacity='1'; btn.style.pointerEvents='auto'
+      btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; btn.style.boxShadow=''; btn.style.pointerEvents='auto'
     } else {
       btn.textContent = '🎡 Start & Pay — select spins first'
-      btn.style.opacity='.5'; btn.style.pointerEvents='none'
+      btn.style.background='linear-gradient(180deg,#3A3020,#252015)'; btn.style.color='rgba(255,220,100,.4)'; btn.style.borderColor='#4A3A20'; btn.style.boxShadow='0 3px 0 #1A1408'; btn.style.pointerEvents='none'
     }
   }
   // Remaining spins
