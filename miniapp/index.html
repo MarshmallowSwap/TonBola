@@ -828,7 +828,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     <div>
       <div style="font-size:.6rem;color:#5A3D1A;font-weight:700;letter-spacing:.5px">SESSION BALANCE</div>
       <div id="w-session-bal" style="font-family:'Clash',sans-serif;font-size:1.1rem;
-        font-weight:700;color:#3AFF8A">0 NOT</div>
+        font-weight:700;color:#3AFF8A">0</div>
     </div>
     <button id="w-collect-btn" onclick="collectWheelWinnings()"
       style="background:linear-gradient(180deg,#3AFF8A,#00C060);
@@ -2081,6 +2081,7 @@ let wheelPricePerSpin = {not:250, ton:0.1}
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   drawWheel(0)
+  setWheelCur(wheelCur) // refresh currency display
   updateWheelUI()
   document.getElementById('w-tbola').textContent = formatTbola(user.tbola||0)
 }
@@ -2125,6 +2126,15 @@ function setWheelCur(cur) {
   } else {
     ton.style.background='rgba(0,80,140,.3)'; ton.style.borderColor='#0098EA'
     not.style.background='rgba(30,30,30,.3)'; not.style.borderColor='rgba(200,200,200,.3)'
+  }
+  // Update session balance label to reflect selected currency
+  const balEl = document.getElementById('w-session-bal')
+  if(balEl) {
+    if(wheelSessionBal > 0) {
+      balEl.textContent = cur==='ton' ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+    } else {
+      balEl.textContent = cur==='ton' ? '0 TON' : '0 NOT'
+    }
   }
   updateWheelUI()
 }
