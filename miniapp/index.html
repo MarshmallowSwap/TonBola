@@ -613,6 +613,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   font-family:'Clash',sans-serif;flex-shrink:0}
 .lv-toast-text{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;color:#FFD93D}
 .lv-toast-sub{font-family:'Clash',sans-serif;font-size:.7rem;color:#8B6340}
+
+/* ── FORTUNE WHEEL ── */
+.spin-btn{
+  flex:1;padding:8px 4px;border-radius:8px;border:2px solid #8B6340;
+  background:linear-gradient(180deg,#5A4230,#3A2818);
+  color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;
+  cursor:pointer;transition:all .1s;
+  box-shadow:0 3px 0 #1A0C04}
+.spin-btn:hover{transform:translateY(-1px)}
+.spin-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1A0C04}
+.spin-btn-clear{
+  flex:0 0 36px;background:linear-gradient(180deg,#5A1A1A,#3A0A0A);
+  border-color:#8B2200;color:#FF8080}
 </style>
 </head>
 <body>
@@ -722,11 +735,164 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
   </div>
 
+  <div class="sec">🎡 Fortune Wheel</div>
+  <div onclick="openWheel()" style="margin:0 0 8px;cursor:pointer;
+    background-image:url(assets/rc-vip.png);background-size:100% 100%;
+    border-radius:12px;height:76px;display:flex;align-items:center;
+    justify-content:space-between;padding:0 20px;
+    box-shadow:0 4px 0 rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="font-size:1.8rem">🎡</div>
+      <div>
+        <div style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+          color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.9)">Fortune Wheel</div>
+        <div style="font-size:.65rem;color:#8B6340">Spin · Win · Jackpot</div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:.58rem;color:#8B6340">🎰 Jackpot</div>
+      <div id="hw-jackpot" style="font-family:'Clash',sans-serif;font-size:.8rem;
+        font-weight:700;color:#FFD700">67.3 TON</div>
+    </div>
+  </div>
+
   <div class="sec">Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
     <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
     <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
   </div>
+</div>
+
+
+<!-- FORTUNE WHEEL SCREEN -->
+<div class="screen" id="s-wheel">
+  <div class="stone-header">
+    <div class="topbar">
+      <button class="btn btn-back btn-sm" onclick="go('sh');setNav('nb-h')">← Back</button>
+      <div style="flex:1;text-align:center;font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;color:#FFE0A0">🎡 Fortune Wheel</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <img src="assets/token-tbola.png" style="width:22px;height:22px;object-fit:contain">
+        <div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFD93D" id="w-tbola">505</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jackpot banner -->
+  <div style="margin:8px 10px 0;background:linear-gradient(135deg,#1A1000,#2A1800);
+    border:2px solid rgba(255,184,0,.3);border-radius:12px;padding:10px 16px;
+    display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;color:#8B6340;text-transform:uppercase">🎰 Jackpot Pool</div>
+      <div id="w-jackpot-amt" style="font-family:'Clash',sans-serif;font-size:1.4rem;font-weight:700;
+        color:#FFD700;text-shadow:0 0 12px rgba(255,184,0,.5)">67.3 TON</div>
+    </div>
+    <div style="flex:1;margin:0 16px">
+      <div style="display:flex;justify-content:space-between;font-size:.62rem;color:#5A3D1A;margin-bottom:4px">
+        <span id="w-jp-cur">67.3</span><span id="w-jp-thresh">100 TON to unlock</span>
+      </div>
+      <div style="height:8px;background:rgba(0,0,0,.4);border-radius:4px;overflow:hidden">
+        <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#FFB800,#FFD700);
+          border-radius:4px;transition:width .5s ease;width:67%"></div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:.6rem;color:#5A3D1A">Unlocks at</div>
+      <div style="font-size:.85rem;font-weight:700;color:#FFD93D">100 TON</div>
+    </div>
+  </div>
+
+  <!-- WHEEL SVG -->
+  <div style="display:flex;justify-content:center;margin:12px 0 8px;position:relative">
+    <div style="position:relative;width:280px;height:280px">
+      <!-- Pointer -->
+      <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+        width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;
+        border-top:24px solid #FFD700;filter:drop-shadow(0 2px 4px rgba(0,0,0,.8));z-index:10"></div>
+      <!-- Wheel canvas -->
+      <canvas id="wheel-canvas" width="280" height="280" style="border-radius:50%;
+        box-shadow:0 0 0 4px #FFD700,0 0 0 8px #4A2800,0 8px 24px rgba(0,0,0,.7)"></canvas>
+      <!-- Center hub -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+        width:44px;height:44px;border-radius:50%;
+        background:radial-gradient(circle at 35% 35%,#FFE566,#CC8800);
+        border:4px solid #4A2800;
+        box-shadow:0 0 12px rgba(255,184,0,.5),inset 0 2px 0 rgba(255,255,255,.3);
+        display:flex;align-items:center;justify-content:center;
+        font-size:1.2rem;z-index:5">⚔️</div>
+    </div>
+  </div>
+
+  <!-- Session balance -->
+  <div style="margin:0 10px 8px;background:rgba(0,0,0,.3);border-radius:10px;
+    padding:8px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:.6rem;color:#5A3D1A;font-weight:700;letter-spacing:.5px">SESSION BALANCE</div>
+      <div id="w-session-bal" style="font-family:'Clash',sans-serif;font-size:1.1rem;
+        font-weight:700;color:#3AFF8A">0 NOT</div>
+    </div>
+    <button id="w-collect-btn" onclick="collectWheelWinnings()"
+      style="background:linear-gradient(180deg,#3AFF8A,#00C060);
+        border:2px solid #3AFF8A;border-radius:8px;padding:8px 16px;
+        font-family:'Clash',sans-serif;font-size:.8rem;font-weight:700;
+        color:#001A00;cursor:pointer;opacity:.4;pointer-events:none">
+      💰 Collect
+    </button>
+  </div>
+
+  <!-- Spin bundle selector -->
+  <div style="margin:0 10px 8px">
+    <div style="font-size:.62rem;font-weight:700;color:#5A3D1A;letter-spacing:.5px;
+      text-transform:uppercase;margin-bottom:6px">Select Spins</div>
+    <div style="display:flex;gap:6px;justify-content:center">
+      <button class="spin-btn" onclick="addSpins(1)">+1</button>
+      <button class="spin-btn" onclick="addSpins(5)">+5</button>
+      <button class="spin-btn" onclick="addSpins(10)">+10</button>
+      <button class="spin-btn" onclick="addSpins(50)">+50</button>
+      <button class="spin-btn" onclick="addSpins(100)">+100</button>
+      <button class="spin-btn spin-btn-clear" onclick="clearSpins()">✕</button>
+    </div>
+    <!-- Selected spins display -->
+    <div style="display:flex;align-items:center;justify-content:space-between;
+      margin-top:8px;background:rgba(0,0,0,.2);border-radius:8px;padding:8px 14px">
+      <div>
+        <span style="font-size:.7rem;color:#5A3D1A">Spins: </span>
+        <span id="w-spin-count" style="font-family:'Clash',sans-serif;font-size:1rem;
+          font-weight:700;color:#FFE0A0">0</span>
+        <span id="w-spins-remaining" style="font-size:.65rem;color:#5A3D1A;margin-left:8px"></span>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.6rem;color:#5A3D1A">Total cost</div>
+        <div id="w-total-cost" style="font-family:'Clash',sans-serif;font-size:.95rem;
+          font-weight:700;color:#FFD93D">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currency selector + Start -->
+  <div style="margin:0 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div id="w-cur-not" onclick="setWheelCur('not')"
+      style="padding:8px;border-radius:8px;text-align:center;cursor:pointer;
+        background:rgba(30,30,30,.5);border:2px solid #555;transition:all .15s">
+      <div style="font-size:.75rem;font-weight:700;color:#CCC">◈ NOT</div>
+      <div style="font-size:.62rem;color:#888">500 NOT / spin</div>
+    </div>
+    <div id="w-cur-ton" onclick="setWheelCur('ton')"
+      style="padding:8px;border-radius:8px;text-align:center;cursor:pointer;
+        background:rgba(0,80,140,.2);border:2px solid #0098EA;transition:all .15s">
+      <div style="font-size:.75rem;font-weight:700;color:#40B8FF">💎 TON</div>
+      <div style="font-size:.62rem;color:#1A6090">0.2 TON / spin</div>
+    </div>
+  </div>
+
+  <div style="margin:0 10px 16px">
+    <button id="w-start-btn" onclick="startWheelSession()"
+      class="btn btn-gold" style="width:100%;padding:14px;font-size:1rem;opacity:.5;pointer-events:none">
+      🎡 Start & Pay — select spins first
+    </button>
+  </div>
+
+  <!-- Last result -->
+  <div id="w-last-result" style="text-align:center;min-height:32px;margin-bottom:8px"></div>
 </div>
 
 <!-- LOBBY -->
@@ -1881,6 +2047,299 @@ function handleTxError(err) {
       title:'❌ Transaction Failed',
       message:'Something went wrong with the transaction.\nPlease try again.',
       buttons:[{type:'ok'}]
+    })
+  }
+}
+
+
+// ── FORTUNE WHEEL ──
+const WHEEL_SEGMENTS = [
+  {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
+  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#FFB800'},
+  {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
+  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#FFE0A0'},
+  {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
+  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#FFB800'},
+  {label:'×2',        mult:2,    color:'#1A3020', textColor:'#3AFF8A'},
+  {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
+  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#FFE0A0'},
+  {label:'×5',        mult:5,    color:'#1A2840', textColor:'#40B8FF'},
+  {label:'⚔️ Pass',   mult:-1,   color:'#2A1A40', textColor:'#C080FF'},
+  {label:'🎰 JACK',   mult:-2,   color:'#3A2800', textColor:'#FFD700'},
+]
+const SEG_COUNT = WHEEL_SEGMENTS.length
+const JACKPOT_THRESHOLD = 100
+let wheelAngle = 0
+let wheelSpinning = false
+let wheelCur = 'ton'
+let wheelSpinsSelected = 0
+let wheelSpinsRemaining = 0
+let wheelSessionBal = 0
+let wheelJackpot = 67.3
+let wheelPricePerSpin = {not:500, ton:0.2}
+
+function openWheel() {
+  go('s-wheel'); setNav('nb-h')
+  drawWheel(0)
+  updateWheelUI()
+  document.getElementById('w-tbola').textContent = formatTbola(user.tbola||0)
+}
+
+function drawWheel(angle) {
+  const canvas = document.getElementById('wheel-canvas')
+  if(!canvas) return
+  const ctx = canvas.getContext('2d')
+  const cx = 140, cy = 140, r = 136
+  const arc = (2*Math.PI)/SEG_COUNT
+  ctx.clearRect(0,0,280,280)
+  WHEEL_SEGMENTS.forEach((seg,i) => {
+    const start = angle + i*arc - Math.PI/2
+    const end   = start + arc
+    // Segment fill
+    ctx.beginPath(); ctx.moveTo(cx,cy)
+    ctx.arc(cx,cy,r,start,end)
+    ctx.closePath()
+    ctx.fillStyle = seg.color; ctx.fill()
+    ctx.strokeStyle='rgba(255,184,0,.3)'; ctx.lineWidth=2; ctx.stroke()
+    // Text
+    ctx.save()
+    ctx.translate(cx,cy)
+    ctx.rotate(start + arc/2)
+    ctx.textAlign='right'; ctx.fillStyle=seg.textColor
+    ctx.font='bold 11px Clash,sans-serif'
+    ctx.fillText(seg.label, r-10, 4)
+    ctx.restore()
+  })
+  // Outer ring
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI)
+  ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.stroke()
+}
+
+function setWheelCur(cur) {
+  wheelCur = cur
+  const not = document.getElementById('w-cur-not')
+  const ton = document.getElementById('w-cur-ton')
+  if(cur==='not') {
+    not.style.background='rgba(80,80,80,.4)'; not.style.borderColor='#CCC'
+    ton.style.background='rgba(0,80,140,.1)'; ton.style.borderColor='rgba(0,152,234,.3)'
+  } else {
+    ton.style.background='rgba(0,80,140,.3)'; ton.style.borderColor='#0098EA'
+    not.style.background='rgba(30,30,30,.3)'; not.style.borderColor='rgba(200,200,200,.3)'
+  }
+  updateWheelUI()
+}
+
+function addSpins(n) {
+  wheelSpinsSelected += n
+  updateWheelUI()
+}
+function clearSpins() {
+  wheelSpinsSelected = 0
+  updateWheelUI()
+}
+
+function updateWheelUI() {
+  const price = wheelPricePerSpin[wheelCur]
+  const total = wheelSpinsSelected * price
+  const isTon = wheelCur === 'ton'
+  document.getElementById('w-spin-count').textContent = wheelSpinsSelected
+  if(wheelSpinsSelected > 0) {
+    document.getElementById('w-total-cost').textContent = isTon ?
+      total.toFixed(2)+' TON' : total.toLocaleString()+' NOT'
+  } else {
+    document.getElementById('w-total-cost').textContent = '—'
+  }
+  // Start button
+  const btn = document.getElementById('w-start-btn')
+  if(btn) {
+    if(wheelSpinsSelected > 0) {
+      const costStr = isTon ? total.toFixed(2)+' TON' : total.toLocaleString()+' NOT'
+      btn.textContent = '🎡 Start & Pay — '+costStr
+      btn.style.opacity='1'; btn.style.pointerEvents='auto'
+    } else {
+      btn.textContent = '🎡 Start & Pay — select spins first'
+      btn.style.opacity='.5'; btn.style.pointerEvents='none'
+    }
+  }
+  // Remaining spins
+  const rem = document.getElementById('w-spins-remaining')
+  if(rem && wheelSpinsRemaining > 0) rem.textContent = '('+wheelSpinsRemaining+' remaining)'
+  else if(rem) rem.textContent = ''
+  // Jackpot bar
+  const pct = Math.min(100, (wheelJackpot/JACKPOT_THRESHOLD)*100)
+  const bar = document.getElementById('w-jp-bar')
+  if(bar) bar.style.width = pct+'%'
+  const cur = document.getElementById('w-jp-cur')
+  if(cur) cur.textContent = wheelJackpot.toFixed(1)+' TON'
+}
+
+function startWheelSession() {
+  if(wheelSpinsSelected <= 0) return
+  // TODO: real TonConnect payment
+  // For now: simulate
+  wheelSpinsRemaining += wheelSpinsSelected
+  wheelSpinsSelected = 0
+  updateWheelUI()
+  // Enable spin
+  const startBtn = document.getElementById('w-start-btn')
+  if(startBtn) {
+    startBtn.textContent = '🎡 Spin!'
+    startBtn.onclick = spinWheel
+    startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
+  }
+  if(tg?.showPopup) tg.showPopup({
+    title:'⚔️ Session Started!',
+    message:'Your spins are loaded. Good luck, warrior!\n\nRemember: collect your winnings before leaving.',
+    buttons:[{type:'ok',text:"Let's spin!"}]
+  })
+}
+
+function spinWheel() {
+  if(wheelSpinning || wheelSpinsRemaining <= 0) return
+  wheelSpinning = true
+  wheelSpinsRemaining--
+  // Random result weighted
+  const jackpotChance = wheelJackpot >= JACKPOT_THRESHOLD ? 1 : 0
+  let segIdx
+  if(jackpotChance && Math.random() < 0.01) {
+    segIdx = 11 // JACKPOT
+  } else {
+    // Random from non-jackpot segments
+    segIdx = Math.floor(Math.random() * 11)
+  }
+  // Spin animation
+  const extraSpins = 5 + Math.random()*3 // 5-8 full rotations
+  const targetAngle = wheelAngle + (extraSpins * 2*Math.PI) + (segIdx * (2*Math.PI/SEG_COUNT))
+  const duration = 3000 + Math.random()*1000
+  const startAngle = wheelAngle
+  const startTime = performance.now()
+  function animate(now) {
+    const elapsed = now - startTime
+    const progress = Math.min(elapsed/duration, 1)
+    // Ease out cubic
+    const ease = 1 - Math.pow(1-progress, 3)
+    wheelAngle = startAngle + (targetAngle-startAngle)*ease
+    drawWheel(wheelAngle)
+    if(progress < 1) { requestAnimationFrame(animate); return }
+    // Done
+    wheelAngle = targetAngle % (2*Math.PI)
+    wheelSpinning = false
+    handleWheelResult(segIdx)
+  }
+  requestAnimationFrame(animate)
+}
+
+function handleWheelResult(segIdx) {
+  const seg = WHEEL_SEGMENTS[segIdx]
+  const price = wheelPricePerSpin[wheelCur]
+  const isTon = wheelCur === 'ton'
+  const resultEl = document.getElementById('w-last-result')
+  let resultMsg = ''
+  let resultColor = '#FFE0A0'
+  if(seg.mult === -2) {
+    // JACKPOT
+    if(wheelJackpot >= JACKPOT_THRESHOLD) {
+      const won = wheelJackpot * 0.8
+      wheelJackpot = wheelJackpot * 0.2
+      wheelSessionBal += won
+      resultMsg = `🎰 JACKPOT! +${won.toFixed(2)} TON`
+      resultColor = '#FFD700'
+      if(tg?.showPopup) tg.showPopup({
+        title:'🎰 JACKPOT!!!',
+        message:`INCREDIBLE! You hit the jackpot!\n\n+${won.toFixed(2)} TON added to your session balance.\n\nCollect your winnings!`,
+        buttons:[{type:'ok',text:'WOW! 🤑'}]
+      })
+    } else {
+      // Jackpot locked — treat as x1
+      const won = price * 1
+      wheelSessionBal += won
+      resultMsg = `⚔️ ×1 — ${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
+      resultColor = '#FFE0A0'
+    }
+  } else if(seg.mult === -1) {
+    // Warrior Pass
+    resultMsg = '⚜️ Warrior Pass 7 days!'
+    resultColor = '#C080FF'
+    if(tg?.showPopup) tg.showPopup({
+      title:'⚜️ Warrior Pass!',
+      message:'You won a FREE 7-day Warrior Pass!\n\nAll benefits activated for 7 days.',
+      buttons:[{type:'ok'}]
+    })
+  } else if(seg.mult === 0) {
+    // Lose — give TBOLA
+    const tbola = Math.floor(price * 10)
+    user.tbola = (user.tbola||0) + tbola
+    document.getElementById('w-tbola').textContent = formatTbola(user.tbola)
+    resultMsg = `💀 Lose — +${tbola} $TBOLA`
+    resultColor = '#FF4444'
+  } else {
+    const won = price * seg.mult
+    wheelSessionBal += won
+    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
+    resultColor = seg.textColor
+  }
+  // Update session balance display
+  const balEl = document.getElementById('w-session-bal')
+  if(balEl) {
+    balEl.textContent = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+  }
+  // Result flash
+  if(resultEl) {
+    resultEl.innerHTML = `<div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${resultColor};
+      animation:fadeUp .3s ease">${resultMsg}</div>`
+  }
+  // Enable collect if balance > 0
+  const collectBtn = document.getElementById('w-collect-btn')
+  if(collectBtn && wheelSessionBal > 0) {
+    collectBtn.style.opacity='1'; collectBtn.style.pointerEvents='auto'
+  }
+  // Update spin button
+  const startBtn = document.getElementById('w-start-btn')
+  if(startBtn) {
+    if(wheelSpinsRemaining > 0) {
+      startBtn.textContent = `🎡 Spin! (${wheelSpinsRemaining} left)`
+      startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
+    } else {
+      startBtn.textContent = '🎡 Add more spins or collect'
+      startBtn.onclick = null
+      startBtn.style.opacity='.5'; startBtn.style.pointerEvents='none'
+    }
+  }
+  // Update remaining display
+  const rem = document.getElementById('w-spins-remaining')
+  if(rem) rem.textContent = wheelSpinsRemaining > 0 ? '('+wheelSpinsRemaining+' remaining)' : ''
+  // Update jackpot
+  wheelJackpot += price * 0.15
+  const jel = document.getElementById('w-jackpot-amt')
+  if(jel) jel.textContent = wheelJackpot.toFixed(1)+' TON'
+  const hw = document.getElementById('hw-jackpot')
+  if(hw) hw.textContent = wheelJackpot.toFixed(1)+' TON'
+  updateWheelUI()
+}
+
+function collectWheelWinnings() {
+  if(wheelSessionBal <= 0) return
+  const isTon = wheelCur === 'ton'
+  const amtStr = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'💰 Collect Winnings',
+      message:`Collect ${amtStr} to your wallet?\n\nA single transaction will be sent to your TON wallet.`,
+      buttons:[{id:'collect',type:'default',text:'Collect '+amtStr},{type:'cancel'}]
+    }, (id) => {
+      if(id==='collect') {
+        // TODO: real TonConnect withdrawal
+        wheelSessionBal = 0
+        const balEl = document.getElementById('w-session-bal')
+        if(balEl) balEl.textContent = '0 NOT'
+        const collectBtn = document.getElementById('w-collect-btn')
+        if(collectBtn) { collectBtn.style.opacity='.4'; collectBtn.style.pointerEvents='none' }
+        if(tg?.showPopup) tg.showPopup({
+          title:'✅ Withdrawal Sent!',
+          message:`${amtStr} is on its way to your wallet.\n\nTransaction will confirm in ~5 seconds.`,
+          buttons:[{type:'ok'}]
+        })
+      }
     })
   }
 }
