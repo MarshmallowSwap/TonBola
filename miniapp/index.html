@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
-<link rel="preload" as="image" href="assets/icon-ton-coin.png">
-<link rel="preload" as="image" href="assets/icon-not-coin.png">
-<link rel="preload" as="image" href="assets/icon-tbola-coin.png">
+<link rel="preload" as="image" href="assets/token-tbola.png">
 <link rel="preload" as="image" href="assets/btn-stone.png">
 <link rel="preload" as="image" href="assets/icon-free.png">
 <link rel="preload" as="image" href="assets/icon-vip.png">
@@ -661,7 +659,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div>
           <div class="bal-lbl">$TBOLA Balance</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <img src="assets/icon-tbola-coin.png" style="width:40px;height:40px;object-fit:contain;flex-shrink:0">
+            <img src="assets/token-tbola.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">
             <div class="bal-amt" id="bc-tbola">505</div>
           </div>
           <div style="font-size:.7rem;color:#5A3D1A;margin-top:2px">Airdrop coming soon ⚔</div>
@@ -681,7 +679,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="rooms">
     <div class="rc free" onclick="openLobby('free')">
       <div class="ri">
-        <div class="r-icon ri-free" style="background-image:url(assets/icon-tbola-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:38px;height:38px"></div>
+        <div class="r-icon ri-free" style="background-image:url(assets/icon-free.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">Free Room</div>
           <div class="rd">1 free card/day · Win $TBOLA</div>
@@ -695,7 +693,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
     <div class="rc stars" onclick="openLobby('stars')">
       <div class="ri">
-        <div class="r-icon ri-stars" style="background-image:url(assets/icon-not-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:38px;height:38px"></div>
+        <div class="r-icon ri-stars" style="background-image:url(assets/icon-star.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">NOT Room</div>
           <div class="rd">Pay NOT · Win NOT · +$TBOLA</div>
@@ -709,7 +707,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
       <div class="ri">
-        <div class="r-icon ri-ton" style="background-image:url(assets/icon-ton-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:38px;height:38px"></div>
+        <div class="r-icon ri-ton" style="background-image:url(assets/icon-ton.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">TON Room</div>
           <div class="rd">Pay TON · Win TON · Instant payout</div>
@@ -723,7 +721,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
       <div class="ri">
-        <div class="r-icon ri-vip" style="background-image:url(assets/icon-tbola-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:38px;height:38px"></div>
+        <div class="r-icon ri-vip" style="background-image:url(assets/icon-vip.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">VIP TON Room</div>
           <div class="rd">High stakes · Lv.20+ · VIP pools</div>
@@ -1827,12 +1825,7 @@ function renderCards(){
   const cardStyle=styleMap[curRoom]||'card-stone'
   const cardLabel=labelMap[curRoom]||'Card'
   // marker image per room — star for Stars, TON coin for rest
-  const markerImg=
-    curRoom==='stars'?'url(assets/icon-not-coin.png)':
-    curRoom==='not'?'url(assets/icon-not-coin.png)':
-    curRoom==='ton'?'url(assets/icon-ton-coin.png)':
-    curRoom==='vip'?'url(assets/icon-ton-coin.png)':
-    'url(assets/icon-tbola-coin.png)'
+  const markerImg=curRoom==='stars'?'url(assets/marker-star.png)':curRoom==='not'?'url(assets/marker-star.png)':'url(assets/marker-ton.png)'
   const extras={
     'card-parchment':'','card-wood':'','card-stone':'','card-gold':''
   }
