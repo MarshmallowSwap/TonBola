@@ -777,9 +777,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="sec">Number of Cards</div>
   <div class="cpick">
     <div class="cn sel" onclick="selC(1,this)">1</div>
-    <div class="cn" onclick="selC(2,this)">2</div>
-    <div class="cn" onclick="selC(3,this)">3</div>
-    <div class="cn" onclick="selC(5,this)">5</div>
+    <div class="cn" onclick="selC(2,this)" style="position:relative">2<span style="position:absolute;top:-7px;right:-7px;background:#3AFF8A;color:#000;font-size:.42rem;font-weight:700;border-radius:4px;padding:1px 3px;line-height:1.2">-10%</span></div>
+    <div class="cn" onclick="selC(3,this)" style="position:relative">3<span style="position:absolute;top:-7px;right:-7px;background:#3AFF8A;color:#000;font-size:.42rem;font-weight:700;border-radius:4px;padding:1px 3px;line-height:1.2">-10%</span></div>
+    <div class="cn" onclick="selC(5,this)" style="position:relative">5<span style="position:absolute;top:-7px;right:-7px;background:#3AFF8A;color:#000;font-size:.42rem;font-weight:700;border-radius:4px;padding:1px 3px;line-height:1.2">-10%</span></div>
     <div class="cn" onclick="selC(10,this)">10</div>
   </div>
 
@@ -1557,8 +1557,17 @@ function selC(n,el){
 
 function updateCost(){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const discount=c.cur!=='free'&&nCards>=2?0.9:1
+  const totalPrice=c.price*nCards*discount
   const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
-  const el=document.getElementById('l-cost');if(el)el.textContent=c.cur==='free'?'Free':c.cur==='not'||c.cur==='stars'?(c.price*nCards).toLocaleString()+' NOT':(c.price*nCards).toFixed(2)+' TON'
+  const el=document.getElementById('l-cost')
+  if(el){
+    const isFree=c.cur==='free'
+    const isNot=c.cur==='not'||c.cur==='stars'
+    let costStr=isFree?'Free':isNot?Math.floor(totalPrice).toLocaleString()+' NOT':totalPrice.toFixed(2)+' TON'
+    if(!isFree&&nCards>=2) costStr+=' <span style="color:#3AFF8A;font-size:.65rem;font-weight:700;margin-left:4px">-10%</span>'
+    el.innerHTML=costStr
+  }
   const te=document.getElementById('l-tbola');if(te)te.textContent='+'+c.tbola*nCards+' $TBOLA'
   const pe=document.getElementById('l-pool');if(pe)pe.textContent=c.cur==='free'?'$TBOLA prizes':fmt(pool)
   const pl=document.getElementById('l-pz-line'),pb=document.getElementById('l-pz-bingo'),pt=document.getElementById('l-pz-tbola')
