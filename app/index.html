@@ -178,12 +178,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .ri-vip{}
 .rn{font-size:1rem;font-weight:700;color:#3D1A00;margin-bottom:2px;
   text-shadow:0 1px 0 rgba(255,220,150,.4)}
+.rc.ton .rn,.rc.ton .rd,.rc.ton .rp{color:#FFE0A0;text-shadow:0 1px 3px rgba(0,0,0,.95)}
+.rc.ton .rp{color:#FFD93D}
 .rd{font-size:.72rem;color:#5A2A00;line-height:1.2;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
-.rbadge{padding:2px 7px;border-radius:50px;font-size:.6rem;font-weight:700;
-  letter-spacing:.5px;flex-shrink:0;border:1.5px solid;
-  background:rgba(0,0,0,.45)!important;color:#FFE0A0!important;
-  border-color:rgba(255,220,150,.4)!important}
+.rbadge{padding:2px 6px;border-radius:50px;font-size:.55rem;font-weight:700;
+  letter-spacing:0;flex-shrink:0;border:1.5px solid;
+  background:rgba(0,0,0,.5)!important;color:#FFE0A0!important;
+  border-color:rgba(255,220,150,.4)!important;max-width:48px;overflow:hidden;text-overflow:clip}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 24px 12px;background:none;border-top:none;flex-shrink:0}
 .rp{font-size:.72rem;color:#3D1A00;font-weight:700;display:flex;align-items:center;gap:4px}
@@ -654,7 +656,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
           <div class="rn">Stars Room</div>
           <div class="rd">Pay Stars · Win Stars · +$TBOLA</div>
         </div>
-        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">STARS</div>
+        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">★</div>
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">34</span> warriors</div>
@@ -672,7 +674,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">11</span> warriors</div>
-        <div class="rprz" style="color:#004A8A;text-shadow:0 1px 0 rgba(255,255,255,.3)">0.1 TON / card</div>
+        <div class="rprz" style="color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.95)">0.1 TON / card</div>
       </div>
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
@@ -686,7 +688,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">4</span> warriors</div>
-        <div class="rprz" style="color:#8A2200;text-shadow:0 1px 0 rgba(255,255,255,.3)">1 TON / card</div>
+        <div class="rprz" style="color:#8A0000;font-weight:700;text-shadow:0 1px 2px rgba(255,200,100,.4)">1 TON / card</div>
       </div>
     </div>
   </div>
