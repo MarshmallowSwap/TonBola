@@ -192,6 +192,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .rn{font-size:1rem;font-weight:700;color:#3D1A00;margin-bottom:2px;
   text-shadow:0 1px 0 rgba(255,220,150,.4)}
 .rc.ton .rn,.rc.ton .rd,.rc.ton .rp{color:#FFE0A0;text-shadow:0 1px 3px rgba(0,0,0,.95)}
+.rc.stars .rn,.rc.stars .rd{color:#E0E0E0;text-shadow:0 1px 3px rgba(0,0,0,.95)}
+.rc.stars .rp{color:#BBB;font-weight:700}
 .rc.ton .rp{color:#FFD93D}
 .rc.stars .r-icon{display:flex;background:none;border:none;width:36px;height:36px}
 .rc.vip .rn{color:#3D1A00;text-shadow:0 1px 0 rgba(255,220,100,.5)}
@@ -208,8 +210,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   border-color:rgba(255,220,150,.5)!important;
   position:absolute;top:22px;right:24px}
 .rc.stars .rbadge{font-size:.65rem;padding:4px 10px;
-  background:rgba(90,70,0,.7)!important;border-color:rgba(255,220,80,.6)!important;
-  color:#FFD93D!important}
+  background:rgba(30,30,30,.7)!important;border-color:rgba(200,200,200,.4)!important;
+  color:#E0E0E0!important}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 24px 12px;background:none;border-top:none;flex-shrink:0}
 .rp{font-size:.72rem;color:#3D1A00;font-weight:700;display:flex;align-items:center;gap:4px}
@@ -1477,7 +1479,7 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
-  stars:{name:'Stars Room',cur:'stars',price:100,tbola:50,icon:'⭐'},
+  stars:{name:'NOT Room',cur:'not',price:1000,tbola:50,icon:'◈'},
   ton:{name:'TON Room',cur:'ton',price:0.1,tbola:100,icon:'💎'},
   vip:{name:'VIP TON Room',cur:'ton',price:1,tbola:300,icon:'👑'}
 }
