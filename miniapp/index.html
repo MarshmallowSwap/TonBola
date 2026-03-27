@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
+<link rel="preload" as="image" href="assets/bal-card.png">
 <link rel="preload" as="image" href="assets/ball-blue.png">
 <link rel="preload" as="image" href="assets/ball-gold.png">
 <link rel="preload" as="image" href="assets/ball-purple.png">
@@ -111,9 +112,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── BALANCE CARD ── */
 .bal-card{margin:8px 10px;border-radius:var(--r);
-  background:linear-gradient(135deg,#2E1B0A 0%,#1E1005 100%);
-  border:2px solid #6B4423;
-  box-shadow:0 4px 0 #0E0805,inset 0 1px 0 rgba(255,184,0,.1)}
+  background-image:url(assets/bal-card.png);
+  background-size:100% 100%;background-repeat:no-repeat;
+  border:none;
+  box-shadow:0 4px 0 rgba(0,0,0,.5)}
 .bal-inner{padding:14px 16px}
 .bal-top{display:flex;align-items:flex-start;justify-content:space-between}
 .bal-lbl{font-size:.65rem;font-weight:700;letter-spacing:.8px;
