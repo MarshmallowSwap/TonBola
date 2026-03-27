@@ -126,7 +126,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   text-shadow:0 1px 3px rgba(0,0,0,.9);opacity:.8}
 .bal-amt{font-size:2rem;font-weight:700;color:#FFD93D;line-height:1;
   text-shadow:0 0 20px rgba(255,184,0,.7),0 2px 4px rgba(0,0,0,.95),
-    2px 2px 0 rgba(0,0,0,.6),-1px -1px 0 rgba(0,0,0,.5)}
+    2px 2px 0 rgba(0,0,0,.6),-1px -1px 0 rgba(0,0,0,.5);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .lv-badge{padding:4px 10px;text-align:center;position:relative;
   background:linear-gradient(135deg,#3A1A00,#1A0A00);
   border:2px solid #CC8800;border-radius:10px;
@@ -1316,6 +1317,13 @@ let isGameActive = false  // true = game running, blocks new lobby entry
   const img=new Image();img.src=`assets/${name}.png`
 })
 
+function formatTbola(n) {
+  if(n >= 1_000_000) return (n/1_000_000).toFixed(n%1_000_000===0?0:1)+'M'
+  if(n >= 100_000)   return Math.floor(n/1_000)+'K'
+  if(n >= 10_000)    return (n/1_000).toFixed(1)+'K'
+  return n.toLocaleString()
+}
+
 function getTgUser(){return{
   id:tg?.initDataUnsafe?.user?.id||0,
   name:tg?.initDataUnsafe?.user?.first_name||tg?.initDataUnsafe?.user?.username||'Warrior',
@@ -1361,8 +1369,8 @@ function initHome(){
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
-  document.getElementById('h-tbola').textContent=user.tbola.toLocaleString()
-  document.getElementById('bc-tbola').textContent=user.tbola.toLocaleString()
+  document.getElementById('h-tbola').textContent=formatTbola(user.tbola)
+  document.getElementById('bc-tbola').textContent=formatTbola(user.tbola)
   document.getElementById('bc-lv').textContent=user.level
   document.getElementById('bc-streak').textContent=user.streak+'d'
   document.getElementById('bc-games').textContent=user.games
@@ -1636,7 +1644,7 @@ function showLevelUp(lv) {
   }).join('')
   // Give TBOLA bonus
   user.tbola += t.tbola
-  const hb=document.getElementById('h-tbola');if(hb)hb.textContent=user.tbola.toLocaleString()
+  const hb=document.getElementById('h-tbola');if(hb)hb.textContent=formatTbola(user.tbola)
   // Show overlay
   const ov = document.getElementById('lvup-ov')
   ov.classList.remove('show')
@@ -1743,7 +1751,7 @@ function renderProfile(){
   document.getElementById('p-nm').textContent=user.name
   const pu=document.getElementById('p-usr');if(pu)pu.textContent=user.username?'@'+user.username:''
   document.getElementById('p-lv').textContent='Level '+user.level
-  document.getElementById('p-tbola').textContent=user.tbola.toLocaleString()+' $TBOLA'
+  document.getElementById('p-tbola').textContent=formatTbola(user.tbola)+' $TBOLA'
   const lvInfo = getLevelIcon(user.level)
   const pbadge = document.getElementById('p-lv-badge')
   if(pbadge){pbadge.textContent=lvInfo.icon;pbadge.style.background=lvInfo.color+'44';pbadge.style.borderColor=lvInfo.color}
@@ -1937,6 +1945,7 @@ function renderLb(tab) {
   // Inject current user if not already in list
   const myName = user.name || 'You'
   const myScore = user.tbola || 0
+  const myScoreFmt = formatTbola(myScore)
   const alreadyIn = data.some(r => r.n === myName)
   if(!alreadyIn && myScore > 0) {
     // Find where user would rank
