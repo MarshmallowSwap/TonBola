@@ -118,23 +118,18 @@ nav{
 @keyframes glow-pulse{0%{transform:translateX(-50%) scale(.9);opacity:.6}100%{transform:translateX(-50%) scale(1.1);opacity:1}}
 
 /* ── STONE SIGN (section header) ── */
-.sign-wrap{text-align:center;margin-bottom:40px;position:relative;display:flex;align-items:center;justify-content:center;gap:0}
-.sign-chain{width:4px;height:30px;background:repeating-linear-gradient(180deg,#8B7040 0px,#8B7040 4px,#5A4A20 4px,#5A4A20 8px);margin:0 -2px}
+.sign-wrap{text-align:center;margin-bottom:32px;position:relative;display:flex;align-items:center;justify-content:center}
 .sign-board{
-  background:linear-gradient(180deg,#5A4230 0%,#3A2818 40%,#2E2010 70%,#3A2818 100%);
-  border:4px solid #1A1008;
-  border-radius:6px;
-  padding:10px 32px;
+  background-image:url(sign-header.png);
+  background-size:100% 100%;background-repeat:no-repeat;
+  padding:18px 80px 22px;
   position:relative;
-  box-shadow:0 6px 0 #0A0804,0 8px 20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08);
+  min-width:280px;max-width:560px;width:60%;
+  display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.7))
 }
-.sign-board::before,.sign-board::after{
-  content:'';position:absolute;width:14px;height:14px;border-radius:50%;top:50%;transform:translateY(-50%);
-  background:radial-gradient(circle at 35% 35%,#C0A060,#7A6030);
-  border:2px solid #1A1008;box-shadow:0 2px 4px rgba(0,0,0,.8)
-}
-.sign-board::before{left:8px}.sign-board::after{right:8px}
-.sign-text{font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C4933F}
+.sign-chain{display:none}
+.sign-text{font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C4933F;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 
 /* ── SECTION TITLE ── */
 .s-title{
