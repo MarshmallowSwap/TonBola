@@ -159,7 +159,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   background-size:100% 100%;background-repeat:no-repeat;
   box-shadow:0 5px 0 rgba(0,0,0,.6);
   height:130px;
-  display:flex;flex-direction:column}
+  display:flex;flex-direction:column;position:relative}
 .rc.free{background-image:url(assets/rc-free.png)}
 .rc.stars{background-image:url(assets/rc-stars.png)}
 .rc.ton{background-image:url(assets/rc-ton.png)}
@@ -184,12 +184,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .rc.vip .rd{color:#5A3000;text-shadow:none}
 .rc.vip .rp{color:#3D1A00;font-weight:700}
 .rc.vip .rprz{color:#5A1000!important;font-weight:700;text-shadow:0 1px 0 rgba(255,200,100,.4)}
+.rc.ton .rf,.rc.vip .rf{padding-bottom:30px}
 .rd{font-size:.72rem;color:#5A2A00;line-height:1.2;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
-.rbadge{padding:2px 6px;border-radius:50px;font-size:.52rem;font-weight:700;
-  letter-spacing:0;flex-shrink:0;border:1.5px solid;
-  background:rgba(0,0,0,.5)!important;color:#FFE0A0!important;
-  border-color:rgba(255,220,150,.4)!important}
+.rbadge{padding:3px 8px;border-radius:50px;font-size:.58rem;font-weight:700;
+  letter-spacing:.3px;border:1.5px solid;
+  background:rgba(0,0,0,.55)!important;color:#FFE0A0!important;
+  border-color:rgba(255,220,150,.5)!important;
+  position:absolute;top:12px;right:24px}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 24px 12px;background:none;border-top:none;flex-shrink:0}
 .rp{font-size:.72rem;color:#3D1A00;font-weight:700;display:flex;align-items:center;gap:4px}
