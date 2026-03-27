@@ -31,7 +31,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
+body{font-family:'Clash',sans-serif;background:#0A0806;overflow-x:hidden}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:10px}
@@ -41,12 +41,11 @@ body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
 /* ── BG ── */
 .bg-layer{
   position:fixed;inset:0;z-index:-3;
-  background:
-    linear-gradient(180deg,#1A1610 0%,#252018 15%,#2E2820 40%,#201C14 70%,#141008 100%);
+  background:#0A0806;
 }
 .bg-layer::after{
   content:'';position:fixed;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C4933F' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C4933F' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   opacity:.4;
 }
 
@@ -57,7 +56,7 @@ body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  background:linear-gradient(180deg,rgba(10,8,4,.97),rgba(10,8,4,.88));
+  background:rgba(6,4,2,.98);
   border-bottom:none;
 }
 .nav-border{
@@ -165,7 +164,7 @@ section{padding:80px 24px;position:relative}
 
 /* Stone panel */
 .stone-panel{
-  background:linear-gradient(135deg,#3A3028 0%,#2C2418 35%,#241C12 65%,#3A3028 100%);
+  background:linear-gradient(135deg,#2A2218 0%,#1E1810 35%,#181208 65%,#2A2218 100%);
   border:4px solid #1A1408;border-radius:10px;
   box-shadow:0 8px 0 #0A0804,0 10px 30px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.07);
   position:relative
@@ -195,7 +194,7 @@ section{padding:80px 24px;position:relative}
 /* ── DIVIDER (rope style) ── */
 .rope-divider{
   position:relative;height:28px;overflow:visible;
-  background:linear-gradient(180deg,#2E2418,#201810,#18100A);
+  background:linear-gradient(180deg,#181210,#100C08,#0C0806);
   border-top:3px solid #6B4A28;border-bottom:3px solid #0E0804;z-index:10
 }
 .rope-divider::before{
@@ -290,7 +289,7 @@ section{padding:80px 24px;position:relative}
 
 /* Stars bar */
 .stats-bar{
-  background:linear-gradient(180deg,#1A0E04,#120A02,#1A0E04);
+  background:#0A0806;
   border-top:4px solid #4A2800;border-bottom:4px solid #0A0602;
   padding:0;overflow:hidden
 }
@@ -343,7 +342,7 @@ section{padding:80px 24px;position:relative}
 /* ── WARRIOR PASS ── */
 .wp-benefits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
 .wp-benefit{
-  background:rgba(0,0,0,.25);border-radius:10px;padding:12px;
+  background:rgba(0,0,0,.4);border-radius:10px;padding:12px;
   display:flex;align-items:center;gap:10px;
   border:1px solid rgba(255,184,0,.12)
 }
@@ -412,7 +411,7 @@ section{padding:80px 24px;position:relative}
 
 /* ── FOOTER ── */
 footer{
-  background:linear-gradient(180deg,#0E0602,#0A0402);
+  background:#060402;
   border-top:4px solid #2A1408;
   padding:32px 24px
 }
@@ -425,7 +424,7 @@ footer{
 .footer-copy{font-size:.72rem;color:rgba(200,140,50,.3)}
 
 /* ── SCROLLING MARQUEE ── */
-.marquee-wrap{background:linear-gradient(180deg,#1A0E04,#120A02);border-top:3px solid #3A2010;border-bottom:3px solid #0A0602;overflow:hidden;padding:10px 0}
+.marquee-wrap{background:linear-gradient(180deg,#0E0804,#08060404);border-top:3px solid #3A2010;border-bottom:3px solid #0A0602;overflow:hidden;padding:10px 0}
 .marquee-track{display:flex;gap:0;animation:marquee 30s linear infinite;white-space:nowrap}
 .marquee-item{font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;color:rgba(200,140,50,.4);letter-spacing:1px;padding:0 24px}
 .marquee-sep{color:rgba(200,140,50,.2);padding:0 8px}
@@ -854,19 +853,19 @@ footer{
     <div class="gem g-br"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
     <div style="font-size:1.1rem;font-weight:700;color:#3D1A00;margin-bottom:18px;text-align:center">⚔ Casual Player · 30 Days · Zero Wins</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
-      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FFD93D">9,000</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">3 games/day × 2 cards</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#3AFF8A">+650</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">30-day login streak</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FF8080">+4,500</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5)">5 friends invited</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
         <div style="font-size:1.8rem;font-weight:900;color:#3D1A00;font-family:'Clash',sans-serif">~14,150</div>
         <div style="font-size:.72rem;color:rgba(0,0,0,.5);font-weight:700">$TBOLA in 30 days</div>
       </div>
@@ -945,7 +944,7 @@ footer{
 <div class="rope-divider"></div>
 
 <!-- TRANSPARENCY -->
-<section id="transparency" style="background:rgba(0,0,0,.25)">
+<section id="transparency" style="background:rgba(0,0,0,.4)">
 <div class="wrap">
   <div class="sign-wrap aos">
     <div class="sign-chain"></div>
@@ -966,22 +965,22 @@ footer{
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#3AFF8A">55%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🏆 Prize Pool</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">25% Line · 75% Bingo</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#40B8FF">34%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">⚙️ Development</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Servers, team, ops</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#FFD93D">8%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🪙 $TBOLA Fund</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Buyback & airdrop</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#FF8060">3%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🥇 Leaderboard</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Unified rankings</div>
@@ -1001,27 +1000,27 @@ footer{
       <div style="margin-left:auto;background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);border-radius:6px;padding:4px 10px;font-size:.65rem;font-weight:700;color:#FFD93D">🔜 Coming Soon</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#3AFF8A">45%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🏆 Prize Pool</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Instant payouts</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px;border:1px solid rgba(255,215,0,.2)">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px;border:1px solid rgba(255,215,0,.2)">
         <div style="font-size:1.5rem;font-weight:700;color:#FFD700">15%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🎰 Jackpot</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Accumulates forever</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#40B8FF">30%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">⚙️ Development</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Servers, team, ops</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#FFD93D">7%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🪙 $TBOLA Fund</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Buyback & airdrop</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px 8px">
+      <div style="text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:12px 8px">
         <div style="font-size:1.5rem;font-weight:700;color:#FF8060">3%</div>
         <div style="font-size:.72rem;font-weight:700;color:#FFE0A0;margin:3px 0">🥇 Leaderboard</div>
         <div style="font-size:.62rem;color:rgba(200,160,80,.4)">Unified rankings</div>
