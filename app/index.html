@@ -127,10 +127,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .bal-amt{font-size:2rem;font-weight:700;color:#FFD93D;line-height:1;
   text-shadow:0 0 20px rgba(255,184,0,.7),0 2px 4px rgba(0,0,0,.95),
     2px 2px 0 rgba(0,0,0,.6),-1px -1px 0 rgba(0,0,0,.5)}
-.lv-badge{background:none;border:none;padding:4px 10px;text-align:center}
-.lv-n{font-size:1.8rem;font-weight:700;color:#FFD93D;line-height:1;
-  text-shadow:0 0 12px rgba(255,184,0,.7),0 2px 4px rgba(0,0,0,.9)}
-.lv-l{font-size:.6rem;color:rgba(255,128,128,.6);text-transform:uppercase;letter-spacing:.5px}
+.lv-badge{padding:4px 10px;text-align:center;position:relative;
+  background:linear-gradient(135deg,#3A1A00,#1A0A00);
+  border:2px solid #CC8800;border-radius:10px;
+  box-shadow:0 0 0 0 rgba(255,184,0,.7);
+  animation:lvPulse 1.8s ease-in-out infinite}
+@keyframes lvPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,184,0,.7)}
+  60%{box-shadow:0 0 0 8px rgba(255,184,0,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,184,0,0)}}
+.lv-n{font-size:2.6rem;font-weight:700;color:#FFD93D;line-height:1;
+  text-shadow:0 0 16px rgba(255,184,0,.9),0 2px 4px rgba(0,0,0,.95)}
+.lv-l{font-size:.65rem;font-weight:700;color:#FFB800;text-transform:uppercase;
+  letter-spacing:1.5px;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .bal-stats{display:flex;gap:6px;margin-top:0px;flex-wrap:wrap;padding:0 74px;justify-content:space-around}
 .bst{background:none;border:none;
   padding:4px 6px;display:flex;align-items:center;gap:4px}
