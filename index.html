@@ -21,149 +21,216 @@
 }
 
 :root {
-  --gold:#FFD93D;--gold2:#FFB800;--gold3:#FF8C00;
-  --brown:#4A2800;--brown2:#2E1600;
-  --wood:#8B5A2B;--wood2:#6B3A1A;
+  --gold:#FFD93D;--gold2:#FFB800;--gold3:#FF8C00;--gold4:#CC8800;
+  --brown:#4A2800;--brown2:#2E1600;--brown3:#6B3A1A;
+  --wood:#8B5A2B;--wood2:#5A2E10;
   --stone:#5A5248;--stone2:#3A3228;
-  --green:#2A6A0A;--green2:#1A4A06;--green3:#3A8A14;
-  --teal:#00C8A0;--blue:#1A80E8;--pink:#FF3CAC;
-  --ton:#0098EA;
+  --green:#2A6A0A;--green2:#1A4A06;
+  --teal:#00C8A0;--blue:#1A80E8;--ton:#0098EA;
+  --red:#E83A1A;--cream:#F5E6C8;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden;cursor:default}
+body{font-family:'Clash',sans-serif;background:#1A3A06;overflow-x:hidden}
 
 /* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:8px}
-::-webkit-scrollbar-track{background:#1A2A08}
-::-webkit-scrollbar-thumb{background:#6B4423;border-radius:4px}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#1A0E04}
+::-webkit-scrollbar-thumb{background:linear-gradient(#8B5A2B,#4A2800);border-radius:5px}
 
-/* ── FOREST BG ── */
-.forest-bg {
-  position:fixed;inset:0;z-index:-2;
+/* ── BG ── */
+.bg-layer{
+  position:fixed;inset:0;z-index:-3;
   background:
-    linear-gradient(180deg,
-      #0A1E04 0%,
-      #142808 20%,
-      #1A3A0A 45%,
-      #0E2206 70%,
-      #081408 100%);
+    linear-gradient(180deg,#0A1E04 0%,#122606 15%,#1A3A0A 40%,#122008 70%,#0A1408 100%);
 }
-.forest-bg::before{
+.bg-layer::after{
   content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 30%,rgba(42,106,10,.3) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 35% at 80% 60%,rgba(26,74,6,.25) 0%,transparent 55%),
-    radial-gradient(ellipse 40% 30% at 50% 90%,rgba(10,30,4,.4) 0%,transparent 50%);
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232A5C0A' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity:.4;
 }
+
 /* Floating particles */
-.particle{position:fixed;border-radius:50%;animation:float-up var(--d,8s) var(--delay,0s) ease-in-out infinite;opacity:0;pointer-events:none;z-index:-1}
-@keyframes float-up{0%{opacity:0;transform:translateY(100vh) scale(0)}20%{opacity:.6}80%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1.5)}}
+.ptcl{position:fixed;border-radius:50%;animation:fup var(--d,8s) var(--dl,0s) ease-in-out infinite;opacity:0;pointer-events:none;z-index:-1}
+@keyframes fup{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}20%{opacity:.7}80%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1.5) rotate(360deg)}}
 
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  background:linear-gradient(180deg,rgba(20,10,4,.98),rgba(20,10,4,.85));
-  border-bottom:4px solid #4A2800;
-  padding:0 24px;
-  box-shadow:0 4px 0 #1A0800,0 6px 20px rgba(0,0,0,.5);
+  background:linear-gradient(180deg,rgba(15,6,0,.97),rgba(15,6,0,.88));
+  border-bottom:none;
 }
-nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,#6B4423,#FFD700,#C4933F,#FFD700,#6B4423);opacity:.5}
-.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:24px}
-.nav-logo{font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:900;
-  color:#FFD93D;text-shadow:0 0 20px rgba(255,184,0,.5),3px 3px 0 #7A5200,-1px -1px 0 rgba(0,0,0,.5);
-  letter-spacing:-1px;cursor:pointer}
-.nav-logo span{color:#FF4444;text-shadow:0 0 20px rgba(255,68,68,.4),3px 3px 0 #8B0000}
-.nav-links{display:flex;gap:6px;margin-left:auto}
-.nav-link{padding:6px 14px;border-radius:50px;font-size:.85rem;font-weight:700;
-  color:rgba(255,220,150,.7);text-decoration:none;
-  transition:all .2s;letter-spacing:.3px}
-.nav-link:hover{color:#FFD93D;background:rgba(255,184,0,.1)}
+.nav-border{
+  height:6px;
+  background:repeating-linear-gradient(90deg,#4A2800 0px,#4A2800 2px,#6B4A28 2px,#6B4A28 4px,#FFD93D 4px,#FFD93D 6px,#6B4A28 6px,#6B4A28 8px,#4A2800 8px,#4A2800 10px);
+}
+.nav-inner{max-width:1200px;margin:0 auto;height:60px;display:flex;align-items:center;gap:16px;padding:0 24px}
+
+/* Logo */
+.nav-logo{
+  font-family:'Clash',sans-serif;font-size:1.9rem;font-weight:900;
+  background:linear-gradient(155deg,#fff 0%,#FFD93D 35%,#FF8C00 70%,#FFD93D 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(2px 2px 0 rgba(120,60,0,.8));
+  letter-spacing:-1px;cursor:pointer;text-decoration:none;flex-shrink:0
+}
+.nav-links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav-link{
+  padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:700;
+  color:rgba(255,220,150,.65);text-decoration:none;
+  transition:all .15s;letter-spacing:.3px;
+  border:1.5px solid transparent
+}
+.nav-link:hover{color:#FFD93D;background:rgba(255,184,0,.12);border-color:rgba(255,184,0,.25)}
 .nav-cta{
-  padding:8px 20px;border-radius:50px;font-size:.9rem;font-weight:700;
-  background:linear-gradient(180deg,#FFD93D,#FFB800);color:#3D1A00;
-  border:3px solid #FFE566;text-decoration:none;
-  box-shadow:0 4px 0 #8B6000,0 6px 12px rgba(0,0,0,.4);
-  transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;gap:6px}
-.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 0 #8B6000,0 8px 16px rgba(0,0,0,.4)}
+  padding:8px 18px;border-radius:8px;font-size:.88rem;font-weight:700;
+  background:linear-gradient(180deg,#FFE566,#FFB800);color:#3D1A00;
+  border:3px solid #FFE566;text-decoration:none;flex-shrink:0;
+  box-shadow:0 4px 0 #8B6000,0 5px 12px rgba(0,0,0,.4);
+  transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;gap:6px
+}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 0 #8B6000}
 .nav-cta:active{transform:translateY(2px);box-shadow:0 2px 0 #8B6000}
+.nav-bottom-border{height:4px;background:linear-gradient(90deg,transparent,#6B4A28 20%,#FFD700 50%,#6B4A28 80%,transparent);opacity:.6}
 
-/* ── STONE DIVIDER ── */
-.stone-divider{
-  position:relative;height:32px;overflow:visible;
-  background:linear-gradient(180deg,#4A3822 0%,#3A2810 50%,#2E1E08 100%);
-  border-top:3px solid #6B4A28;border-bottom:3px solid #1A0E04;
-  z-index:10}
-.stone-divider::before,.stone-divider::after{
-  content:'';position:absolute;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,transparent,#FFD700,#C4933F,#FFD700,transparent);opacity:.3}
-.stone-divider::before{top:-1px}.stone-divider::after{bottom:-1px}
+/* ── TORCH ── */
+.torch{position:absolute;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.torch-pole{width:10px;height:60px;background:linear-gradient(180deg,#6B3A1A,#3A1A08);border-radius:5px;border:2px solid #1A0A04}
+.torch-head{width:22px;height:28px;background:linear-gradient(180deg,#5A3210,#2A1408);border-radius:4px 4px 2px 2px;border:2px solid #1A0A04;margin-top:-2px;position:relative}
+.torch-flame{position:absolute;top:-24px;left:50%;transform:translateX(-50%);width:16px;height:26px}
+.torch-flame::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:14px;height:22px;
+  background:radial-gradient(ellipse at 50% 80%,#FF6A00,#FF2200 40%,transparent 70%);
+  border-radius:50% 50% 30% 30%;
+  animation:flicker 0.15s ease-in-out infinite alternate;
+}
+.torch-flame::after{
+  content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  width:8px;height:14px;
+  background:radial-gradient(ellipse at 50% 80%,#FFD93D,#FF8C00 60%,transparent 90%);
+  border-radius:50% 50% 30% 30%;
+  animation:flicker2 0.12s ease-in-out infinite alternate;
+}
+@keyframes flicker{0%{transform:translateX(-50%) scaleX(1) scaleY(1) rotate(-1deg)}100%{transform:translateX(-50%) scaleX(1.15) scaleY(1.1) rotate(1deg)}}
+@keyframes flicker2{0%{transform:translateX(-50%) scaleX(.9) rotate(2deg)}100%{transform:translateX(-50%) scaleX(1.1) rotate(-2deg)}}
+.torch-glow{position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,0,.4) 0%,transparent 70%);animation:glow-pulse 0.8s ease-in-out infinite alternate}
+@keyframes glow-pulse{0%{transform:translateX(-50%) scale(.9);opacity:.6}100%{transform:translateX(-50%) scale(1.1);opacity:1}}
 
-/* ── STONE PANEL ── */
-.stone-panel{
-  background:linear-gradient(135deg,#3A3228 0%,#2E2620 40%,#252018 70%,#3A3228 100%);
-  border:4px solid #1A1408;border-radius:8px;
-  box-shadow:0 8px 0 #0A0804,0 10px 30px rgba(0,0,0,.6),
-    inset 0 2px 0 rgba(255,255,255,.08),inset 0 -2px 0 rgba(0,0,0,.4);
-  position:relative;overflow:hidden}
-.stone-panel::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:6px;
-  background:linear-gradient(90deg,#4A3828,#7A6040,#C4933F,#FFD700,#C4933F,#7A6040,#4A3828);opacity:.5}
+/* ── STONE SIGN (section header) ── */
+.sign-wrap{text-align:center;margin-bottom:40px;position:relative;display:flex;align-items:center;justify-content:center;gap:0}
+.sign-chain{width:4px;height:30px;background:repeating-linear-gradient(180deg,#8B7040 0px,#8B7040 4px,#5A4A20 4px,#5A4A20 8px);margin:0 -2px}
+.sign-board{
+  background:linear-gradient(180deg,#5A4230 0%,#3A2818 40%,#2E2010 70%,#3A2818 100%);
+  border:4px solid #1A1008;
+  border-radius:6px;
+  padding:10px 32px;
+  position:relative;
+  box-shadow:0 6px 0 #0A0804,0 8px 20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.sign-board::before,.sign-board::after{
+  content:'';position:absolute;width:14px;height:14px;border-radius:50%;top:50%;transform:translateY(-50%);
+  background:radial-gradient(circle at 35% 35%,#C0A060,#7A6030);
+  border:2px solid #1A1008;box-shadow:0 2px 4px rgba(0,0,0,.8)
+}
+.sign-board::before{left:8px}.sign-board::after{right:8px}
+.sign-text{font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C4933F}
 
-/* ── WOOD PANEL ── */
+/* ── SECTION TITLE ── */
+.s-title{
+  font-family:'Clash',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;
+  color:#FFE0A0;line-height:1.15;margin-bottom:16px;
+  text-shadow:3px 3px 0 rgba(0,0,0,.6),0 0 40px rgba(255,184,0,.15)
+}
+.s-sub{font-size:.95rem;color:rgba(255,200,120,.5);line-height:1.7;max-width:560px}
+
+/* AOS */
+.aos{opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease}
+.aos.show{opacity:1;transform:none}
+
+/* ── WRAP ── */
+section{padding:80px 24px;position:relative}
+.wrap{max-width:1100px;margin:0 auto}
+
+/* ── PANELS ── */
+/* Wood panel with nails */
 .wood-panel{
   background:
-    repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0px,transparent 3px,rgba(0,0,0,.06) 8px,transparent 12px),
+    repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0px,transparent 3px,rgba(0,0,0,.08) 8px,transparent 12px),
     linear-gradient(135deg,#8A5228 0%,#5A2E10 20%,#7A4520 40%,#5A2C0E 60%,#7A4520 80%,#5A2E10 100%);
-  border:5px solid #2E1206;border-radius:8px;
-  box-shadow:0 8px 0 #1A0A04,0 10px 30px rgba(0,0,0,.6),
-    inset 0 2px 0 rgba(255,255,255,.12),inset 0 -2px 0 rgba(0,0,0,.5);
-  position:relative}
-.wood-panel::before{
-  content:'';position:absolute;top:4px;left:4px;width:16px;height:16px;
-  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
-  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
-.wood-panel::after{
-  content:'';position:absolute;top:4px;right:4px;width:16px;height:16px;
-  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
-  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
-.nail-bl,.nail-br{position:absolute;bottom:4px;width:16px;height:16px;
-  border-radius:50%;background:radial-gradient(circle at 35% 35%,#C0C0C0,#606060);
-  border:3px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,.7)}
-.nail-bl{left:4px}.nail-br{right:4px}
+  border:5px solid #1E0C04;border-radius:10px;
+  box-shadow:0 8px 0 #100602,0 10px 30px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.1);
+  position:relative
+}
+.nail{position:absolute;width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#D0B870,#7A6030);
+  border:2px solid #1A1008;box-shadow:0 2px 4px rgba(0,0,0,.8);z-index:2}
+.n-tl{top:6px;left:6px}.n-tr{top:6px;right:6px}.n-bl{bottom:6px;left:6px}.n-br{bottom:6px;right:6px}
 
-/* ── GOLD PANEL ── */
+/* Stone panel */
+.stone-panel{
+  background:linear-gradient(135deg,#3A3228 0%,#2E2620 35%,#252018 65%,#3A3228 100%);
+  border:4px solid #1A1408;border-radius:10px;
+  box-shadow:0 8px 0 #0A0804,0 10px 30px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.07);
+  position:relative
+}
+
+/* Gold panel */
 .gold-panel{
   background:linear-gradient(145deg,#C8A820,#8B7010,#B09020,#6B5200,#AA8A10,#C4A020);
-  border:5px solid #FFD700;border-radius:8px;
+  border:5px solid #FFD700;border-radius:10px;
   box-shadow:0 8px 0 #5A4A00,0 0 40px rgba(255,184,0,.2),0 10px 30px rgba(0,0,0,.6),
-    inset 0 2px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.4);
-  position:relative}
-.gem{position:absolute;width:18px;height:18px;z-index:5}
-.gem svg{width:18px;height:18px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
+    inset 0 2px 0 rgba(255,255,255,.3);
+  position:relative
+}
+/* Gems on corners */
+.gem{position:absolute;width:16px;height:16px;z-index:3}
+.gem svg{width:16px;height:16px;filter:drop-shadow(0 0 5px rgba(255,255,255,.5))}
+.g-tl{top:4px;left:4px}.g-tr{top:4px;right:4px}.g-bl{bottom:4px;left:4px}.g-br{bottom:4px;right:4px}
+
+/* Parchment panel */
+.parch-panel{
+  background:linear-gradient(145deg,#F5E6C8,#E8D5A8,#F0DEB8,#D8C898);
+  border:4px solid #8B6340;border-radius:8px;
+  box-shadow:0 6px 0 #4A3018,0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.5);
+  position:relative
+}
+
+/* ── DIVIDER (rope style) ── */
+.rope-divider{
+  position:relative;height:28px;overflow:visible;
+  background:linear-gradient(180deg,#3A2510,#2A1808,#1E1006);
+  border-top:3px solid #6B4A28;border-bottom:3px solid #0E0804;z-index:10
+}
+.rope-divider::before{
+  content:'⚔ ✦ ⚔ ✦ ⚔ ✦ ⚔ ✦ ⚔ ✦ ⚔ ✦ ⚔';
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  font-size:.55rem;letter-spacing:12px;color:rgba(200,150,50,.35);text-align:center;
+  white-space:nowrap;overflow:hidden
+}
 
 /* ── BUTTONS ── */
 .btn-gold{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:14px 32px;border-radius:50px;border:none;cursor:pointer;
-  font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.5px;
+  padding:14px 32px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'Clash',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:.5px;
   background:linear-gradient(180deg,#FFE566 0%,#FFD93D 40%,#FFB800 100%);
   color:#3D1A00;border:3px solid #FFE566;
   box-shadow:0 6px 0 #8B6000,0 8px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);
   text-shadow:0 1px 0 rgba(255,255,255,.3);
-  transition:transform .1s,box-shadow .1s;text-decoration:none}
+  transition:transform .1s,box-shadow .1s;text-decoration:none
+}
 .btn-gold:hover{transform:translateY(-3px);box-shadow:0 9px 0 #8B6000,0 12px 24px rgba(0,0,0,.5)}
 .btn-gold:active{transform:translateY(4px);box-shadow:0 2px 0 #8B6000}
-
 .btn-stone{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px 28px;border-radius:50px;border:none;cursor:pointer;
-  font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
+  padding:12px 28px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;
   background:linear-gradient(180deg,#7A7060,#5A5040);
   color:#FFE0A0;border:3px solid #9A9080;
   box-shadow:0 5px 0 #2A2418,0 7px 16px rgba(0,0,0,.5);
-  transition:transform .1s,box-shadow .1s;text-decoration:none}
+  transition:transform .1s,box-shadow .1s;text-decoration:none
+}
 .btn-stone:hover{transform:translateY(-2px)}
 .btn-stone:active{transform:translateY(3px);box-shadow:0 2px 0 #2A2418}
 
@@ -171,227 +238,235 @@ nav::after{content:'';position:absolute;bottom:-7px;left:0;right:0;height:3px;
 #hero{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  padding:100px 24px 60px;text-align:center;
-  position:relative;overflow:hidden}
-
-/* Background trees SVG */
-.tree{position:absolute;bottom:0;opacity:.3;pointer-events:none}
-
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 20px;border-radius:50px;margin-bottom:24px;
-  background:rgba(0,200,160,.1);border:2px solid rgba(0,200,160,.3);
-  font-size:.82rem;font-weight:700;color:var(--teal);letter-spacing:1px;
-  animation:fadeUp .6s ease both}
-.hero-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);
-  animation:pulse-d 1.2s ease infinite;box-shadow:0 0 8px var(--teal)}
-@keyframes pulse-d{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
+  padding:90px 24px 60px;text-align:center;position:relative;overflow:hidden
+}
+/* Banner ribbon */
+.hero-banner{
+  position:relative;margin-bottom:28px;display:inline-block
+}
+.banner-rope{display:flex;align-items:center;gap:0;justify-content:center}
+.banner-rope-l,.banner-rope-r{width:3px;height:40px;background:repeating-linear-gradient(180deg,#8B7040 0px,#8B7040 4px,#5A4A20 4px,#5A4A20 8px)}
+.banner-cloth{
+  background:linear-gradient(180deg,#8B1A00,#6B1200,#8B1A00);
+  border:3px solid #4A0A00;
+  padding:10px 28px 14px;
+  position:relative;
+  clip-path:polygon(0 0,100% 0,100% 80%,90% 100%,50% 88%,10% 100%,0 80%);
+  min-width:240px
+}
+.banner-cloth::before,.banner-cloth::after{
+  content:'';position:absolute;top:8px;width:12px;height:12px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#FFD93D,#AA8800);
+  border:2px solid #5A4000
+}
+.banner-cloth::before{left:10px}.banner-cloth::after{right:10px}
+.banner-text{font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FFE0A0;text-shadow:0 1px 2px rgba(0,0,0,.8)}
 
 .hero-title{
   font-family:'Clash',sans-serif;font-weight:900;
-  font-size:clamp(3rem,8vw,6.5rem);line-height:1;
-  margin-bottom:8px;
-  animation:fadeUp .7s .1s ease both}
-.hero-title .t1{
-  display:block;color:#FFD93D;
-  text-shadow:4px 4px 0 #7A5200,6px 6px 0 rgba(0,0,0,.4),0 0 60px rgba(255,184,0,.3);
-  -webkit-text-stroke:1.5px #4A2800}
-.hero-title .t2{
-  display:block;color:#FF4444;
-  text-shadow:4px 4px 0 #8B0000,6px 6px 0 rgba(0,0,0,.4);
-  font-size:75%;-webkit-text-stroke:1px #5A0000}
+  font-size:clamp(3.5rem,10vw,7rem);line-height:.95;
+  margin-bottom:12px;
+  animation:titleIn .8s .1s ease both
+}
+@keyframes titleIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:none}}
+.hero-title .t1{display:block;color:#FFD93D;
+  text-shadow:5px 5px 0 #7A5200,7px 7px 0 rgba(0,0,0,.5),0 0 80px rgba(255,184,0,.3);
+  -webkit-text-stroke:2px #4A2800}
+.hero-title .t2{display:block;color:#FF4444;font-size:60%;letter-spacing:2px;
+  text-shadow:3px 3px 0 #8B0000,5px 5px 0 rgba(0,0,0,.5)}
+.hero-sub{font-size:1.05rem;color:rgba(255,200,120,.6);max-width:520px;margin:0 auto 32px;line-height:1.7}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-.hero-sub{
-  font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,220,150,.8);
-  max-width:580px;line-height:1.6;margin:16px auto 36px;
-  animation:fadeUp .7s .2s ease both;
-  text-shadow:0 2px 8px rgba(0,0,0,.8)}
-
-.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
-  animation:fadeUp .7s .3s ease both}
-
-/* FLOATING BALLS hero */
-.hero-balls{position:absolute;inset:0;pointer-events:none}
-.hball{position:absolute;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-family:'Clash',sans-serif;font-weight:700;
-  animation:hfloat var(--d,5s) var(--dl,0s) ease-in-out infinite alternate;
-  box-shadow:0 4px 0 rgba(0,0,0,.4),inset -3px -3px 8px rgba(0,0,0,.3),
-    inset 2px 2px 6px rgba(255,255,255,.25)}
-.hball::after{content:'';position:absolute;top:12%;left:18%;width:30%;height:20%;
-  border-radius:50%;background:rgba(255,255,255,.35);filter:blur(2px)}
+/* Floating balls */
+.hero-balls{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hball{
+  position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Clash',sans-serif;font-weight:700;
+  background:radial-gradient(circle at 35% 32%,#6A6860,#3A3830);
+  border:3px solid #1A1810;
+  box-shadow:0 4px 0 rgba(0,0,0,.5),inset -3px -3px 8px rgba(0,0,0,.4),inset 2px 2px 6px rgba(255,255,255,.1);
+  animation:hfloat var(--d,4s) var(--dl,0s) ease-in-out infinite alternate
+}
 @keyframes hfloat{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-20px) rotate(5deg)}}
 
-/* ── SECTIONS ── */
-section{padding:80px 24px;position:relative}
-.wrap{max-width:1100px;margin:0 auto}
+/* Trees */
+.tree{position:absolute;bottom:0;pointer-events:none}
 
-/* Section badge */
-.s-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 16px;border-radius:50px;margin-bottom:16px;
-  font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-  border:2px solid}
-
-/* Section title */
-.s-title{
-  font-family:'Clash',sans-serif;font-weight:900;
-  font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:12px;
-  color:#FFE0A0;text-shadow:3px 3px 0 rgba(0,0,0,.5);-webkit-text-stroke:.5px #4A2800}
-.s-sub{font-size:1rem;color:rgba(255,200,120,.6);line-height:1.7;max-width:560px}
+/* Stars bar */
+.stats-bar{
+  background:linear-gradient(180deg,#1A0E04,#120A02,#1A0E04);
+  border-top:4px solid #4A2800;border-bottom:4px solid #0A0602;
+  padding:0;overflow:hidden
+}
+.stats-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:stretch;
+  min-height:72px
+}
+.stat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 8px;position:relative}
+.stat::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:2px;background:linear-gradient(180deg,transparent,#4A2800,transparent)}
+.stat:last-child::after{display:none}
+.stat-n{font-family:'Clash',sans-serif;font-size:1.3rem;font-weight:700;color:#FFD93D;text-shadow:0 0 20px rgba(255,184,0,.5);line-height:1}
+.stat-l{font-size:.65rem;font-weight:700;color:rgba(200,140,50,.5);letter-spacing:.5px;margin-top:3px}
 
 /* ── HOW IT WORKS ── */
-#how{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:48px}
-.step{padding:28px 24px;text-align:center;position:relative;
-  animation:fadeUp .6s ease both}
-.step-num{
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:40px}
+.step{padding:28px 22px 24px;text-align:center}
+.step-icon{
   width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
-  font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:900;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 5px 0 rgba(0,0,0,.4),inset -2px -2px 6px rgba(0,0,0,.3)}
-.step h3{font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:8px;
-  text-shadow:0 2px 4px rgba(0,0,0,.6)}
-.step p{font-size:.88rem;color:rgba(255,200,120,.6);line-height:1.6}
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;
+  background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
+  border:3px solid #1A1810;
+  box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.4)
+}
+.step h3{font-size:1rem;font-weight:700;color:#FFE0A0;margin-bottom:8px}
+.step p{font-size:.82rem;color:rgba(200,160,80,.55);line-height:1.7}
 
 /* ── ROOMS ── */
-#rooms{background:linear-gradient(180deg,#142A08 0%,#0E2206 100%)}
-.room-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
-.room-card{padding:20px;border-radius:10px;cursor:pointer;
-  transition:transform .2s;position:relative;overflow:hidden}
-.room-card:hover{transform:translateY(-6px)}
-.room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:2px 2px 0 0}
-.room-icon-wrap{width:60px;height:60px;border-radius:14px;margin-bottom:14px;
-  display:flex;align-items:center;justify-content:center;font-size:2rem;
-  border:3px solid;box-shadow:0 4px 0 rgba(0,0,0,.4),inset -2px -2px 6px rgba(0,0,0,.3)}
-.room-name{font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:4px;
-  text-shadow:0 2px 4px rgba(0,0,0,.6)}
-.room-desc{font-size:.82rem;color:rgba(255,200,120,.55);line-height:1.5;margin-bottom:14px}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:36px}
+.room-card{padding:22px 20px 18px;position:relative}
+.room-badge{
+  position:absolute;top:-1px;right:12px;
+  padding:4px 12px;border-radius:0 0 8px 8px;font-size:.65rem;font-weight:700;
+  letter-spacing:.5px;border:2px solid;border-top:none
+}
+.room-icon-wrap{
+  width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;margin-bottom:14px;
+  border:3px solid;box-shadow:0 3px 0 rgba(0,0,0,.4),inset -1px -1px 4px rgba(0,0,0,.3)
+}
+.room-name{font-size:1.05rem;font-weight:700;color:#FFE0A0;margin-bottom:6px}
+.room-desc{font-size:.78rem;color:rgba(200,160,80,.5);line-height:1.6;margin-bottom:14px}
 .room-footer-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 0 0;border-top:2px solid rgba(255,255,255,.07)}
-.room-players{font-size:.78rem;color:rgba(255,200,120,.5);display:flex;align-items:center;gap:5px}
-.room-prize{font-size:.9rem;font-weight:700}
-.ldot{width:6px;height:6px;border-radius:50%;background:#3AFF8A;
-  box-shadow:0 0 6px #3AFF8A;animation:pd 1.2s ease infinite}
-@keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
-.room-badge{padding:4px 10px;border-radius:50px;font-size:.68rem;font-weight:700;
-  letter-spacing:.5px;border:2px solid;position:absolute;top:16px;right:16px}
+  border-top:1px solid rgba(255,184,0,.1);padding-top:10px;margin-top:2px}
+.room-players{font-size:.72rem;color:rgba(200,160,80,.4);display:flex;align-items:center;gap:5px}
+.room-prize{font-size:.78rem;font-weight:700}
+.ldot{width:7px;height:7px;border-radius:50%;background:#3AFF8A;display:inline-block;box-shadow:0 0 6px #3AFF8A;animation:ldot-pulse 1.5s ease infinite}
+@keyframes ldot-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── WARRIOR PASS ── */
+.wp-benefits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.wp-benefit{
+  background:rgba(0,0,0,.2);border-radius:10px;padding:12px;
+  display:flex;align-items:center;gap:10px;
+  border:1px solid rgba(255,184,0,.12)
+}
+.wp-benefit-icon{font-size:1.3rem;flex-shrink:0}
+.wp-benefit-title{font-size:.82rem;font-weight:700;color:#3D1A00}
+.wp-benefit-desc{font-size:.68rem;color:rgba(60,30,0,.55);margin-top:1px}
 
 /* ── EARN ── */
-#earn{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
-.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:40px}
-.earn-panel{padding:24px}
-.earn-title{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-  margin-bottom:16px;display:flex;align-items:center;gap:6px}
-.earn-row{display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:36px}
+.earn-panel{padding:24px 22px}
+.earn-title{font-size:.85rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.earn-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,184,0,.08)}
 .earn-row:last-child{border-bottom:none}
-.earn-row .label{font-size:.88rem;color:rgba(255,200,120,.6)}
-.earn-row .value{font-size:.95rem;font-weight:700;color:#FFD93D}
+.earn-row .label{font-size:.8rem;color:rgba(200,160,80,.5)}
+.earn-row .value{font-size:.8rem;font-weight:700;color:#FFD93D}
 
 /* ── TOKEN ── */
-#token{background:linear-gradient(180deg,#142A08 0%,#0E2206 100%)}
-.tok-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.tok-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:36px}
 @media(max-width:700px){.tok-grid{grid-template-columns:1fr}}
-.timeline{display:flex;flex-direction:column;gap:20px;margin-top:24px}
-.tl-item{display:flex;gap:14px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:16px;padding-bottom:24px}
 .tl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-.tl-dot{width:14px;height:14px;border-radius:50%;margin-top:4px;border:2px solid rgba(0,0,0,.3);flex-shrink:0}
-.tl-line{width:3px;flex:1;background:rgba(255,255,255,.08);margin-top:6px;border-radius:2px}
-.tl-item:last-child .tl-line{display:none}
-.tl-phase{font-size:.68rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
-  padding:2px 8px;border-radius:50px;margin-bottom:4px;display:inline-block}
-.tl-body h4{font-size:1rem;font-weight:700;color:#FFE0A0;margin-bottom:2px}
-.tl-body p{font-size:.82rem;color:rgba(255,200,120,.55);line-height:1.5}
+.tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:3px solid rgba(0,0,0,.3)}
+.tl-line{width:3px;flex:1;background:linear-gradient(180deg,rgba(255,184,0,.3),transparent);min-height:20px;margin-top:4px}
+.tl-body{flex:1}
+.tl-phase{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:4px;margin-bottom:6px}
+.tl-body h4{font-size:.95rem;font-weight:700;color:#FFE0A0;margin-bottom:4px}
+.tl-body p{font-size:.8rem;color:rgba(200,160,80,.5);line-height:1.6}
+.tok-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.tok-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tok-label{font-size:.8rem;color:rgba(200,160,80,.55);width:140px;flex-shrink:0}
+.tok-bar{flex:1;height:8px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden}
+.tok-fill{height:100%;border-radius:4px;transition:width .8s ease}
+.tok-pct{font-size:.78rem;font-weight:700;width:32px;text-align:right;flex-shrink:0}
 
-.tok-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.tok-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;border:2px solid rgba(0,0,0,.3)}
-.tok-label{font-size:.88rem;color:rgba(255,200,120,.6);flex:1}
-.tok-bar{flex:1;height:8px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;
-  border:1px solid rgba(0,0,0,.3)}
-.tok-fill{height:100%;border-radius:4px}
-.tok-pct{font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;min-width:32px;text-align:right}
+/* ── SQUADS ── */
+.squads-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:36px auto 0}
+@media(max-width:600px){.squads-grid{grid-template-columns:1fr}}
+
+/* ── TRANSPARENCY ── */
+.trans-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:900px;margin:36px auto 0}
+@media(max-width:700px){.trans-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* ── REFERRAL ── */
-#referral{background:linear-gradient(180deg,#0E2206 0%,#142A08 100%)}
-.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px}
-.ref-card{padding:24px;text-align:center;border-radius:10px}
-.ref-pct{font-family:'Clash',sans-serif;font-weight:900;font-size:3rem;line-height:1;margin-bottom:4px}
-.ref-name{font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:4px}
-.ref-desc{font-size:.8rem;color:rgba(255,200,120,.5);line-height:1.5}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:36px}
+.ref-card{padding:24px 20px;text-align:center}
+.ref-pct{font-family:'Clash',sans-serif;font-size:2.5rem;font-weight:900;line-height:1;margin-bottom:6px}
+.ref-name{font-size:.88rem;font-weight:700;color:#FFE0A0;margin-bottom:6px}
+.ref-desc{font-size:.75rem;color:rgba(200,160,80,.45);line-height:1.5}
 
-/* ── FINAL CTA ── */
-#cta{
-  background:linear-gradient(180deg,#142A08 0%,#0E1A04 100%);
-  text-align:center;padding:100px 24px}
-.cta-inner h2{
-  font-family:'Clash',sans-serif;font-weight:900;
-  font-size:clamp(2.2rem,5vw,4rem);color:#FFD93D;
-  text-shadow:4px 4px 0 #7A5200,0 0 40px rgba(255,184,0,.3);
-  -webkit-text-stroke:1px #4A2800;margin-bottom:16px}
-.cta-inner p{color:rgba(255,200,120,.65);font-size:1.05rem;
-  max-width:480px;margin:0 auto 36px;line-height:1.7}
-.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+/* ── FAQ ── */
+#faq-list .faq-item{cursor:pointer;overflow:hidden;transition:transform .1s}
+#faq-list .faq-item:hover{transform:translateX(3px)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:16px 20px}
+.faq-q-text{font-size:.9rem;font-weight:700;color:#FFE0A0;padding-right:12px}
+.faq-arrow{font-size:1rem;color:#6B4423;flex-shrink:0;transition:transform .3s}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-body-inner{padding:0 20px 16px;font-size:.83rem;color:#8B6340;line-height:1.7;border-top:1px solid rgba(107,68,35,.2);padding-top:12px}
+
+/* ── CTA ── */
+#cta{text-align:center;padding:100px 24px}
+.cta-inner{max-width:600px;margin:0 auto}
+#cta h2{font-family:'Clash',sans-serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#FFE0A0;margin-bottom:16px;text-shadow:3px 3px 0 rgba(0,0,0,.5)}
+#cta p{font-size:.95rem;color:rgba(200,160,80,.5);margin-bottom:32px;line-height:1.7}
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
 /* ── FOOTER ── */
 footer{
-  background:linear-gradient(180deg,#0E1A04,#060E02);
-  border-top:4px solid #2E1A08;
-  padding:32px 24px}
-.footer-inner{max-width:1100px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-logo{font-family:'Clash',sans-serif;font-weight:900;font-size:1.5rem;
-  color:#FFD93D;text-shadow:2px 2px 0 #7A5200;letter-spacing:-1px}
-.footer-logo span{color:#FF4444}
-.footer-links{display:flex;gap:16px;flex-wrap:wrap}
-.footer-links a{font-size:.82rem;color:rgba(255,200,120,.4);text-decoration:none;
-  transition:color .2s}
-.footer-links a:hover{color:rgba(255,200,120,.8)}
-.footer-copy{font-size:.78rem;color:rgba(255,200,120,.25)}
+  background:linear-gradient(180deg,#0E0602,#0A0402);
+  border-top:4px solid #2A1408;
+  padding:32px 24px
+}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:'Clash',sans-serif;font-size:1.6rem;font-weight:900;
+  background:linear-gradient(155deg,#FFD93D,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:.8rem;color:rgba(200,140,50,.45);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:#FFD93D}
+.footer-copy{font-size:.72rem;color:rgba(200,140,50,.3)}
+
+/* ── SCROLLING MARQUEE ── */
+.marquee-wrap{background:linear-gradient(180deg,#1A0E04,#120A02);border-top:3px solid #3A2010;border-bottom:3px solid #0A0602;overflow:hidden;padding:10px 0}
+.marquee-track{display:flex;gap:0;animation:marquee 30s linear infinite;white-space:nowrap}
+.marquee-item{font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;color:rgba(200,140,50,.4);letter-spacing:1px;padding:0 24px}
+.marquee-sep{color:rgba(200,140,50,.2);padding:0 8px}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.aos{opacity:0;transform:translateY(32px);transition:opacity .65s,transform .65s}
-.aos.show{opacity:1;transform:translateY(0)}
+@keyframes hfloat{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-18px) rotate(3deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
-/* ── STAT BAR ── */
-.stats-bar{
-  background:linear-gradient(180deg,#2E1A08,#1E1004);
-  border-top:4px solid #4A2800;border-bottom:4px solid #1A0A04;
-  padding:20px 24px;
-  box-shadow:inset 0 4px 16px rgba(0,0,0,.4)}
-.stats-inner{max-width:1100px;margin:0 auto;
-  display:flex;justify-content:space-around;flex-wrap:wrap;gap:8px}
-.stat{text-align:center;padding:0 24px}
-.stat-n{font-family:'Clash',sans-serif;font-weight:900;font-size:2.2rem;
-  color:#FFD93D;line-height:1;
-  text-shadow:2px 2px 0 #7A5200,0 0 20px rgba(255,184,0,.3)}
-.stat-l{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  color:rgba(255,200,120,.45);margin-top:4px}
-.stat-div{width:3px;height:40px;background:rgba(255,255,255,.07);border-radius:2px;align-self:center}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){.nav-links{display:none}}
+/* RESPONSIVE */
 @media(max-width:600px){
-  .stats-inner{gap:0}.stat{padding:8px 12px;width:50%}
-  .stat-div{display:none}}
+  .steps,.room-grid,.earn-grid,.ref-grid{grid-template-columns:1fr}
+  .wp-benefits{grid-template-columns:1fr}
+  .trans-grid{grid-template-columns:repeat(2,1fr)}
+  .squads-grid{grid-template-columns:1fr}
+  .stats-inner{flex-wrap:wrap}
+  .nav-links{display:none}
+}
 </style>
 </head>
 <body>
 
-<div class="forest-bg"></div>
+<div class="bg-layer"></div>
 
-<!-- floating particles -->
-<div class="particle" style="width:4px;height:4px;background:#FFD93D;left:10%;--d:12s;--delay:0s"></div>
-<div class="particle" style="width:3px;height:3px;background:#3AFF8A;left:25%;--d:9s;--delay:2s"></div>
-<div class="particle" style="width:5px;height:5px;background:#40B8FF;left:45%;--d:14s;--delay:1s"></div>
-<div class="particle" style="width:3px;height:3px;background:#FFD93D;left:65%;--d:11s;--delay:3s"></div>
-<div class="particle" style="width:4px;height:4px;background:#FF8080;left:80%;--d:10s;--delay:1.5s"></div>
-<div class="particle" style="width:3px;height:3px;background:#C080FF;left:90%;--d:13s;--delay:4s"></div>
+<!-- Floating particles -->
+<div class="ptcl" style="width:6px;height:6px;background:#FFD93D;left:15%;--d:9s;--dl:0s;box-shadow:0 0 6px #FFD93D"></div>
+<div class="ptcl" style="width:4px;height:4px;background:#3AFF8A;left:35%;--d:7s;--dl:2s;box-shadow:0 0 4px #3AFF8A"></div>
+<div class="ptcl" style="width:5px;height:5px;background:#40B8FF;left:60%;--d:11s;--dl:1s;box-shadow:0 0 5px #40B8FF"></div>
+<div class="ptcl" style="width:6px;height:6px;background:#FFD93D;left:80%;--d:8s;--dl:3s;box-shadow:0 0 6px #FFD93D"></div>
+<div class="ptcl" style="width:3px;height:3px;background:#FF8080;left:50%;--d:10s;--dl:.5s;box-shadow:0 0 4px #FF8080"></div>
+<div class="ptcl" style="width:5px;height:5px;background:#C080FF;left:25%;--d:12s;--dl:4s;box-shadow:0 0 5px #C080FF"></div>
 
 <!-- NAV -->
 <nav>
+  <div class="nav-border"></div>
   <div class="nav-inner">
-    <div class="nav-logo">Ton<span>B</span>ola</div>
+    <a href="#hero" class="nav-logo">TonBola</a>
     <div class="nav-links">
       <a href="#how" class="nav-link">How to Play</a>
       <a href="#rooms" class="nav-link">Rooms</a>
@@ -401,43 +476,66 @@ footer{
       <a href="#token" class="nav-link">$TBOLA</a>
       <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <a href="https://t.me/TonBolaBot_bot/play" class="nav-cta">
-      ⚔ Play Free
-    </a>
+    <a href="https://t.me/TonBolaBot_bot/play" class="nav-cta">⚔ Play Free</a>
   </div>
+  <div class="nav-bottom-border"></div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <!-- background trees -->
-  <svg class="tree" style="left:-40px;width:220px" viewBox="0 0 200 400" fill="none">
-    <path d="M100 10 L180 200 L130 200 L160 320 L100 320 L100 400 L100 320 L40 320 L70 200 L20 200 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
-    <path d="M100 10 L175 195 L125 195 L155 310 L100 310 Z" fill="#2A6A0A" opacity=".5"/>
-  </svg>
-  <svg class="tree" style="right:-30px;width:180px;bottom:40px" viewBox="0 0 200 400" fill="none">
-    <path d="M100 20 L175 210 L125 210 L155 330 L100 330 L100 400 L100 330 L45 330 L75 210 L25 210 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
-  </svg>
-  <svg class="tree" style="left:8%;width:120px;bottom:20px;opacity:.15" viewBox="0 0 200 400" fill="none">
-    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
-  </svg>
-  <svg class="tree" style="right:12%;width:140px;bottom:0;opacity:.12" viewBox="0 0 200 400" fill="none">
-    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
-  </svg>
-
-  <!-- floating balls -->
-  <div class="hero-balls">
-    <div class="hball" style="width:72px;height:72px;font-size:1.5rem;color:#fff;top:18%;left:8%;--d:4.5s;--dl:0s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">17</div>
-    <div class="hball" style="width:56px;height:56px;font-size:1.15rem;color:#FFD700;top:30%;left:4%;--d:5.5s;--dl:1s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">42</div>
-    <div class="hball" style="width:64px;height:64px;font-size:1.3rem;color:#3AFF8A;top:55%;left:6%;--d:6s;--dl:.5s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">8</div>
-    <div class="hball" style="width:80px;height:80px;font-size:1.7rem;color:#FF8080;top:15%;right:8%;--d:5s;--dl:.8s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">63</div>
-    <div class="hball" style="width:52px;height:52px;font-size:1.1rem;color:#40B8FF;top:40%;right:5%;--d:4s;--dl:1.5s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">31</div>
-    <div class="hball" style="width:60px;height:60px;font-size:1.25rem;color:#C080FF;top:65%;right:7%;--d:6.5s;--dl:.3s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">75</div>
-    <div class="hball" style="width:44px;height:44px;font-size:.95rem;color:#FFD93D;top:72%;left:12%;--d:5.8s;--dl:2s;background:radial-gradient(circle at 35% 32%,#7A7870,#4A4840);border:3px solid #2A2820">54</div>
+  <!-- Torches -->
+  <div class="torch" style="position:absolute;left:40px;top:80px">
+    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
+    <div class="torch-pole"></div>
+  </div>
+  <div class="torch" style="position:absolute;right:40px;top:80px">
+    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
+    <div class="torch-pole"></div>
+  </div>
+  <div class="torch" style="position:absolute;left:120px;top:80px;opacity:.5;transform:scale(.7)">
+    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
+    <div class="torch-pole"></div>
+  </div>
+  <div class="torch" style="position:absolute;right:120px;top:80px;opacity:.5;transform:scale(.7)">
+    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
+    <div class="torch-pole"></div>
   </div>
 
-  <div class="hero-badge">
-    <span class="hero-dot"></span>
-    LIVE ON TELEGRAM · POWERED BY TON
+  <!-- Trees -->
+  <svg class="tree" style="left:-40px;width:220px;opacity:.35" viewBox="0 0 200 400" fill="none">
+    <path d="M100 10 L180 200 L130 200 L160 320 L100 320 L40 320 L70 200 L20 200 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
+    <path d="M100 10 L175 195 L125 195 L155 310 L100 310 Z" fill="#2A6A0A" opacity=".5"/>
+  </svg>
+  <svg class="tree" style="right:-30px;width:180px;bottom:40px;opacity:.3" viewBox="0 0 200 400" fill="none">
+    <path d="M100 20 L175 210 L125 210 L155 330 L100 330 L45 330 L75 210 L25 210 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
+  </svg>
+  <svg class="tree" style="left:6%;width:100px;bottom:10px;opacity:.15" viewBox="0 0 200 400" fill="none">
+    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
+  </svg>
+  <svg class="tree" style="right:10%;width:120px;bottom:0;opacity:.12" viewBox="0 0 200 400" fill="none">
+    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
+  </svg>
+
+  <!-- Floating balls -->
+  <div class="hero-balls">
+    <div class="hball" style="width:72px;height:72px;font-size:1.5rem;color:#FFD700;top:18%;left:8%;--d:4.5s;--dl:0s">17</div>
+    <div class="hball" style="width:52px;height:52px;font-size:1.1rem;color:#3AFF8A;top:30%;left:3%;--d:5.5s;--dl:1s">42</div>
+    <div class="hball" style="width:62px;height:62px;font-size:1.3rem;color:#40B8FF;top:58%;left:5%;--d:6s;--dl:.5s">8</div>
+    <div class="hball" style="width:80px;height:80px;font-size:1.7rem;color:#FF8080;top:16%;right:7%;--d:5s;--dl:.8s">63</div>
+    <div class="hball" style="width:50px;height:50px;font-size:1rem;color:#C080FF;top:42%;right:4%;--d:4s;--dl:1.5s">31</div>
+    <div class="hball" style="width:64px;height:64px;font-size:1.3rem;color:#FFD93D;top:66%;right:6%;--d:6.5s;--dl:.3s">75</div>
+    <div class="hball" style="width:44px;height:44px;font-size:.95rem;color:#FF8060;top:75%;left:11%;--d:5.8s;--dl:2s">54</div>
+  </div>
+
+  <!-- Banner -->
+  <div class="hero-banner" style="animation:fadeUp .5s ease both">
+    <div class="banner-rope">
+      <div class="banner-rope-l"></div>
+      <div class="banner-cloth">
+        <div class="banner-text">⚔ Live on Telegram · Powered by TON ⚔</div>
+      </div>
+      <div class="banner-rope-r"></div>
+    </div>
   </div>
 
   <h1 class="hero-title">
@@ -445,11 +543,9 @@ footer{
     <span class="t2">Win Real TON</span>
   </h1>
 
-  <p class="hero-sub">
-    Live multiplayer bingo every 5 minutes. Buy cards with Stars or TON, mark numbers, win prizes instantly. No wallet setup — just Telegram.
-  </p>
+  <p class="hero-sub">Live multiplayer bingo every 5 minutes. Buy cards with Stars or TON, mark numbers, win prizes instantly. No wallet setup — just Telegram.</p>
 
-  <div class="hero-ctas">
+  <div class="hero-ctas" style="animation:fadeUp .6s .3s ease both">
     <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 36px">
       ⚔ Enter the Arena!
     </a>
@@ -459,52 +555,57 @@ footer{
   </div>
 </section>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat"><div class="stat-n" data-count="127400">0</div><div class="stat-l">Games Played</div></div>
-    <div class="stat-div"></div>
-    <div class="stat"><div class="stat-n" data-ton="48200">0 TON</div><div class="stat-l">Paid Out</div></div>
-    <div class="stat-div"></div>
-    <div class="stat"><div class="stat-n" data-count="312000">0</div><div class="stat-l">Stars Paid Out</div></div>
-    <div class="stat-div"></div>
-    <div class="stat"><div class="stat-n" data-count="31900">0</div><div class="stat-l">Active Warriors</div></div>
-    <div class="stat-div"></div>
-    <div class="stat"><div class="stat-n">~5 min</div><div class="stat-l">Between Games</div></div>
+<!-- STATS MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">⚔ 127,400 Games Played</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">💎 48,200 TON Paid Out</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">⭐ 312,000 Stars Distributed</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">🏹 31,900 Active Warriors</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">⏱ New Game Every 5 Minutes</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">🔒 All Payouts On-Chain</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">⚔ 127,400 Games Played</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">💎 48,200 TON Paid Out</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">⭐ 312,000 Stars Distributed</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">🏹 31,900 Active Warriors</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">⏱ New Game Every 5 Minutes</span><span class="marquee-sep">•</span>
+    <span class="marquee-item">🔒 All Payouts On-Chain</span><span class="marquee-sep">•</span>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
 <section id="how">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(0,200,160,.1);border-color:rgba(0,200,160,.3);color:var(--teal)">⚔ How to Play</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">⚔ How to Play</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Simple as Bingo.<br>Powerful as TON.</h2>
   <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Zero friction. Open Telegram, choose your room, mark numbers, collect prizes.</p>
 
   <div class="steps">
     <div class="step wood-panel aos" style="animation-delay:.1s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#FFD700">1</div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div class="step-icon" style="color:#FFD700">1</div>
       <h3>Open the Bot</h3>
       <p>Launch @TonBolaBot_bot on Telegram. No downloads, no complicated wallets — your account is all you need.</p>
     </div>
     <div class="step wood-panel aos" style="animation-delay:.2s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#3AFF8A">2</div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div class="step-icon" style="color:#3AFF8A">2</div>
       <h3>Choose Your Room</h3>
       <p>Free, Stars, TON or VIP. Same currency in, same currency out. No conversions, no surprises.</p>
     </div>
     <div class="step wood-panel aos" style="animation-delay:.3s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#40B8FF">3</div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div class="step-icon" style="color:#40B8FF">3</div>
       <h3>Play Live</h3>
-      <p>One number every 5 seconds. Watch the draw live with other players. Tension builds with every call.</p>
+      <p>One number every 5 seconds. Watch the draw live with other warriors. Tension builds with every call.</p>
     </div>
     <div class="step wood-panel aos" style="animation-delay:.4s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div class="step-num" style="background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;color:#FF8080">4</div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div class="step-icon" style="color:#FF8080">4</div>
       <h3>Collect Instantly</h3>
       <p>Line = 25% of the pool. Full house = 75%. Prize hits your wallet immediately. No delays.</p>
     </div>
@@ -512,18 +613,21 @@ footer{
 </div>
 </section>
 
-<div class="stone-divider"></div>
+<div class="rope-divider"></div>
 
 <!-- ROOMS -->
 <section id="rooms">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.3);color:var(--gold)">⚔ Choose Your Arena</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">⚔ Choose Your Arena</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Pay in Stars, Win in Stars.<br>Pay in TON, Win in TON.</h2>
 
   <div class="room-grid">
     <div class="room-card stone-panel aos">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="room-badge" style="background:rgba(42,92,26,.3);color:#5AFF5A;border-color:#2A5C1A">FREE</div>
       <div class="room-icon-wrap" style="background:radial-gradient(circle,#2A5C1A,#0E2A06);border-color:#2A5C1A">🏕️</div>
       <div class="room-name">Free Room</div>
@@ -534,6 +638,7 @@ footer{
       </div>
     </div>
     <div class="room-card stone-panel aos" style="animation-delay:.1s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="room-badge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">⭐ STARS</div>
       <div class="room-icon-wrap" style="background:radial-gradient(circle,#5A4A00,#2A2200);border-color:#8B7000">⭐</div>
       <div class="room-name">Stars Room</div>
@@ -544,6 +649,7 @@ footer{
       </div>
     </div>
     <div class="room-card stone-panel aos" style="animation-delay:.2s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="room-badge" style="background:rgba(0,96,160,.25);color:#40B8FF;border-color:#0060A0">💎 TON</div>
       <div class="room-icon-wrap" style="background:radial-gradient(circle,#003060,#001020);border-color:#0060A0">💎</div>
       <div class="room-name">TON Room</div>
@@ -554,6 +660,7 @@ footer{
       </div>
     </div>
     <div class="room-card stone-panel aos" style="animation-delay:.3s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="room-badge" style="background:rgba(139,34,0,.25);color:#FF8060;border-color:#8B2200">👑 VIP</div>
       <div class="room-icon-wrap" style="background:radial-gradient(circle,#5A1000,#200600);border-color:#8B2200">👑</div>
       <div class="room-name">VIP TON Room</div>
@@ -565,36 +672,150 @@ footer{
     </div>
   </div>
 
-  <!-- private rooms callout -->
-  <div class="wood-panel aos" style="margin-top:24px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
-    <div class="nail-bl"></div><div class="nail-br"></div>
+  <!-- Private rooms -->
+  <div class="wood-panel aos" style="margin-top:20px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
     <div>
-      <div style="font-size:1.3rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">⚔ Private Battle Rooms</div>
-      <div style="font-size:.9rem;color:rgba(255,200,120,.55);max-width:500px;line-height:1.6">
-        Create a private room, set the rules, share your link — and earn 2% of every card sold in your room. Challenge your clan.
-      </div>
+      <div style="font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">⚔ Private Battle Rooms</div>
+      <div style="font-size:.85rem;color:rgba(255,200,120,.5);max-width:500px;line-height:1.6">Create a private room, set the rules, share your link — earn 2% of every card sold. Challenge your clan.</div>
     </div>
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.95rem;padding:12px 24px;flex-shrink:0">
-      ⚔ Create Room
-    </a>
+    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.9rem;padding:12px 22px;flex-shrink:0">⚔ Create Room</a>
   </div>
 </div>
 </section>
 
-<div class="stone-divider"></div>
+<div class="rope-divider"></div>
+
+<!-- WARRIOR PASS -->
+<section id="warrior">
+<div class="wrap">
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">⚔️ Premium Subscription</div></div>
+    <div class="sign-chain"></div>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Warrior Pass.<br>Dominate Every Game.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 36px">One subscription. Every advantage. Cancel anytime.</p>
+
+  <div class="gold-panel aos" style="max-width:660px;margin:0 auto;padding:32px 28px">
+    <div class="gem g-tl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+    <div class="gem g-tr"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem g-bl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem g-br"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:2.5rem;margin-bottom:6px">⚔️</div>
+      <div style="font-size:1.4rem;font-weight:700;color:#3D1A00">Warrior Pass</div>
+      <div style="font-size:.78rem;color:rgba(60,30,0,.55);margin-top:3px">Monthly · Auto-renews · Cancel anytime</div>
+    </div>
+
+    <div class="wp-benefits">
+      <div class="wp-benefit">
+        <div class="wp-benefit-icon">🃏</div>
+        <div><div class="wp-benefit-title">+2 Free Cards/day</div><div class="wp-benefit-desc">3 total in Free Room</div></div>
+      </div>
+      <div class="wp-benefit">
+        <div class="wp-benefit-icon">📈</div>
+        <div><div class="wp-benefit-title">+5% Win Rate</div><div class="wp-benefit-desc">Gold cards every game</div></div>
+      </div>
+      <div class="wp-benefit">
+        <div class="wp-benefit-icon">👑</div>
+        <div><div class="wp-benefit-title">VIP Room Access</div><div class="wp-benefit-desc">No level 20 required</div></div>
+      </div>
+      <div class="wp-benefit">
+        <div class="wp-benefit-icon">💰</div>
+        <div><div class="wp-benefit-title">2× $TBOLA</div><div class="wp-benefit-desc">All month long</div></div>
+      </div>
+      <div class="wp-benefit" style="grid-column:1/-1">
+        <div class="wp-benefit-icon">🎖️</div>
+        <div><div class="wp-benefit-title">Exclusive Warrior Badge</div><div class="wp-benefit-desc">Visible in lobby and on the leaderboard</div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:rgba(255,184,0,.2);border:2px solid rgba(255,184,0,.5);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:1.4rem;font-weight:700;color:#3D1A00">600 ⭐ Stars</div>
+        <div style="font-size:.72rem;color:rgba(60,30,0,.55);margin-top:3px">~€4.40 / month</div>
+      </div>
+      <div style="background:rgba(0,152,234,.15);border:2px solid rgba(0,152,234,.4);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:1.4rem;font-weight:700;color:#003060">3 💎 TON</div>
+        <div style="font-size:.72rem;color:rgba(0,50,100,.55);margin-top:3px">~€3.45 / month · save 22%</div>
+      </div>
+    </div>
+
+    <div style="text-align:center">
+      <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.95rem;padding:13px 28px">⚔️ Get Warrior Pass</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="rope-divider"></div>
+
+<!-- SQUADS -->
+<section id="squads">
+<div class="wrap">
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">👥 Competitive Play</div></div>
+    <div class="sign-chain"></div>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Form Your Squad.<br>Climb the Leaderboard.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Solo glory or team domination — TonBola rewards both. Weekly prizes in Stars and TON for top ranked players and squads.</p>
+
+  <div class="squads-grid">
+    <div class="wood-panel aos" style="padding:26px 22px">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:2rem;margin-bottom:12px">🏆</div>
+      <h3 style="font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:8px">Weekly Leaderboard</h3>
+      <p style="font-size:.82rem;color:rgba(200,160,80,.5);line-height:1.6;margin-bottom:16px">Top 10 players split the weekly prize fund. Separate rankings for Stars and TON rooms. Reset every Monday.</p>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">🥇 1st place</span><span style="color:#FFD93D;font-weight:700">30% of fund</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">🥈 2nd place</span><span style="color:#FFD93D;font-weight:700">20% of fund</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">🥉 3rd–10th</span><span style="color:#FFD93D;font-weight:700">50% split</span></div>
+      </div>
+    </div>
+    <div class="wood-panel aos" style="padding:26px 22px;animation-delay:.15s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:2rem;margin-bottom:12px">👥</div>
+      <h3 style="font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:8px">Squad System</h3>
+      <p style="font-size:.82rem;color:rgba(200,160,80,.5);line-height:1.6;margin-bottom:16px">Create or join a squad of up to 20 warriors. Combined scores compete for the squad leaderboard and weekly TON prizes.</p>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">Create squad</span><span style="color:#40B8FF;font-weight:700">0.5 TON or 500 ⭐</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">Max members</span><span style="color:#40B8FF;font-weight:700">20 warriors</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem"><span style="color:rgba(200,160,80,.45)">Join via code</span><span style="color:#40B8FF;font-weight:700">Free</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stone-panel aos" style="max-width:800px;margin:16px auto 0;padding:18px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+    <div style="font-size:1.8rem">📅</div>
+    <div style="flex:1">
+      <div style="font-size:.95rem;font-weight:700;color:#FFE0A0;margin-bottom:3px">3% of every card → Weekly Prize Fund</div>
+      <div style="font-size:.78rem;color:#5A3D1A;line-height:1.5">Every card purchase across all rooms contributes to the weekly leaderboard fund. The more players, the bigger the prize.</div>
+    </div>
+    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.85rem;padding:10px 18px;flex-shrink:0">👥 Join a Squad</a>
+  </div>
+</div>
+</section>
+
+<div class="rope-divider"></div>
 
 <!-- EARN TBOLA -->
 <section id="earn">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.3);color:var(--gold)">◆ Earn $TBOLA</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">◆ Earn $TBOLA</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Every Action Earns Tokens.<br>Win or Not.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">You do not need to win to earn $TBOLA. Every card, every game, every day builds your balance for the airdrop.</p>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">You do not need to win to earn $TBOLA. Every card, every game, every day builds your balance for the airdrop.</p>
 
   <div class="earn-grid">
     <div class="earn-panel wood-panel aos">
-      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="earn-title" style="color:#FFD93D">⚔ Playing</div>
       <div class="earn-row"><span class="label">Buy 1 card</span><span class="value">+50 $TBOLA</span></div>
       <div class="earn-row"><span class="label">Play a full game</span><span class="value">+10 $TBOLA</span></div>
@@ -603,7 +824,7 @@ footer{
       <div class="earn-row"><span class="label">Play in VIP room</span><span class="value">+200 $TBOLA</span></div>
     </div>
     <div class="earn-panel wood-panel aos" style="animation-delay:.15s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="earn-title" style="color:#3AFF8A">🔥 Daily & Streaks</div>
       <div class="earn-row"><span class="label">Daily login</span><span class="value">+5 $TBOLA</span></div>
       <div class="earn-row"><span class="label">7-day streak</span><span class="value">+100 $TBOLA</span></div>
@@ -612,7 +833,7 @@ footer{
       <div class="earn-row"><span class="label">Lv.30+ weekend</span><span class="value">2× XP</span></div>
     </div>
     <div class="earn-panel wood-panel aos" style="animation-delay:.3s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="earn-title" style="color:#FF8080">🏹 Referral</div>
       <div class="earn-row"><span class="label">Invite a friend</span><span class="value">+500 $TBOLA</span></div>
       <div class="earn-row"><span class="label">Friend buys cards (L1)</span><span class="value">5% of their TBOLA</span></div>
@@ -623,45 +844,47 @@ footer{
   </div>
 
   <!-- simulation -->
-  <div class="gold-panel aos" style="margin-top:20px;padding:28px 32px">
-    <div class="gem tl" style="position:absolute;top:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-    <div class="gem tr" style="position:absolute;top:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem bl" style="position:absolute;bottom:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem br" style="position:absolute;bottom:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-    <div style="font-size:1.2rem;font-weight:700;color:#3D1A00;margin-bottom:20px;text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.2)">⚔ Casual Player · 30 Days · Zero Wins</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+  <div class="gold-panel aos" style="margin-top:20px;padding:26px 28px">
+    <div class="gem g-tl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+    <div class="gem g-tr"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem g-bl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
+    <div class="gem g-br"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
+    <div style="font-size:1.1rem;font-weight:700;color:#3D1A00;margin-bottom:18px;text-align:center">⚔ Casual Player · 30 Days · Zero Wins</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FFD93D">9,000</div>
-        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">3 games/day × 2 cards</div>
+        <div style="font-size:.72rem;color:rgba(0,0,0,.5)">3 games/day × 2 cards</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#3AFF8A">+650</div>
-        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">30-day login streak</div>
+        <div style="font-size:.72rem;color:rgba(0,0,0,.5)">30-day login streak</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:8px;padding:12px">
+      <div style="text-align:center;background:rgba(0,0,0,.15);border-radius:8px;padding:12px">
         <div style="font-size:1.3rem;font-weight:700;color:#FF8080">+4,500</div>
-        <div style="font-size:.75rem;color:rgba(0,0,0,.6)">5 friends invited</div>
+        <div style="font-size:.72rem;color:rgba(0,0,0,.5)">5 friends invited</div>
       </div>
-      <div style="text-align:center;background:rgba(0,0,0,.3);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
+      <div style="text-align:center;background:rgba(0,0,0,.25);border-radius:8px;padding:12px;border:2px solid rgba(0,0,0,.2)">
         <div style="font-size:1.8rem;font-weight:900;color:#3D1A00;font-family:'Clash',sans-serif">~14,150</div>
-        <div style="font-size:.75rem;color:rgba(0,0,0,.55);font-weight:700">$TBOLA in 30 days</div>
+        <div style="font-size:.72rem;color:rgba(0,0,0,.5);font-weight:700">$TBOLA in 30 days</div>
       </div>
     </div>
   </div>
 </div>
 </section>
 
-<div class="stone-divider"></div>
+<div class="rope-divider"></div>
 
 <!-- TOKEN -->
 <section id="token">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(139,47,255,.12);border-color:rgba(139,47,255,.3);color:#C080FF">◆ $TBOLA Token</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">◆ $TBOLA Token</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Not Hype. Real Revenue.</h2>
 
-  <div class="tok-grid" style="margin-top:40px">
+  <div class="tok-grid" style="margin-top:36px">
     <div class="aos">
       <div class="timeline">
         <div class="tl-item">
@@ -700,44 +923,15 @@ footer{
     </div>
 
     <div class="stone-panel aos" style="padding:24px">
-      <div style="font-size:1rem;font-weight:700;color:rgba(255,220,150,.6);margin-bottom:20px">$TBOLA · 1,000,000,000 supply</div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:#3AFF8A"></div>
-        <span class="tok-label">Player airdrop</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:100%;background:#3AFF8A"></div></div>
-        <span class="tok-pct" style="color:#3AFF8A">40%</span>
-      </div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:#FFD93D"></div>
-        <span class="tok-label">Public presale</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:50%;background:#FFD93D"></div></div>
-        <span class="tok-pct" style="color:#FFD93D">20%</span>
-      </div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:#40B8FF"></div>
-        <span class="tok-label">DEX liquidity</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#40B8FF"></div></div>
-        <span class="tok-pct" style="color:#40B8FF">15%</span>
-      </div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:#C080FF"></div>
-        <span class="tok-label">Team (24m vesting)</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#C080FF"></div></div>
-        <span class="tok-pct" style="color:#C080FF">15%</span>
-      </div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:#FF8060"></div>
-        <span class="tok-label">Marketing</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:#FF8060"></div></div>
-        <span class="tok-pct" style="color:#FF8060">5%</span>
-      </div>
-      <div class="tok-row">
-        <div class="tok-dot" style="background:rgba(255,255,255,.3)"></div>
-        <span class="tok-label">Reserve</span>
-        <div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:rgba(255,255,255,.3)"></div></div>
-        <span class="tok-pct" style="color:rgba(255,255,255,.35)">5%</span>
-      </div>
-      <div style="margin-top:16px;padding:12px 14px;background:rgba(58,255,138,.06);border:1.5px solid rgba(58,255,138,.18);border-radius:8px;font-size:.8rem;color:rgba(58,255,138,.65);line-height:1.6">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:.9rem;font-weight:700;color:rgba(255,220,150,.5);margin-bottom:18px">$TBOLA · 1,000,000,000 supply</div>
+      <div class="tok-row"><div class="tok-dot" style="background:#3AFF8A"></div><span class="tok-label">Player airdrop</span><div class="tok-bar"><div class="tok-fill" style="width:100%;background:#3AFF8A"></div></div><span class="tok-pct" style="color:#3AFF8A">40%</span></div>
+      <div class="tok-row"><div class="tok-dot" style="background:#FFD93D"></div><span class="tok-label">Public presale</span><div class="tok-bar"><div class="tok-fill" style="width:50%;background:#FFD93D"></div></div><span class="tok-pct" style="color:#FFD93D">20%</span></div>
+      <div class="tok-row"><div class="tok-dot" style="background:#40B8FF"></div><span class="tok-label">DEX liquidity</span><div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#40B8FF"></div></div><span class="tok-pct" style="color:#40B8FF">15%</span></div>
+      <div class="tok-row"><div class="tok-dot" style="background:#C080FF"></div><span class="tok-label">Team (24m vesting)</span><div class="tok-bar"><div class="tok-fill" style="width:37.5%;background:#C080FF"></div></div><span class="tok-pct" style="color:#C080FF">15%</span></div>
+      <div class="tok-row"><div class="tok-dot" style="background:#FF8060"></div><span class="tok-label">Marketing</span><div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:#FF8060"></div></div><span class="tok-pct" style="color:#FF8060">5%</span></div>
+      <div class="tok-row"><div class="tok-dot" style="background:rgba(255,255,255,.3)"></div><span class="tok-label">Reserve</span><div class="tok-bar"><div class="tok-fill" style="width:12.5%;background:rgba(255,255,255,.3)"></div></div><span class="tok-pct" style="color:rgba(255,255,255,.35)">5%</span></div>
+      <div style="margin-top:14px;padding:11px 13px;background:rgba(58,255,138,.06);border:1.5px solid rgba(58,255,138,.18);border-radius:8px;font-size:.78rem;color:rgba(58,255,138,.6);line-height:1.6">
         8% of every card sold goes into the $TBOLA fund. Every token is backed by real game revenue — never minted from thin air.
       </div>
     </div>
@@ -745,34 +939,100 @@ footer{
 </div>
 </section>
 
-<div class="stone-divider"></div>
+<div class="rope-divider"></div>
+
+<!-- TRANSPARENCY -->
+<section id="transparency" style="background:rgba(0,0,0,.15)">
+<div class="wrap">
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">🔒 On-Chain Transparency</div></div>
+    <div class="sign-chain"></div>
+  </div>
+  <h2 class="s-title aos" style="text-align:center">Every TON accounted for.<br>On-chain. Always.</h2>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Prize distribution is handled by a verified TON smart contract. No middlemen. No hidden fees. Verify every transaction.</p>
+
+  <div class="trans-grid">
+    <div class="stone-panel aos" style="padding:18px;text-align:center">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:1.8rem;margin-bottom:6px">🏆</div>
+      <div style="font-size:1.7rem;font-weight:700;color:#3AFF8A">55%</div>
+      <div style="font-size:.78rem;font-weight:700;color:#FFE0A0;margin:3px 0">Prize Pool</div>
+      <div style="font-size:.68rem;color:#5A3D1A">25% Line · 75% Bingo</div>
+    </div>
+    <div class="stone-panel aos" style="padding:18px;text-align:center;animation-delay:.08s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:1.8rem;margin-bottom:6px">⚙️</div>
+      <div style="font-size:1.7rem;font-weight:700;color:#40B8FF">32%</div>
+      <div style="font-size:.78rem;font-weight:700;color:#FFE0A0;margin:3px 0">Development</div>
+      <div style="font-size:.68rem;color:#5A3D1A">Servers, team, ops</div>
+    </div>
+    <div class="stone-panel aos" style="padding:18px;text-align:center;animation-delay:.16s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:1.8rem;margin-bottom:6px">🪙</div>
+      <div style="font-size:1.7rem;font-weight:700;color:#FFD93D">8%</div>
+      <div style="font-size:.78rem;font-weight:700;color:#FFE0A0;margin:3px 0">$TBOLA Fund</div>
+      <div style="font-size:.68rem;color:#5A3D1A">Buyback & airdrop</div>
+    </div>
+    <div class="stone-panel aos" style="padding:18px;text-align:center;animation-delay:.24s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:1.8rem;margin-bottom:6px">🥇</div>
+      <div style="font-size:1.7rem;font-weight:700;color:#FF8060">3%</div>
+      <div style="font-size:.78rem;font-weight:700;color:#FFE0A0;margin:3px 0">Leaderboard</div>
+      <div style="font-size:.68rem;color:#5A3D1A">Weekly prizes</div>
+    </div>
+    <div class="stone-panel aos" style="padding:18px;text-align:center;animation-delay:.32s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+      <div style="font-size:1.8rem;margin-bottom:6px">🔗</div>
+      <div style="font-size:1.7rem;font-weight:700;color:#C080FF">2%</div>
+      <div style="font-size:.78rem;font-weight:700;color:#FFE0A0;margin:3px 0">Platform</div>
+      <div style="font-size:.68rem;color:#5A3D1A">Infrastructure</div>
+    </div>
+  </div>
+
+  <div class="wood-panel aos" style="max-width:680px;margin:16px auto 0;padding:18px 22px;text-align:center">
+    <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
+    <div style="font-size:.83rem;color:rgba(255,200,120,.6);line-height:1.7">
+      All funds flow through a verified TON smart contract. Prize payouts are instant and automatic. Every wallet address is public — verify on <strong style="color:#FFD93D">TON Explorer</strong> at any time.
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="rope-divider"></div>
 
 <!-- REFERRAL -->
 <section id="referral">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(255,60,172,.1);border-color:rgba(255,60,172,.3);color:#FF8080">🏹 Referral Program</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">🏹 Referral Program</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Invite Friends.<br>Earn Forever.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">Every time your referral buys a card, you receive $TBOLA automatically — via TON smart contract, in real time, for life.</p>
+  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Every time your referral buys a card, you receive $TBOLA automatically — via TON smart contract, in real time, for life.</p>
 
   <div class="ref-grid">
     <div class="ref-card stone-panel aos">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="ref-pct" style="color:#3AFF8A">5%</div>
       <div class="ref-name">Direct Referral</div>
       <div class="ref-desc">On every $TBOLA your direct referrals earn. Level 1 — forever.</div>
     </div>
     <div class="ref-card stone-panel aos" style="animation-delay:.1s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="ref-pct" style="color:#FF8060">7%</div>
       <div class="ref-name">Nano Influencer</div>
       <div class="ref-desc">1k–10k followers + exclusive in-game badge.</div>
     </div>
-    <div class="ref-card stone-panel aos" style="animation-delay:.2s;border-color:#FFD700!important">
+    <div class="ref-card stone-panel aos" style="animation-delay:.2s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="ref-pct" style="color:#FFD93D">10%</div>
       <div class="ref-name">Micro Influencer ★</div>
       <div class="ref-desc">10k–100k followers + monthly bonus + exclusive character.</div>
     </div>
     <div class="ref-card stone-panel aos" style="animation-delay:.3s">
+      <div class="nail n-tl"></div><div class="nail n-tr"></div><div class="nail n-bl"></div><div class="nail n-br"></div>
       <div class="ref-pct" style="color:#FF8080">15%</div>
       <div class="ref-name">Macro Influencer</div>
       <div class="ref-desc">100k+ followers + custom deal + co-marketing.</div>
@@ -781,249 +1041,36 @@ footer{
 </div>
 </section>
 
-<div class="stone-divider"></div>
-
-<!-- WARRIOR PASS -->
-<section id="warrior">
-<div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(255,140,0,.1);border-color:rgba(255,140,0,.3);color:#FF8C00">⚔️ Premium</span>
-  </div>
-  <h2 class="s-title aos" style="text-align:center">Warrior Pass.<br>Dominate Every Game.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">One subscription. Every advantage. Cancel anytime.</p>
-
-  <div class="gold-panel aos" style="max-width:680px;margin:0 auto;padding:36px 32px">
-    <div class="gem tl" style="position:absolute;top:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-    <div class="gem tr" style="position:absolute;top:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem bl" style="position:absolute;bottom:6px;left:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem br" style="position:absolute;bottom:6px;right:6px;width:18px;height:18px"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-size:3rem;margin-bottom:8px">⚔️</div>
-      <div style="font-size:1.5rem;font-weight:700;color:#3D1A00">Warrior Pass</div>
-      <div style="font-size:.85rem;color:rgba(60,30,0,.6);margin-top:4px">Monthly subscription · Auto-renews</div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px">
-      <div style="background:rgba(0,0,0,.15);border-radius:10px;padding:14px 12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.4rem">🃏</span>
-        <div><div style="font-size:.85rem;font-weight:700;color:#3D1A00">+2 Free Cards/day</div><div style="font-size:.7rem;color:rgba(60,30,0,.55)">3 total in Free Room</div></div>
-      </div>
-      <div style="background:rgba(0,0,0,.15);border-radius:10px;padding:14px 12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.4rem">📈</span>
-        <div><div style="font-size:.85rem;font-weight:700;color:#3D1A00">+5% Win Rate</div><div style="font-size:.7rem;color:rgba(60,30,0,.55)">Gold cards every game</div></div>
-      </div>
-      <div style="background:rgba(0,0,0,.15);border-radius:10px;padding:14px 12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.4rem">👑</span>
-        <div><div style="font-size:.85rem;font-weight:700;color:#3D1A00">VIP Room Access</div><div style="font-size:.7rem;color:rgba(60,30,0,.55)">No level 20 required</div></div>
-      </div>
-      <div style="background:rgba(0,0,0,.15);border-radius:10px;padding:14px 12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.4rem">💰</span>
-        <div><div style="font-size:.85rem;font-weight:700;color:#3D1A00">2× $TBOLA</div><div style="font-size:.7rem;color:rgba(60,30,0,.55)">All month long</div></div>
-      </div>
-      <div style="background:rgba(0,0,0,.15);border-radius:10px;padding:14px 12px;display:flex;align-items:center;gap:10px;grid-column:1/-1">
-        <span style="font-size:1.4rem">🎖️</span>
-        <div><div style="font-size:.85rem;font-weight:700;color:#3D1A00">Exclusive Warrior Badge</div><div style="font-size:.7rem;color:rgba(60,30,0,.55)">Visible in lobby & leaderboard</div></div>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-      <div style="background:rgba(255,184,0,.2);border:2px solid rgba(255,184,0,.5);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:1.5rem;font-weight:700;color:#3D1A00">600 ⭐</div>
-        <div style="font-size:.75rem;color:rgba(60,30,0,.6)">Stars · ~€4.40/mo</div>
-      </div>
-      <div style="background:rgba(0,152,234,.15);border:2px solid rgba(0,152,234,.4);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:1.5rem;font-weight:700;color:#003060">3 💎 TON</div>
-        <div style="font-size:.75rem;color:rgba(0,50,100,.6)">~€3.45/mo · save 22%</div>
-      </div>
-    </div>
-
-    <div style="text-align:center">
-      <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1rem;padding:14px 32px">
-        ⚔️ Get Warrior Pass
-      </a>
-      <div style="font-size:.7rem;color:rgba(60,30,0,.45);margin-top:8px">Cancel anytime · No commitment</div>
-    </div>
-  </div>
-</div>
-</section>
-
-<div class="stone-divider"></div>
-
-<!-- SQUADS & LEADERBOARD -->
-<section id="squads">
-<div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(64,184,255,.1);border-color:rgba(64,184,255,.3);color:#40B8FF">👥 Competitive</span>
-  </div>
-  <h2 class="s-title aos" style="text-align:center">Form Your Squad.<br>Climb the Leaderboard.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">Solo glory or team domination — TonBola rewards both. Weekly prizes in Stars and TON for top ranked players and squads.</p>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:0 auto">
-    <div class="wood-panel aos" style="padding:28px 24px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:2rem;margin-bottom:12px">🏆</div>
-      <h3 style="font-size:1.15rem;font-weight:700;color:#FFE0A0;margin-bottom:8px">Weekly Leaderboard</h3>
-      <p style="font-size:.85rem;color:rgba(255,200,120,.55);line-height:1.6">Top 10 players split the weekly prize fund. Separate rankings for Stars and TON rooms. Reset every Monday.</p>
-      <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">🥇 1st place</span>
-          <span style="color:#FFD93D;font-weight:700">30% of fund</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">🥈 2nd place</span>
-          <span style="color:#FFD93D;font-weight:700">20% of fund</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">🥉 3rd–10th</span>
-          <span style="color:#FFD93D;font-weight:700">50% split</span>
-        </div>
-      </div>
-    </div>
-    <div class="wood-panel aos" style="padding:28px 24px;animation-delay:.15s">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:2rem;margin-bottom:12px">👥</div>
-      <h3 style="font-size:1.15rem;font-weight:700;color:#FFE0A0;margin-bottom:8px">Squad System</h3>
-      <p style="font-size:.85rem;color:rgba(255,200,120,.55);line-height:1.6">Create or join a squad of up to 20 warriors. Combined scores compete for the squad leaderboard and weekly TON prizes.</p>
-      <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">Create squad</span>
-          <span style="color:#40B8FF;font-weight:700">0.5 TON or 500 ⭐</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">Max members</span>
-          <span style="color:#40B8FF;font-weight:700">20 warriors</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:.82rem">
-          <span style="color:rgba(255,200,120,.5)">Join via code</span>
-          <span style="color:#40B8FF;font-weight:700">Free</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="stone-panel aos" style="max-width:800px;margin:16px auto 0;padding:20px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-    <div style="font-size:2rem">📅</div>
-    <div style="flex:1">
-      <div style="font-size:1rem;font-weight:700;color:#FFE0A0;margin-bottom:4px">3% of every card → Weekly Prize Fund</div>
-      <div style="font-size:.8rem;color:#5A3D1A;line-height:1.5">Every card purchase across all rooms contributes to the weekly leaderboard fund. The more players, the bigger the prize.</div>
-    </div>
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.9rem;padding:10px 20px;flex-shrink:0">
-      👥 Join a Squad
-    </a>
-  </div>
-</div>
-</section>
-
-<div class="stone-divider"></div>
-
-<!-- TRANSPARENCY -->
-<section id="transparency" style="background:rgba(0,0,0,.2)">
-<div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(58,255,138,.1);border-color:rgba(58,255,138,.3);color:#3AFF8A">🔒 On-Chain</span>
-  </div>
-  <h2 class="s-title aos" style="text-align:center">Every TON accounted for.<br>On-chain. Always.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 40px">Prize distribution is handled by a verified TON smart contract. No middlemen. No hidden fees. Verify every transaction on-chain.</p>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:900px;margin:0 auto">
-    <div class="stone-panel aos" style="padding:20px;text-align:center">
-      <div style="font-size:2rem;margin-bottom:8px">🏆</div>
-      <div style="font-size:1.8rem;font-weight:700;color:#3AFF8A">55%</div>
-      <div style="font-size:.8rem;font-weight:700;color:#FFE0A0;margin:4px 0">Prize Pool</div>
-      <div style="font-size:.7rem;color:#5A3D1A">25% Line · 75% Full House</div>
-    </div>
-    <div class="stone-panel aos" style="padding:20px;text-align:center;animation-delay:.08s">
-      <div style="font-size:2rem;margin-bottom:8px">⚙️</div>
-      <div style="font-size:1.8rem;font-weight:700;color:#40B8FF">32%</div>
-      <div style="font-size:.8rem;font-weight:700;color:#FFE0A0;margin:4px 0">Development</div>
-      <div style="font-size:.7rem;color:#5A3D1A">Servers, team, operations</div>
-    </div>
-    <div class="stone-panel aos" style="padding:20px;text-align:center;animation-delay:.16s">
-      <div style="font-size:2rem;margin-bottom:8px">🪙</div>
-      <div style="font-size:1.8rem;font-weight:700;color:#FFD93D">8%</div>
-      <div style="font-size:.8rem;font-weight:700;color:#FFE0A0;margin:4px 0">$TBOLA Fund</div>
-      <div style="font-size:.7rem;color:#5A3D1A">Buyback & airdrop reserve</div>
-    </div>
-    <div class="stone-panel aos" style="padding:20px;text-align:center;animation-delay:.24s">
-      <div style="font-size:2rem;margin-bottom:8px">🥇</div>
-      <div style="font-size:1.8rem;font-weight:700;color:#FF8060">3%</div>
-      <div style="font-size:.8rem;font-weight:700;color:#FFE0A0;margin:4px 0">Leaderboard</div>
-      <div style="font-size:.7rem;color:#5A3D1A">Weekly prize distribution</div>
-    </div>
-    <div class="stone-panel aos" style="padding:20px;text-align:center;animation-delay:.32s">
-      <div style="font-size:2rem;margin-bottom:8px">🔗</div>
-      <div style="font-size:1.8rem;font-weight:700;color:#C080FF">2%</div>
-      <div style="font-size:.8rem;font-weight:700;color:#FFE0A0;margin:4px 0">Platform</div>
-      <div style="font-size:.7rem;color:#5A3D1A">Infrastructure reserve</div>
-    </div>
-  </div>
-
-  <div class="wood-panel aos" style="max-width:700px;margin:20px auto 0;padding:20px 24px;text-align:center">
-    <div class="nail-bl"></div><div class="nail-br"></div>
-    <div style="font-size:.85rem;color:rgba(255,200,120,.7);line-height:1.7">
-      All funds flow through a verified TON smart contract. Prize payouts are instant and automatic. 
-      Every wallet address is public — you can verify the fund distribution on-chain at any time via <strong style="color:#FFD93D">TON Explorer</strong>.
-    </div>
-  </div>
-</div>
-</section>
-
-<div class="stone-divider"></div>
+<div class="rope-divider"></div>
 
 <!-- FAQ -->
 <section id="faq">
 <div class="wrap">
-  <div style="text-align:center;margin-bottom:8px">
-    <span class="s-badge aos" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.3);color:var(--gold)">❓ FAQ</span>
+  <div class="sign-wrap aos">
+    <div class="sign-chain"></div>
+    <div class="sign-board"><div class="sign-text">❓ Questions & Answers</div></div>
+    <div class="sign-chain"></div>
   </div>
   <h2 class="s-title aos" style="text-align:center">Common Questions.</h2>
-
-  <div style="max-width:700px;margin:40px auto 0;display:flex;flex-direction:column;gap:10px" id="faq-list">
-  </div>
+  <div style="max-width:700px;margin:36px auto 0;display:flex;flex-direction:column;gap:8px" id="faq-list"></div>
 </div>
 </section>
 
 <!-- FINAL CTA -->
 <section id="cta">
   <div class="cta-inner wrap">
-    <!-- decorative balls -->
+    <!-- Decorative balls -->
     <div style="position:relative;height:80px;margin-bottom:16px">
-      <div style="position:absolute;left:50%;transform:translateX(-200px);width:60px;height:60px;
-        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
-        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
-        font-size:1.3rem;font-weight:700;color:#FFD700;
-        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
-        animation:hfloat 4s ease-in-out infinite alternate">7</div>
-      <div style="position:absolute;left:50%;transform:translateX(-100px);width:80px;height:80px;
-        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
-        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
-        font-size:1.7rem;font-weight:700;color:#3AFF8A;
-        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
-        animation:hfloat 5s .5s ease-in-out infinite alternate">42</div>
-      <div style="position:absolute;left:50%;transform:translateX(20px);width:70px;height:70px;
-        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
-        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
-        font-size:1.5rem;font-weight:700;color:#40B8FF;
-        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
-        animation:hfloat 4.5s 1s ease-in-out infinite alternate">88</div>
-      <div style="position:absolute;left:50%;transform:translateX(120px);width:55px;height:55px;
-        border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);
-        border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;
-        font-size:1.1rem;font-weight:700;color:#FF8080;
-        box-shadow:0 4px 0 rgba(0,0,0,.5),inset -2px -2px 6px rgba(0,0,0,.3);
-        animation:hfloat 3.5s .3s ease-in-out infinite alternate">23</div>
+      <div style="position:absolute;left:50%;transform:translateX(-200px);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:#FFD700;box-shadow:0 4px 0 rgba(0,0,0,.5);animation:hfloat 4s ease-in-out infinite alternate">7</div>
+      <div style="position:absolute;left:50%;transform:translateX(-100px);width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:700;color:#3AFF8A;box-shadow:0 4px 0 rgba(0,0,0,.5);animation:hfloat 5s .5s ease-in-out infinite alternate">42</div>
+      <div style="position:absolute;left:50%;transform:translateX(20px);width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#40B8FF;box-shadow:0 4px 0 rgba(0,0,0,.5);animation:hfloat 4.5s 1s ease-in-out infinite alternate">88</div>
+      <div style="position:absolute;left:50%;transform:translateX(120px);width:55px;height:55px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#7A7870,#3A3830);border:3px solid #1A1810;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#FF8080;box-shadow:0 4px 0 rgba(0,0,0,.5);animation:hfloat 3.5s .3s ease-in-out infinite alternate">23</div>
     </div>
-
     <h2>Ready to Win Real TON?</h2>
     <p>The next game starts in a few minutes. No wallet setup, no credit card. Just Telegram.</p>
     <div class="cta-btns">
-      <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 40px">
-        ⚔ Enter the Arena!
-      </a>
-      <a href="#token" class="btn-stone" style="font-size:1rem;padding:14px 32px">
-        💎 Join Presale
-      </a>
+      <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 40px">⚔ Enter the Arena!</a>
+      <a href="#token" class="btn-stone" style="font-size:1rem;padding:14px 32px">💎 Join Presale</a>
     </div>
   </div>
 </section>
@@ -1031,7 +1078,7 @@ footer{
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">Ton<span>B</span>ola</div>
+    <div class="footer-logo">TonBola</div>
     <div class="footer-links">
       <a href="https://t.me/tonbola_community">Telegram</a>
       <a href="#">Twitter / X</a>
@@ -1044,6 +1091,7 @@ footer{
 </footer>
 
 <script>
+
 // FAQ data
 const faqs = [
   {q:'Do I need a crypto wallet?', a:'No wallet needed to play with Telegram Stars. For TON rooms, you need a TON wallet (Tonkeeper works great). Winnings are sent directly to your wallet.'},
