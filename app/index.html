@@ -2177,7 +2177,7 @@ function renderLb(tab) {
   ]
   const podiumBorder = ['#FFD700','#CD7F32','#8A8A8A']
   document.getElementById('lb-list').innerHTML = data.map(row => `
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 28px 10px 14px;
       margin-bottom:${row.r<=3?'6px':'2px'};
       border-radius:${row.r<=3?'10px':'6px'};
       ${row.r<=3 ? podiumBg[row.r-1]+';border:2px solid '+podiumBorder[row.r-1]+';box-shadow:0 4px 0 rgba(0,0,0,.4)' : 'border-bottom:1px solid rgba(107,68,35,.15)'};
@@ -2194,14 +2194,16 @@ function renderLb(tab) {
         ${row.av||row.n[0]}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:.875rem;font-weight:700;
-          color:${row.isMe?'#FFD93D':'#FFE0A0'};
+          color:${row.isMe?'#FFD93D':row.r===1?'#3D1A00':row.r===2?'#FFE0A0':row.r===3?'#3D1A00':'#FFE0A0'};
+          text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.6)':'none'};
           white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
           ${row.n}${row.isMe?' 👈':''}
         </div>
-        <div style="font-size:.7rem;color:#5A3D1A">${row.p||''}</div>
+        <div style="font-size:.7rem;color:${row.r===1?'#5A3D1A':row.r===2?'#FFE0A0':row.r===3?'#5A3D1A':'#5A3D1A'};text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.5)':'none'}">${row.p||''}</div>
       </div>
       <div style="font-size:.95rem;font-weight:700;
-        color:${row.isMe?'#FFD93D':'#FFD93D'};flex-shrink:0">${row.s.toLocaleString()}</div>
+        color:${row.r===2?'#FFE0A0':row.isMe?'#FFD93D':'#FFD93D'};flex-shrink:0;
+        text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.6)':'none'}">${row.s.toLocaleString()}</div>
     </div>`).join('')
 }
 
