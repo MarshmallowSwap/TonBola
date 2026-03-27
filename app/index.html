@@ -171,26 +171,27 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 .ri{padding:0 52px;display:flex;align-items:center;gap:10px;flex:1}
 .r-icon{width:44px;height:44px;border-radius:10px;display:flex;
-  align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+  align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;align-self:center}
 .ri-free{}
 .ri-stars{}
 .ri-ton{}
 .ri-vip{}
-.rn{font-size:1rem;font-weight:700;color:#FFE0A0;margin-bottom:2px;
-  text-shadow:0 2px 4px rgba(0,0,0,.95),1px 1px 0 rgba(0,0,0,.8)}
-.rd{font-size:.73rem;color:#FFE0A0;line-height:1.3;
-  text-shadow:0 1px 3px rgba(0,0,0,.95);opacity:.85}
+.rn{font-size:1rem;font-weight:700;color:#3D1A00;margin-bottom:2px;
+  text-shadow:0 1px 0 rgba(255,220,150,.4)}
+.rd{font-size:.72rem;color:#5A2A00;line-height:1.2;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
 .rbadge{padding:3px 9px;border-radius:50px;font-size:.65rem;font-weight:700;
-  letter-spacing:.5px;margin-left:auto;flex-shrink:0;border:1.5px solid}
+  letter-spacing:.5px;margin-left:auto;flex-shrink:0;border:1.5px solid;
+  background:rgba(0,0,0,.35)!important;color:#FFE0A0!important;
+  border-color:rgba(255,220,150,.4)!important}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 52px 18px;background:none;border-top:none;flex-shrink:0}
-.rp{font-size:.73rem;color:#FFD93D;display:flex;align-items:center;gap:4px;
-  text-shadow:0 1px 4px rgba(0,0,0,.95),1px 1px 0 rgba(0,0,0,.8)}
+.rp{font-size:.72rem;color:#3D1A00;font-weight:700;display:flex;align-items:center;gap:4px}
 .live-dot{width:5px;height:5px;border-radius:50%;background:#3AFF8A;
   animation:pd 1.2s ease infinite;box-shadow:0 0 6px #3AFF8A}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.rprz{font-size:.78rem;font-weight:700}
+.rprz{font-size:.72rem;font-weight:700;color:#3D1A00}
 
 /* ── CRYSTAL decorations (CSS only) ── */
 .crystals{position:relative;height:3px;overflow:visible;margin:4px 10px}
@@ -637,7 +638,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div class="r-icon ri-free">🏕️</div>
         <div style="flex:1">
           <div class="rn">Free Room</div>
-          <div class="rd">1 free card/day · Win $TBOLA tokens</div>
+          <div class="rd">1 free card/day · Win $TBOLA</div>
         </div>
         <div class="rbadge" style="background:rgba(42,92,26,.3);color:#5AFF5A;border-color:#2A5C1A">FREE</div>
       </div>
@@ -651,7 +652,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div class="r-icon ri-stars">⭐</div>
         <div style="flex:1">
           <div class="rn">Stars Room</div>
-          <div class="rd">Pay Stars · Win Stars · Earn $TBOLA</div>
+          <div class="rd">Pay Stars · Win Stars · +$TBOLA</div>
         </div>
         <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">STARS</div>
       </div>
@@ -679,7 +680,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div class="r-icon ri-vip">👑</div>
         <div style="flex:1">
           <div class="rn">VIP TON Room</div>
-          <div class="rd">High stakes · Lv.20+ · Legendary pools</div>
+          <div class="rd">High stakes · Lv.20+ · VIP pools</div>
         </div>
         <div class="rbadge" style="background:rgba(139,34,0,.25);color:#FF8060;border-color:#8B2200">VIP</div>
       </div>
