@@ -1555,8 +1555,8 @@ function selC(n,el){
 
 function updateCost(){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
-  const fmt=v=>c.cur==='stars'?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
-  const el=document.getElementById('l-cost');if(el)el.textContent=c.cur==='free'?'Free':c.cur==='stars'?(c.price*nCards).toLocaleString()+' NOT':(c.price*nCards).toFixed(2)+' TON'
+  const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
+  const el=document.getElementById('l-cost');if(el)el.textContent=c.cur==='free'?'Free':c.cur==='not'||c.cur==='stars'?(c.price*nCards).toLocaleString()+' NOT':(c.price*nCards).toFixed(2)+' TON'
   const te=document.getElementById('l-tbola');if(te)te.textContent='+'+c.tbola*nCards+' $TBOLA'
   const pe=document.getElementById('l-pool');if(pe)pe.textContent=c.cur==='free'?'$TBOLA prizes':fmt(pool)
   const pl=document.getElementById('l-pz-line'),pb=document.getElementById('l-pz-bingo'),pt=document.getElementById('l-pz-tbola')
@@ -1608,7 +1608,7 @@ function startGame(){
   setRoomCardsEnabled(false)
   saveGameState()
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
-  const fmt=v=>c.cur==='stars'?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
+  const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
   document.getElementById('g-lp').textContent=c.cur==='free'?'250 $TBOLA':fmt(pool*0.25)
   document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(pool*0.75)
@@ -1702,7 +1702,7 @@ function showWin(type){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'750 $TBOLA':'250 $TBOLA'):
-    c.cur==='stars'?Math.floor(prizeVal).toLocaleString()+' NOT':prizeVal.toFixed(2)+' TON'
+    (c.cur==='stars'||c.cur==='not')?Math.floor(prizeVal).toLocaleString()+' NOT':prizeVal.toFixed(2)+' TON'
   const tbolaWon=(type==='bingo'?500:100)+(c.tbola*nCards)
   document.getElementById('wb').textContent=type==='bingo'?'🎱':'📏'
   document.getElementById('wtype').textContent=type==='bingo'?'FULL HOUSE':'FIRST LINE'
@@ -2279,8 +2279,8 @@ function selectCur(el, cur){
     b.style.background='rgba(0,0,0,.2)'
     b.style.borderColor='rgba(255,255,255,.1)'
   })
-  el.style.background=cur==='stars'?'rgba(255,184,0,.2)':cur==='ton'?'rgba(61,158,255,.2)':'rgba(58,255,138,.15)'
-  el.style.borderColor=cur==='stars'?'#FFB800':cur==='ton'?'#40B8FF':'#2A7A1A'
+  el.style.background=(cur==='stars'||cur==='not')?'rgba(200,200,200,.15)':cur==='ton'?'rgba(61,158,255,.2)':'rgba(58,255,138,.15)'
+  el.style.borderColor=(cur==='stars'||cur==='not')?'#888':cur==='ton'?'#40B8FF':'#2A7A1A'
   // Update price options
   const priceWrap=document.getElementById('cr-price-wrap')
   const pricesEl=document.getElementById('cr-prices')
@@ -2288,8 +2288,8 @@ function selectCur(el, cur){
     priceWrap.style.opacity='.4';priceWrap.style.pointerEvents='none'
   } else {
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
-    const opts=cur==='stars'
-      ?[{v:50,l:'50 ⭐'},{v:100,l:'100 ⭐'},{v:200,l:'200 ⭐'},{v:500,l:'500 ⭐'}]
+    const opts=(cur==='stars'||cur==='not')
+      ?[{v:500,l:'500 NOT'},{v:1000,l:'1,000 NOT'},{v:2000,l:'2,000 NOT'},{v:500,l:'500 ⭐'}]
       :[{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
       <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
