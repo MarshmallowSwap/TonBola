@@ -1857,6 +1857,34 @@ function subscribeWarriorPass() {
   }
 }
 
+function showTonFeeError() {
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'⚠️ Insufficient TON for Fees',
+      message:'Your wallet does not have enough TON to cover the network fee.\n\nEven when paying with NOT, a small amount of TON is required for gas fees (~0.05 TON).\n\nPlease add at least 0.1 TON to your wallet and try again.',
+      buttons:[{type:'ok',text:'Got it'}]
+    })
+  } else {
+    alert('⚠️ Not enough TON for fees.\nAdd at least 0.1 TON to your wallet to cover gas fees, even when paying with NOT.')
+  }
+}
+
+// General transaction error handler
+function handleTxError(err) {
+  const msg = err?.message || err?.toString() || ''
+  if(msg.includes('balance') || msg.includes('fee') || msg.includes('insufficient') || msg.includes('not enough')) {
+    showTonFeeError()
+  } else if(msg.includes('cancel') || msg.includes('reject') || msg.includes('declined')) {
+    // User cancelled — do nothing
+  } else {
+    if(tg?.showPopup) tg.showPopup({
+      title:'❌ Transaction Failed',
+      message:'Something went wrong with the transaction.\nPlease try again.',
+      buttons:[{type:'ok'}]
+    })
+  }
+}
+
 function closeLvUp(){
   const ov=document.getElementById('lvup-ov')
   ov.style.transition='opacity .22s'
