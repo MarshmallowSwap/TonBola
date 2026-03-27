@@ -180,7 +180,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   text-shadow:0 1px 0 rgba(255,220,150,.4)}
 .rc.ton .rn,.rc.ton .rd,.rc.ton .rp{color:#FFE0A0;text-shadow:0 1px 3px rgba(0,0,0,.95)}
 .rc.ton .rp{color:#FFD93D}
-.rc.stars .r-icon{display:none}
+.rc.stars .r-icon{display:flex;background:none;border:none;width:36px;height:36px}
 .rc.vip .rn{color:#3D1A00;text-shadow:0 1px 0 rgba(255,220,100,.5)}
 .rc.vip .rd{color:#5A3000;text-shadow:none}
 .rc.vip .rp{color:#3D1A00;font-weight:700}
@@ -660,12 +660,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
     <div class="rc stars" onclick="openLobby('stars')">
       <div class="ri">
-        <div class="r-icon ri-stars">⭐</div>
+        <div class="r-icon ri-stars" style="background-image:url(assets/marker-star.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0"></div>
         <div style="flex:1">
           <div class="rn">Stars Room</div>
           <div class="rd">Pay Stars · Win Stars · +$TBOLA</div>
         </div>
-        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">★</div>
+        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">STARS</div>
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">34</span> warriors</div>
