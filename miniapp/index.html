@@ -681,13 +681,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div class="r-icon ri-stars" style="background-image:url(assets/icon-star.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">Stars Room</div>
-          <div class="rd">Pay Stars · Win Stars · +$TBOLA</div>
+          <div class="rd">Pay NOT · Win NOT · +$TBOLA</div>
         </div>
         <div class="rbadge" style="background:rgba(139,112,0,.25);color:#FFD93D;border-color:#8B7000">STARS</div>
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">34</span> warriors</div>
-        <div class="rprz" style="color:#7A5500;text-shadow:0 1px 0 rgba(255,255,255,.3)">100 Stars / card</div>
+        <div class="rprz" style="color:#888;font-weight:700">500 NOT / card</div>
       </div>
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
@@ -701,7 +701,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">11</span> warriors</div>
-        <div class="rprz" style="color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.95)">0.1 TON / card</div>
+        <div class="rprz" style="color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.95)">0.2 TON / card</div>
       </div>
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
@@ -715,7 +715,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">4</span> warriors</div>
-        <div class="rprz" style="color:#6A1500;font-weight:700;text-shadow:0 1px 1px rgba(255,200,100,.3)">1 TON / card</div>
+        <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 2,000 NOT</div></div>
       </div>
     </div>
   </div>
@@ -1479,8 +1479,8 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
-  stars:{name:'NOT Room',cur:'not',price:1000,tbola:50,icon:'◈'},
-  ton:{name:'TON Room',cur:'ton',price:0.1,tbola:100,icon:'💎'},
+  stars:{name:'NOT Room',cur:'not',price:500,tbola:50,icon:'◈'},
+  ton:{name:'TON Room',cur:'ton',price:0.2,tbola:100,icon:'💎'},
   vip:{name:'VIP TON Room',cur:'ton',price:1,tbola:300,icon:'👑'}
 }
 const BC=['c1','c2','c3','c4','c5','c6']
