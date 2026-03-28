@@ -1812,7 +1812,8 @@ function getLevelIcon(lv){
   return      {icon:'🏕️',color:'#3A7A24',label:'Rookie'}
 }
 
-let isGameActive = false  // true = game running, blocks new lobby entry
+let isGameActive = false
+let paymentVerified = false  // true = game running, blocks new lobby entry
 
 // Preload ball images into browser cache immediately
 ;['ball-blue','ball-gold','ball-purple','ball-green','ball-red'].forEach(name=>{
@@ -1972,6 +1973,11 @@ function restoreGameState(){
 }
 
 function startGame(){
+  if(!paymentVerified && ROOMS[curRoom]?.cur !== 'free') {
+    if(tg?.showPopup) tg.showPopup({title:'💳 Payment Required',message:'Complete payment to enter this room.',buttons:[{type:'ok'}]})
+    return
+  }
+  paymentVerified = false
   go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=3;gameOver=false
   document.getElementById('game-bar').style.display='block'
   isGameActive = true
@@ -2524,6 +2530,7 @@ async function payAndEnterLobby(room, nCards) {
 
   // ── Free room: bypass payment ──
   if (r.cur === 'free') {
+    paymentVerified = true
     startGame()
     return
   }
