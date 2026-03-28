@@ -657,7 +657,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.0.9/dist/tonconnect-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@3.0.6/dist/tonconnect-sdk.min.js"></script>
 </head>
 <body>
 
@@ -1084,7 +1084,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <button class="btn btn-back btn-sm" onclick="go('s-hub');initHub()">← Back</button>
       <div>
         <div style="font-size:.95rem;font-weight:700;color:#333" id="l-nm">$NOT Room</div>
-        <div style="font-size:.7rem;color:#999">Starts in <span id="l-cd" style="color:#6C63FF;font-weight:700">1:48</span></div>
+        <div style="font-size:.7rem;color:#999"><span id="l-cd" style="color:rgba(255,255,255,.4);font-size:.65rem"></span></div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:4px;font-size:.75rem;color:#999">
@@ -1133,11 +1133,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="cbox">
     <div>
       <div style="font-size:.7rem;color:var(--muted)">You pay</div>
-      <div style="font-size:1rem;font-weight:700;color:#fff" id="l-cost">2,000 $NOT</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff" id="l-cost">—</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:.7rem;color:#999">You earn</div>
-      <div style="font-size:.88rem;font-weight:700;color:var(--yellow)" id="l-tbola">+50 $TBOLA</div>
+      <div style="font-size:.88rem;font-weight:700;color:var(--yellow)" id="l-tbola">—</div>
     </div>
   </div>
 
@@ -2425,205 +2425,91 @@ function handleTxError(err) {
 // ══════════════════════════════════════════
 const MANIFEST_URL = 'https://marshmallowswap.github.io/TonBola/tonconnect-manifest.json'
 const PLATFORM_WALLET = 'UQAr0sQOHUZRN3cUBGRAX7G5eTSR7e6C4b4k4V8mBzC_'
-const TON_DECIMALS = 1000000000 // 1 TON = 10^9 nanotons
+const TON_DECIMALS = 1000000000
 
 let tc = null
-let tcWallet = null  // connected wallet info
+let tcWallet = null
 
 function initTonConnect() {
   try {
-    // Try different possible global names for the SDK
-    const TCUI = window.TON_CONNECT_UI || window.TonConnectUI
-    if (!TCUI) {
-      console.warn('TonConnect SDK not loaded yet, will retry')
-      setTimeout(initTonConnect, 1000)
-      return
-    }
-    const UIClass = TCUI.TonConnectUI || TCUI
-    tc = new UIClass({ manifestUrl: MANIFEST_URL })
-
-    tc.onStatusChange(wallet => {
-      tcWallet = wallet
+    const SDK = window.TonConnectSDK
+    if (!SDK) { setTimeout(initTonConnect, 800); return }
+    tc = new SDK.TonConnect({ manifestUrl: MANIFEST_URL })
+    // Restore previous session
+    tc.restoreConnection()
+    tc.onStatusChange(w => {
+      tcWallet = w
       updateWalletUI()
-      if (wallet) {
-        console.log('✅ Wallet:', wallet.account.address)
-      }
+      console.log(w ? '✅ Wallet: ' + w.account.address : '❌ Wallet disconnected')
     })
-    console.log('✅ TonConnect initialized')
+    console.log('✅ TonConnect SDK ready')
   } catch(e) {
-    console.warn('TonConnect init error:', e)
-    tc = null
+    console.warn('TC init error:', e)
   }
 }
 
 function updateWalletUI() {
-  const connected = !!tcWallet
-  const addr = tcWallet?.account?.address
-  const short = addr ? addr.slice(0,6) + '...' + addr.slice(-4) : ''
-
-  // Update all wallet buttons in the app
+  const connected = !!(tcWallet?.account?.address)
+  const addr = tcWallet?.account?.address || ''
+  const short = addr ? addr.slice(0,4) + '...' + addr.slice(-4) : ''
   document.querySelectorAll('.tc-connect-btn').forEach(btn => {
-    btn.textContent = connected ? ('💎 ' + short) : '🔗 Connect Wallet'
-    btn.style.background = connected ? 'rgba(0,152,234,.2)' : 'rgba(255,255,255,.08)'
+    btn.textContent = connected ? '💎 ' + short : '🔗 Connect Wallet'
     btn.style.borderColor = connected ? '#0098EA' : 'rgba(255,255,255,.15)'
     btn.style.color = connected ? '#40B8FF' : 'rgba(255,255,255,.6)'
   })
 }
 
 async function connectWallet() {
-  if (!tc) {
-    initTonConnect()
-    await new Promise(r => setTimeout(r, 800))
-  }
-  if (!tc) {
-    alert('TonConnect not available. Make sure you are using Telegram.')
-    return
-  }
+  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
+  if (!tc) { alert('TonConnect unavailable'); return }
   if (tcWallet) {
-    // Show disconnect option
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: '💎 Wallet Connected',
-        message: 'Address: ' + tcWallet.account.address.slice(0,20) + '...\n\nDisconnect?',
-        buttons: [{id:'disconnect', type:'destructive', text:'Disconnect'}, {type:'cancel', text:'Close'}]
-      }, (id) => { if(id==='disconnect') tc.disconnect() })
-    }
+    // Already connected — show info + disconnect option
+    if (tg?.showPopup) tg.showPopup({
+      title: '💎 Wallet Connected',
+      message: 'Address:\n' + tcWallet.account.address + '\n\nDisconnect?',
+      buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
+    }, id => { if(id==='dc') tc.disconnect() })
     return
   }
   try {
-    await tc.openModal()
+    // Get available wallets and open best one
+    const wallets = await tc.getWallets()
+    // Filter to ones with universalLink (work in Telegram)
+    const tgWallets = wallets.filter(w => w.universalLink || w.bridgeUrl)
+    if (!tgWallets.length) { alert('No TON wallets found'); return }
+    // Use first available (usually Tonkeeper or Telegram Wallet)
+    const wallet = tgWallets[0]
+    const link = tc.connect({ universalLink: wallet.universalLink, bridgeUrl: wallet.bridgeUrl })
+    // Open wallet link
+    if (tg?.openLink) tg.openLink(link)
+    else window.open(link, '_blank')
   } catch(e) {
-    console.warn('Connect wallet error:', e)
+    console.warn('Connect error:', e)
+    // Fallback: deep link to Tonkeeper
+    const link = 'https://app.tonkeeper.com/ton-connect?v=2&id=' + encodeURIComponent(MANIFEST_URL)
+    if (tg?.openLink) tg.openLink(link)
+    else window.open(link, '_blank')
   }
 }
 
-// ── Send TON payment ──
 async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
-  if (!tc || !tcWallet) {
-    // Prompt to connect first
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: '🔗 Connect Wallet',
-        message: 'Connect your TON wallet to make payments.',
-        buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel'}]
-      }, async (id) => {
-        if (id === 'connect') {
-          await tc?.openModal()
-        }
-      })
-    }
+  if (!tcWallet) {
+    await connectWallet()
     if (onFail) onFail('no_wallet')
     return
   }
-
-  const nanotons = Math.round(amountTon * TON_DECIMALS).toString()
-  const payload = comment
-    ? btoa(String.fromCharCode(...new TextEncoder().encode(comment)))
-    : undefined
-
+  const nanotons = String(Math.round(amountTon * TON_DECIMALS))
+  // Encode comment as TON cell payload
+  const payload = btoa(comment).replace(/\+/g,'-').replace(/\//g,'_')
   try {
-    const tx = {
-      validUntil: Math.floor(Date.now() / 1000) + 300, // 5 min
-      messages: [{
-        address: PLATFORM_WALLET,
-        amount: nanotons,
-        payload: payload,
-      }]
-    }
-    const result = await tc.sendTransaction(tx)
-    console.log('✅ TX sent:', result)
-    if (onSuccess) onSuccess(result)
-    return result
-  } catch(e) {
-    console.warn('TX failed:', e)
-    if (onFail) onFail(e)
-    return null
-  }
-}
-
-// ── Buy bingo cards with TON ──
-async function payAndEnterLobby(room, nCards) {
-  const r = ROOMS[room]
-
-  // ── Free room: bypass payment ──
-  if (r.cur === 'free') {
-    paymentVerified = true
-    startGame()
-    return
-  }
-
-  // ── $NOT room: coming soon ──
-  if (r.cur === 'not') {
-    alert('$NOT payments coming soon!\nUse the $TON or Free room for now.')
-    return
-  }
-
-  // ── $TON / VIP room: require wallet + payment ──
-  // HARD BLOCK: never start game without payment
-  if (!tcWallet) {
-    // TonConnect not connected
-    const msg = '$TON rooms require a connected TON wallet.\n\nConnect your wallet from the Profile page.'
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: '🔗 Wallet Required',
-        message: msg,
-        buttons: [
-          {id:'connect', type:'default', text:'Connect Wallet'},
-          {type:'cancel', text:'Later'}
-        ]
-      }, async (id) => {
-        if (id === 'connect') {
-          try {
-      if(tc) await tc.openModal()
-      else tg?.openLink('https://tonkeeper.com/download')
-    } catch(e) { tg?.openLink('https://tonkeeper.com/download') }
-        }
-      })
-    } else {
-      alert(msg)
-    }
-    return  // HARD STOP — never proceeds
-  }
-
-  // Wallet connected — confirm payment
-  const total = r.price * nCards
-  const label = nCards + ' card' + (nCards > 1 ? 's' : '')
-  const msg2 = 'Buy ' + label + ' for ' + total.toFixed(2) + ' TON?'
-
-  if (tg?.showPopup) {
-    tg.showPopup({
-      title: '💎 Confirm Payment',
-      message: msg2,
-      buttons: [
-        {id:'pay', type:'default', text:'Pay ' + total.toFixed(2) + ' TON ✓'},
-        {type:'cancel', text:'Cancel'}
-      ]
-    }, async (btnId) => {
-      if (btnId !== 'pay') return
-      const comment = 'TonBola:bingo:' + room + ':' + nCards
-      await sendTonPayment(total, comment,
-        () => { paymentVerified = true; startGame() },
-        (err) => {
-          if (err !== 'no_wallet') {
-            if (tg?.showPopup) tg.showPopup({
-              title: '❌ Payment Failed',
-              message: 'Transaction cancelled or failed. Try again.',
-              buttons: [{type:'ok'}]
-            })
-            else alert('Payment failed. Try again.')
-          }
-        }
-      )
+    const result = await tc.sendTransaction({
+      validUntil: Math.floor(Date.now()/1000) + 300,
+      messages: [{ address: PLATFORM_WALLET, amount: nanotons }]
     })
-  } else {
-    // Fallback for non-Telegram environment
-    const ok = confirm(msg2)
-    if (!ok) return
-    const comment = 'TonBola:bingo:' + room + ':' + nCards
-    await sendTonPayment(total, comment,
-      () => { startGame() },
-      () => { alert('Payment failed.') }
-    )
+    if (onSuccess) onSuccess(result)
+  } catch(e) {
+    console.warn('TX error:', e)
+    if (onFail) onFail(e)
   }
 }
 
