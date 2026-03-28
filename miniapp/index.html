@@ -112,19 +112,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .btn:active{transform:translateY(2px)}
 
 .btn-gold{
-  background:linear-gradient(135deg,#6C63FF,#4158D0);
+  background:linear-gradient(180deg,#A78BFA 0%,#6C63FF 50%,#4158D0 100%);
   color:#fff;border:none;
-  box-shadow:0 4px 15px rgba(108,99,255,.4);
+  box-shadow:0 6px 0 #2D1FA8,0 8px 20px rgba(108,99,255,.4),inset 0 1px 0 rgba(255,255,255,.3);
   padding:13px 24px;font-size:1.05rem;width:100%;
-  border-radius:14px}
+  border-radius:16px;transition:transform .1s,box-shadow .1s}
+.btn-gold:active{transform:translateY(3px);box-shadow:0 3px 0 #2D1FA8}
 .btn-gold:disabled,.btn-gold[disabled]{background:linear-gradient(180deg,#5A4A20,#3A2E10)!important;color:rgba(255,200,80,.5)!important;border-color:#4A3A18!important;box-shadow:0 3px 0 #1A1408!important}
 .btn-stone{
-  background:rgba(255,255,255,.1);
-  color:#fff;border:1.5px solid rgba(255,255,255,.15)!important;outline:none!important;
-  box-shadow:none;-webkit-appearance:none;appearance:none;
-  border-radius:14px;
+  background:linear-gradient(180deg,#3D3D4E 0%,#252535 100%);
+  color:#fff;border:1px solid rgba(255,255,255,.12)!important;outline:none!important;
+  box-shadow:0 4px 0 #111,0 6px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1);-webkit-appearance:none;appearance:none;
+  border-radius:16px;
   padding:14px 12px;font-size:.82rem;
-  font-weight:700;min-height:52px;white-space:nowrap}
+  font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s}
+.btn-stone:active{transform:translateY(3px);box-shadow:0 1px 0 #111}
 .btn-sm{padding:7px 12px;font-size:.8rem;width:auto}
 .btn-back{background:linear-gradient(180deg,#5A3D1A,#3D2810);
   color:#FFD093;border:2px solid #7A5228;
@@ -147,13 +149,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 4px 0 rgba(0,0,0,.5);
   min-height:160px;
   display:flex;flex-direction:column;justify-content:center}
-.bal-inner{padding:19px 0 12px 0}/* v2 */
+.bal-inner{padding:16px 0 10px 0;position:relative;z-index:1}/* v3 */
 .bal-top{display:flex;align-items:flex-start;justify-content:space-between;padding:0 44px;margin-top:-10px}
-.bal-lbl{font-size:.65rem;font-weight:700;letter-spacing:.8px;
-  text-transform:uppercase;color:#FFD93D;margin-bottom:2px;
-  text-shadow:0 1px 3px rgba(0,0,0,.9);opacity:.8}
-.bal-amt{font-size:1.6rem;font-weight:700;color:#fff;line-height:1;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bal-lbl{font-size:.6rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:2px;
+  text-shadow:0 1px 2px rgba(0,0,0,.9);opacity:.8}
+.bal-amt{font-size:1.8rem;font-weight:900;color:#fff;line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:-1px}
 .lv-badge{padding:4px 10px;text-align:center;position:relative;
   background:linear-gradient(135deg,#3A1A00,#1A0A00);
   border:2px solid #CC8800;border-radius:10px;
@@ -163,28 +165,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   0%{box-shadow:0 0 0 0 rgba(255,184,0,.7)}
   60%{box-shadow:0 0 0 8px rgba(255,184,0,0)}
   100%{box-shadow:0 0 0 0 rgba(255,184,0,0)}}
-.lv-n{font-size:2rem;font-weight:700;color:#FFD93D;line-height:1;
+.lv-n{font-size:2rem;font-weight:900;color:#fff;line-height:1;
   text-shadow:0 0 16px rgba(255,184,0,.9),0 2px 4px rgba(0,0,0,.95)}
 .lv-l{font-size:.65rem;font-weight:700;color:#FFB800;text-transform:uppercase;
   letter-spacing:1.5px;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .bal-stats{display:flex;gap:0;margin-top:0px;flex-wrap:nowrap;padding:0;justify-content:center;gap:8px;width:100%;overflow:hidden}
-.bst{background:none;border:none;
-  padding:2px 4px;display:flex;align-items:center;gap:2px;white-space:nowrap;flex-shrink:0}
-.bst-v{font-size:9px;font-weight:700;color:#FFE0A0;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.bst{background:rgba(255,255,255,.12);border-radius:8px;
+  padding:4px 6px;display:flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0}
+.bst-v{font-size:9px;font-weight:700;color:#fff}
 .bst-l{font-size:.65rem;color:#D4A060;text-shadow:0 1px 2px rgba(0,0,0,.9)}
 
 /* ── ROOM CARDS ── */
 .rooms{padding:0 10px;display:flex;flex-direction:column;gap:8px}
-.rc{border-radius:16px;overflow:hidden;cursor:pointer;
-  transition:transform .12s;
+.rc{border-radius:20px;overflow:hidden;cursor:pointer;
+  transition:transform .12s,box-shadow .12s;
   border:none;
-  box-shadow:0 6px 20px rgba(0,0,0,.15);
-  height:120px;
+  height:118px;
   display:flex;flex-direction:column;position:relative;justify-content:space-between}
-.rc.free{background:linear-gradient(135deg,#11998E,#38EF7D);border:none!important}
-.rc.stars{background:linear-gradient(135deg,#373B44,#4286f4);border:none!important}
-.rc.ton{background:linear-gradient(135deg,#667EEA,#764BA2);border:none!important}
-.rc.vip{background:linear-gradient(135deg,#F7971E,#FFD200);border:none!important}
+.rc::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);z-index:0;border-radius:20px 20px 0 0}
+.rc:active{transform:scale(.97)}
+.rc.free{background:linear-gradient(135deg,#11998E,#38EF7D);border:none!important;box-shadow:0 8px 20px rgba(17,153,142,.4),inset 0 1px 0 rgba(255,255,255,.2)}
+.rc.stars{background:linear-gradient(135deg,#373B44,#4286f4);border:none!important;box-shadow:0 8px 20px rgba(66,134,244,.4),inset 0 1px 0 rgba(255,255,255,.15)}
+.rc.ton{background:linear-gradient(135deg,#667EEA,#764BA2);border:none!important;box-shadow:0 8px 20px rgba(102,126,234,.4),inset 0 1px 0 rgba(255,255,255,.15)}
+.rc.vip{background:linear-gradient(135deg,#F7971E,#FFD200);border:none!important;box-shadow:0 8px 20px rgba(247,151,30,.4),inset 0 1px 0 rgba(255,255,255,.2)}
 .rc:active{transform:scale(.97) translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.5)}
 
 
@@ -692,10 +695,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div>
           <div class="bal-lbl">$TBOLA Balance</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;color:#C4933F;flex-shrink:0;text-shadow:0 1px 2px rgba(0,0,0,.8)">$TBOLA</div>
+            <div style="font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7);flex-shrink:0">$TBOLA</div>
             <div class="bal-amt" id="bc-tbola">505</div>
           </div>
-          <div style="font-size:.7rem;color:#5A3D1A;margin-top:2px">Airdrop coming soon ⚔</div>
+          <div style="font-size:.68rem;color:rgba(255,255,255,.65);margin-top:2px">🚀 Airdrop coming soon</div>
         </div>
         <div class="lv-badge">
           <div class="lv-n" id="bc-lv">1</div>
@@ -768,26 +771,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     </div>
   </div>
 
-  <div class="sec">🎡 Fortune Wheel</div>
-  <div onclick="openWheel()" style="margin:0 0 8px;cursor:pointer;
-    background-image:url(assets/rc-vip.png);background-size:100% 100%;
-    border-radius:12px;height:76px;display:flex;align-items:center;
-    justify-content:space-between;padding:0 20px;
-    box-shadow:0 4px 0 rgba(0,0,0,.5)">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="font-size:1.8rem">🎡</div>
-      <div>
-        <div style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
-          color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.9)">Fortune Wheel</div>
-        <div style="font-size:.65rem;color:#8B6340">Spin · Win · Jackpot</div>
-      </div>
-    </div>
-    <div style="text-align:right">
-      <div style="font-size:.58rem;color:#8B6340">🎰 Jackpot</div>
-      <div id="hw-jackpot" style="font-family:'Clash',sans-serif;font-size:.8rem;
-        font-weight:700;color:#FFD700">67.3 $TON</div>
-    </div>
-  </div>
 
   <div class="sec">Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
@@ -853,6 +836,37 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
     </div>
 
+
+    <!-- Fortune Wheel card -->
+    <div onclick="openWheel()" style="cursor:pointer;margin-bottom:10px;position:relative;
+      background:linear-gradient(135deg,#F7971E,#FFD200);
+      border-radius:20px;height:110px;display:flex;align-items:center;
+      gap:14px;padding:0 20px;
+      box-shadow:0 8px 24px rgba(247,151,30,.35),0 2px 0 rgba(0,0,0,.1);
+      overflow:hidden">
+      <!-- shine effect -->
+      <div style="position:absolute;top:0;left:0;right:0;height:50%;
+        background:linear-gradient(180deg,rgba(255,255,255,.15),transparent);border-radius:20px 20px 0 0"></div>
+      <div style="font-size:2.8rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2))">🎡</div>
+      <div style="flex:1">
+        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2)">Fortune Wheel</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
+          Spin to win · Jackpot pool · $NOT · $TON
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span style="background:rgba(255,255,255,.25);
+            color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:50px">
+            ● LIVE
+          </span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.55rem;color:rgba(255,255,255,.7)">🎰 Jackpot</div>
+        <div id="hub-jackpot" style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+          color:#fff">67.3 $TON</div>
+      </div>
+    </div>
 
     <!-- Scratch Cards — Coming Soon -->
     <div style="margin-bottom:10px;position:relative;
