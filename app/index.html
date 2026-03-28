@@ -3130,14 +3130,25 @@ function selectCur(el, cur){
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
     const isNot=(cur==='stars'||cur==='not')
     const opts=isNot
-      ?[{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'}]
+      ?[{v:100,l:'100'},{v:200,l:'200'},{v:1000,l:'1,000'},{v:2000,l:'2,000'},{v:5000,l:'5,000'},{v:10000,l:'10,000'}]
       :[{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
       <div class="price-btn" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
         style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
           background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);
           color:#fff;transition:all .15s">${o.l}</div>`).join('')
-    crPrice=0;crPriceAccum=0
+    // Total + reset row
+    let totalRow=document.getElementById('cr-total-row')
+    if(!totalRow){
+      totalRow=document.createElement('div')
+      totalRow.id='cr-total-row'
+      totalRow.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px'
+      totalRow.innerHTML=`
+        <div id="cr-price-total" style="flex:1;padding:8px 14px;border-radius:50px;background:rgba(167,139,250,.15);border:2px solid rgba(167,139,250,.3);color:#ccc;font-weight:700;font-size:.85rem;text-align:center">Total: 0</div>
+        <button onclick="resetPrice()" style="padding:8px 14px;border-radius:50px;background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.4);color:#FF8080;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap">↺ Reset</button>`
+      document.getElementById('cr-price-wrap').appendChild(totalRow)
+    }
+    crPrice=0;crPriceAccum=0;updateTotalBadge()
   }
   updateRoomPreview()
 }
@@ -3146,23 +3157,25 @@ let crPriceAccum=0
 function selectPrice(el, price){
   crPriceAccum=Math.round((crPriceAccum+price)*1000)/1000
   crPrice=crPriceAccum
-  // Show total on a badge
-  let badge=document.getElementById('cr-price-total')
-  if(!badge){
-    badge=document.createElement('div')
-    badge.id='cr-price-total'
-    badge.style.cssText='margin-top:10px;padding:8px 14px;border-radius:50px;background:rgba(167,139,250,.2);border:2px solid #A78BFA;color:#fff;font-weight:700;font-size:.9rem;text-align:center;cursor:pointer'
-    badge.onclick=function(){crPriceAccum=0;crPrice=0;this.textContent='';this.style.display='none';updateRoomPreview()}
-    badge.title='Tap to reset'
-    document.getElementById('cr-price-wrap').appendChild(badge)
-  }
-  const isNot=crCurrency==='stars'||crCurrency==='not'
-  const label=isNot?crPriceAccum.toLocaleString()+' $NOT':crPriceAccum.toFixed(isNot?0:crPriceAccum<1?2:1)+' $TON'
-  badge.textContent='Total: '+label+' ✕ tap to reset'
-  badge.style.display='block'
+  updateTotalBadge()
   updateRoomPreview()
 }
-function resetPrice(){crPriceAccum=0;crPrice=0;const b=document.getElementById('cr-price-total');if(b)b.style.display='none';updateRoomPreview()}
+function updateTotalBadge(){
+  const badge=document.getElementById('cr-price-total')
+  if(!badge)return
+  const isNot=crCurrency==='stars'||crCurrency==='not'
+  if(crPriceAccum===0){
+    badge.textContent='Total: 0'
+    badge.style.color='#888'
+    badge.style.borderColor='rgba(167,139,250,.3)'
+  } else {
+    const label=isNot?crPriceAccum.toLocaleString()+' $NOT':crPriceAccum.toFixed(crPriceAccum<1?2:1)+' $TON'
+    badge.textContent='Total: '+label
+    badge.style.color='#fff'
+    badge.style.borderColor='#A78BFA'
+  }
+}
+function resetPrice(){crPriceAccum=0;crPrice=0;updateTotalBadge();updateRoomPreview()}
 
 function updateRoomPreview(){
   const maxP=parseInt(document.getElementById('cr-players')?.value||10)
