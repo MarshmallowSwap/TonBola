@@ -360,14 +360,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .bc:nth-child(5n+5){background:linear-gradient(145deg,#FFD54F,#F57F17);color:#fff}
 /* Marked number */
 .bc.mk{
-  position:relative;transform:scale(.95)}
+  background:rgba(255,255,255,.05)!important;
+  transform:scale(.93);position:relative}
 .bc.mk span{visibility:hidden}
 .bc.mk::after{
-  content:'⭐';
-  position:absolute;inset:0;
+  content:'⭐';position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:1.1em;line-height:1;
-  padding-top:2px}
+  font-size:1em;line-height:1}
 /* Line hit */
 .bc.lh{
   background:linear-gradient(145deg,#FFD700,#FF8C00)!important;
@@ -2001,26 +2000,33 @@ function renderBalls(){
 
 function renderCards(){
   const cont=document.getElementById('g-cards');if(!cont)return
-  const styleMap={free:'card-parchment',stars:'card-wood',ton:'card-stone',vip:'card-gold'}
-  const labelMap={free:'📜 Card',stars:'📜 Card',ton:'🗿 Card',vip:'👑 Card'}
-  const cardStyle=styleMap[curRoom]||'card-stone'
-  const cardLabel=labelMap[curRoom]||'Card'
-  // marker image per room — star for Stars, TON coin for rest
-  const markerImg=curRoom==='stars'?'url(assets/marker-star.png)':curRoom==='not'?'url(assets/marker-star.png)':'url(assets/marker-ton.png)'
-  const extras={
-    'card-parchment':'','card-wood':'','card-stone':'','card-gold':''
+  // Room colors matching room cards
+  const roomBg={
+    free:'linear-gradient(135deg,#065F46,#0D9B6B)',
+    stars:'linear-gradient(135deg,#1D3461,#2D5FB5)',
+    ton:'linear-gradient(135deg,#4C1D95,#7C3AED)',
+    vip:'linear-gradient(135deg,#92400E,#D97706)'
   }
+  const roomBorder={
+    free:'rgba(52,211,153,.4)',
+    stars:'rgba(66,134,244,.4)',
+    ton:'rgba(139,92,246,.4)',
+    vip:'rgba(245,158,11,.4)'
+  }
+  const cardLabel={free:'🆓 Card',stars:'◈ Card',ton:'💎 Card',vip:'👑 Card'}[curRoom]||'Card'
+  const bg=roomBg[curRoom]||roomBg.ton
+  const bd=roomBorder[curRoom]||roomBorder.ton
   cont.innerHTML=cards.map((card,ci)=>`
     <div class="bcwrap">
       <div class="bct">
         <div class="bcl">${cardLabel} ${ci+1}</div>
         <div class="bcs bcs-p" id="cs-${ci}">Playing</div>
       </div>
-      <div class="${cardStyle}">
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 4px 0;margin-bottom:0">
-          ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;
-            color:${['#A78BFA','#22D3EE','#34D399','#FB923C','#FBBF24'][i]};
-            text-shadow:0 1px 2px rgba(0,0,0,.3);padding:2px 0">${l}</div>`).join('')}
+      <div style="background:${bg};border:1.5px solid ${bd};border-radius:16px;padding:6px;
+        box-shadow:0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1)">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 4px 2px">
+          ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:800;
+            color:rgba(255,255,255,.85);padding:2px 0">${l}</div>`).join('')}
         </div>
         <div class="bgrid" style="position:relative;z-index:1">
           ${card.map(n=>`<div class="bc" id="c${ci}-${n}"><span>${n}</span></div>`).join('')}
