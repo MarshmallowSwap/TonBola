@@ -3287,6 +3287,48 @@ function updateTotalBadge(){
   }
 }
 
+let autoSpinActive=false
+let autoSpinTimeout=null
+
+function toggleAutoSpin(){
+  if(!user.warriorPass){
+    document.getElementById('w-wp-gate').style.display='flex'
+    return
+  }
+  autoSpinActive=!autoSpinActive
+  updateWheelAutoSpinBtn()
+  if(autoSpinActive) autoSpinLoop()
+  else clearTimeout(autoSpinTimeout)
+}
+
+function autoSpinLoop(){
+  if(!autoSpinActive) return
+  if(wheelSpinsRemaining<=0){
+    autoSpinActive=false
+    updateWheelAutoSpinBtn()
+    return
+  }
+  spinWheel()
+  autoSpinTimeout=setTimeout(autoSpinLoop,4600)
+}
+
+function updateWheelAutoSpinBtn(){
+  const btn=document.getElementById('w-autospin-btn')
+  const lbl=document.getElementById('w-autospin-label')
+  if(!btn||!lbl) return
+  if(autoSpinActive){
+    btn.style.background='rgba(139,92,246,.3)'
+    btn.style.borderColor='#8B5CF6'
+    btn.style.color='#C4B5FD'
+    lbl.textContent='⏹ Stop Auto-Spin'
+  } else {
+    btn.style.background='rgba(139,92,246,.08)'
+    btn.style.borderColor='rgba(139,92,246,.4)'
+    btn.style.color='rgba(139,92,246,.7)'
+    lbl.textContent='Auto-Spin'
+  }
+}
+
 function resetPrice(){
   crPriceAccum = 0; crPrice = 0
   // Reset visual highlight on chips
