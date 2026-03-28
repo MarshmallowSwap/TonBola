@@ -1149,7 +1149,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
 
   <div style="padding:6px 10px 14px">
-    <button class="btn btn-gold" onclick="startGame()">⚔ Enter the Arena!</button>
+    <button class="btn btn-gold" onclick="payAndEnterLobby(curRoom, nCards)">⚔ Enter the Arena!</button>
   </div>
 </div>
 
@@ -2523,7 +2523,7 @@ async function payAndEnterLobby(room, nCards) {
   const r = ROOMS[room]
   if (r.cur === 'free') {
     // Free room — no payment
-    startGame(room, nCards)
+    startGame()
     return
   }
   if (r.cur !== 'ton') {
@@ -2533,6 +2533,16 @@ async function payAndEnterLobby(room, nCards) {
       message:'$NOT payments via Jetton transfer coming soon!\n\nPlay in the $TON or Free room for now.',
       buttons:[{type:'ok'}]
     })
+    return
+  }
+
+  // Check wallet connected
+  if (!tcWallet) {
+    if (tg?.showPopup) tg.showPopup({
+      title: '🔗 Wallet Required',
+      message: 'Connect your TON wallet to play in paid rooms.\n\nGo to Profile → Connect Wallet',
+      buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel', text:'Later'}]
+    }, async (id) => { if(id==='connect') await tc?.openModal() })
     return
   }
 
@@ -2549,7 +2559,7 @@ async function payAndEnterLobby(room, nCards) {
       (result) => {
         // Payment successful — start game
         if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
-        startGame(room, nCards)
+        startGame()
       },
       (err) => {
         if (err !== 'no_wallet' && tg?.showPopup) tg.showPopup({
