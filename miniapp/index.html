@@ -658,7 +658,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@3.0.6/dist/tonconnect-sdk.min.js"></script>
+
 </head>
 <body>
 
@@ -2422,97 +2422,109 @@ function handleTxError(err) {
 
 
 // ══════════════════════════════════════════
-// TONCONNECT 2.0
+// TELEGRAM STARS PAYMENTS
 // ══════════════════════════════════════════
-const MANIFEST_URL = 'https://marshmallowswap.github.io/TonBola/tonconnect-manifest.json'
-const PLATFORM_WALLET = 'UQAr0sQOHUZRN3cUBGRAX7G5eTSR7e6C4b4k4V8mBzC_'
-const TON_DECIMALS = 1000000000
 
-let tc = null
-let tcWallet = null
+// Stars pricing per card
+const ROOM_STARS = {free:0, stars:100, ton:50, vip:250}
+// Stars per spin on wheel
+const WHEEL_STARS = {not:5, ton:5}
 
-function initTonConnect() {
-  try {
-    const SDK = window.TonConnectSDK
-    if (!SDK) { setTimeout(initTonConnect, 800); return }
-    tc = new SDK.TonConnect({ manifestUrl: MANIFEST_URL })
-    // Restore previous session
-    tc.restoreConnection()
-    tc.onStatusChange(w => {
-      tcWallet = w
-      updateWalletUI()
-      console.log(w ? '✅ Wallet: ' + w.account.address : '❌ Wallet disconnected')
+// ── Buy bingo cards via Telegram Stars ──
+async function payAndEnterLobby(room, nCards) {
+  const r = ROOMS[room]
+  paymentVerified = false
+
+  // Free room — no payment
+  if (r.cur === 'free') {
+    paymentVerified = true
+    startGame()
+    return
+  }
+
+  const stars = (ROOM_STARS[room] || 50) * nCards
+
+  // Get invoice from backend
+  const inv = await apiCall('/payments/invoice?room=' + room + '&n_cards=' + nCards, {method:'POST'})
+  if (!inv) {
+    alert('Payment service unavailable. Try again.')
+    return
+  }
+  if (inv.free) {
+    paymentVerified = true
+    startGame()
+    return
+  }
+  if (!inv.invoice_url) {
+    alert('Could not create invoice: ' + (inv.error || 'unknown error'))
+    return
+  }
+
+  // Open Telegram native payment UI ✅
+  if (tg?.openInvoice) {
+    tg.openInvoice(inv.invoice_url, (status) => {
+      if (status === 'paid') {
+        paymentVerified = true
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+        startGame()
+      } else if (status === 'cancelled') {
+        // User cancelled — do nothing
+      } else if (status === 'failed') {
+        if (tg?.showPopup) tg.showPopup({
+          title:'❌ Payment Failed',
+          message:'Payment did not go through. Try again.',
+          buttons:[{type:'ok'}]
+        })
+      }
     })
-    console.log('✅ TonConnect SDK ready')
-  } catch(e) {
-    console.warn('TC init error:', e)
+  } else {
+    // Fallback: open invoice URL in browser
+    window.open(inv.invoice_url, '_blank')
+    // Show manual confirm since we can't detect payment
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title:'✅ Payment Sent?',
+        message:'After completing payment, tap Confirm.',
+        buttons:[{id:'yes',type:'default',text:'✅ Confirmed'},{type:'cancel',text:'Cancel'}]
+      }, (id) => {
+        if (id === 'yes') { paymentVerified = true; startGame() }
+      })
+    }
   }
 }
 
-function updateWalletUI() {
-  const connected = !!(tcWallet?.account?.address)
-  const addr = tcWallet?.account?.address || ''
-  const short = addr ? addr.slice(0,4) + '...' + addr.slice(-4) : ''
-  document.querySelectorAll('.tc-connect-btn').forEach(btn => {
-    btn.textContent = connected ? '💎 ' + short : '🔗 Connect Wallet'
-    btn.style.borderColor = connected ? '#0098EA' : 'rgba(255,255,255,.15)'
-    btn.style.color = connected ? '#40B8FF' : 'rgba(255,255,255,.6)'
+// ── Wheel spins payment (Stars) ──
+async function payWheelSpins(spins, currency, onPaid) {
+  const starsPerSpin = WHEEL_STARS[currency] || 5
+  const totalStars = starsPerSpin * spins
+
+  // Simulate invoice for wheel (same flow)
+  const inv = await apiCall('/payments/invoice?room=wheel_spin&n_cards=' + spins, {method:'POST'})
+  if (!inv?.invoice_url) {
+    // Fallback: just proceed (wheel is less critical)
+    if (onPaid) onPaid()
+    return
+  }
+  if (tg?.openInvoice) {
+    tg.openInvoice(inv.invoice_url, (status) => {
+      if (status === 'paid' && onPaid) onPaid()
+    })
+  }
+}
+
+// Dummy wallet UI (no TonConnect needed)
+function connectWallet() {
+  if (tg?.showPopup) tg.showPopup({
+    title:'💎 Payments',
+    message:'TonBola uses Telegram Stars for payments — no wallet needed!\n\n⭐ Fast, secure, native Telegram payments.',
+    buttons:[{type:'ok',text:'Got it!'}]
   })
 }
-
-async function connectWallet() {
-  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
-  if (!tc) { alert('TonConnect unavailable'); return }
-  if (tcWallet) {
-    // Already connected — show info + disconnect option
-    if (tg?.showPopup) tg.showPopup({
-      title: '💎 Wallet Connected',
-      message: 'Address:\n' + tcWallet.account.address + '\n\nDisconnect?',
-      buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
-    }, id => { if(id==='dc') tc.disconnect() })
-    return
-  }
-  try {
-    // Get available wallets and open best one
-    const wallets = await tc.getWallets()
-    // Filter to ones with universalLink (work in Telegram)
-    const tgWallets = wallets.filter(w => w.universalLink || w.bridgeUrl)
-    if (!tgWallets.length) { alert('No TON wallets found'); return }
-    // Use first available (usually Tonkeeper or Telegram Wallet)
-    const wallet = tgWallets[0]
-    const link = tc.connect({ universalLink: wallet.universalLink, bridgeUrl: wallet.bridgeUrl })
-    // Open wallet link
-    if (tg?.openLink) tg.openLink(link)
-    else window.open(link, '_blank')
-  } catch(e) {
-    console.warn('Connect error:', e)
-    // Fallback: deep link to Tonkeeper
-    const link = 'https://app.tonkeeper.com/ton-connect?v=2&id=' + encodeURIComponent(MANIFEST_URL)
-    if (tg?.openLink) tg.openLink(link)
-    else window.open(link, '_blank')
-  }
+function updateWalletUI() {}
+function initTonConnect() {
+  console.log('✅ Telegram Stars payments active — no wallet needed')
 }
 
-async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
-  if (!tcWallet) {
-    await connectWallet()
-    if (onFail) onFail('no_wallet')
-    return
-  }
-  const nanotons = String(Math.round(amountTon * TON_DECIMALS))
-  // Encode comment as TON cell payload
-  const payload = btoa(comment).replace(/\+/g,'-').replace(/\//g,'_')
-  try {
-    const result = await tc.sendTransaction({
-      validUntil: Math.floor(Date.now()/1000) + 300,
-      messages: [{ address: PLATFORM_WALLET, amount: nanotons }]
-    })
-    if (onSuccess) onSuccess(result)
-  } catch(e) {
-    console.warn('TX error:', e)
-    if (onFail) onFail(e)
-  }
-}
 
 // ── Buy wheel spins with TON ──
 async function payWheelSpins(spins, currency, onPaid) {
@@ -2746,10 +2758,9 @@ function updateWheelUI() {
 
 function startWheelSession() {
   if(wheelSpinsSelected <= 0) return
-  // Real TonConnect payment
-  if(wheelCur === 'ton') {
-    payWheelSpins(wheelSpinsSelected, 'ton', () => {
-      wheelSpinsRemaining += wheelSpinsSelected
+  // Telegram Stars payment
+  payWheelSpins(wheelSpinsSelected, wheelCur, () => {
+    wheelSpinsRemaining += wheelSpinsSelected
       wheelSpinsSelected = 0
       updateWheelUI()
       const startBtn = document.getElementById('w-start-btn')
@@ -2764,18 +2775,6 @@ function startWheelSession() {
         buttons:[{type:'ok',text:"Let's spin!"}]
       })
     })
-    return
-  }
-  // NOT currency — direct (no payment yet)
-  wheelSpinsRemaining += wheelSpinsSelected
-  wheelSpinsSelected = 0
-  updateWheelUI()
-  const startBtn2 = document.getElementById('w-start-btn')
-  if(startBtn2) {
-    startBtn2.textContent = '🎡 Spin!'
-    startBtn2.onclick = spinWheel
-    startBtn2.style.opacity='1'; startBtn2.style.pointerEvents='auto'
-  }
 }
 
 function spinWheel() {
