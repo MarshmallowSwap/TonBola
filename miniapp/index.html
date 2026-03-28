@@ -341,17 +341,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 
 .card-parchment .bc{
-  background:#fff;
-  border-radius:8px;
-  color:#1a1a2e;
-  font-size:clamp(14px,4.5cqw,20px);
-  font-weight:800;
-  font-style:normal;
-  border:none;
-  box-shadow:0 2px 4px rgba(0,0,0,.15);
-  display:flex;align-items:center;justify-content:center;
-  aspect-ratio:1;
-  transition:all .2s ease}
+  background:rgba(255,255,255,.18);border-radius:10px;
+  color:#fff;font-size:clamp(13px,4.5cqw,19px);font-weight:800;
+  border:none;display:flex;align-items:center;justify-content:center;
+  aspect-ratio:1;transition:all .18s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+}
 /* Column colors B-I-N-G-O */
 .bc:nth-child(5n+1){background:linear-gradient(145deg,#4FC3F7,#0288D1);color:#fff}
 .bc:nth-child(5n+2){background:linear-gradient(145deg,#FF8A65,#E64A19);color:#fff}
@@ -360,14 +355,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .bc:nth-child(5n+5){background:linear-gradient(145deg,#FFD54F,#F57F17);color:#fff}
 /* Marked number */
 .bc.mk{
-  background:rgba(255,255,255,.08)!important;
+  background:rgba(0,0,0,.3)!important;
+  border-radius:10px;
   transform:scale(.93);position:relative;overflow:hidden}
-.bc.mk span{visibility:hidden}
+.bc.mk span{display:none}
 .bc.mk::after{
   content:'★';position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:1.4em;line-height:1;
-  color:#FBBF24;text-shadow:0 0 8px rgba(251,191,36,.8)}
+  font-size:1.6em;line-height:1;
+  color:#FFD700;
+  filter:drop-shadow(0 0 6px #FFD700)}
 /* Line hit */
 .bc.lh{
   background:linear-gradient(145deg,#FFD700,#FF8C00)!important;
