@@ -2799,12 +2799,13 @@ function renderProfile(){
   document.getElementById('p-unlocks').innerHTML=levels.map(u=>{
     const done=user.level>=u.lv
     const col=u.color
-    return`<div class="uitem ${done?'done':'lock'}" style="${done?'border-color:'+col+'44;background:linear-gradient(135deg,'+col+'18,'+col+'08)':''}">
-      <div class="ulv ${done?'ulv-d':'ulv-l'}" style="${done?'--card-color:'+col+';background:'+col+'33;border-color:'+col+'66;':''}">
+    const op=done?'1':'0.42'
+    return`<div class="uitem ${done?'done':'lock'}" style="border:1.5px solid ${col};background:${col}1A;box-shadow:0 0 14px ${col}33,inset 0 0 0 1px ${col}22;border-radius:12px;opacity:${op};transition:opacity .2s">
+      <div class="ulv" style="background:${col}33;border:1.5px solid ${col};border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 0 8px ${col}44;flex-shrink:0">
         ${done?u.icon:'🔒'}
       </div>
-      <div class="utext" style="flex:1"><h4>${u.label}</h4><p>${u.unlocks}</p></div>
-      <div class="utag ${done?'utag-d':'utag-l'}" style="${done?'background:'+col+'22;color:'+col+';border-color:'+col+'44':''}"}>Lv.${u.lv}</div>
+      <div class="utext" style="flex:1"><h4 style="color:${col};text-shadow:0 0 8px ${col}66;margin:0 0 2px">${u.label}</h4><p style="margin:0">${u.unlocks}</p></div>
+      <div class="utag" style="background:${col}22;color:${col};border:1px solid ${col};border-radius:6px;padding:3px 8px;font-size:.65rem;font-weight:700;white-space:nowrap;flex-shrink:0">Lv.${u.lv}</div>
     </div>`
   }).join('')
 }
