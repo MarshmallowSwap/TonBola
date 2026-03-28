@@ -1345,8 +1345,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div onclick="selectCur(this,'stars')" data-cur="stars"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
             background:rgba(255,184,0,.2);border:2px solid #FFB800;transition:all .15s">
-          <div style="font-size:1.2rem">⭐</div>
-          <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:3px">Stars</div>
+          <img src="assets/icon-not-coin.png" style="width:28px;height:28px;object-fit:contain">
+          <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:3px">$NOT</div>
         </div>
         <div onclick="selectCur(this,'ton')" data-cur="ton"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
@@ -1369,16 +1369,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
         <div onclick="selectPrice(this,50)" data-price="50"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:var(--yellow)">50 ⭐</div>
+            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:var(--yellow)">50 $NOT</div>
         <div onclick="selectPrice(this,100)" data-price="100"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">100 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">100 $NOT</div>
         <div onclick="selectPrice(this,200)" data-price="200"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">200 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">200 $NOT</div>
         <div onclick="selectPrice(this,500)" data-price="500"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">500 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">500 $NOT</div>
       </div>
     </div>
 
@@ -1407,11 +1407,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Preview</div>
       <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <span style="font-size:.82rem;color:var(--muted)">Your earnings (2%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">1 ⭐ per card</span>
+        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">1 $NOT per card</span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:5px 0">
         <span style="font-size:.82rem;color:var(--muted)">Prize pool (53%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">265 ⭐ max</span>
+        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">265 $NOT max</span>
       </div>
     </div>
 
@@ -3128,7 +3128,7 @@ function selectCur(el, cur){
   } else {
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
     const opts=(cur==='stars'||cur==='not')
-      ?[{v:500,l:'500 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'},{v:500,l:'500 ⭐'}]
+      ?[{v:500,l:'500 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'},{v:5000,l:'5,000 $NOT'}]
       :[{v:0.05,l:'0.05 $TON'},{v:0.1,l:'0.1 $TON'},{v:0.5,l:'0.5 $TON'},{v:1,l:'1 $TON'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
       <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
