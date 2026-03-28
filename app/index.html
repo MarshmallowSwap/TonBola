@@ -3302,9 +3302,9 @@ async function serverSpin(sessionId) {
 // Room live player count
 async function loadRoomStats() {
   for(const room of ['free','stars','ton','vip']) {
-    const data = await apiCall(\`/rooms/\${room}/stats\`)
+    const data = await apiCall('/rooms/' + room + '/stats')
     if(data?.online) {
-      const el = document.getElementById(\`rp-\${room}\`)
+      const el = document.getElementById('rp-' + room + '')
       if(el) el.textContent = data.online
     }
   }
