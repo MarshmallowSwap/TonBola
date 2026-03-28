@@ -1826,7 +1826,7 @@ function getTgUser(){return{
   username:tg?.initDataUnsafe?.user?.username||''
 }}
 
-const user={...getTgUser(),tbola:505,level:1,xp:20,streak:1,games:3,wins:0,lines:0,cards:6}
+const user={...getTgUser(),tbola:505,level:1,xp:20,streak:1,games:3,wins:0,lines:0,cards:6,warriorPass:false}
 
 setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
 
@@ -2302,10 +2302,12 @@ function subscribeWarriorPass() {
       buttons:[{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
     }, (id) => {
       if(id==='pay') {
+        user.warriorPass = true
         closeWarriorPass()
+        updateWheelAutoSpinBtn()
         setTimeout(()=>{ if(tg?.showPopup) tg.showPopup({
           title:'⚔️ Warrior Pass Active!',
-          message:'Welcome, Warrior!\n\nYour benefits are now active for 30 days.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge',
+          message:'Welcome, Warrior!\n\nYour benefits are now active for 30 days.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin unlocked!',
           buttons:[{type:'ok'}]
         }) }, 300)
       }
