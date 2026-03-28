@@ -2062,7 +2062,7 @@ function renderCards(){
         <div class="bgrid" style="position:relative;z-index:1">
           ${card.map((n,ni)=>{
           const colIdx=ni%5
-          const colBg=['linear-gradient(145deg,#4C1D95,#6D28D9)','linear-gradient(145deg,#164E63,#0E7490)','linear-gradient(145deg,#064E3B,#065F46)','linear-gradient(145deg,#4C1D95,#7C3AED)','linear-gradient(145deg,#78350F,#B45309)'][colIdx]
+          const colBg=['linear-gradient(145deg,#7F1D1D,#DC2626)','linear-gradient(145deg,#7C2D12,#EA580C)','linear-gradient(145deg,#14532D,#16A34A)','linear-gradient(145deg,#134E4A,#0D9488)','linear-gradient(145deg,#1E3A5F,#2563EB)'][colIdx]
           return`<div class="bc" id="c${ci}-${n}" data-col="${colIdx}" style="background:${colBg};border-radius:10px;color:#fff;font-size:clamp(13px,4.5cqw,19px);font-weight:800;display:flex;align-items:center;justify-content:center;aspect-ratio:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)"><span>${n}</span></div>`
         }).join('')}
         </div>
