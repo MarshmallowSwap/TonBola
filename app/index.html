@@ -227,7 +227,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 /* ── LOBBY ── */
 .lobby-hdr{background:rgba(8,8,14,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.lpool{text-align:center;padding:22px 12px 18px;background:linear-gradient(135deg,#4C1D95,#6D28D9,#8B5CF6);margin:10px 12px;border-radius:20px;box-shadow:0 6px 24px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
+.lpool{text-align:center;padding:20px 12px 18px;background:linear-gradient(135deg,#3B0764,#4C1D95,#7C3AED);margin:10px 12px;border-radius:20px;box-shadow:0 8px 28px rgba(109,40,217,.5),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
 .pl{font-size:.62rem;font-weight:700;text-transform:uppercase;
   letter-spacing:1px;color:var(--muted);margin-bottom:3px}
 .pa{font-size:2rem;font-weight:700;color:var(--yellow);
@@ -630,14 +630,27 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 #p-wins .sbn{color:var(--violet3)}
 #p-lines{background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(6,182,212,.06));border:1px solid rgba(34,211,238,.25)!important}
 #p-lines .sbn{color:var(--cyan)}
+#p-lines-box{background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(6,182,212,.06));border:1px solid rgba(34,211,238,.25)!important}
+#p-lines-box .sbn{color:var(--cyan)}
 #p-cards{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(245,158,11,.06));border:1px solid rgba(251,191,36,.25)!important}
 #p-cards .sbn{color:var(--yellow)}
+
+/* Per-screen backgrounds */
+#s-hub{background:var(--bg)}
+#sh{background:var(--bg)}
+#sg{background:var(--bg)}
+#sl{background:var(--bg)}
+#sp{background:var(--bg)}
+#slb{background:var(--bg)}
+#s-squad{background:var(--bg)}
+#s-wheel{background:var(--bg)}
+#s-create,#s-join{background:var(--bg)}
 </style>
 </head>
 <body>
 
 <!-- HOME -->
-<div class="screen" id="sh" style="background:var(--bg)">
+<div class="screen" id="sh">
   <div class="stone-header">
     <div class="topbar">
       <div style="position:relative;flex-shrink:0">
@@ -742,7 +755,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
 
 
-  <div class="sec">Private Battle</div>
+  <div class="sec">⚔️ Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
     <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
     <button class="btn btn-stone" style="border:none;outline:none" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
@@ -751,7 +764,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 
 <!-- GAME HUB -->
-<div class="screen active" id="s-hub" style="background:#0A0A0F">
+<div class="screen active" id="s-hub">
   <div style="background:#111;border-bottom:1px solid rgba(255,255,255,.08);padding:10px 12px;position:sticky;top:0;z-index:10">
     <div class="topbar">
       <div style="position:relative;flex-shrink:0">
@@ -1102,12 +1115,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- GAME -->
-<div class="screen" id="sg" style="overflow:hidden;flex-direction:column;background:linear-gradient(180deg,#1a8c3c 0%,#0d6b2e 40%,#0a5522 100%)">
+<div class="screen" id="sg" style="overflow:hidden;flex-direction:column;background:var(--bg)">
   <!-- STICKY TOP: header + ball machine + prizes -->
   <div id="g-top" style="flex-shrink:0">
-    <div class="ghdr" style="background:rgba(0,0,0,.25);backdrop-filter:blur(4px);border-bottom:1px solid rgba(255,255,255,.1)">
+    <div class="ghdr">
       <div>
-        <div style="font-size:.9rem;font-weight:700;color:#333" id="g-rm">$NOT Room</div>
+        <div style="font-size:.9rem;font-weight:700;color:#fff" id="g-rm">$NOT Room</div>
         <div style="font-size:.67rem;color:#999" id="g-di">0 numbers drawn</div>
       </div>
       <div style="display:flex;align-items:center;gap:5px">
@@ -1183,15 +1196,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <div class="srow">
     <div class="sb"><div class="sbn" id="p-wins">0</div><div class="sbl">Wins</div></div>
-    <div class="sbn" style="display:none" id="p-lines">0</div>
-    <div class="sb"><div class="sbn" id="p-li">0</div><div class="sbl">Lines</div></div>
+    <div class="sb" id="p-lines-box"><div class="sbn" id="p-li">0</div><div class="sbl">Lines</div></div>
     <div class="sb"><div class="sbn" id="p-cd">6</div><div class="sbl">Cards</div></div>
   </div>
 
   <!-- Warrior Pass -->
   <div onclick="showWarriorPass()" style="margin:0 10px 8px;cursor:pointer;
-    background:linear-gradient(135deg,#2A2010,#1A1408);border:2px solid rgba(196,147,63,.3);
-    border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,rgba(109,40,217,.18),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.35);
+    border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:12px;
     box-shadow:0 4px 0 rgba(0,0,0,.5)">
     <div style="font-size:2rem">⚔️</div>
     <div style="flex:1">
@@ -1199,7 +1211,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         color:var(--yellow);text-shadow:0 1px 3px rgba(0,0,0,.9)">Warrior Pass</div>
       <div style="font-size:.7rem;color:var(--muted);margin-top:1px">600 ⭐ Stars · 3 $TON / month</div>
     </div>
-    <div style="background:linear-gradient(135deg,#CC8800,#FF6A00);border-radius:50px;
+    <div style="background:linear-gradient(135deg,var(--violet),#4F46E5);border-radius:50px;
       padding:3px 10px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;
       color:#fff">UPGRADE</div>
   </div>
@@ -1209,11 +1221,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div onclick="go('s-squad');setNav('nb-s');renderSquad()"
       style="display:flex;align-items:center;gap:10px;padding:12px 14px;
         border-radius:12px;cursor:pointer;
-        background:linear-gradient(135deg,#1A2A0A,#0E1A06);
-        border:2px solid #2A5C1A">
+        background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(16,185,129,.06));
+        border:1px solid rgba(52,211,153,.25)">
       <div id="p-squad-icon"
         style="width:44px;height:44px;border-radius:10px;
-          background:linear-gradient(145deg,#3A2810,#1A1005);
+          background:rgba(139,92,246,.15);
           border:1px solid var(--border);display:flex;align-items:center;
           justify-content:center;font-size:1.4rem;flex-shrink:0">🛡️</div>
       <div style="flex:1;min-width:0">
@@ -1432,7 +1444,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Squad Image</div>
       <div id="squad-avatar-preview" onclick="openAvatarPicker('squad')"
         style="width:80px;height:80px;border-radius:16px;margin:0 auto 10px;
-          background:linear-gradient(145deg,#3A2810,#1A1005);
+          background:rgba(139,92,246,.15);
           border:1px solid var(--border);display:flex;align-items:center;
           justify-content:center;font-size:2.5rem;cursor:pointer;
           box-shadow:0 4px 0 rgba(0,0,0,.5)">🛡️</div>
@@ -1532,7 +1544,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         style="width:90px;height:90px;border-radius:50%;margin:0 auto 8px;
           border:4px solid #FFB800;display:flex;align-items:center;
           justify-content:center;font-size:2.8rem;
-          background:linear-gradient(145deg,#3A2810,#1A1005);
+          background:rgba(139,92,246,.15);
           box-shadow:0 0 20px rgba(255,184,0,.3),0 4px 0 rgba(0,0,0,.5)">😊</div>
       <div style="font-size:.75rem;color:var(--muted)">Selected avatar</div>
     </div>
@@ -1965,7 +1977,7 @@ function renderCards(){
       <div class="${cardStyle}">
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 4px 0;margin-bottom:0">
           ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;
-            color:${['#4FC3F7','#FF8A65','#81C784','#CE93D8','#FFD54F'][i]};
+            color:${['#A78BFA','#22D3EE','#34D399','#FB923C','#FBBF24'][i]};
             text-shadow:0 1px 2px rgba(0,0,0,.3);padding:2px 0">${l}</div>`).join('')}
         </div>
         <div class="bgrid" style="position:relative;z-index:1">
@@ -3211,7 +3223,7 @@ function renderSquad() {
       <div class="wood-panel" style="padding:16px;text-align:center">
         <div class="nail-bl"></div><div class="nail-br"></div>
         <div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;
-          background:linear-gradient(145deg,#3A2810,#1A1005);border:1px solid var(--border);
+          background:rgba(139,92,246,.15);border:1px solid var(--border);
           display:flex;align-items:center;justify-content:center;font-size:2rem">${mySquad.icon}</div>
         <div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:2px">${mySquad.name}</div>
         <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">${mySquad.desc||'No description'}</div>
@@ -3298,7 +3310,7 @@ function renderSquadList() {
         ${s.rank<=3 ? medals[s.rank-1] : '<span style="font-size:.8rem;font-weight:700;color:var(--muted)">'+s.rank+'</span>'}
       </div>
       <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;
-        background:linear-gradient(145deg,#3A2810,#1A1005);border:1px solid var(--border);
+        background:rgba(139,92,246,.15);border:1px solid var(--border);
         display:flex;align-items:center;justify-content:center;font-size:1.2rem">${s.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:5px">
