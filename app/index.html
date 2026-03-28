@@ -3778,7 +3778,42 @@ function leaveSquad() {
       (id)=>{ if(id==='yes'){ mySquad=null; renderSquad() }})
   } else { mySquad=null; renderSquad() }
 }
+
+let autoSpinActive=false,autoSpinTimeout=null
+function toggleAutoSpin(){
+  if(!user.warriorPass){document.getElementById('w-wp-gate').style.display='flex';return}
+  autoSpinActive=!autoSpinActive;updateWheelAutoSpinBtn()
+  if(autoSpinActive) autoSpinLoop(); else clearTimeout(autoSpinTimeout)
+}
+function autoSpinLoop(){
+  if(!autoSpinActive) return
+  if(wheelSpinsRemaining<=0){autoSpinActive=false;updateWheelAutoSpinBtn();return}
+  spinWheel();autoSpinTimeout=setTimeout(autoSpinLoop,4600)
+}
+function updateWheelAutoSpinBtn(){
+  const btn=document.getElementById('w-autospin-btn'),lbl=document.getElementById('w-autospin-label')
+  if(!btn||!lbl) return
+  if(autoSpinActive){btn.style.background='rgba(139,92,246,.3)';btn.style.borderColor='#8B5CF6';btn.style.color='#C4B5FD';lbl.textContent='⏹ Stop Auto-Spin'}
+  else{btn.style.background='rgba(139,92,246,.08)';btn.style.borderColor='rgba(139,92,246,.4)';btn.style.color='rgba(139,92,246,.7)';lbl.textContent='Auto-Spin'}
+}
 </script>
+
+<!-- Warrior Pass gate (global, outside any screen) -->
+<div id="w-wp-gate" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div style="font-size:3.5rem;margin-bottom:10px">⚔️</div>
+  <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:6px">Warrior Pass Required</div>
+  <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px;max-width:280px;line-height:1.6">Auto-Spin is exclusive to <span style="color:#A78BFA;font-weight:700">Warrior Pass</span> members. The wheel spins automatically until your spins run out.</div>
+  <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:16px;padding:14px 20px;margin-bottom:14px;max-width:280px;width:100%;text-align:left">
+    <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass includes</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on Fortune Wheel</span><br>🏆 +10% jackpot share</div>
+  </div>
+  <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">600,000 $NOT or 3 $TON / month</div>
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
+    <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()" style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">⚔️ Get Warrior Pass</button>
+    <button onclick="document.getElementById('w-wp-gate').style.display='none'" style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">← Go back</button>
+  </div>
+</div>
+
 </body>
 </html>
 /* deploy trigger */
