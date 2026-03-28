@@ -360,13 +360,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .bc:nth-child(5n+5){background:linear-gradient(145deg,#FFD54F,#F57F17);color:#fff}
 /* Marked number */
 .bc.mk{
-  background:rgba(255,255,255,.05)!important;
-  transform:scale(.93);position:relative}
+  background:rgba(255,255,255,.08)!important;
+  transform:scale(.93);position:relative;overflow:hidden}
 .bc.mk span{visibility:hidden}
 .bc.mk::after{
-  content:'⭐';position:absolute;inset:0;
+  content:'★';position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:1em;line-height:1}
+  font-size:1.4em;line-height:1;
+  color:#FBBF24;text-shadow:0 0 8px rgba(251,191,36,.8)}
 /* Line hit */
 .bc.lh{
   background:linear-gradient(145deg,#FFD700,#FF8C00)!important;
