@@ -1366,19 +1366,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div class="wood-panel" style="padding:16px" id="cr-price-wrap">
       <div class="nail-bl"></div><div class="nail-br"></div>
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Card Price</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
-        <div onclick="selectPrice(this,50)" data-price="50"
-          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:var(--yellow)">1,000 $NOT</div>
-        <div onclick="selectPrice(this,100)" data-price="100"
-          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">1,000 $NOT</div>
-        <div onclick="selectPrice(this,200)" data-price="200"
-          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">1,000 $NOT</div>
-        <div onclick="selectPrice(this,500)" data-price="500"
-          style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">2,000 $NOT</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+        <div id="cr-price-total" style="flex:1;padding:8px 14px;border-radius:50px;background:rgba(167,139,250,.1);border:2px solid rgba(167,139,250,.3);color:#888;font-weight:700;font-size:.85rem;text-align:center">Total: 0</div>
+        <button onclick="resetPrice()" style="padding:8px 14px;border-radius:50px;background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.4);color:#FF8080;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;border-style:solid">↺ Reset</button>
       </div>
     </div>
 
