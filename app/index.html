@@ -1663,7 +1663,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         -webkit-background-clip:text;-webkit-text-fill-color:transparent;
         filter:drop-shadow(0 2px 8px rgba(255,184,0,.6))">Warrior Pass</div>
       <div style="font-family:'Outfit',sans-serif;font-size:.75rem;color:var(--muted);margin-top:4px">
-        Abbonamento mensile · Non si rinnova automaticamente
+        Monthly subscription · Does not renew automatically
       </div>
     </div>
 
@@ -1724,11 +1724,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Subscribe button -->
     <button id="wp-btn" class="btn btn-gold" onclick="subscribeWarriorPass()"
       style="padding:14px;font-size:1rem;width:100%">
-      ⚔️ Attiva — 600,000 $NOT
+      ⚔️ Activate — 600,000 $NOT
     </button>
     <div style="font-family:'Outfit',sans-serif;font-size:.65rem;color:#4A3318;
       text-align:center;margin-top:8px">
-      Non si rinnova · Riceverai un promemoria alla scadenza
+      No auto-renewal · You'll get a reminder when it expires
     </div>
     <button onclick="closeWarriorPass()"
       style="background:none;border:none;color:#4A3318;font-family:'Outfit',sans-serif;
@@ -2270,7 +2270,7 @@ function selectWPCur(cur) {
   if(cur === 'stars') {
     stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#A78BFA'
     ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
-    btn.textContent = '⚔️ Attiva — 600,000 $NOT'
+    btn.textContent = '⚔️ Activate — 600,000 $NOT'
   } else {
     ton.style.background   = 'rgba(0,152,234,.12)'; ton.style.borderColor   = '#0098EA'
     stars.style.background = 'rgba(0,0,0,.2)';      stars.style.borderColor = 'rgba(255,255,255,.1)'
@@ -2306,9 +2306,9 @@ function checkWarriorPassExpiry() {
     updateWheelAutoSpinBtn()
     // Show renewal banner
     if(tg?.showPopup) tg.showPopup({
-      title:'⏰ Warrior Pass Scaduto',
-      message:'Il tuo Warrior Pass è scaduto.\n\nRinnova ora per non perdere i tuoi benefit!\n\n🃏 Free cards · 📈 Win boost · ⚡ Auto-Spin',
-      buttons:[{id:'renew',type:'default',text:'⚔️ Rinnova ora'},{type:'cancel',text:'Dopo'}]
+      title:'⏰ Warrior Pass Expired',
+      message:'Your Warrior Pass has expired.\n\nRenew now to keep your benefits!\n\n🃏 Free cards · 📈 Win boost · ⚡ Auto-Spin',
+      buttons:[{id:'renew',type:'default',text:'⚔️ Renew now'},{type:'cancel',text:'Later'}]
     },(id)=>{ if(id==='renew') showWarriorPass(true) })
     else showWarriorPass(true)
   }
@@ -2324,7 +2324,7 @@ function subscribeWarriorPass() {
   if(tg?.showPopup) {
     tg.showPopup({
       title:'⚔️ Warrior Pass',
-      message:`Attivare il Warrior Pass per ${feeStr}?\n\nNon si rinnova automaticamente. Alla scadenza riceverai un promemoria per rinnovare manualmente.`,
+      message:`Activate Warrior Pass for ${feeStr}?\n\nNo automatic renewal. You\'ll receive a reminder when it expires to renew manually.`,
       buttons:[{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
     }, (id) => {
       if(id==='pay') {
@@ -2334,7 +2334,7 @@ function subscribeWarriorPass() {
         updateWheelAutoSpinBtn()
         setTimeout(()=>{ if(tg?.showPopup) tg.showPopup({
           title:'⚔️ Warrior Pass Active!',
-          message:'Benvenuto, Warrior!\n\nI tuoi benefit sono attivi per 30 giorni.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin sbloccato!\n\n⏰ Alla scadenza riceverai un promemoria per rinnovare.',
+          message:'Welcome, Warrior!\n\nYour benefits are active for 30 days.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin unlocked!\n\n⏰ You\'ll get a reminder when it expires.',
           buttons:[{type:'ok'}]
         }) }, 300)
       }
