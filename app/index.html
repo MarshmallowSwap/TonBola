@@ -1741,13 +1741,28 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 <!-- WIN OVERLAY -->
 <div class="wov" id="wov" style="display:none">
-  <div class="conf" id="conf"></div>
+  <div id="wov-confetti" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+
+  <!-- Winner banner -->
+  <div style="background:linear-gradient(135deg,rgba(255,184,0,.15),rgba(196,147,63,.08));border:1.5px solid rgba(255,184,0,.45);border-radius:18px;padding:16px 24px;margin-bottom:14px;width:100%;max-width:300px;box-shadow:0 0 30px rgba(255,184,0,.15)">
+    <div style="font-size:.65rem;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:4px">🏆 Winner</div>
+    <div id="w-winner-name" style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#FFD700;text-shadow:0 0 16px rgba(255,215,0,.5)">Tommy</div>
+    <div id="w-winner-room" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:2px">$NOT Room</div>
+  </div>
+
   <div class="wb" id="wb">🎱</div>
-  <div style="font-size:.85rem;font-weight:700;letter-spacing:2px;color:var(--muted);margin-top:8px" id="wtype">FULL HOUSE</div>
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:2px;color:var(--muted);margin-top:6px" id="wtype">FULL HOUSE</div>
   <div class="wt" id="wt">BINGO!</div>
+
+  <div style="background:rgba(255,60,60,.1);border:1px solid rgba(255,60,60,.3);border-radius:50px;padding:4px 16px;margin:6px 0;font-size:.68rem;font-weight:700;color:#FF8080;letter-spacing:1.5px;text-transform:uppercase">⛔ Partita Finita</div>
+
   <div class="wamt" id="wamt">+880,000 NOT</div>
   <div class="wtbola" id="wtbola">+500 $TBOLA earned</div>
-  <button class="btn btn-gold" style="max-width:260px" onclick="closeWin()">🏆 Collect Prize!</button>
+
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:270px;margin-top:10px">
+    <button class="btn btn-gold" style="padding:13px" onclick="closeWin()">🏆 Collect Prize!</button>
+    <button class="btn" onclick="closeWin()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);border-radius:14px;padding:11px;font-size:.82rem;font-weight:700;cursor:pointer">← Back to Home</button>
+  </div>
 </div>
 
 <!-- NAV -->
