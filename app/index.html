@@ -1060,15 +1060,43 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
   </div>
 
-  <div style="margin:0 10px 16px">
+  <div style="margin:0 12px 8px;display:flex;flex-direction:column;gap:8px">
     <button id="w-start-btn" onclick="startWheelSession()"
-      class="btn btn-gold" style="width:100%;padding:14px;font-size:1rem;opacity:.5;pointer-events:none;background:linear-gradient(180deg,#8B6000,#5A3A00)!important">
-      🎡 Start & Pay — select spins first
+      class="btn btn-gold" style="width:100%;padding:15px;font-size:1rem;font-weight:800;opacity:.45;pointer-events:none;background:linear-gradient(180deg,#7A5000,#4A3000)!important">
+      🎡 Start &amp; Pay — select spins first
+    </button>
+    <button id="w-autospin-btn" onclick="toggleAutoSpin()"
+      style="width:100%;padding:11px;border-radius:14px;border:1.5px solid rgba(139,92,246,.4);background:rgba(139,92,246,.08);color:rgba(139,92,246,.7);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+      <span>⚡</span>
+      <span id="w-autospin-label">Auto-Spin</span>
+      <span style="font-size:.62rem;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.35);border-radius:50px;padding:2px 8px;color:rgba(167,139,250,.8)">Warrior Pass</span>
     </button>
   </div>
 
   <!-- Last result -->
-  <div id="w-last-result" style="text-align:center;min-height:32px;margin-bottom:8px"></div>
+  <div id="w-last-result" style="text-align:center;min-height:36px;margin-bottom:8px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700"></div>
+
+  <!-- Warrior Pass gate overlay -->
+  <div id="w-wp-gate" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+    <div style="font-size:3.5rem;margin-bottom:10px;filter:drop-shadow(0 0 24px rgba(139,92,246,.9))">⚔️</div>
+    <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:6px">Warrior Pass Required</div>
+    <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px;max-width:280px;line-height:1.6">L'Auto-Spin è esclusivo del <span style="color:#A78BFA;font-weight:700">Warrior Pass</span>. La ruota gira automaticamente fino ad esaurimento spin.</div>
+    <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:16px;padding:14px 20px;margin-bottom:14px;max-width:280px;width:100%;text-align:left">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.55);text-transform:uppercase;margin-bottom:8px">Warrior Pass include</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin sulla Fortune Wheel</span><br>🏆 +10% jackpot share</div>
+    </div>
+    <div style="font-size:.72rem;color:rgba(167,139,250,.55);margin-bottom:16px">600 ⭐ Stars o 3 $TON / mese</div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
+      <button onclick="document.getElementById('w-wp-gate').style.display='none';openWarriorPass()"
+        style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">
+        ⚔️ Ottieni il Warrior Pass
+      </button>
+      <button onclick="document.getElementById('w-wp-gate').style.display='none'"
+        style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
+        ← Torna indietro
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- LOBBY -->
