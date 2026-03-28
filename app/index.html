@@ -1883,10 +1883,7 @@ function initHome(){
   const lvInfo = getLevelIcon(user.level)
   const hbadge = document.getElementById('h-lv-badge')
   if(hbadge){hbadge.textContent=lvInfo.icon;hbadge.style.background=lvInfo.color+'33';hbadge.style.borderColor=lvInfo.color+'88'}
-  setInterval(()=>{
-    const ids=['rp-free','rp-stars','rp-ton','rp-vip'],bases=[8,26,8,3]
-    ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=bases[i]+Math.floor(Math.random()*7)})
-  },9000)
+  // warrior counts loaded from backend via loadRoomStats()
 }
 
 function openLobby(r){
@@ -2361,7 +2358,7 @@ function initHub() {
   if(jp) jp.textContent = wheelJackpot.toFixed(1) + ' TON'
   // Update bingo players
   const bp = document.getElementById('hub-bingo-players')
-  if(bp) bp.textContent = (Math.floor(Math.random()*40)+10) + ' warriors'
+  if(bp) bp.textContent = '-- players'
 }
 
 function openBingo() {
@@ -3117,18 +3114,7 @@ function renderPoolBanner(tab) {
     </div>`).join('')
 }
 
-// Grow pool every few seconds to simulate live activity
-setInterval(()=>{
-  poolTick++
-  // ~1 card every 8 seconds on average across all rooms
-  poolGrowth.stars  += Math.random() < 0.4 ? Math.floor(Math.random()*100+50) : 0
-  poolGrowth.ton    += Math.random() < 0.2 ? parseFloat((Math.random()*0.1).toFixed(3)) : 0
-  poolGrowth.tbola  += Math.floor(Math.random()*20+10)
-  // Re-render banner if on leaderboard screen
-  if(document.getElementById('slb').classList.contains('active')) {
-    renderPoolBanner(currentTab)
-  }
-}, 8000)
+// pool growth loaded from backend
 
 // ══════════════════════════════════════════
 // BACKEND API
