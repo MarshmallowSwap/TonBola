@@ -657,7 +657,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.0.9/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 
@@ -2423,26 +2423,27 @@ let tcWallet = null  // connected wallet info
 
 function initTonConnect() {
   try {
-    tc = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: MANIFEST_URL,
-      buttonRootId: 'tc-btn-root',
-    })
+    // Try different possible global names for the SDK
+    const TCUI = window.TON_CONNECT_UI || window.TonConnectUI
+    if (!TCUI) {
+      console.warn('TonConnect SDK not loaded yet, will retry')
+      setTimeout(initTonConnect, 1000)
+      return
+    }
+    const UIClass = TCUI.TonConnectUI || TCUI
+    tc = new UIClass({ manifestUrl: MANIFEST_URL })
 
-    // Listen for wallet connection changes
     tc.onStatusChange(wallet => {
       tcWallet = wallet
       updateWalletUI()
       if (wallet) {
-        console.log('✅ Wallet connected:', wallet.account.address)
-        // Sync wallet address to backend
-        apiCall('/user/wallet', {
-          method: 'POST',
-          body: JSON.stringify({wallet_address: wallet.account.address})
-        })
+        console.log('✅ Wallet:', wallet.account.address)
       }
     })
+    console.log('✅ TonConnect initialized')
   } catch(e) {
-    console.warn('TonConnect init failed:', e)
+    console.warn('TonConnect init error:', e)
+    tc = null
   }
 }
 
@@ -2461,7 +2462,14 @@ function updateWalletUI() {
 }
 
 async function connectWallet() {
-  if (!tc) return
+  if (!tc) {
+    initTonConnect()
+    await new Promise(r => setTimeout(r, 800))
+  }
+  if (!tc) {
+    alert('TonConnect not available. Make sure you are using Telegram.')
+    return
+  }
   if (tcWallet) {
     // Show disconnect option
     if (tg?.showPopup) {
@@ -3468,7 +3476,8 @@ async function loadRoomStats() {
 
 // Init all backend data
 async function initBackend() {
-  initTonConnect()
+  // Init TonConnect with slight delay to ensure SDK loaded
+  setTimeout(initTonConnect, 500)
   await backendLogin()
   await Promise.all([loadJackpot(), loadRoomStats()])
   // Refresh jackpot every 30s
