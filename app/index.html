@@ -676,7 +676,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="flex:1"></div>
       <div class="coin-bag">
         <div class="coin-ic">$TBOLA</div>
-        <div class="coin-v" id="h-tbola">505</div>
+        <div class="coin-v" id="h-tbola">0</div>
       </div>
     </div>
   </div>
@@ -688,7 +688,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           <div class="bal-lbl">$TBOLA Balance</div>
           <div style="display:flex;align-items:center;gap:8px">
             <div style="font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7);flex-shrink:0">$TBOLA</div>
-            <div class="bal-amt" id="bc-tbola">505</div>
+            <div class="bal-amt" id="bc-tbola">0</div>
           </div>
           <div style="font-size:.68rem;color:rgba(255,255,255,.65);margin-top:2px">🚀 Airdrop coming soon</div>
         </div>
@@ -1829,7 +1829,7 @@ function getTgUser(){return{
   username:tg?.initDataUnsafe?.user?.username||''
 }}
 
-const user={...getTgUser(),tbola:0,level:1,xp:20,streak:1,games:3,wins:0,lines:0,cards:6,warriorPass:false}
+const user={...getTgUser(),tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
 
 setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
 
@@ -2924,90 +2924,10 @@ let lbCurrency = 'stars' // 'stars' or 'ton'
 let lbTab = 'weekly'
 
 const LBD = {
-  weekly: {
-    stars: [
-      {r:1,n:'CryptoKnight',  s:12400,p:'🥇 Prize: 1,800 ⭐',   col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
-      {r:2,n:'TonWarlord',    s:9800, p:'🥈 Prize: 1,080 ⭐',   col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
-      {r:3,n:'BingoSage',     s:8200, p:'🥉 Prize: 720 ⭐',     col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
-      {r:4,n:'LuckyArcher',   s:7100, p:'Prize: 300 ⭐',        col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
-      {r:5,n:'SatoshiKnight', s:6400, p:'Prize: 300 ⭐',        col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
-      {r:6,n:'Alice_TON',     s:5900, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
-      {r:7,n:'MaxBlade',      s:5200, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
-      {r:8,n:'BallDrop99',    s:4800, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🎯'},
-      {r:9,n:'TonHunter',     s:4400, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#8B5500,#5A3000)',av:'🔥'},
-      {r:10,n:'BingoBot',     s:4100, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#3A8B2A,#1A5A10)',av:'🐉'},
-    ],
-    ton: [
-      {r:1,n:'DiamondHands',  s:8200, p:'🥇 Prize: 0.54 TON',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
-      {r:2,n:'WhaleKnight',   s:6800, p:'🥈 Prize: 0.32 $TON',  col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
-      {r:3,n:'TonSage',       s:5400, p:'🥉 Prize: 0.22 $TON',  col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
-      {r:4,n:'CryptoWolf',    s:4100, p:'Prize: 0.09 TON',     col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
-      {r:5,n:'BlockArcher',   s:3800, p:'Prize: 0.09 TON',     col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
-      {r:6,n:'LedgerBlade',   s:3200, p:'Prize: 0.05 $TON',     col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'⚔️'},
-      {r:7,n:'VaultHunter',   s:2800, p:'Prize: 0.05 $TON',     col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🔥'},
-    ]
-  },
-  monthly: {
-    stars: [
-      {r:1,n:'CryptoKnight',  s:48200, p:'🥇 Season champion',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
-      {r:2,n:'TonWarlord',    s:41800, p:'🥈 Runner-up',        col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
-      {r:3,n:'BingoSage',     s:38400, p:'🥉 3rd place',        col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
-      {r:4,n:'LuckyArcher',   s:31200, p:'Top 5',               col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
-      {r:5,n:'SatoshiKnight', s:28900, p:'Top 5',               col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
-      {r:6,n:'Alice_TON',     s:24600, p:'Top 10',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
-      {r:7,n:'MaxBlade',      s:21200, p:'Top 10',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
-      {r:8,n:'BallDrop99',    s:19800, p:'Top 10',              col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🎯'},
-      {r:9,n:'TonHunter',     s:17400, p:'Top 10',              col:'radial-gradient(circle,#8B5500,#5A3000)',av:'🔥'},
-      {r:10,n:'BingoBot',     s:15100, p:'Top 10',              col:'radial-gradient(circle,#3A8B2A,#1A5A10)',av:'🐉'},
-    ],
-    ton: [
-      {r:1,n:'DiamondHands',  s:32400, p:'🥇 Season champion',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
-      {r:2,n:'WhaleKnight',   s:28600, p:'🥈 Runner-up',        col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
-      {r:3,n:'TonSage',       s:24200, p:'🥉 3rd place',        col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
-      {r:4,n:'CryptoWolf',    s:19800, p:'Top 5',               col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
-      {r:5,n:'BlockArcher',   s:16400, p:'Top 5',               col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
-      {r:6,n:'LedgerBlade',   s:13200, p:'Top 10',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'⚔️'},
-      {r:7,n:'VaultHunter',   s:11800, p:'Top 10',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🔥'},
-    ]
-  },
-  squads: {
-    stars: [
-      {r:1,n:'TON Wolves 🐺',   s:24100, p:'🥇 30% Stars pool · 18 members', col:'radial-gradient(circle,#CC8800,#8B6000)',av:'🐺'},
-      {r:2,n:'Iron Clan 🛡️',    s:19800, p:'🥈 18% Stars pool · 20 members', col:'radial-gradient(circle,#808080,#505050)',av:'🛡️'},
-      {r:3,n:'Crystal Guild 💎', s:17200, p:'🥉 12% Stars pool · 15 members', col:'radial-gradient(circle,#0060A0,#003060)',av:'💎'},
-      {r:4,n:'Stone Legion ⚔',  s:14100, p:'5% pool · 12 members',           col:'radial-gradient(circle,#3A7A24,#1A4010)',av:'⚔️'},
-      {r:5,n:'Lucky Seven 🍀',  s:11900, p:'5% pool · 9 members',            col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🍀'},
-      {r:6,n:'Dragon Fire 🐉',  s:9400,  p:'Top 10 · 14 members',            col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🐉'},
-      {r:7,n:'Moon Raiders 🌙', s:7200,  p:'Top 10 · 11 members',            col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🌙'},
-    ],
-    ton: [
-      {r:1,n:'TON Wolves 🐺',   s:48000, p:'🥇 30% $TON pool · 18 members',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'🐺'},
-      {r:2,n:'Crystal Guild 💎', s:38800, p:'🥈 18% $TON pool · 15 members',  col:'radial-gradient(circle,#0060A0,#003060)',av:'💎'},
-      {r:3,n:'Iron Clan 🛡️',    s:32200, p:'🥉 12% $TON pool · 20 members',  col:'radial-gradient(circle,#808080,#505050)',av:'🛡️'},
-      {r:4,n:'Stone Legion ⚔',  s:24100, p:'5% pool · 12 members',          col:'radial-gradient(circle,#3A7A24,#1A4010)',av:'⚔️'},
-      {r:5,n:'Dragon Fire 🐉',  s:19400, p:'5% pool · 14 members',          col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🐉'},
-      {r:6,n:'Lucky Seven 🍀',  s:14900, p:'Top 10 · 9 members',            col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🍀'},
-      {r:7,n:'Moon Raiders 🌙', s:11200, p:'Top 10 · 11 members',           col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🌙'},
-    ]
-  },
-  alltime: {
-    stars: [
-      {r:1,n:'CryptoKnight',  s:284000,p:'👑 All-time legend',   col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
-      {r:2,n:'TonWarlord',    s:241800,p:'Hall of Fame',         col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
-      {r:3,n:'BingoSage',     s:198400,p:'Hall of Fame',         col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
-      {r:4,n:'LuckyArcher',   s:171200,p:'Elite',                col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
-      {r:5,n:'SatoshiKnight', s:158900,p:'Elite',                col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
-      {r:6,n:'Alice_TON',     s:134600,p:'Veteran',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
-      {r:7,n:'MaxBlade',      s:121200,p:'Veteran',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
-    ],
-    ton: [
-      {r:1,n:'DiamondHands',  s:184000,p:'👑 TON Legend',        col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
-      {r:2,n:'WhaleKnight',   s:156800,p:'Hall of Fame',         col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
-      {r:3,n:'TonSage',       s:128400,p:'Hall of Fame',         col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
-      {r:4,n:'CryptoWolf',    s:98200, p:'Elite',                col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
-      {r:5,n:'BlockArcher',   s:76400, p:'Elite',                col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
-    ]
-  }
+  weekly:  { not: [], ton: [] },
+  monthly: { not: [], ton: [] },
+  squads:  { not: [], ton: [] },
+  alltime: { not: [], ton: [] }
 }
 
 const LB_LABELS = {
@@ -3016,10 +2936,10 @@ const LB_LABELS = {
 }
 
 const POOL_BASE = {
-  weekly:  { stars:{val:48200,  unit:'⭐'},   ton:{val:4.82, unit:'TON'}, tbola:{val:284000, unit:'$TBOLA'}, label:'This week · resets Monday' },
-  monthly: { stars:{val:186400, unit:'⭐'},   ton:{val:18.6, unit:'TON'}, tbola:{val:920000, unit:'$TBOLA'}, label:'This month · resets 1st' },
-  squads:  { stars:{val:24100, unit:'⭐'},   ton:{val:1.84, unit:'TON'}, tbola:{val:142000, unit:'$TBOLA'}, label:'Squad fund · resets Monday' },
-  alltime: { stars:{val:1284400,unit:'⭐'},   ton:{val:48.2, unit:'TON'}, tbola:{val:4820000,unit:'$TBOLA'}, label:'Cumulative all time' }
+  weekly:  { stars:{val:0,unit:'⭐'}, ton:{val:0,unit:'TON'}, tbola:{val:0,unit:'$TBOLA'}, label:'This week · resets Monday' },
+  monthly: { stars:{val:0,unit:'⭐'}, ton:{val:0,unit:'TON'}, tbola:{val:0,unit:'$TBOLA'}, label:'This month · resets 1st' },
+  squads:  { stars:{val:0,unit:'⭐'}, ton:{val:0,unit:'TON'}, tbola:{val:0,unit:'$TBOLA'}, label:'Squad fund · resets Monday' },
+  alltime: { stars:{val:0,unit:'⭐'}, ton:{val:0,unit:'TON'}, tbola:{val:0,unit:'$TBOLA'}, label:'Cumulative all time' }
 }
 
 let poolGrowth = {stars:0, ton:0, tbola:0}
@@ -3822,13 +3742,7 @@ function _doCreateSquad(name) {
 }
 
 // Squad registry — in production this comes from Supabase
-const SQUAD_REGISTRY = [
-  {code:'TONWOL', name:'TON Wolves',  desc:'We hunt TON together',      icon:'🐺', members:18, max:20, rank:1, weekScore:48000, memberList:[{name:'WolfAlpha',avatar:'🐺'},{name:'TonHunter',avatar:'🦊'},{name:'CryptoFang',avatar:'⚔️'}]},
-  {code:'CRYSTL', name:'Crystal Guild',desc:'Crystal clear victories',  icon:'💎', members:15, max:20, rank:3, weekScore:38800, memberList:[{name:'DiamondHands',avatar:'💎'},{name:'GemCutter',avatar:'🔮'}]},
-  {code:'STONLG', name:'Stone Legion', desc:'Hard as stone, strong as one',icon:'⚔️',members:12, max:15, rank:4, weekScore:32100, memberList:[{name:'IronWall',avatar:'🛡️'},{name:'RockSolid',avatar:'🗿'}]},
-  {code:'DRAGFR', name:'Dragon Fire',  desc:'We breathe fire on the leaderboard',icon:'🐉',members:14,max:20,rank:5,weekScore:24400,memberList:[{name:'FireBreath',avatar:'🔥'},{name:'AshWing',avatar:'🐉'}]},
-  {code:'MOONRD', name:'Moon Raiders', desc:'Strike under the moonlight', icon:'🌙', members:11, max:15, rank:6, weekScore:21200, memberList:[{name:'NightStar',avatar:'🌙'},{name:'DarkArrow',avatar:'🏹'}]},
-]
+const SQUAD_REGISTRY = []
 
 function joinSquad() {
   const input = document.getElementById('squad-join-code')
