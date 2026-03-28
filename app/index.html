@@ -2411,14 +2411,10 @@ function hexToRgb(hex){
 }
 
 function drawWheel(angle) {
-  // Rotate disc image underneath
-  const disc = document.getElementById('wheel-disc-img')
-  if(disc) disc.style.transform = `rotate(${angle}rad)`
-
   const canvas = document.getElementById('wheel-canvas')
   if(!canvas) return
   const ctx = canvas.getContext('2d')
-  const W=280, cx=140, cy=140, r=134, rInner=28
+  const W=360, cx=180, cy=180, r=172, rInner=36
   const arc = (2*Math.PI)/SEG_COUNT
   ctx.clearRect(0,0,W,W)
 
