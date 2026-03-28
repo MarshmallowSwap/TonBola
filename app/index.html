@@ -3114,6 +3114,7 @@ let crCurrency='stars', crPrice=50
 
 function selectCur(el, cur){
   crCurrency=cur
+  crPriceAccum=0;crPrice=0;const tb=document.getElementById('cr-price-total');if(tb)tb.style.display='none'
   document.querySelectorAll('.cur-btn').forEach(b=>{
     b.style.background='rgba(0,0,0,.2)'
     b.style.borderColor='rgba(255,255,255,.1)'
@@ -3125,11 +3126,13 @@ function selectCur(el, cur){
   const pricesEl=document.getElementById('cr-prices')
   if(cur==='free'){
     priceWrap.style.opacity='.4';priceWrap.style.pointerEvents='none'
+  } else if(cur==='ton'){
+    priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
   } else {
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
     const opts=(cur==='stars'||cur==='not')
       ?[{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'}]
-      :[{v:0.05,l:'0.05 $TON'},{v:0.1,l:'0.1 $TON'},{v:0.5,l:'0.5 $TON'},{v:1,l:'1 $TON'}]
+      :[{v:0.05,l:'0.05'},{v:0.1,l:'0.1'},{v:0.5,l:'0.5'},{v:1,l:'1'},{v:10,l:'10'},{v:100,l:'100'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
       <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
         style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
@@ -3141,19 +3144,33 @@ function selectCur(el, cur){
   updateRoomPreview()
 }
 
+let crPriceAccum=0
 function selectPrice(el, price){
-  crPrice=price
-  document.querySelectorAll('.price-btn').forEach(b=>{
-    b.style.background='rgba(0,0,0,.2)';b.style.borderColor='rgba(255,255,255,.1)';b.style.color='#fff'
-  })
-  el.style.background='rgba(255,184,0,.2)';el.style.borderColor='#A78BFA';el.style.color='#fff'
+  crPriceAccum=Math.round((crPriceAccum+price)*1000)/1000
+  crPrice=crPriceAccum
+  // Show total on a badge
+  let badge=document.getElementById('cr-price-total')
+  if(!badge){
+    badge=document.createElement('div')
+    badge.id='cr-price-total'
+    badge.style.cssText='margin-top:10px;padding:8px 14px;border-radius:50px;background:rgba(167,139,250,.2);border:2px solid #A78BFA;color:#fff;font-weight:700;font-size:.9rem;text-align:center;cursor:pointer'
+    badge.onclick=function(){crPriceAccum=0;crPrice=0;this.textContent='';this.style.display='none';updateRoomPreview()}
+    badge.title='Tap to reset'
+    document.getElementById('cr-price-wrap').appendChild(badge)
+  }
+  const isNot=crCurrency==='stars'||crCurrency==='not'
+  const label=isNot?crPriceAccum.toLocaleString()+' $NOT':crPriceAccum.toFixed(isNot?0:crPriceAccum<1?2:1)+' $TON'
+  badge.textContent='Total: '+label+' ✕ tap to reset'
+  badge.style.display='block'
   updateRoomPreview()
 }
+function resetPrice(){crPriceAccum=0;crPrice=0;const b=document.getElementById('cr-price-total');if(b)b.style.display='none';updateRoomPreview()}
 
 function updateRoomPreview(){
   const maxP=parseInt(document.getElementById('cr-players')?.value||10)
-  const earn=crCurrency==='free'?'+$TBOLA':crCurrency==='stars'?Math.round(crPrice*.02)+' $NOT per card':(crPrice*.02).toFixed(3)+' $TON/card'
-  const pool=crCurrency==='free'?'$TBOLA':crCurrency==='stars'?Math.round(crPrice*maxP*.53)+' $NOT':(crPrice*maxP*.53).toFixed(2)+' TON'
+  const p=crPriceAccum||crPrice
+  const earn=crCurrency==='free'?'+$TBOLA':crCurrency==='stars'?Math.round(p*.02)+' $NOT per card':(p*.02).toFixed(3)+' $TON/card'
+  const pool=crCurrency==='free'?'$TBOLA':crCurrency==='stars'?Math.round(p*maxP*.53)+' $NOT':(p*maxP*.53).toFixed(2)+' TON'
   const ep=document.getElementById('cr-earn-preview');if(ep)ep.textContent=earn
   const pp=document.getElementById('cr-pool-preview');if(pp)pp.textContent=pool+' max'
 }
