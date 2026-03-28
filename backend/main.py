@@ -192,7 +192,7 @@ def lb_squads(limit: int = 20):
 @app.get("/rooms/{room_type}/stats")
 def room_stats(room_type: str):
     online = len(room_connections.get(room_type, []))
-    return {"room_type": room_type, "online": max(online, random.randint(2, 35))}
+    return {"room_type": room_type, "online": online}
 
 # ── Fortune Wheel ──
 class WheelStartReq(BaseModel):
