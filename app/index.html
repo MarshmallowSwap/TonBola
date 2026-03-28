@@ -3132,38 +3132,20 @@ function selectCur(el, cur){
     const opts=isNot
       ?[{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1K $NOT'},{v:2000,l:'2K $NOT'},{v:5000,l:'5K $NOT'},{v:10000,l:'10K $NOT'}]
       :[{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}]
-    pricesEl.innerHTML=opts.map((o,i)=>`
+    pricesEl.innerHTML=opts.map(o=>`
       <div class="price-btn" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
         style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
           background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);
           color:#fff;transition:all .15s">${o.l}</div>`).join('')
-    ensureTotalRow()
     crPrice=0;crPriceAccum=0;updateTotalBadge()
   }
   updateRoomPreview()
 }
 
 let crPriceAccum=0
-function ensureTotalRow(){
-  if(document.getElementById('cr-total-row'))return
-  const wrap=document.getElementById('cr-price-wrap')
-  if(!wrap)return
-  const totalRow=document.createElement('div')
-  totalRow.id='cr-total-row'
-  totalRow.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px'
-  totalRow.innerHTML=`
-    <div id="cr-price-total" style="flex:1;padding:8px 14px;border-radius:50px;background:rgba(167,139,250,.15);border:2px solid rgba(167,139,250,.3);color:#888;font-weight:700;font-size:.85rem;text-align:center">Total: 0</div>
-    <button onclick="resetPrice()" style="padding:8px 14px;border-radius:50px;background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.4);color:#FF8080;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;-webkit-appearance:none">↺ Reset</button>`
-  wrap.appendChild(totalRow)
-}
 function selectPrice(el, price){
-  ensureTotalRow()
-  // ensure wrap is interactive
-  const wrap=document.getElementById('cr-price-wrap')
-  if(wrap){wrap.style.opacity='1';wrap.style.pointerEvents='auto'}
   crPriceAccum=Math.round((crPriceAccum+price)*1000)/1000
   crPrice=crPriceAccum
-  // highlight clicked button
   el.style.background='rgba(167,139,250,.25)'
   el.style.borderColor='#A78BFA'
   updateTotalBadge()
