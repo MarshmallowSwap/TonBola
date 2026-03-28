@@ -765,8 +765,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <div class="sec">⚔️ Private Battle</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 12px">
-    <button class="btn" style="background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;border:none;outline:none;box-shadow:0 4px 0 #3B0FA8,0 6px 16px rgba(139,92,246,.4),inset 0 1px 0 rgba(255,255,255,.2);border-radius:16px;padding:14px 12px;font-size:.82rem;font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
-    <button class="btn" style="background:linear-gradient(180deg,#3B9EFF,#1A6FD4);color:#fff;border:none;outline:none;box-shadow:0 4px 0 #0A3A8A,0 6px 16px rgba(59,158,255,.4),inset 0 1px 0 rgba(255,255,255,.2);border-radius:16px;padding:14px 12px;font-size:.82rem;font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
+    <button class="btn private-room-btn" style="background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;border:none;outline:none;box-shadow:0 4px 0 #3B0FA8,0 6px 16px rgba(139,92,246,.4),inset 0 1px 0 rgba(255,255,255,.2);border-radius:16px;padding:14px 12px;font-size:.82rem;font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s" onclick="go('s-create');setNav('nb-h')">⚔ Create Room</button>
+    <button class="btn private-room-btn" style="background:linear-gradient(180deg,#3B9EFF,#1A6FD4);color:#fff;border:none;outline:none;box-shadow:0 4px 0 #0A3A8A,0 6px 16px rgba(59,158,255,.4),inset 0 1px 0 rgba(255,255,255,.2);border-radius:16px;padding:14px 12px;font-size:.82rem;font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s" onclick="go('s-join');setNav('nb-h')">🔑 Enter Code</button>
   </div>
 </div>
 
@@ -1832,16 +1832,21 @@ function setNav(id){
 }
 
 function setRoomCardsEnabled(enabled){
+  // Room cards
   document.querySelectorAll('.rc').forEach(card=>{
     card.style.opacity = enabled ? '1' : '.45'
     card.style.filter  = enabled ? '' : 'grayscale(.4)'
-    card.style.pointerEvents = enabled ? '' : 'auto' // keep clickable to show warning
+    card.style.pointerEvents = enabled ? '' : 'auto'
   })
-  // Also update Play nav icon with indicator
+  // Create Room & Enter Code buttons
+  document.querySelectorAll('.private-room-btn').forEach(btn=>{
+    btn.style.opacity = enabled ? '1' : '.4'
+    btn.style.pointerEvents = enabled ? '' : 'none'
+    btn.style.filter = enabled ? '' : 'grayscale(.5)'
+  })
+  // Nav play icon indicator
   const nbh = document.getElementById('nb-h')
-  if(nbh){
-    nbh.querySelector('.ni').textContent = enabled ? '⚔' : '🎱'
-  }
+  if(nbh) nbh.querySelector('.ni').textContent = enabled ? '⚔' : '🎱'
 }
 
 function initHome(){
