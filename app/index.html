@@ -786,7 +786,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="display:flex;align-items:center;gap:4px;background:#F0EEFF;
         border-radius:50px;padding:4px 10px;border:1.5px solid rgba(108,99,255,.2)">
         <span style="font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;color:#6C63FF">$TBOLA</span>
-        <span style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;color:#6C63FF" id="hub-tbola">505</span>
+        <span style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;color:#6C63FF" id="hub-tbola">0</span>
       </div>
     </div>
   </div>
@@ -941,7 +941,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#fff;letter-spacing:.5px">🎡 Fortune Wheel</div>
     <div style="display:flex;align-items:center;gap:5px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);border-radius:50px;padding:4px 10px">
       <img src="assets/token-tbola.png" style="width:16px;height:16px;object-fit:contain">
-      <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:#FFB800" id="w-tbola">505</div>
+      <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:#FFB800" id="w-tbola">0</div>
     </div>
   </div>
 
@@ -1829,7 +1829,7 @@ function getTgUser(){return{
   username:tg?.initDataUnsafe?.user?.username||''
 }}
 
-const user={...getTgUser(),tbola:505,level:1,xp:20,streak:1,games:3,wins:0,lines:0,cards:6,warriorPass:false}
+const user={...getTgUser(),tbola:0,level:1,xp:20,streak:1,games:3,wins:0,lines:0,cards:6,warriorPass:false}
 
 setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
 
