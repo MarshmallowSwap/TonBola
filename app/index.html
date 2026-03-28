@@ -657,7 +657,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 
@@ -2521,55 +2521,83 @@ async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
 // ── Buy bingo cards with TON ──
 async function payAndEnterLobby(room, nCards) {
   const r = ROOMS[room]
+
+  // ── Free room: bypass payment ──
   if (r.cur === 'free') {
-    // Free room — no payment
     startGame()
     return
   }
-  if (r.cur !== 'ton') {
-    // NOT room — show NOT payment TODO
-    if (tg?.showPopup) tg.showPopup({
-      title:'⚠️ $NOT Payment',
-      message:'$NOT payments via Jetton transfer coming soon!\n\nPlay in the $TON or Free room for now.',
-      buttons:[{type:'ok'}]
-    })
+
+  // ── $NOT room: coming soon ──
+  if (r.cur === 'not') {
+    alert('$NOT payments coming soon!\nUse the $TON or Free room for now.')
     return
   }
 
-  // Check wallet connected
+  // ── $TON / VIP room: require wallet + payment ──
+  // HARD BLOCK: never start game without payment
   if (!tcWallet) {
-    if (tg?.showPopup) tg.showPopup({
-      title: '🔗 Wallet Required',
-      message: 'Connect your TON wallet to play in paid rooms.\n\nGo to Profile → Connect Wallet',
-      buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel', text:'Later'}]
-    }, async (id) => { if(id==='connect') await tc?.openModal() })
-    return
+    // TonConnect not connected
+    const msg = '$TON rooms require a connected TON wallet.\n\nConnect your wallet from the Profile page.'
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: '🔗 Wallet Required',
+        message: msg,
+        buttons: [
+          {id:'connect', type:'default', text:'Connect Wallet'},
+          {type:'cancel', text:'Later'}
+        ]
+      }, async (id) => {
+        if (id === 'connect') {
+          try { await tc?.openModal() } catch(e) {}
+        }
+      })
+    } else {
+      alert(msg)
+    }
+    return  // HARD STOP — never proceeds
   }
 
+  // Wallet connected — confirm payment
   const total = r.price * nCards
-  const comment = 'TonBola:bingo:' + room + ':' + nCards
+  const label = nCards + ' card' + (nCards > 1 ? 's' : '')
+  const msg2 = 'Buy ' + label + ' for ' + total.toFixed(2) + ' TON?'
 
-  if (tg?.showPopup) tg.showPopup({
-    title: '💎 Confirm Payment',
-    message: 'Buy ' + nCards + ' card' + (nCards>1?'s':'') + ' for ' + total.toFixed(2) + ' TON?\n\nPlatform wallet:\n' + PLATFORM_WALLET.slice(0,20) + '...',
-    buttons: [{id:'pay', type:'default', text:'Pay ' + total.toFixed(2) + ' TON'}, {type:'cancel'}]
-  }, async (id) => {
-    if (id !== 'pay') return
+  if (tg?.showPopup) {
+    tg.showPopup({
+      title: '💎 Confirm Payment',
+      message: msg2,
+      buttons: [
+        {id:'pay', type:'default', text:'Pay ' + total.toFixed(2) + ' TON ✓'},
+        {type:'cancel', text:'Cancel'}
+      ]
+    }, async (btnId) => {
+      if (btnId !== 'pay') return
+      const comment = 'TonBola:bingo:' + room + ':' + nCards
+      await sendTonPayment(total, comment,
+        () => { startGame() },
+        (err) => {
+          if (err !== 'no_wallet') {
+            if (tg?.showPopup) tg.showPopup({
+              title: '❌ Payment Failed',
+              message: 'Transaction cancelled or failed. Try again.',
+              buttons: [{type:'ok'}]
+            })
+            else alert('Payment failed. Try again.')
+          }
+        }
+      )
+    })
+  } else {
+    // Fallback for non-Telegram environment
+    const ok = confirm(msg2)
+    if (!ok) return
+    const comment = 'TonBola:bingo:' + room + ':' + nCards
     await sendTonPayment(total, comment,
-      (result) => {
-        // Payment successful — start game
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
-        startGame()
-      },
-      (err) => {
-        if (err !== 'no_wallet' && tg?.showPopup) tg.showPopup({
-          title: '❌ Payment Failed',
-          message: 'Transaction was cancelled or failed.\nTry again.',
-          buttons: [{type:'ok'}]
-        })
-      }
+      () => { startGame() },
+      () => { alert('Payment failed.') }
     )
-  })
+  }
 }
 
 // ── Buy wheel spins with TON ──
