@@ -2607,7 +2607,10 @@ function spinWheel() {
   }
   // Spin animation
   const extraSpins = 5 + Math.random()*3 // 5-8 full rotations
-  const targetAngle = wheelAngle + (extraSpins * 2*Math.PI) + (segIdx * (2*Math.PI/SEG_COUNT))
+  const arc = 2*Math.PI/SEG_COUNT
+  // Center of segIdx must land at pointer (top = -PI/2 offset in drawWheel)
+  const segCenter = segIdx * arc + arc/2
+  const targetAngle = wheelAngle + (extraSpins * 2*Math.PI) + (Math.PI*1.5 - segCenter)
   const duration = 3000 + Math.random()*1000
   const startAngle = wheelAngle
   const startTime = performance.now()
