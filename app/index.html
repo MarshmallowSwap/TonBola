@@ -1826,9 +1826,9 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
-  stars:{name:'$NOT Room',cur:'not',price:500,tbola:50,icon:'◈'},
+  stars:{name:'$NOT Room',cur:'not',price:500,tbola:25,icon:'◈'},
   ton:{name:'$TON Room',cur:'ton',price:0.2,tbola:100,icon:'💎'},
-  vip:{name:'VIP $TON Room',cur:'ton',price:1,tbola:300,icon:'👑'}
+  vip:{name:'VIP $TON Room',cur:'ton',price:1,tbola:150,icon:'👑'}
 }
 const BC=['c1','c2','c3','c4','c5','c6']
 let curRoom='stars',nCards=1,drawn=[],cards=[],timer=null,cd=5
@@ -1916,7 +1916,7 @@ function updateCost(){
   const te=document.getElementById('l-tbola');if(te)te.textContent='+'+c.tbola*nCards+' $TBOLA'
   const pe=document.getElementById('l-pool');if(pe)pe.textContent=c.cur==='free'?'$TBOLA prizes':fmt(pool)
   const pl=document.getElementById('l-pz-line'),pb=document.getElementById('l-pz-bingo'),pt=document.getElementById('l-pz-tbola')
-  if(c.cur==='free'){if(pl)pl.textContent='250 $TBOLA';if(pb)pb.textContent='750 $TBOLA';if(pt)pt.textContent='+'+c.tbola}
+  if(c.cur==='free'){if(pl)pl.textContent='125 $TBOLA';if(pb)pb.textContent='375 $TBOLA';if(pt)pt.textContent='+'+c.tbola}
   else{if(pl)pl.textContent=fmt(pool*0.25);if(pb)pb.textContent=fmt(pool*0.75);if(pt)pt.textContent='+'+c.tbola*nCards}
 }
 
@@ -1998,7 +1998,7 @@ function startGame(){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
-  document.getElementById('g-lp').textContent=c.cur==='free'?'250 $TBOLA':fmt(pool*0.25)
+  document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(pool*0.25)
   document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(pool*0.75)
   renderCards()
   if(timer)clearInterval(timer)
@@ -2142,9 +2142,9 @@ function checkW(){
 function showWin(type){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
-  const prizeFmt=c.cur==='free'?(type==='bingo'?'750 $TBOLA':'250 $TBOLA'):
+  const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
     (c.cur==='stars'||c.cur==='not')?Math.floor(prizeVal).toLocaleString()+' NOT':prizeVal.toFixed(2)+' TON'
-  const tbolaWon=(type==='bingo'?500:100)+(c.tbola*nCards)
+  const tbolaWon=(type==='bingo'?250:50)+(c.tbola*nCards)
   document.getElementById('wb').textContent=type==='bingo'?'🎱':'📏'
   document.getElementById('wtype').textContent=type==='bingo'?'FULL HOUSE':'FIRST LINE'
   document.getElementById('wt').textContent=type==='bingo'?'BINGO!':'LINE!'
