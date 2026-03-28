@@ -655,6 +655,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 #p-cards-box{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(245,158,11,.08))!important;border:1px solid rgba(251,191,36,.3)!important}
 #p-cards-box .sbn{color:var(--yellow)!important}
 </style>
+
+<!-- TonConnect SDK -->
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 
@@ -2402,6 +2405,193 @@ function handleTxError(err) {
 }
 
 
+// ══════════════════════════════════════════
+// TONCONNECT 2.0
+// ══════════════════════════════════════════
+const MANIFEST_URL = 'https://marshmallowswap.github.io/TonBola/tonconnect-manifest.json'
+const PLATFORM_WALLET = 'UQAr0sQOHUZRN3cUBGRAX7G5eTSR7e6C4b4k4V8mBzC_'
+const TON_DECIMALS = 1000000000 // 1 TON = 10^9 nanotons
+
+let tc = null
+let tcWallet = null  // connected wallet info
+
+function initTonConnect() {
+  try {
+    tc = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: MANIFEST_URL,
+      buttonRootId: 'tc-btn-root',
+    })
+
+    // Listen for wallet connection changes
+    tc.onStatusChange(wallet => {
+      tcWallet = wallet
+      updateWalletUI()
+      if (wallet) {
+        console.log('✅ Wallet connected:', wallet.account.address)
+        // Sync wallet address to backend
+        apiCall('/user/wallet', {
+          method: 'POST',
+          body: JSON.stringify({wallet_address: wallet.account.address})
+        })
+      }
+    })
+  } catch(e) {
+    console.warn('TonConnect init failed:', e)
+  }
+}
+
+function updateWalletUI() {
+  const connected = !!tcWallet
+  const addr = tcWallet?.account?.address
+  const short = addr ? addr.slice(0,6) + '...' + addr.slice(-4) : ''
+
+  // Update all wallet buttons in the app
+  document.querySelectorAll('.tc-connect-btn').forEach(btn => {
+    btn.textContent = connected ? ('💎 ' + short) : '🔗 Connect Wallet'
+    btn.style.background = connected ? 'rgba(0,152,234,.2)' : 'rgba(255,255,255,.08)'
+    btn.style.borderColor = connected ? '#0098EA' : 'rgba(255,255,255,.15)'
+    btn.style.color = connected ? '#40B8FF' : 'rgba(255,255,255,.6)'
+  })
+}
+
+async function connectWallet() {
+  if (!tc) return
+  if (tcWallet) {
+    // Show disconnect option
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: '💎 Wallet Connected',
+        message: 'Address: ' + tcWallet.account.address.slice(0,20) + '...\n\nDisconnect?',
+        buttons: [{id:'disconnect', type:'destructive', text:'Disconnect'}, {type:'cancel', text:'Close'}]
+      }, (id) => { if(id==='disconnect') tc.disconnect() })
+    }
+    return
+  }
+  try {
+    await tc.openModal()
+  } catch(e) {
+    console.warn('Connect wallet error:', e)
+  }
+}
+
+// ── Send TON payment ──
+async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
+  if (!tc || !tcWallet) {
+    // Prompt to connect first
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: '🔗 Connect Wallet',
+        message: 'Connect your TON wallet to make payments.',
+        buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel'}]
+      }, async (id) => {
+        if (id === 'connect') {
+          await tc?.openModal()
+        }
+      })
+    }
+    if (onFail) onFail('no_wallet')
+    return
+  }
+
+  const nanotons = Math.round(amountTon * TON_DECIMALS).toString()
+  const payload = comment
+    ? btoa(String.fromCharCode(...new TextEncoder().encode(comment)))
+    : undefined
+
+  try {
+    const tx = {
+      validUntil: Math.floor(Date.now() / 1000) + 300, // 5 min
+      messages: [{
+        address: PLATFORM_WALLET,
+        amount: nanotons,
+        payload: payload,
+      }]
+    }
+    const result = await tc.sendTransaction(tx)
+    console.log('✅ TX sent:', result)
+    if (onSuccess) onSuccess(result)
+    return result
+  } catch(e) {
+    console.warn('TX failed:', e)
+    if (onFail) onFail(e)
+    return null
+  }
+}
+
+// ── Buy bingo cards with TON ──
+async function payAndEnterLobby(room, nCards) {
+  const r = ROOMS[room]
+  if (r.cur === 'free') {
+    // Free room — no payment
+    startGame(room, nCards)
+    return
+  }
+  if (r.cur !== 'ton') {
+    // NOT room — show NOT payment TODO
+    if (tg?.showPopup) tg.showPopup({
+      title:'⚠️ $NOT Payment',
+      message:'$NOT payments via Jetton transfer coming soon!\n\nPlay in the $TON or Free room for now.',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+
+  const total = r.price * nCards
+  const comment = 'TonBola:bingo:' + room + ':' + nCards
+
+  if (tg?.showPopup) tg.showPopup({
+    title: '💎 Confirm Payment',
+    message: 'Buy ' + nCards + ' card' + (nCards>1?'s':'') + ' for ' + total.toFixed(2) + ' TON?\n\nPlatform wallet:\n' + PLATFORM_WALLET.slice(0,20) + '...',
+    buttons: [{id:'pay', type:'default', text:'Pay ' + total.toFixed(2) + ' TON'}, {type:'cancel'}]
+  }, async (id) => {
+    if (id !== 'pay') return
+    await sendTonPayment(total, comment,
+      (result) => {
+        // Payment successful — start game
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+        startGame(room, nCards)
+      },
+      (err) => {
+        if (err !== 'no_wallet' && tg?.showPopup) tg.showPopup({
+          title: '❌ Payment Failed',
+          message: 'Transaction was cancelled or failed.\nTry again.',
+          buttons: [{type:'ok'}]
+        })
+      }
+    )
+  })
+}
+
+// ── Buy wheel spins with TON ──
+async function payWheelSpins(spins, currency, onPaid) {
+  if (currency === 'not') {
+    // NOT jetton — coming soon
+    if (tg?.showPopup) tg.showPopup({
+      title:'⚠️ $NOT Payment',
+      message:'$NOT Jetton payments coming soon! Use $TON for now.',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+
+  const price = WHEEL_PRICE[currency] || 0.1
+  const total = price * spins
+  const comment = 'TonBola:wheel:' + spins
+
+  await sendTonPayment(total, comment,
+    (result) => {
+      if (onPaid) onPaid()
+    },
+    (err) => {
+      if (err !== 'no_wallet' && tg?.showPopup) tg.showPopup({
+        title: '❌ Payment Failed',
+        message: 'Transaction cancelled. Try again.',
+        buttons: [{type:'ok'}]
+      })
+    }
+  )
+}
+
 // ── FORTUNE WHEEL ──
 const WHEEL_SEGMENTS = [
   {label:'💀 LOSE',  mult:0,   color:'#8B1A1A', colorEnd:'#5A0A0A', textColor:'#FFB0B0', emoji:'💀'},
@@ -2604,23 +2794,36 @@ function updateWheelUI() {
 
 function startWheelSession() {
   if(wheelSpinsSelected <= 0) return
-  // TODO: real TonConnect payment
-  // For now: simulate
+  // Real TonConnect payment
+  if(wheelCur === 'ton') {
+    payWheelSpins(wheelSpinsSelected, 'ton', () => {
+      wheelSpinsRemaining += wheelSpinsSelected
+      wheelSpinsSelected = 0
+      updateWheelUI()
+      const startBtn = document.getElementById('w-start-btn')
+      if(startBtn) {
+        startBtn.textContent = '🎡 Spin!'
+        startBtn.onclick = spinWheel
+        startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
+      }
+      if(tg?.showPopup) tg.showPopup({
+        title:'⚔️ Session Started!',
+        message:'Your spins are loaded. Good luck, warrior!\n\nRemember: collect your winnings before leaving.',
+        buttons:[{type:'ok',text:"Let's spin!"}]
+      })
+    })
+    return
+  }
+  // NOT currency — direct (no payment yet)
   wheelSpinsRemaining += wheelSpinsSelected
   wheelSpinsSelected = 0
   updateWheelUI()
-  // Enable spin
-  const startBtn = document.getElementById('w-start-btn')
-  if(startBtn) {
-    startBtn.textContent = '🎡 Spin!'
-    startBtn.onclick = spinWheel
-    startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
+  const startBtn2 = document.getElementById('w-start-btn')
+  if(startBtn2) {
+    startBtn2.textContent = '🎡 Spin!'
+    startBtn2.onclick = spinWheel
+    startBtn2.style.opacity='1'; startBtn2.style.pointerEvents='auto'
   }
-  if(tg?.showPopup) tg.showPopup({
-    title:'⚔️ Session Started!',
-    message:'Your spins are loaded. Good luck, warrior!\n\nRemember: collect your winnings before leaving.',
-    buttons:[{type:'ok',text:"Let's spin!"}]
-  })
 }
 
 function spinWheel() {
@@ -2866,6 +3069,8 @@ function closeWin(){
 }
 
 function renderProfile(){
+  // Update wallet button
+  updateWalletUI()
   const av=document.getElementById('p-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('p-nm').textContent=user.name
   const pu=document.getElementById('p-usr');if(pu)pu.textContent=user.username?'@'+user.username:''
@@ -3218,6 +3423,7 @@ async function loadRoomStats() {
 
 // Init all backend data
 async function initBackend() {
+  initTonConnect()
   await backendLogin()
   await Promise.all([loadJackpot(), loadRoomStats()])
   // Refresh jackpot every 30s
