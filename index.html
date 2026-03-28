@@ -143,9 +143,9 @@ section{padding:80px 0;position:relative}
 .step p{font-family:'Norse',sans-serif;font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.7}
 
 /* ── ROOM CARDS ── */
-.room-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:48px}
-.room-card{border-radius:24px;padding:28px 24px;position:relative;overflow:hidden;
-  box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.room-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:48px}
+.room-card{border-radius:24px;padding:24px 20px;position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);min-height:160px}
 .room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;
   background:linear-gradient(180deg,rgba(255,255,255,.12),transparent);border-radius:24px 24px 0 0}
 .room-card.r-free{background:linear-gradient(135deg,#11998E,#38EF7D);
@@ -278,6 +278,7 @@ footer{background:#060608;border-top:1px solid rgba(255,255,255,.06);padding:40p
   animation:pulse 1.4s ease-in-out infinite;display:inline-block}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 @media(max-width:700px){
+  .room-grid{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
   .warrior-benefits{grid-template-columns:1fr}
   .warrior-price{flex-direction:column}
@@ -288,6 +289,9 @@ footer{background:#060608;border-top:1px solid rgba(255,255,255,.06);padding:40p
 <body>
 
 <div class="bg-layer"></div>
+<div class="ptcl" style="width:8px;height:8px;background:#A78BFA;left:15%;--d:9s;--dl:0s"></div>
+<div class="ptcl" style="width:6px;height:6px;background:#F953C6;left:60%;--d:12s;--dl:3s"></div>
+<div class="ptcl" style="width:10px;height:10px;background:#F7971E;left:80%;--d:15s;--dl:6s"></div>
 
 <!-- Floating particles -->
 <div class="ptcl" style="width:6px;height:6px;background:#A78BFA;left:15%;--d:9s;--dl:0s;"></div>
@@ -318,223 +322,7 @@ footer{background:#060608;border-top:1px solid rgba(255,255,255,.06);padding:40p
 <!-- HERO -->
 <section id="hero">
   <!-- Torches -->
-  <div class="torch" style="position:absolute;left:40px;top:80px">
-    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
-    <div class="torch-pole"></div>
-  </div>
-  <div class="torch" style="position:absolute;right:40px;top:80px">
-    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
-    <div class="torch-pole"></div>
-  </div>
-  <div class="torch" style="position:absolute;left:120px;top:80px;opacity:.5;transform:scale(.7)">
-    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
-    <div class="torch-pole"></div>
-  </div>
-  <div class="torch" style="position:absolute;right:120px;top:80px;opacity:.5;transform:scale(.7)">
-    <div class="torch-head"><div class="torch-flame"></div><div class="torch-glow"></div></div>
-    <div class="torch-pole"></div>
-  </div>
-
-  <!-- Trees -->
-  <svg class="tree" style="left:-40px;width:220px;opacity:.12" viewBox="0 0 200 400" fill="none">
-    <path d="M100 10 L180 200 L130 200 L160 320 L100 320 L40 320 L70 200 L20 200 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
-    <path d="M100 10 L175 195 L125 195 L155 310 L100 310 Z" fill="#2A6A0A" opacity=".5"/>
-  </svg>
-  <svg class="tree" style="right:-30px;width:180px;bottom:40px;opacity:.1" viewBox="0 0 200 400" fill="none">
-    <path d="M100 20 L175 210 L125 210 L155 330 L100 330 L45 330 L75 210 L25 210 Z" fill="#1A4A06" stroke="#0E2A04" stroke-width="4"/>
-  </svg>
-  <svg class="tree" style="left:6%;width:100px;bottom:10px;opacity:.05" viewBox="0 0 200 400" fill="none">
-    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
-  </svg>
-  <svg class="tree" style="right:10%;width:120px;bottom:0;opacity:.05" viewBox="0 0 200 400" fill="none">
-    <path d="M100 30 L165 220 L115 220 L145 340 L100 340 L55 340 L85 220 L35 220 Z" fill="#3A8A14"/>
-  </svg>
-
-  <!-- Floating balls -->
-  <div class="hero-balls">
-    <div class="hball" style="width:72px;height:72px;font-size:1.5rem;color:#FFD700;top:18%;left:8%;--d:4.5s;--dl:0s">17</div>
-    <div class="hball" style="width:52px;height:52px;font-size:1.1rem;color:#3AFF8A;top:30%;left:3%;--d:5.5s;--dl:1s">42</div>
-    <div class="hball" style="width:62px;height:62px;font-size:1.3rem;color:#40B8FF;top:58%;left:5%;--d:6s;--dl:.5s">8</div>
-    <div class="hball" style="width:80px;height:80px;font-size:1.7rem;color:#FF8080;top:16%;right:7%;--d:5s;--dl:.8s">63</div>
-    <div class="hball" style="width:50px;height:50px;font-size:1rem;color:#C080FF;top:42%;right:4%;--d:4s;--dl:1.5s">31</div>
-    <div class="hball" style="width:64px;height:64px;font-size:1.3rem;color:#FFD93D;top:66%;right:6%;--d:6.5s;--dl:.3s">75</div>
-    <div class="hball" style="width:44px;height:44px;font-size:.95rem;color:#FF8060;top:75%;left:11%;--d:5.8s;--dl:2s">54</div>
-  </div>
-
-  <!-- Hero image -->
-  <div class="hero-img-wrap aos" style="width:100%;max-width:1100px;margin:0 auto 20px;position:relative">
-    <img src="hero-bg.png" style="width:100%;height:auto;display:block;
-      filter:drop-shadow(0 8px 32px rgba(0,0,0,.8));
-      animation:fadeUp .5s .1s ease both">
-  </div>
-
-  <!-- Banner -->
-  <div class="hero-banner" style="margin-bottom:24px" style="animation:fadeUp .5s ease both">
-    <div class="banner-rope">
-      <div class="banner-rope-l"></div>
-      <div class="banner-cloth">
-        <div class="banner-text">⚔ Live on Telegram · Powered by TON ⚔</div>
-      </div>
-      <div class="banner-rope-r"></div>
-    </div>
-  </div>
-
-  <h1 class="hero-title">
-    <span class="t1">TonBola</span>
-    <span class="t2">Win Real <span style="background:linear-gradient(135deg,#F7971E,#FFD200);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$TON</span></span>
-  </h1>
-
-  <p class="hero-sub">Live multiplayer bingo every 5 minutes. Buy cards with $TON or $NOT, win prizes instantly. No wallet setup — just Telegram.</p>
-
-  <div class="hero-ctas" style="animation:fadeUp .6s .3s ease both">
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:1.15rem;padding:16px 36px">
-      ⚔ Enter the Arena!
-    </a>
-    <a href="#token" class="btn-stone" style="font-size:1rem;padding:14px 28px">
-      💎 Join Presale
-    </a>
-  </div>
-</section>
-
-<!-- STATS MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">⚔ 127,400 Games Played</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">💎 48,200 TON Paid Out</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">⭐ 312,000 Stars Distributed</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">🏹 31,900 Active Warriors</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">⏱ New Game Every 5 Minutes</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">🔒 All Payouts On-Chain</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">⚔ 127,400 Games Played</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">💎 48,200 TON Paid Out</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">⭐ 312,000 Stars Distributed</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">🏹 31,900 Active Warriors</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">⏱ New Game Every 5 Minutes</span><span class="marquee-sep">•</span>
-    <span class="marquee-item">🔒 All Payouts On-Chain</span><span class="marquee-sep">•</span>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section id="how">
-<div class="wrap">
-  <h2 class="s-title aos" style="text-align:center">Simple as Bingo.<br>Powerful as TON.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 0">Zero friction. Open Telegram, choose your room, mark numbers, collect prizes.</p>
-
-  <div class="steps">
-    <div class="squad-feat" style="animation-delay:.1s">
-      
-      <div class="step-icon" style="color:#FFD700">1</div>
-      <h3>Open the Bot</h3>
-      <p>Launch @TonBolaBot_bot on Telegram. No downloads, no complicated wallets — your account is all you need.</p>
-    </div>
-    <div class="squad-feat" style="animation-delay:.2s">
-      
-      <div class="step-icon" style="color:#3AFF8A">2</div>
-      <h3>Choose Your Room</h3>
-      <p>Free, Stars, TON or VIP. Same currency in, same currency out. No conversions, no surprises.</p>
-    </div>
-    <div class="squad-feat" style="animation-delay:.3s">
-      
-      <div class="step-icon" style="color:#40B8FF">3</div>
-      <h3>Play Live</h3>
-      <p>One number every 5 seconds. Watch the draw live with other warriors. Tension builds with every call.</p>
-    </div>
-    <div class="squad-feat" style="animation-delay:.4s">
-      
-      <div class="step-icon" style="color:#FF8080">4</div>
-      <h3>Collect Instantly</h3>
-      <p>Line = 25% of the pool. Full house = 75%. Prize hits your wallet immediately. No delays.</p>
-    </div>
-  </div>
-</div>
-</section>
-
-
-<!-- ROOMS -->
-<section id="rooms">
-<div class="wrap">
-  <h2 class="s-title aos" style="text-align:center">Pay in $NOT, Win in $NOT.<br>Pay in $TON, Win in $TON.<br>Same currency in — same currency out.</h2>
-
-  <div class="room-grid">
-    <div class="room-card r-free aos">
-      <div class="room-badge">🆓 Free</div>
-      <div class="room-name">Free Room</div>
-      <div class="room-desc">No cost, no risk. Perfect to learn. Win $TBOLA every game.</div>
-      <div class="room-price">Free · Earn $TBOLA</div>
-    </div>
-    <div class="room-card r-not aos" style="animation-delay:.08s">
-      <div class="room-badge">◈ $NOT</div>
-      <div class="room-name">$NOT Room</div>
-      <div class="room-desc">Pay in $NOT, win in $NOT. Up to 10x your bet on a full house.</div>
-      <div class="room-price">500 $NOT / card · -10% from 2</div>
-    </div>
-    <div class="room-card r-ton aos" style="animation-delay:.16s">
-      <div class="room-badge">💎 $TON</div>
-      <div class="room-name">$TON Room</div>
-      <div class="room-desc">Pay in $TON, win in $TON. Bigger pool, bigger prizes.</div>
-      <div class="room-price">0.2 $TON / card · -10% from 2</div>
-    </div>
-    <div class="room-card r-vip aos" style="animation-delay:.24s">
-      <div class="room-badge">👑 VIP</div>
-      <div class="room-name">VIP Room</div>
-      <div class="room-desc">Max stakes, max prizes. Warrior Pass holders get priority access.</div>
-      <div class="room-price">1 $TON or 2,000 $NOT</div>
-    </div>
-  </div>
-
-  <!-- Private rooms -->
-  <div class="squad-feat" style="margin-top:20px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-    
-    <div>
-      <div style="font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">⚔ Private Battle Rooms</div>
-      <div style="font-size:.85rem;color:rgba(255,200,120,.5);max-width:500px;line-height:1.6">Create a private room, set the rules, share your link — earn 2% of every card sold. Challenge your clan.</div>
-    </div>
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-gold" style="font-size:.9rem;padding:12px 22px;flex-shrink:0">⚔ Create Room</a>
-  </div>
-</div>
-</section>
-
-
-<!-- WARRIOR PASS -->
-<section id="warrior">
-<div class="wrap">
-  <h2 class="s-title aos" style="text-align:center">Warrior Pass.<br>Dominate Every Game.</h2>
-  <p class="s-sub aos" style="text-align:center;margin:0 auto 36px">One subscription. Every advantage. Cancel anytime.</p>
-
-  <div class="warrior-card" style="max-width:660px;margin:0 auto;padding:32px 28px">
-    <div class="gem g-tl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-    <div class="gem g-tr"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem g-bl"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#44AAFF" stroke="#0044AA" stroke-width="1.5"/></svg></div>
-    <div class="gem g-br"><svg viewBox="0 0 18 18"><polygon points="9,1 17,7 14,17 4,17 1,7" fill="#FF4488" stroke="#AA0044" stroke-width="1.5"/></svg></div>
-
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="font-size:2.5rem;margin-bottom:6px">⚔️</div>
-      <div style="font-size:1.4rem;font-weight:700;color:#3D1A00">Warrior Pass</div>
-      <div style="font-size:.78rem;color:rgba(60,30,0,.55);margin-top:3px">Monthly · Auto-renews · Cancel anytime</div>
-    </div>
-
-    <div class="wp-benefits">
-      <div class="wp-benefit">
-        <div class="wp-benefit-icon">🃏</div>
-        <div><div class="wp-benefit-title">+2 Free Cards/day</div><div class="wp-benefit-desc">3 total in Free Room</div></div>
-      </div>
-      <div class="wp-benefit">
-        <div class="wp-benefit-icon">📈</div>
-        <div><div class="wp-benefit-title">+5% Win Rate</div><div class="wp-benefit-desc">Gold cards every game</div></div>
-      </div>
-      <div class="wp-benefit">
-        <div class="wp-benefit-icon">👑</div>
-        <div><div class="wp-benefit-title">VIP Room Access</div><div class="wp-benefit-desc">No level 20 required</div></div>
-      </div>
-      <div class="wp-benefit">
-        <div class="wp-benefit-icon">💰</div>
-        <div><div class="wp-benefit-title">2× $TBOLA</div><div class="wp-benefit-desc">All month long</div></div>
-      </div>
-      <div class="wp-benefit" style="grid-column:1/-1">
-        <div class="wp-benefit-icon">🎖️</div>
-        <div><div class="wp-benefit-title">Exclusive Warrior Badge</div><div class="wp-benefit-desc">Visible in lobby and on the leaderboard</div></div>
-      </div>
-    </div>
+  
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
       <div style="background:rgba(255,184,0,.2);border:2px solid rgba(255,184,0,.5);border-radius:10px;padding:14px;text-align:center">
