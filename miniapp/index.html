@@ -304,11 +304,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* BALL MACHINE */
 .bmach{margin:8px 10px;padding:14px;
-  background-image:url(assets/panel-stone.png);
-  background-size:100% 100%;background-repeat:no-repeat;
-  border-radius:18px;border:none;text-align:center;
-  position:relative;overflow:hidden;
-  box-shadow:0 6px 0 #0A0602}
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+  border-radius:18px;border:1px solid rgba(255,255,255,.2);
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .bmach::before{display:none}
 .bml{font-size:.62rem;font-weight:700;letter-spacing:1.5px;
   text-transform:uppercase;color:#FFD93D;margin-bottom:8px;
@@ -367,7 +367,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .bcs-p{background:rgba(107,68,35,.3);color:#C49040;border-color:#6B4423}
 .bcs-l{background:rgba(255,184,0,.15);color:#FFD93D;border-color:#8B6000}
 .bcs-b{background:rgba(46,204,113,.15);color:#2ECC71;border-color:#1A8040}
-.bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;border-radius:2px}
+.bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;border-radius:4px;container-type:inline-size}
 
 /* ── REAL IMAGE CARDS ── */
 .card-parchment,.card-wood,.card-stone,.card-gold{
@@ -379,11 +379,42 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .card-parchment{background:linear-gradient(135deg,#4A2E10,#2E1A08);border:2px solid #6B4423}
 .card-wood{background:linear-gradient(135deg,#3A3228,#252018);border:2px solid #5A5248}
 .card-stone{background:linear-gradient(135deg,#5A3A1A,#3A2010);border:2px solid #8B6040}
-.card-gold{background:linear-gradient(135deg,#4A3A00,#2E2200);border:2px solid #C4933F}
 
-.card-parchment .bc{background:transparent;border:none;
-  color:#2A1000;font-size:4.5cqw;font-weight:700;font-style:italic;
-  text-shadow:0 1px 2px rgba(255,220,150,.6),0 2px 4px rgba(0,0,0,.4)}
+
+.card-parchment .bc{
+  background:#fff;
+  border-radius:8px;
+  color:#1a1a2e;
+  font-size:clamp(14px,4.5cqw,20px);
+  font-weight:800;
+  font-style:normal;
+  border:none;
+  box-shadow:0 2px 4px rgba(0,0,0,.15);
+  display:flex;align-items:center;justify-content:center;
+  aspect-ratio:1;
+  transition:all .2s ease}
+/* Column colors B-I-N-G-O */
+.bc:nth-child(5n+1){background:linear-gradient(145deg,#4FC3F7,#0288D1);color:#fff}
+.bc:nth-child(5n+2){background:linear-gradient(145deg,#FF8A65,#E64A19);color:#fff}
+.bc:nth-child(5n+3){background:linear-gradient(145deg,#81C784,#388E3C);color:#fff}
+.bc:nth-child(5n+4){background:linear-gradient(145deg,#CE93D8,#7B1FA2);color:#fff}
+.bc:nth-child(5n+5){background:linear-gradient(145deg,#FFD54F,#F57F17);color:#fff}
+/* Marked number */
+.bc.mk{
+  background:rgba(255,255,255,.15)!important;
+  color:rgba(255,255,255,.5)!important;
+  box-shadow:none;
+  transform:scale(.92);
+  position:relative}
+.bc.mk::after{
+  content:'';position:absolute;inset:0;border-radius:8px;
+  border:2px solid rgba(255,255,255,.4)}
+/* Line hit */
+.bc.lh{
+  background:linear-gradient(145deg,#FFD700,#FF8C00)!important;
+  color:#fff!important;
+  box-shadow:0 0 12px rgba(255,184,0,.6)!important;
+  transform:scale(1.05)!important}
 .card-wood .bc{background:transparent;border:none;
   color:#FFE0A0;font-size:4.5cqw;font-weight:700;
   text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
@@ -1127,13 +1158,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 </div>
 
 <!-- GAME -->
-<div class="screen" id="sg" style="overflow:hidden;flex-direction:column">
+<div class="screen" id="sg" style="overflow:hidden;flex-direction:column;background:linear-gradient(180deg,#1a8c3c 0%,#0d6b2e 40%,#0a5522 100%)">
   <!-- STICKY TOP: header + ball machine + prizes -->
   <div id="g-top" style="flex-shrink:0">
-    <div class="ghdr">
+    <div class="ghdr" style="background:rgba(0,0,0,.25);backdrop-filter:blur(4px);border-bottom:1px solid rgba(255,255,255,.1)">
       <div>
-        <div style="font-size:.9rem;font-weight:700;color:#FFE0A0" id="g-rm">$NOT Room</div>
-        <div style="font-size:.67rem;color:#6B4423" id="g-di">0 numbers drawn</div>
+        <div style="font-size:.9rem;font-weight:700;color:#fff" id="g-rm">$NOT Room</div>
+        <div style="font-size:.67rem;color:rgba(255,255,255,.6)" id="g-di">0 numbers drawn</div>
       </div>
       <div style="display:flex;align-items:center;gap:5px">
         <div style="font-size:.68rem;color:#6B4423">Next in</div>
@@ -1155,12 +1186,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
     <div class="prow">
       <div class="pb pbl">
-        <div class="pblbl" style="color:rgba(255,184,0,.6)">📏 Line Prize</div>
-        <div class="pbv" style="color:#FFD93D" id="g-lp">-</div>
+        <div class="pblbl" style="color:rgba(255,255,255,.7)">📏 Line</div>
+        <div class="pbv" style="color:#FFE566" id="g-lp">-</div>
       </div>
       <div class="pb pbb">
-        <div class="pblbl" style="color:rgba(180,79,255,.6)">🎱 Full House</div>
-        <div class="pbv" style="color:#C080FF" id="g-bp">-</div>
+        <div class="pblbl" style="color:rgba(255,255,255,.7)">🎱 Bingo!</div>
+        <div class="pbv" style="color:#FFE566" id="g-bp">-</div>
       </div>
     </div>
   </div>
@@ -1990,6 +2021,11 @@ function renderCards(){
         <div class="bcs bcs-p" id="cs-${ci}">Playing</div>
       </div>
       <div class="${cardStyle}">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 4px 0;margin-bottom:0">
+          ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;
+            color:${['#4FC3F7','#FF8A65','#81C784','#CE93D8','#FFD54F'][i]};
+            text-shadow:0 1px 2px rgba(0,0,0,.3);padding:2px 0">${l}</div>`).join('')}
+        </div>
         <div class="bgrid" style="position:relative;z-index:1">
           ${card.map(n=>`<div class="bc" id="c${ci}-${n}" style="--marker-img:${markerImg}">${n}</div>`).join('')}
         </div>
