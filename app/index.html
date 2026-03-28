@@ -63,7 +63,7 @@
   --r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#000;
+html,body{height:100%;overflow:hidden;background:#F0F4FF;
   font-family:'Clash',sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ── */
@@ -77,11 +77,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── STONE HEADER ── */
 .stone-header{
-  background:linear-gradient(180deg,#3D2B1A 0%,#2A1C0E 100%);
-  border-bottom:3px solid #6B4423;
+  background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.08);
   padding:10px 12px 8px;
   position:sticky;top:0;z-index:50;
-  box-shadow:0 3px 12px rgba(0,0,0,.5);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 .stone-header::after{content:'';position:absolute;bottom:-6px;left:0;right:0;height:3px;
   background:linear-gradient(90deg,#8B6340,#C4933F,#FFD700,#C4933F,#8B6340);opacity:.6}
@@ -116,17 +116,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .btn:active{transform:translateY(2px)}
 
 .btn-gold{
-  background:linear-gradient(180deg,#FFD93D 0%,#CC8800 100%);
-  color:#3D1A00;border:3px solid #FFE566;
-  box-shadow:0 5px 0 #7A5200,0 7px 0 rgba(0,0,0,.4);
+  background:linear-gradient(135deg,#6C63FF,#4158D0);
+  color:#fff;border:none;
+  box-shadow:0 4px 15px rgba(108,99,255,.4);
   padding:13px 24px;font-size:1.05rem;width:100%;
-  text-shadow:0 1px 0 rgba(255,255,255,.3)}
+  border-radius:14px}
 .btn-gold:disabled,.btn-gold[disabled]{background:linear-gradient(180deg,#5A4A20,#3A2E10)!important;color:rgba(255,200,80,.5)!important;border-color:#4A3A18!important;box-shadow:0 3px 0 #1A1408!important}
 .btn-stone{
-  background:linear-gradient(180deg,#5A4230,#3A2818);
-  color:#FFE0A0;border:2px solid #8B6340!important;outline:none!important;
-  box-shadow:0 3px 0 #1A0C04;-webkit-appearance:none;appearance:none;
-  border-radius:8px;
+  background:#f5f5f5;
+  color:#333;border:1.5px solid #e0e0e0!important;outline:none!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);-webkit-appearance:none;appearance:none;
+  border-radius:14px;
   padding:14px 12px;font-size:.82rem;
   font-weight:700;min-height:52px;white-space:nowrap}
 .btn-sm{padding:7px 12px;font-size:.8rem;width:auto}
@@ -136,7 +136,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── SECTION TITLE ── */
 .sec{font-size:.68rem;font-weight:700;letter-spacing:1.2px;
-  text-transform:uppercase;color:#A07040;padding:8px 12px 5px;
+  text-transform:uppercase;color:#888;padding:8px 12px 5px;
   display:flex;align-items:center;gap:6px}
 .sec::before{content:'⚔';font-size:.7rem;color:#C4933F}
 .sec::after{content:'';flex:1;height:1px;
@@ -156,9 +156,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .bal-lbl{font-size:.65rem;font-weight:700;letter-spacing:.8px;
   text-transform:uppercase;color:#FFD93D;margin-bottom:2px;
   text-shadow:0 1px 3px rgba(0,0,0,.9);opacity:.8}
-.bal-amt{font-size:1.6rem;font-weight:700;color:#FFD93D;line-height:1;
-  text-shadow:0 0 20px rgba(255,184,0,.7),0 2px 4px rgba(0,0,0,.95),
-    2px 2px 0 rgba(0,0,0,.6),-1px -1px 0 rgba(0,0,0,.5);
+.bal-amt{font-size:1.6rem;font-weight:700;color:#fff;line-height:1;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .lv-badge{padding:4px 10px;text-align:center;position:relative;
   background:linear-gradient(135deg,#3A1A00,#1A0A00);
@@ -181,17 +179,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── ROOM CARDS ── */
 .rooms{padding:0 10px;display:flex;flex-direction:column;gap:8px}
-.rc{border-radius:var(--r);overflow:hidden;cursor:pointer;
+.rc{border-radius:16px;overflow:hidden;cursor:pointer;
   transition:transform .12s;
   border:none;
-  background-size:100% 100%;background-repeat:no-repeat;
-  box-shadow:0 5px 0 rgba(0,0,0,.6);
-  height:130px;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);
+  height:120px;
   display:flex;flex-direction:column;position:relative;justify-content:space-between}
-.rc.free{background:linear-gradient(135deg,#1A3A0A,#0E2006);border:2px solid #2A6A0A!important}
-.rc.stars{background:linear-gradient(135deg,#1A1A1A,#0E0E0E);border:2px solid #555!important}
-.rc.ton{background:linear-gradient(135deg,#003060,#001A40);border:2px solid #0060A0!important}
-.rc.vip{background:linear-gradient(135deg,#3A2800,#1E1400);border:2px solid #C4933F!important}
+.rc.free{background:linear-gradient(135deg,#11998E,#38EF7D);border:none!important}
+.rc.stars{background:linear-gradient(135deg,#373B44,#4286f4);border:none!important}
+.rc.ton{background:linear-gradient(135deg,#667EEA,#764BA2);border:none!important}
+.rc.vip{background:linear-gradient(135deg,#F7971E,#FFD200);border:none!important}
 .rc:active{transform:scale(.97) translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.5)}
 
 
@@ -231,12 +228,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   color:#E0E0E0!important}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 24px 12px;background:none;border-top:none;flex-shrink:0}
-.rp{font-size:.72rem;color:#3D1A00;font-weight:700;display:flex;align-items:center;gap:4px}
+.rp{font-size:.72rem;color:rgba(255,255,255,.85);font-weight:700;display:flex;align-items:center;gap:4px}
 .live-dot{width:5px;height:5px;border-radius:50%;background:#3AFF8A;
   animation:pd 1.2s ease infinite;box-shadow:0 0 6px #3AFF8A}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.rprz{font-size:.72rem;font-weight:700;color:#3D1A00}
+.rprz{font-size:.72rem;font-weight:700;color:#fff}
 
 /* ── CRYSTAL decorations (CSS only) ── */
 .crystals{position:relative;height:3px;overflow:visible;margin:4px 10px}
@@ -401,14 +398,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .bc:nth-child(5n+5){background:linear-gradient(145deg,#FFD54F,#F57F17);color:#fff}
 /* Marked number */
 .bc.mk{
-  background:rgba(255,255,255,.15)!important;
-  color:rgba(255,255,255,.5)!important;
-  box-shadow:none;
-  transform:scale(.92);
-  position:relative}
+  position:relative;transform:scale(.95)}
+.bc.mk span{visibility:hidden}
 .bc.mk::after{
-  content:'';position:absolute;inset:0;border-radius:8px;
-  border:2px solid rgba(255,255,255,.4)}
+  content:'⭐';
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1em;line-height:1;
+  padding-top:2px}
 /* Line hit */
 .bc.lh{
   background:linear-gradient(145deg,#FFD700,#FF8C00)!important;
@@ -490,17 +487,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── BOTTOM NAV ── */
 .nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:linear-gradient(180deg,#2A1C0E,#1E1005);
-  border-top:3px solid #6B4423;
+  background:#fff;
+  border-top:1px solid rgba(0,0,0,.08);
   display:flex;padding:6px 0 max(6px,env(safe-area-inset-bottom));
-  box-shadow:0 -4px 12px rgba(0,0,0,.5)}
+  box-shadow:0 -4px 12px rgba(0,0,0,.06)}
 .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,#FFD700,transparent);opacity:.3}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;
   gap:2px;cursor:pointer;border:none;background:transparent;
-  color:#5A3D1A;font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;
+  color:#aaa;font-family:'Clash',sans-serif;font-size:.68rem;font-weight:700;
   padding:5px 4px}
-.nb.on{color:#FFD93D}
+.nb.on{color:#6C63FF}
 .ni{font-size:1.2rem;transition:transform .15s}
 .nb.on .ni{transform:scale(1.15)}
 
@@ -811,20 +808,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 
 <!-- GAME HUB -->
-<div class="screen active" id="s-hub">
+<div class="screen active" id="s-hub" style="background:#F0F4FF">
   <div class="stone-header">
     <div class="topbar">
       <div style="position:relative;flex-shrink:0">
         <div class="t-av" id="hub-av">T</div>
       </div>
       <div style="flex:1;margin:0 10px">
-        <div style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#FFE0A0" id="hub-name">Tommy</div>
-        <div style="font-size:.65rem;color:#6B4423">@Tommyall</div>
+        <div style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#333" id="hub-name">Tommy</div>
+        <div style="font-size:.65rem;color:#999">@Tommyall</div>
       </div>
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);
-        border-radius:50px;padding:4px 10px;border:1.5px solid rgba(255,184,0,.2)">
-        <span style="font-family:'Clash',sans-serif;font-size:.72rem;font-weight:700;color:#C4933F">$TBOLA</span>
-        <span style="font-family:'Clash',sans-serif;font-size:.82rem;font-weight:700;color:#FFD93D" id="hub-tbola">505</span>
+      <div style="display:flex;align-items:center;gap:4px;background:#F0EEFF;
+        border-radius:50px;padding:4px 10px;border:1.5px solid rgba(108,99,255,.2)">
+        <span style="font-family:'Clash',sans-serif;font-size:.72rem;font-weight:700;color:#6C63FF">$TBOLA</span>
+        <span style="font-family:'Clash',sans-serif;font-size:.82rem;font-weight:700;color:#6C63FF" id="hub-tbola">505</span>
       </div>
     </div>
   </div>
@@ -834,19 +831,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
     <!-- Section title -->
     <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
-      letter-spacing:2px;text-transform:uppercase;color:#6B4423;
-      margin-bottom:10px;padding:0 2px">⚔ Choose Your Game</div>
+      letter-spacing:2px;text-transform:uppercase;color:#999;
+      margin-bottom:10px;padding:0 2px">🎮 Choose Your Game</div>
 
     <!-- Bingo card -->
     <div onclick="openBingo()" style="cursor:pointer;margin-bottom:10px;position:relative;
-      background:linear-gradient(135deg,#003060,#001A40);
-      border:2px solid #0060A0;
+      background:linear-gradient(135deg,#667EEA,#764BA2);
+      border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
-      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,40,80,.6);overflow:hidden">
+      gap:14px;padding:0 18px;box-shadow:0 6px 20px rgba(0,0,0,.2);overflow:hidden">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🎱</div>
       <div style="flex:1">
         <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
-          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">Bingo</div>
+          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">🎱 Bingo</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Live draws every 5 min · NOT · TON · VIP
         </div>
@@ -868,14 +865,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
     <!-- Fortune Wheel card -->
     <div onclick="openWheel()" style="cursor:pointer;margin-bottom:10px;position:relative;
-      background:linear-gradient(135deg,#3A2800,#1E1400);
-      border:2px solid #C4933F;
+      background:linear-gradient(135deg,#F7971E,#FFD200);
+      border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
-      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(80,40,0,.6);overflow:hidden">
+      gap:14px;padding:0 18px;box-shadow:0 6px 20px rgba(0,0,0,.2);overflow:hidden">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🎡</div>
       <div style="flex:1">
         <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
-          color:#FFD93D;text-shadow:0 1px 4px rgba(0,0,0,.9)">Fortune Wheel</div>
+          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">🎡 Fortune Wheel</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Spin to win · Jackpot pool · NOT · TON
         </div>
@@ -895,15 +892,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
     <!-- Scratch Cards — Coming Soon -->
     <div style="margin-bottom:10px;position:relative;
-      background:linear-gradient(135deg,#1A3A0A,#0E2006);
-      border:2px solid #2A5C1A;
+      background:linear-gradient(135deg,#11998E,#38EF7D);
+      border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
-      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(0,20,0,.5);overflow:hidden;
+      gap:14px;padding:0 18px;box-shadow:0 6px 20px rgba(0,0,0,.2);overflow:hidden;
       opacity:.55;cursor:not-allowed">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🃏</div>
       <div style="flex:1">
         <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
-          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">Scratch Cards</div>
+          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">Scratch Cards</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Instant win · Gratta e vinci on TON
         </div>
@@ -918,15 +915,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
     <!-- PvP Battle — Coming Soon -->
     <div style="margin-bottom:10px;position:relative;
-      background:linear-gradient(135deg,#3A0A0A,#200606);
-      border:2px solid #8B2200;
+      background:linear-gradient(135deg,#F953C6,#B91D73);
+      border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
-      gap:14px;padding:0 18px;box-shadow:0 5px 0 rgba(60,0,0,.5);overflow:hidden;
+      gap:14px;padding:0 18px;box-shadow:0 6px 20px rgba(0,0,0,.2);overflow:hidden;
       opacity:.55;cursor:not-allowed">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">⚔️</div>
       <div style="flex:1">
         <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
-          color:#FFE0A0;text-shadow:0 1px 4px rgba(0,0,0,.9)">PvP Battle</div>
+          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">PvP Battle</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Live 1v1 bingo · Challenge real players
         </div>
@@ -2027,7 +2024,7 @@ function renderCards(){
             text-shadow:0 1px 2px rgba(0,0,0,.3);padding:2px 0">${l}</div>`).join('')}
         </div>
         <div class="bgrid" style="position:relative;z-index:1">
-          ${card.map(n=>`<div class="bc" id="c${ci}-${n}" style="--marker-img:${markerImg}">${n}</div>`).join('')}
+          ${card.map(n=>`<div class="bc" id="c${ci}-${n}"><span>${n}</span></div>`).join('')}
         </div>
       </div>
     </div>`).join('')
