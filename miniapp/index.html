@@ -505,7 +505,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 /* ── PROFILE ── */
 .phero{margin:10px 12px;padding:24px 18px;border-radius:20px;background:linear-gradient(135deg,#4C1D95,#6D28D9);text-align:center;box-shadow:0 6px 24px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
-.phero::before{content:'';display:block;height:3px;margin:-18px -18px 14px;
+.phero::before{display:none;content:'';height:3px;margin:-18px -18px 14px;
   background:linear-gradient(90deg,#8B6340,#FFD700,#C4933F,#FFD700,#8B6340);
   border-radius:var(--r) var(--r) 0 0}
 .pav{width:76px;height:76px;border-radius:50%;margin:0 auto;background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:700;box-shadow:0 0 20px rgba(255,255,255,.1)}
@@ -1246,15 +1246,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
 
   <!-- CURRENCY SUB-TABS -->
-  <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:#000">
+  <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:var(--bg)">
     <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">◈ $NOT</div>
     <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')" style="justify-content:center">💎 $TON</div>
   </div>
 
   <!-- POOL BANNER -->
   <div style="margin:6px 10px 8px;border-radius:12px;
-    background:linear-gradient(135deg,#1E1005,#130A02);
-    border:1px solid var(--border);padding:10px 12px">
+    background:var(--bg3);border:1px solid var(--border);padding:10px 12px">
     <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
       <span class="live-dot"></span>
       <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;
@@ -2036,7 +2035,7 @@ function showWin(type){
 
 function spawnConf(){
   const cont=document.getElementById('conf');if(!cont)return
-  const cols=['#FFD93D','#FF4040','#40FF80','#40B8FF','#C080FF','#FF8040']
+  const cols=['#fff','#FF4040','#40FF80','#40B8FF','#C080FF','#FF8040']
   cont.innerHTML=Array.from({length:40},(_,i)=>{
     const c=cols[i%cols.length],x=Math.random()*100,d=1.5+Math.random()*2,dl=Math.random()*1.5
     const w=6+Math.random()*6
@@ -2056,7 +2055,7 @@ const LEVEL_THRESHOLDS = [
   {lv:51, icon:'💎', title:'Legend',       unlock:'Season badge + exclusive frame',    color:'#8B2FFF', bg:'#180028', tbola:600},
   {lv:75, icon:'🎱', title:'Grand Master', unlock:'Legend avatar in all lobbies!',    color:'#FFD700', bg:'#221A00', tbola:1000},
 ]
-const CONF_COLS=['#FFD93D','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
+const CONF_COLS=['#fff','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
 
 function showLevelUp(lv) {
   const t = LEVEL_THRESHOLDS.find(t=>t.lv===lv)
@@ -2102,7 +2101,7 @@ function selectWPCur(cur) {
   const ton   = document.getElementById('wp-ton')
   const btn   = document.getElementById('wp-btn')
   if(cur === 'stars') {
-    stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#FFB800'
+    stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#A78BFA'
     ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
     btn.textContent = '⚔️ Subscribe — 600 ⭐ Stars'
   } else {
@@ -2206,14 +2205,14 @@ function handleTxError(err) {
 // ── FORTUNE WHEEL ──
 const WHEEL_SEGMENTS = [
   {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
-  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#FFB800'},
+  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#A78BFA'},
   {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
-  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#FFE0A0'},
+  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#fff'},
   {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
-  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#FFB800'},
+  {label:'×0.5',      mult:0.5,  color:'#3A3028', textColor:'#A78BFA'},
   {label:'×2',        mult:2,    color:'#1A3020', textColor:'#3AFF8A'},
   {label:'💀 Lose',   mult:0,    color:'#2A1808', textColor:'#FF4444'},
-  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#FFE0A0'},
+  {label:'×1',        mult:1,    color:'#2E2418', textColor:'#fff'},
   {label:'×5',        mult:5,    color:'#1A2840', textColor:'#40B8FF'},
   {label:'⚔️ Pass',   mult:-1,   color:'#2A1A40', textColor:'#C080FF'},
   {label:'🎰 JACK',   mult:-2,   color:'#3A2800', textColor:'#FFD700'},
@@ -2421,7 +2420,7 @@ function handleWheelResult(segIdx) {
   const isTon = wheelCur === 'ton'
   const resultEl = document.getElementById('w-last-result')
   let resultMsg = ''
-  let resultColor = '#FFE0A0'
+  let resultColor = '#fff'
   if(seg.mult === -2) {
     // JACKPOT
     if(wheelJackpot >= JACKPOT_THRESHOLD) {
@@ -2440,7 +2439,7 @@ function handleWheelResult(segIdx) {
       const won = price * 1
       wheelSessionBal += won
       resultMsg = `⚔️ ×1 — ${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
-      resultColor = '#FFE0A0'
+      resultColor = '#fff'
     }
   } else if(seg.mult === -1) {
     // Warrior Pass
@@ -2844,39 +2843,38 @@ function renderLb(tab) {
 
   const medals = ['🥇','🥈','🥉']
   const podiumBg = [
-    'background-image:url(assets/rc-vip.png);background-size:100% 100%',
-    'background-image:url(assets/rc-ton.png);background-size:100% 100%',
-    'background-image:url(assets/rc-stars.png);background-size:100% 100%'
+    'background:linear-gradient(135deg,#78350F,#B45309)',
+    'background:linear-gradient(135deg,#1F2937,#374151)',
+    'background:linear-gradient(135deg,#1C1917,#292524)'
   ]
-  const podiumBorder = ['#FFD700','#CD7F32','#8A8A8A']
+  const podiumBorder = ['rgba(251,191,36,.4)','rgba(156,163,175,.3)','rgba(120,113,108,.3)']
   document.getElementById('lb-list').innerHTML = data.map(row => `
     <div style="display:flex;align-items:center;gap:10px;padding:10px 28px 10px 14px;
       margin-bottom:${row.r<=3?'6px':'2px'};
       border-radius:${row.r<=3?'10px':'6px'};
-      ${row.r<=3 ? podiumBg[row.r-1]+';border:2px solid '+podiumBorder[row.r-1]+';box-shadow:0 4px 0 rgba(0,0,0,.4)' : 'border-bottom:1px solid rgba(107,68,35,.15)'};
-      ${row.isMe && row.r>3 ? 'background:rgba(255,184,0,.08);border-left:3px solid #FFB800;' : ''}
+      ${row.r<=3 ? podiumBg[row.r-1]+';border:2px solid '+podiumBorder[row.r-1]+';box-shadow:0 4px 0 rgba(0,0,0,.4)' : 'border-bottom:1px solid rgba(255,255,255,.06)'};
+      ${row.isMe && row.r>3 ? 'background:rgba(139,92,246,.08);border-left:3px solid #8B5CF6;' : ''}
       cursor:default;position:relative">
       <div style="font-size:${row.r<=3?'1.3rem':'1rem'};font-weight:700;width:28px;text-align:center;flex-shrink:0;
-        color:${row.r===1?'#FFD700':row.r===2?'#CD7F32':row.r===3?'#A0A0A0':row.isMe?'#FFB800':'#5A3D1A'};
+        color:${row.r===1?'#FBBF24':row.r===2?'#9CA3AF':row.r===3?'#78716C':row.isMe?'#A78BFA':'rgba(255,255,255,.35)'};
         text-shadow:${row.r<=3?'0 1px 3px rgba(0,0,0,.8)':'none'}">${medals[row.r-1]||row.r}</div>
       <div style="width:${row.r<=3?'46px':'40px'};height:${row.r<=3?'46px':'40px'};border-radius:50%;flex-shrink:0;
         display:flex;align-items:center;justify-content:center;
         font-size:${row.r<=3?'1.3rem':'1.1rem'};background:${row.col};
-        border:${row.r<=3?'3px solid '+podiumBorder[row.r-1]:row.isMe?'3px solid #FFB800':'2px solid rgba(0,0,0,.4)'};
-        box-shadow:${row.r<=3?'0 0 12px rgba(0,0,0,.5)':row.isMe?'0 0 10px rgba(255,184,0,.5)':'0 2px 6px rgba(0,0,0,.5)'}">
+        border:${row.r<=3?'2px solid '+podiumBorder[row.r-1]:row.isMe?'2px solid #8B5CF6':'2px solid rgba(255,255,255,.08)'};
+        box-shadow:${row.r<=3?'0 0 12px rgba(0,0,0,.3)':row.isMe?'0 0 10px rgba(139,92,246,.4)':'none'}">
         ${row.av||row.n[0]}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:.875rem;font-weight:700;
-          color:${row.isMe?'#FFD93D':row.r===1?'#3D1A00':row.r===2?'#FFE0A0':row.r===3?'#3D1A00':'#FFE0A0'};
-          text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.6)':'none'};
+          color:${row.isMe?'#A78BFA':'#fff'};
+          
           white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
           ${row.n}${row.isMe?' 👈':''}
         </div>
-        <div style="font-size:.7rem;color:${row.r===1?'#5A3D1A':row.r===2?'#FFE0A0':row.r===3?'#5A3D1A':'#5A3D1A'};text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.5)':'none'}">${row.p||''}</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.5)">${row.p||''}</div>
       </div>
       <div style="font-size:.95rem;font-weight:700;
-        color:${row.r===2?'#FFE0A0':row.isMe?'#FFD93D':'#FFD93D'};flex-shrink:0;
-        text-shadow:${row.r<=3?'0 1px 2px rgba(0,0,0,.6)':'none'}">${row.s.toLocaleString()}</div>
+        color:${row.isMe?'#A78BFA':'#fff'};flex-shrink:0">${row.s.toLocaleString()}</div>
     </div>`).join('')
 }
 
@@ -2901,8 +2899,8 @@ function renderPoolBanner(tab) {
     // alltime: 2 top + 1 centered below
     grid.style.gridTemplateColumns = '1fr 1fr'
     grid.innerHTML = `
-      <div style="background:rgba(255,184,0,.1);border:1.5px solid rgba(255,184,0,.3);border-radius:10px;padding:10px 8px;text-align:center">
-        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);margin-bottom:5px;opacity:.85">◈ $NOT Paid</div>
+      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);margin-bottom:5px">◈ $NOT Paid</div>
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--yellow);text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
@@ -2919,14 +2917,14 @@ function renderPoolBanner(tab) {
     return
   } else if(isSquads) {
     boxes = lbCurrency === 'stars'
-      ? [{label:'◈ $NOT Pool', color:'#FFD93D', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
+      ? [{label:'◈ $NOT Pool', color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
       : [{label:'💎 $TON Pool',  color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',             sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
     grid.style.gridTemplateColumns = '1fr 1fr'
   } else if(lbCurrency === 'stars') {
     boxes = [
-      {label:'◈ $NOT Pool',  color:'#FFD93D', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
+      {label:'◈ $NOT Pool',  color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
       {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(),       sub:'airdrop snapshot'},
     ]
     grid.style.gridTemplateColumns = '1fr 1fr'
@@ -2991,8 +2989,8 @@ function selectCur(el, cur){
       <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
         style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
           background:${i===0?'rgba(255,184,0,.2)':'rgba(0,0,0,.2)'};
-          border:2px solid ${i===0?'#FFB800':'rgba(255,255,255,.1)'};
-          color:${i===0?'#FFD93D':'#FFE0A0'};transition:all .15s">${o.l}</div>`).join('')
+          border:2px solid ${i===0?'#A78BFA':'rgba(255,255,255,.1)'};
+          color:${i===0?'#fff':'#fff'};transition:all .15s">${o.l}</div>`).join('')
     crPrice=opts[0].v
   }
   updateRoomPreview()
@@ -3001,9 +2999,9 @@ function selectCur(el, cur){
 function selectPrice(el, price){
   crPrice=price
   document.querySelectorAll('.price-btn').forEach(b=>{
-    b.style.background='rgba(0,0,0,.2)';b.style.borderColor='rgba(255,255,255,.1)';b.style.color='#FFE0A0'
+    b.style.background='rgba(0,0,0,.2)';b.style.borderColor='rgba(255,255,255,.1)';b.style.color='#fff'
   })
-  el.style.background='rgba(255,184,0,.2)';el.style.borderColor='#FFB800';el.style.color='#FFD93D'
+  el.style.background='rgba(255,184,0,.2)';el.style.borderColor='#A78BFA';el.style.color='#fff'
   updateRoomPreview()
 }
 
@@ -3049,7 +3047,7 @@ function updateCodeBoxes(val){
   const boxes=document.querySelectorAll('.code-box')
   boxes.forEach((b,i)=>{
     b.textContent=val[i]||''
-    b.style.borderColor=val[i]?'#FFB800':'#4A3318'
+    b.style.borderColor=val[i]?'#A78BFA':'#4A3318'
     b.style.background=val[i]?'rgba(255,184,0,.1)':'rgba(0,0,0,.3)'
   })
 }
@@ -3096,7 +3094,7 @@ function openAvatarPicker(target) {
       style="aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
         justify-content:center;font-size:1.6rem;cursor:pointer;
         background:${p===current?'rgba(255,184,0,.2)':'rgba(0,0,0,.25)'};
-        border:2px solid ${p===current?'#FFB800':'rgba(255,255,255,.08)'};
+        border:2px solid ${p===current?'#A78BFA':'rgba(255,255,255,.08)'};
         transition:all .15s">${p}</div>`).join('')
   go('s-avatar')
 }
@@ -3107,7 +3105,7 @@ function selectPreset(p) {
   document.querySelectorAll('#preset-grid div').forEach(el => {
     const isSelected = el.textContent === p
     el.style.background = isSelected ? 'rgba(255,184,0,.2)' : 'rgba(0,0,0,.25)'
-    el.style.borderColor = isSelected ? '#FFB800' : 'rgba(255,255,255,.08)'
+    el.style.borderColor = isSelected ? '#A78BFA' : 'rgba(255,255,255,.08)'
   })
 }
 
