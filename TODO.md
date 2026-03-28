@@ -1,61 +1,68 @@
 # TonBola — TODO / Feature Backlog
 
-## 🎨 Avatars & Images
-
-- [ ] **User avatar** — player can choose from a preset gallery OR upload custom image
-  - Preset gallery: bingo balls, lucky characters, crypto-themed icons
-  - Custom upload: square crop, max 2MB, stored on Supabase Storage
-  - Avatar visible in lobby to all players before each game
-  - Avatar frame/border evolves with player level
-
-- [ ] **Squad avatar/image** — captain can set a squad logo/image
-  - Choose from preset squad emblems OR upload custom image
-  - Shown in squad leaderboard next to squad name
+_Last updated: 2026-03-28_
 
 ---
 
-## ⚔️ Warrior Pass (Premium Subscription)
+## ✅ Completato (Mar 2026)
 
-- [ ] **Warrior Pass — 500 Stars/month**
-  - +2 free cards/day (from 1 to 3)
-  - Gold cards (+5% win rate) in all rooms
-  - Guaranteed slot in VIP TON rooms
-  - Exclusive badge visible on profile and in lobby
-  - 2× $TBOLA on ALL games during the month
-  - Implemented via Telegram Stars recurring payment
+- [x] Game Hub homepage con card Bingo, Fortune Wheel, Scratch Cards, PvP
+- [x] Fortune Wheel — grafica 320px canvas, gradienti per segmento, glow, pointer
+- [x] Fortune Wheel — Auto-Spin (Warrior Pass gate overlay)
+- [x] Fortune Wheel — LOSE no consolation, PASS → free spin, JACKPOT forzato 1%
+- [x] Fortune Wheel — targetAngle allineato al pointer (fix visivo/logico)
+- [x] Fortune Wheel — pagina redesign dark (#08080E), coin icons currency tabs
+- [x] Warrior Pass — prezzo in $NOT (600,000), no auto-renew, reminder scadenza
+- [x] Warrior Pass — gate overlay con benefit list + CTA → showWarriorPass()
+- [x] Card room colorate per room (Free/NOT/TON/VIP) con coin images
+- [x] Coin $NOT trasparente (flood fill), coin Free arancione, coin VIP verde
+- [x] TON coin ufficiale con sfondo trasparente
+- [x] Marker cartelle bingo → stella gold glossy
+- [x] Card livelli profile colorate (bordo + bg per livello, locked opacity 42%)
+- [x] Balance card full-width, stat badges stretch tutta la riga
+- [x] Bottoni colorati: Create Room (viola), Enter Code (blu)
+- [x] Bottoni Scratch Cards e PvP — rimosso opacity (colorati)
+- [x] Create Room — currency tab $NOT con coin, prezzi additivi, reset button, total badge
+- [x] Create Room — Stars → $NOT, 10 TON e 100 TON options, auto-init chips
+- [x] Create Room — TON e FREE coin images in currency tabs
+- [x] TBOLA prizes dimezzati (-50%) — level milestones + room config + game prizes
+- [x] Banner vincitore bingo — nome, room, "Partita Finita", back to home, confetti
+- [x] Disable room cards + Create/Enter Code buttons durante partita attiva
+- [x] Intervallo pallina estratta: 5s → 3s
+- [x] Auto-Spin wheel con Warrior Pass check + stop button
 
-> ✅ Auto-check of numbers on cards is FREE for everyone, always.
-> The fairness of the game must never be pay-to-win.
+---
+
+## 🔧 Tecnico — Priorità Alta
+
+- [ ] **TonConnect 2.0** — wallet connect reale, pagamenti TON/NOT
+- [ ] **Telegram Stars payment** — Warrior Pass + spin bundles
+- [ ] **Supabase live data** — jackpot reale, warriors count, leaderboard
+- [ ] **WebSocket server** — multiplayer Bingo sync (Hetzner VPS)
 
 ---
 
 ## 🎮 Gameplay
 
-- [ ] Private rooms — creator earns 2% of all cards sold
-- [ ] Squads system (max 20 players) — weekly/monthly leaderboard
-- [ ] Squad prize distribution: 40% equal / 35% XP / 25% cards
-- [ ] Squad captain +10% prize bonus
-- [ ] WebSocket game engine — real multiplayer sync
+- [ ] Avatar picker (preset gallery + custom upload)
+- [ ] Squad avatar/logo
+- [ ] WebSocket game engine — real multiplayer sync lobby → game
+- [ ] Scratch Cards — implementazione completa
+- [ ] PvP Battle — implementazione completa
 
 ---
 
 ## 🪙 Token & Economy
 
-- [ ] $TBOLA presale smart contract (TON Jetton)
+- [ ] $TBOLA Jetton smart contract su TON mainnet
 - [ ] Airdrop snapshot mechanism
-- [ ] Referral multi-level (L1 5% / L2 2% / L3 1%) on-chain
-- [ ] Influencer dashboard for commission tracking
+- [ ] Referral multi-level on-chain (L1 5% / L2 2% / L3 1%)
+- [ ] $TBOLA mainnet launch + airdrop
 
 ---
 
-## 🔧 Technical
+## 🔐 Security (pending)
 
-- [ ] Connect Mini App to Supabase real data
-- [ ] Telegram Stars payment integration
-- [ ] TonConnect 2.0 wallet integration
-- [ ] WebSocket server on Hetzner
-- [ ] Smart contract for $TBOLA distribution on TON
-
----
-
-_Last updated: 2025-03-26_
+- [ ] Ruota `ghp_lcxKfT3` (GitHub token vecchio)
+- [ ] Rigenerare NOWPayments API key
+- [ ] Cambiare password `Bardella@2026`
