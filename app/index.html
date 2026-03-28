@@ -1125,7 +1125,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="cbox">
     <div>
       <div style="font-size:.7rem;color:var(--muted)">You pay</div>
-      <div style="font-size:1rem;font-weight:700;color:#fff" id="l-cost">500 $NOT</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff" id="l-cost">2,000 $NOT</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:.7rem;color:#999">You earn</div>
@@ -1369,16 +1369,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="display:flex;gap:8px;flex-wrap:wrap" id="cr-prices">
         <div onclick="selectPrice(this,50)" data-price="50"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:var(--yellow)">50 $NOT</div>
+            background:rgba(255,184,0,.2);border:2px solid #FFB800;color:var(--yellow)">1,000 $NOT</div>
         <div onclick="selectPrice(this,100)" data-price="100"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">100 $NOT</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">1,000 $NOT</div>
         <div onclick="selectPrice(this,200)" data-price="200"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">200 $NOT</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">1,000 $NOT</div>
         <div onclick="selectPrice(this,500)" data-price="500"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">500 $NOT</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">2,000 $NOT</div>
       </div>
     </div>
 
@@ -1407,11 +1407,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Preview</div>
       <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <span style="font-size:.82rem;color:var(--muted)">Your earnings (2%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">1 $NOT per card</span>
+        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">2 $NOT per card</span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:5px 0">
         <span style="font-size:.82rem;color:var(--muted)">Prize pool (53%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">265 $NOT max</span>
+        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">530 $NOT max</span>
       </div>
     </div>
 
@@ -3128,7 +3128,7 @@ function selectCur(el, cur){
   } else {
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
     const opts=(cur==='stars'||cur==='not')
-      ?[{v:500,l:'500 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'},{v:5000,l:'5,000 $NOT'}]
+      ?[{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'}]
       :[{v:0.05,l:'0.05 $TON'},{v:0.1,l:'0.1 $TON'},{v:0.5,l:'0.5 $TON'},{v:1,l:'1 $TON'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
       <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
@@ -3152,8 +3152,8 @@ function selectPrice(el, price){
 
 function updateRoomPreview(){
   const maxP=parseInt(document.getElementById('cr-players')?.value||10)
-  const earn=crCurrency==='free'?'+$TBOLA':crCurrency==='stars'?Math.round(crPrice*.02)+' ⭐ per card':(crPrice*.02).toFixed(3)+' $TON/card'
-  const pool=crCurrency==='free'?'$TBOLA':crCurrency==='stars'?Math.round(crPrice*maxP*.53)+' ⭐':(crPrice*maxP*.53).toFixed(2)+' TON'
+  const earn=crCurrency==='free'?'+$TBOLA':crCurrency==='stars'?Math.round(crPrice*.02)+' $NOT per card':(crPrice*.02).toFixed(3)+' $TON/card'
+  const pool=crCurrency==='free'?'$TBOLA':crCurrency==='stars'?Math.round(crPrice*maxP*.53)+' $NOT':(crPrice*maxP*.53).toFixed(2)+' TON'
   const ep=document.getElementById('cr-earn-preview');if(ep)ep.textContent=earn
   const pp=document.getElementById('cr-pool-preview');if(pp)pp.textContent=pool+' max'
 }
