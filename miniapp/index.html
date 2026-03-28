@@ -2060,7 +2060,11 @@ function renderCards(){
             color:rgba(255,255,255,.85);padding:2px 0">${l}</div>`).join('')}
         </div>
         <div class="bgrid" style="position:relative;z-index:1">
-          ${card.map(n=>`<div class="bc" id="c${ci}-${n}" style="background:rgba(255,255,255,.18);border-radius:10px;color:#fff;font-size:clamp(13px,4.5cqw,19px);font-weight:800;display:flex;align-items:center;justify-content:center;aspect-ratio:1"><span>${n}</span></div>`).join('')}
+          ${card.map((n,ni)=>{
+          const colIdx=ni%5
+          const colBg=['linear-gradient(145deg,#4C1D95,#6D28D9)','linear-gradient(145deg,#164E63,#0E7490)','linear-gradient(145deg,#064E3B,#065F46)','linear-gradient(145deg,#4C1D95,#7C3AED)','linear-gradient(145deg,#78350F,#B45309)'][colIdx]
+          return`<div class="bc" id="c${ci}-${n}" data-col="${colIdx}" style="background:${colBg};border-radius:10px;color:#fff;font-size:clamp(13px,4.5cqw,19px);font-weight:800;display:flex;align-items:center;justify-content:center;aspect-ratio:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)"><span>${n}</span></div>`
+        }).join('')}
         </div>
       </div>
     </div>`).join('')
@@ -2068,10 +2072,11 @@ function renderCards(){
 
 function markC(n){cards.forEach((card,ci)=>{if(card.includes(n)){const el=document.getElementById(`c${ci}-${n}`);if(el){
   el.classList.add('mk')
-  el.innerHTML='<span style="display:flex;align-items:center;justify-content:center;font-size:1.5em;color:#FFD700;filter:drop-shadow(0 0 5px #FFD700)">★</span>'
-  el.style.background='rgba(0,0,0,.35)'
-  el.style.transform='scale(.93)'
+  el.style.background='rgba(255,255,255,.06)'
+  el.style.transform='scale(.92)'
   el.style.borderRadius='10px'
+  el.style.boxShadow='inset 0 0 0 1px rgba(255,215,0,.3)'
+  el.innerHTML='<span style="font-size:1.5em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#FFD700;text-shadow:0 0 8px #FFD700,0 0 16px rgba(255,215,0,.5)">★</span>'
 }}})
 }
 
