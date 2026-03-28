@@ -3210,7 +3210,121 @@ setInterval(()=>{
   }
 }, 8000)
 
+// ══════════════════════════════════════════
+// BACKEND API
+// ══════════════════════════════════════════
+const API_BASE = 'http://95.217.10.201:8001'
+
+function getInitData() {
+  try { return window.Telegram?.WebApp?.initData || '' } catch { return '' }
+}
+
+async function apiCall(path, opts={}) {
+  try {
+    const res = await fetch(API_BASE + path, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', 'X-Init-Data': getInitData(), ...(opts.headers||{}) }
+    })
+    return await res.json()
+  } catch(e) {
+    console.warn('API error:', path, e)
+    return null
+  }
+}
+
+// Login + sync user from backend
+async function backendLogin() {
+  const data = await apiCall('/auth/login', {method:'POST'})
+  if(data?.user) {
+    const u = data.user
+    if(u.level)         user.level   = u.level
+    if(u.xp)           user.xp      = u.xp
+    if(u.tbola_balance) user.tbola   = u.tbola_balance
+    if(u.streak_days)  user.streak  = u.streak_days
+    if(u.total_games)  user.games   = u.total_games
+    if(u.total_wins)   user.wins    = u.total_wins
+    if(u.total_lines)  user.lines   = u.total_lines
+    console.log('✅ User synced from backend:', u.first_name)
+  }
+}
+
+// Load real jackpot
+async function loadJackpot() {
+  const data = await apiCall('/jackpot')
+  if(data?.pool_ton !== undefined) {
+    wheelJackpot = parseFloat(data.pool_ton)
+    const el = document.getElementById('w-jackpot-amt')
+    if(el) el.textContent = wheelJackpot.toFixed(1) + ' $TON'
+    const hw = document.getElementById('hub-jackpot')
+    if(hw) hw.textContent = wheelJackpot.toFixed(1) + ' $TON'
+    const jpBar = document.getElementById('w-jp-bar')
+    if(jpBar) jpBar.style.width = Math.min(100, (wheelJackpot/parseFloat(data.threshold||100))*100) + '%'
+    const jpCur = document.getElementById('w-jp-cur')
+    if(jpCur) jpCur.textContent = wheelJackpot.toFixed(1) + ' / ' + (data.threshold||100) + ' TON'
+  }
+}
+
+// Load real leaderboard
+async function loadLeaderboard(tab) {
+  const path = tab === 'monthly' ? '/leaderboard/monthly' :
+               tab === 'squads'  ? '/leaderboard/squads'  : '/leaderboard/weekly'
+  const data = await apiCall(path + '?limit=20')
+  if(!data?.entries?.length) return
+
+  const medals = ['🥇','🥈','🥉']
+  const el = document.getElementById('lb-list')
+  if(!el) return
+
+  el.innerHTML = data.entries.map((row, i) => {
+    const rank = i + 1
+    const name = row.users?.first_name || row.squads?.name || 'Player'
+    const score = row.score?.toLocaleString() || '0'
+    const isTop = rank <= 3
+    const colors = ['linear-gradient(135deg,#3D2A00,#7A5200)','linear-gradient(135deg,#1A1F28,#2D3748)','linear-gradient(135deg,#2A1A0A,#4A2E12)']
+    const borders = ['#FFD700','#9CA3AF','#CD7F32']
+    return \`<div style="display:flex;align-items:center;gap:10px;padding:\${isTop?'14px 20px':'10px 14px'};
+      margin-bottom:\${isTop?'8px':'2px'};border-radius:\${isTop?'10px':'6px'};
+      \${isTop ? 'background:'+colors[rank-1]+';border:2px solid '+borders[rank-1] : 'border-bottom:1px solid rgba(255,255,255,.05)'}">
+      <div style="font-size:\${isTop?'1.3rem':'1rem'};width:28px;text-align:center;
+        color:\${rank===1?'#FBBF24':rank===2?'#9CA3AF':rank===3?'#78716C':'rgba(255,255,255,.35)'}">
+        \${medals[rank-1]||rank}</div>
+      <div style="flex:1;font-size:.875rem;font-weight:700;color:#fff">\${name}</div>
+      <div style="font-size:.95rem;font-weight:700;color:#fff">\${score}</div>
+    </div>\`
+  }).join('')
+}
+
+// Server-side wheel spin
+async function serverSpin(sessionId) {
+  return await apiCall('/wheel/spin', {
+    method: 'POST',
+    body: JSON.stringify({session_id: sessionId})
+  })
+}
+
+// Room live player count
+async function loadRoomStats() {
+  for(const room of ['free','stars','ton','vip']) {
+    const data = await apiCall(\`/rooms/\${room}/stats\`)
+    if(data?.online) {
+      const el = document.getElementById(\`rp-\${room}\`)
+      if(el) el.textContent = data.online
+    }
+  }
+}
+
+// Init all backend data
+async function initBackend() {
+  await backendLogin()
+  await Promise.all([loadJackpot(), loadRoomStats()])
+  // Refresh jackpot every 30s
+  setInterval(loadJackpot, 30000)
+  // Refresh room stats every 20s
+  setInterval(loadRoomStats, 20000)
+}
+
 initHome();renderLb('weekly');renderPoolBanner('weekly')
+initBackend()
 
 
 
