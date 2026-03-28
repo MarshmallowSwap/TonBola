@@ -3269,30 +3269,27 @@ async function loadLeaderboard(tab) {
   const path = tab === 'monthly' ? '/leaderboard/monthly' :
                tab === 'squads'  ? '/leaderboard/squads'  : '/leaderboard/weekly'
   const data = await apiCall(path + '?limit=20')
-  if(!data?.entries?.length) return
-
+  if(!data || !data.entries || !data.entries.length) return
   const medals = ['🥇','🥈','🥉']
   const el = document.getElementById('lb-list')
   if(!el) return
-
-  el.innerHTML = data.entries.map((row, i) => {
+  const colors = ['linear-gradient(135deg,#3D2A00,#7A5200)','linear-gradient(135deg,#1A1F28,#2D3748)','linear-gradient(135deg,#2A1A0A,#4A2E12)']
+  const borders = ['#FFD700','#9CA3AF','#CD7F32']
+  el.innerHTML = data.entries.map(function(row, i) {
     const rank = i + 1
-    const name = row.users?.first_name || row.squads?.name || 'Player'
-    const score = row.score?.toLocaleString() || '0'
+    const name = (row.users && row.users.first_name) || (row.squads && row.squads.name) || 'Player'
+    const score = (row.score || 0).toLocaleString()
     const isTop = rank <= 3
-    const colors = ['linear-gradient(135deg,#3D2A00,#7A5200)','linear-gradient(135deg,#1A1F28,#2D3748)','linear-gradient(135deg,#2A1A0A,#4A2E12)']
-    const borders = ['#FFD700','#9CA3AF','#CD7F32']
-    return \`<div style="display:flex;align-items:center;gap:10px;padding:\${isTop?'14px 20px':'10px 14px'};
-      margin-bottom:\${isTop?'8px':'2px'};border-radius:\${isTop?'10px':'6px'};
-      \${isTop ? 'background:'+colors[rank-1]+';border:2px solid '+borders[rank-1] : 'border-bottom:1px solid rgba(255,255,255,.05)'}">
-      <div style="font-size:\${isTop?'1.3rem':'1rem'};width:28px;text-align:center;
-        color:\${rank===1?'#FBBF24':rank===2?'#9CA3AF':rank===3?'#78716C':'rgba(255,255,255,.35)'}">
-        \${medals[rank-1]||rank}</div>
-      <div style="flex:1;font-size:.875rem;font-weight:700;color:#fff">\${name}</div>
-      <div style="font-size:.95rem;font-weight:700;color:#fff">\${score}</div>
-    </div>\`
+    const bg = isTop ? 'background:' + colors[rank-1] + ';border:2px solid ' + borders[rank-1] : 'border-bottom:1px solid rgba(255,255,255,.05)'
+    const rankCol = rank===1?'#FBBF24':rank===2?'#9CA3AF':rank===3?'#78716C':'rgba(255,255,255,.35)'
+    return '<div style="display:flex;align-items:center;gap:10px;padding:' + (isTop?'14px 20px':'10px 14px') + ';margin-bottom:' + (isTop?'8px':'2px') + ';border-radius:' + (isTop?'10px':'6px') + ';' + bg + '">' +
+      '<div style="font-size:' + (isTop?'1.3rem':'1rem') + ';width:28px;text-align:center;color:' + rankCol + '">' + (medals[rank-1]||rank) + '</div>' +
+      '<div style="flex:1;font-size:.875rem;font-weight:700;color:#fff">' + name + '</div>' +
+      '<div style="font-size:.95rem;font-weight:700;color:#fff">' + score + '</div>' +
+      '</div>'
   }).join('')
 }
+
 
 // Server-side wheel spin
 async function serverSpin(sessionId) {
