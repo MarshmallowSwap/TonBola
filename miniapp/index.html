@@ -132,9 +132,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   font-weight:700;min-height:52px;white-space:nowrap;transition:transform .1s,box-shadow .1s}
 .btn-stone:active{transform:translateY(3px);box-shadow:0 1px 0 #111}
 .btn-sm{padding:7px 12px;font-size:.8rem;width:auto}
-.btn-back{background:linear-gradient(180deg,#5A3D1A,#3D2810);
-  color:#FFD093;border:2px solid #7A5228;
-  box-shadow:0 2px 0 #1A0E04;padding:7px 12px;font-size:.8rem;width:auto}
+.btn-back{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:7px 14px;font-size:.82rem;font-weight:700;width:auto}
 
 /* ── SECTION TITLE ── */
 .sec{font-size:.62rem;font-weight:700;letter-spacing:1.5px;
@@ -514,14 +512,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .pusername{font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:10px}
 .xpt{height:6px;border-radius:50px;background:rgba(255,255,255,.15);border:none;overflow:hidden;margin:8px 0}
 .xpf{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--violet3),var(--cyan));transition:width .8s cubic-bezier(.34,1.56,.64,1)}
-.ptbola{font-size:1.9rem;font-weight:700;color:var(--yellow);
-  text-shadow:0 0 16px rgba(255,184,0,.5),0 2px 4px rgba(0,0,0,.8)}
+.ptbola{font-size:1.7rem;font-weight:900;color:#fff;margin-top:4px}
 .plbl{font-size:.72rem;color:var(--muted);margin-top:3px}
 .srow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:7px 10px}
-.sb{background:linear-gradient(135deg,#2E1B0A,#1E1005);
-  border:2px solid #4A3318;border-radius:12px;padding:9px;text-align:center}
-.sbn{font-size:1.3rem;font-weight:700;color:var(--yellow);
-  text-shadow:0 0 10px rgba(255,184,0,.4)}
+.sb{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}
+.sbn{font-size:1.3rem;font-weight:800;color:#fff}
 .sbl{font-size:.65rem;color:var(--muted);margin-top:2px}
 .refcard{margin:0 10px 8px;padding:12px 14px;border-radius:12px;
   background:linear-gradient(135deg,#001A0A,#000E06);
@@ -630,12 +625,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   text-align:center;padding:24px;
 }
 .wov.show{display:flex}
+
+#p-wins{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(109,40,217,.08));border:1px solid rgba(139,92,246,.3)!important}
+#p-wins .sbn{color:var(--violet3)}
+#p-lines{background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(6,182,212,.06));border:1px solid rgba(34,211,238,.25)!important}
+#p-lines .sbn{color:var(--cyan)}
+#p-cards{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(245,158,11,.06));border:1px solid rgba(251,191,36,.25)!important}
+#p-cards .sbn{color:var(--yellow)}
 </style>
 </head>
 <body>
 
 <!-- HOME -->
-<div class="screen" id="sh" style="background:#0A0A0F">
+<div class="screen" id="sh" style="background:var(--bg)">
   <div class="stone-header">
     <div class="topbar">
       <div style="position:relative;flex-shrink:0">
@@ -1024,7 +1026,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- LOBBY -->
-<div class="screen" id="sl" style="background:#F0F4FF">
+<div class="screen" id="sl" style="background:var(--bg)">
   <div class="lobby-hdr">
     <div style="display:flex;align-items:center;gap:8px">
       <button class="btn btn-back btn-sm" onclick="go('s-hub');initHub()">← Back</button>
@@ -1145,7 +1147,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- PROFILE -->
-<div class="screen" id="sp">
+<div class="screen" id="sp" style="background:var(--bg)">
   <div class="stone-header">
     <div class="topbar">
       <div style="font-size:1rem;font-weight:700;color:#fff">⚔ Profile</div>
@@ -1158,15 +1160,15 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="pav" id="p-av" onclick="openAvatarPicker('user')"
         style="cursor:pointer;margin:0">
         <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;
-          border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FFB800);
-          border:2px solid #3D1A00;display:flex;align-items:center;
+          border-radius:50%;background:rgba(139,92,246,.8);
+          border:2px solid rgba(139,92,246,.4);display:flex;align-items:center;
           justify-content:center;font-size:.65rem">✏️</div>
       </div>
-      <div id="p-lv-badge" style="position:absolute;top:-4px;right:-4px;
-        width:28px;height:28px;border-radius:50%;
-        border:2px solid #1A0F08;
-        display:flex;align-items:center;justify-content:center;font-size:.9rem;
-        background:#3A7A24;box-shadow:0 0 8px rgba(0,0,0,.5)">🏕️</div>
+      <div id="p-lv-badge" style="position:absolute;bottom:-2px;right:-2px;
+        width:24px;height:24px;border-radius:50%;
+        border:2px solid rgba(109,40,217,.5);
+        display:flex;align-items:center;justify-content:center;font-size:.7rem;
+        background:var(--bg3);box-shadow:0 0 8px rgba(139,92,246,.4)">🏕️</div>
     </div>
     <div class="pname" id="p-nm">TonPlayer</div>
     <div class="pusername" id="p-usr"></div>
@@ -1237,7 +1239,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- LEADERBOARD -->
-<div class="screen" id="slb">
+<div class="screen" id="slb" style="background:var(--bg)">
 
   <!-- STICKY HEADER WITH TABS -->
   <div style="position:sticky;top:0;z-index:50;background:rgba(8,8,14,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 12px 8px">
@@ -1404,7 +1406,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- SQUAD SCREEN -->
-<div class="screen" id="s-squad">
+<div class="screen" id="s-squad" style="background:var(--bg)">
   <div class="stone-header">
     <div class="topbar">
       <div style="font-size:1rem;font-weight:700;color:#fff">👥 Squads</div>
