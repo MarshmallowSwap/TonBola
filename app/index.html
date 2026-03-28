@@ -1051,6 +1051,27 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#C4B5FD">Free Spin added! +1 spin to your session</div>
   </div>
 
+  <!-- Warrior Pass gate overlay -->
+  <div id="w-wp-gate" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+    <div style="font-size:3.5rem;margin-bottom:10px">⚔️</div>
+    <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:6px">Warrior Pass Required</div>
+    <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px;max-width:280px;line-height:1.6">Auto-Spin is exclusive to <span style="color:#A78BFA;font-weight:700">Warrior Pass</span> members. The wheel spins automatically until your spins run out.</div>
+    <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:16px;padding:14px 20px;margin-bottom:14px;max-width:280px;width:100%;text-align:left">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass include</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on the Fortune Wheel</span><br>🏆 +10% jackpot share</div>
+    </div>
+    <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">600,000 $NOT or 3 $TON / month</div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
+      <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()"
+        style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">
+        ⚔️ Get Warrior Pass
+      </button>
+      <button onclick="document.getElementById('w-wp-gate').style.display='none'"
+        style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
+        ← Go back
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- LOBBY -->
@@ -2671,33 +2692,1094 @@ function handleWheelResult(segIdx) {
       resultColor = '#fff'
     }
   } else if(seg.mult === -1) {
-    // Free spin + temp badge
+    // Free spin
     wheelSpinsRemaining++
     resultMsg = '⚔️ Free Spin! +1 spin added'
     resultColor = '#C080FF'
     const badge = document.getElementById('w-pass-badge')
     if(badge){ badge.style.display='flex'; setTimeout(()=>badge.style.display='none', 4000) }
     if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
-  
-<!-- Warrior Pass gate overlay (global) -->
-<div id="w-wp-gate" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
-    <div style="font-size:3.5rem;margin-bottom:10px">⚔️</div>
-    <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:6px">Warrior Pass Required</div>
-    <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px;max-width:280px;line-height:1.6">Auto-Spin is exclusive to <span style="color:#A78BFA;font-weight:700">Warrior Pass</span> members. The wheel spins automatically until your spins run out.</div>
-    <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:16px;padding:14px 20px;margin-bottom:14px;max-width:280px;width:100%;text-align:left">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass include</div>
-      <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on the Fortune Wheel</span><br>🏆 +10% jackpot share</div>
-    </div>
-    <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">600,000 $NOT or 3 $TON / month</div>
-    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
-      <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()"
-        style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">
-        ⚔️ Get Warrior Pass
+  } else if(seg.mult === 0) {
+    // Lose — no consolation
+    resultMsg = '💀 Lose!'
+    resultColor = '#FF4444'
+  } else {
+    const won = price * seg.mult
+    wheelSessionBal += won
+    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
+    resultColor = seg.textColor
+  }
+  // Update session balance display
+  const balEl = document.getElementById('w-session-bal')
+  if(balEl) {
+    balEl.textContent = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+  }
+  // Result flash
+  if(resultEl) {
+    resultEl.innerHTML = `<div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:${resultColor};
+      animation:fadeUp .3s ease">${resultMsg}</div>`
+  }
+  // Enable collect if balance > 0
+  const collectBtn = document.getElementById('w-collect-btn')
+  if(collectBtn && wheelSessionBal > 0) {
+    collectBtn.style.opacity='1'; collectBtn.style.pointerEvents='auto'
+  }
+  // Update spin button
+  const startBtn = document.getElementById('w-start-btn')
+  if(startBtn) {
+    if(wheelSpinsRemaining > 0) {
+      startBtn.textContent = `🎡 Spin! (${wheelSpinsRemaining} left)`
+      startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
+    } else {
+      startBtn.textContent = '🎡 Add more spins or collect'
+      startBtn.onclick = null
+      startBtn.style.opacity='.5'; startBtn.style.pointerEvents='none'
+    }
+  }
+  // Update remaining display
+  const rem = document.getElementById('w-spins-remaining')
+  if(rem) rem.textContent = wheelSpinsRemaining > 0 ? '('+wheelSpinsRemaining+' remaining)' : ''
+  // Update jackpot
+  wheelJackpot += price * 0.15
+  const jel = document.getElementById('w-jackpot-amt')
+  if(jel) jel.textContent = wheelJackpot.toFixed(1)+' TON'
+  const hw = document.getElementById('hw-jackpot')
+  if(hw) hw.textContent = wheelJackpot.toFixed(1)+' TON'
+  updateWheelUI()
+}
+
+function collectWheelWinnings() {
+  if(wheelSessionBal <= 0) return
+  const isTon = wheelCur === 'ton'
+  const amtStr = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'💰 Collect Winnings',
+      message:`Collect ${amtStr} to your wallet?\n\nA single transaction will be sent to your TON wallet.`,
+      buttons:[{id:'collect',type:'default',text:'Collect '+amtStr},{type:'cancel'}]
+    }, (id) => {
+      if(id==='collect') {
+        // TODO: real TonConnect withdrawal
+        wheelSessionBal = 0
+        const balEl = document.getElementById('w-session-bal')
+        if(balEl) balEl.textContent = '0 NOT'
+        const collectBtn = document.getElementById('w-collect-btn')
+        if(collectBtn) { collectBtn.style.opacity='.4'; collectBtn.style.pointerEvents='none' }
+        if(tg?.showPopup) tg.showPopup({
+          title:'✅ Withdrawal Sent!',
+          message:`${amtStr} is on its way to your wallet.\n\nTransaction will confirm in ~5 seconds.`,
+          buttons:[{type:'ok'}]
+        })
+      }
+    })
+  }
+}
+
+function closeLvUp(){
+  const ov=document.getElementById('lvup-ov')
+  ov.style.transition='opacity .22s'
+  ov.style.opacity='0'
+  setTimeout(()=>{ov.classList.remove('show');ov.style.opacity='';ov.style.transition=''},240)
+}
+
+function checkLevelUp(oldXp, newXp, level) {
+  const isMilestone = LEVEL_THRESHOLDS.find(t=>t.lv===level)
+  if(isMilestone) {
+    // Big celebration overlay for milestone levels
+    setTimeout(()=>showLevelUp(level), 900)
+  } else {
+    // Simple toast for regular level ups
+    setTimeout(()=>showMinorLevelUp(level), 400)
+  }
+}
+
+function awardXp(amount) {
+  const oldLv = user.level
+  user.xp += amount
+  while(user.xp >= 100) {
+    user.xp -= 100
+    user.level++
+    checkLevelUp(0, user.xp, user.level)
+  }
+}
+
+function showLineBanner(prize) {
+  const el = document.getElementById('line-banner')
+  const pr = document.getElementById('line-banner-prize')
+  if(pr) pr.textContent = prize
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 400)
+  }, 2800)
+  if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium')
+}
+
+function showBingoBanner(prize) {
+  const el = document.getElementById('bingo-banner')
+  const pr = document.getElementById('bingo-banner-prize')
+  if(pr) pr.textContent = prize
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  // Shake all bingo cards
+  document.querySelectorAll('.bcwrap').forEach(c=>{
+    c.classList.remove('bingo-shake')
+    void c.offsetWidth
+    c.classList.add('bingo-shake')
+    setTimeout(()=>c.classList.remove('bingo-shake'), 600)
+  })
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 400)
+  }, 3000)
+}
+
+function showMinorLevelUp(lv) {
+  const el = document.getElementById('lv-toast')
+  const badge = document.getElementById('lv-toast-badge')
+  const text = document.getElementById('lv-toast-text')
+  if(badge) badge.textContent = lv
+  if(text) text.textContent = 'Level ' + lv + '!'
+  if(!el) return
+  el.classList.remove('show','hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  clearTimeout(el._hideTimer)
+  el._hideTimer = setTimeout(()=>{
+    el.classList.add('hide')
+    setTimeout(()=>el.classList.remove('show','hide'), 350)
+  }, 2000)
+  if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
+}
+
+function closeWin(){
+  document.getElementById('wov').classList.remove('show')
+  document.getElementById('game-bar').style.display='none'
+  sessionStorage.removeItem('tbgame')
+  isGameActive = false
+  setRoomCardsEnabled(true)
+  go('sh');setNav('nb-h')
+}
+
+function renderProfile(){
+  const av=document.getElementById('p-av');if(av)av.textContent=user.name[0].toUpperCase()
+  document.getElementById('p-nm').textContent=user.name
+  const pu=document.getElementById('p-usr');if(pu)pu.textContent=user.username?'@'+user.username:''
+  document.getElementById('p-lv').textContent='Level '+user.level
+  document.getElementById('p-tbola').textContent=formatTbola(user.tbola)+' $TBOLA'
+  const lvInfo = getLevelIcon(user.level)
+  const pbadge = document.getElementById('p-lv-badge')
+  if(pbadge){pbadge.textContent=lvInfo.icon;pbadge.style.background=lvInfo.color+'44';pbadge.style.borderColor=lvInfo.color}
+  document.getElementById('p-str').textContent=user.streak
+  document.getElementById('p-gm').textContent=user.games
+  document.getElementById('p-wins').textContent=user.wins
+  document.getElementById('p-li').textContent=user.lines
+  document.getElementById('p-cd').textContent=user.cards
+  const xpPct=user.xp%100
+  document.getElementById('p-xpf').style.width=xpPct+'%'
+  document.getElementById('p-nxp').textContent=(100-xpPct)+' XP to next'
+  document.getElementById('p-ref').textContent='t.me/TonBolaBot_bot?start=ref_'+user.id
+
+  const levels=[
+    {lv:1, icon:'🏕️',label:'Rookie',    unlocks:'Free & NOT rooms access',color:'#3A7A24'},
+    {lv:6, icon:'⚔', label:'Player',    unlocks:'Referral program activated',color:'#4080CC'},
+    {lv:10,icon:'⭐',label:'Gold Cards', unlocks:'+5% win probability forever',color:'#CC8800'},
+    {lv:16,icon:'🔥',label:'Expert',     unlocks:'Monthly leaderboard prizes',color:'#CC5500'},
+    {lv:20,icon:'👑',label:'VIP Access', unlocks:'VIP $TON Room — legendary pools',color:'#CC2200'},
+    {lv:30,icon:'⚡',label:'Double XP',  unlocks:'2× XP every weekend',color:'#0090CC'},
+    {lv:31,icon:'🏅',label:'Master',     unlocks:'Priority squad matching',color:'#3AAA3A'},
+    {lv:50,icon:'🃏',label:'Free Card',  unlocks:'1 free card every day forever',color:'#00BCD4'},
+    {lv:51,icon:'💎',label:'Legend',     unlocks:'Season badge + exclusive frame',color:'#8B2FFF'},
+    {lv:75,icon:'🎱',label:'Grand Master',unlocks:'Legend avatar in all lobbies',color:'#CC8800'},
+  ]
+  document.getElementById('p-unlocks').innerHTML=levels.map(u=>{
+    const done=user.level>=u.lv
+    const col=u.color
+    const op=done?'1':'0.42'
+    return`<div class="uitem ${done?'done':'lock'}" style="border:1.5px solid ${col};background:${col}1A;box-shadow:0 0 14px ${col}33,inset 0 0 0 1px ${col}22;border-radius:12px;opacity:${op};transition:opacity .2s">
+      <div class="ulv" style="background:${col}33;border:1.5px solid ${col};border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 0 8px ${col}44;flex-shrink:0">
+        ${done?u.icon:'🔒'}
+      </div>
+      <div class="utext" style="flex:1"><h4 style="color:${col};text-shadow:0 0 8px ${col}66;margin:0 0 2px">${u.label}</h4><p style="margin:0">${u.unlocks}</p></div>
+      <div class="utag" style="background:${col}22;color:${col};border:1px solid ${col};border-radius:6px;padding:3px 8px;font-size:.65rem;font-weight:700;white-space:nowrap;flex-shrink:0">Lv.${u.lv}</div>
+    </div>`
+  }).join('')
+}
+
+function copyRef(){
+  const link='https://t.me/TonBolaBot_bot?start=ref_'+user.id
+  if(navigator.clipboard)navigator.clipboard.writeText(link)
+  if(tg?.showPopup)tg.showPopup({title:'Link Copied! 🏹',message:'Share and earn 5% of friends\' $TBOLA forever!',buttons:[{type:'ok'}]})
+}
+
+// ── LEADERBOARD DATA — Opzione A: Stars vs TON separate ──
+let lbCurrency = 'stars' // 'stars' or 'ton'
+let lbTab = 'weekly'
+
+const LBD = {
+  weekly: {
+    stars: [
+      {r:1,n:'CryptoKnight',  s:12400,p:'🥇 Prize: 1,800 ⭐',   col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
+      {r:2,n:'TonWarlord',    s:9800, p:'🥈 Prize: 1,080 ⭐',   col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
+      {r:3,n:'BingoSage',     s:8200, p:'🥉 Prize: 720 ⭐',     col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
+      {r:4,n:'LuckyArcher',   s:7100, p:'Prize: 300 ⭐',        col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
+      {r:5,n:'SatoshiKnight', s:6400, p:'Prize: 300 ⭐',        col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
+      {r:6,n:'Alice_TON',     s:5900, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
+      {r:7,n:'MaxBlade',      s:5200, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
+      {r:8,n:'BallDrop99',    s:4800, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🎯'},
+      {r:9,n:'TonHunter',     s:4400, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#8B5500,#5A3000)',av:'🔥'},
+      {r:10,n:'BingoBot',     s:4100, p:'Prize: 180 ⭐',        col:'radial-gradient(circle,#3A8B2A,#1A5A10)',av:'🐉'},
+    ],
+    ton: [
+      {r:1,n:'DiamondHands',  s:8200, p:'🥇 Prize: 0.54 TON',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
+      {r:2,n:'WhaleKnight',   s:6800, p:'🥈 Prize: 0.32 $TON',  col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
+      {r:3,n:'TonSage',       s:5400, p:'🥉 Prize: 0.22 $TON',  col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
+      {r:4,n:'CryptoWolf',    s:4100, p:'Prize: 0.09 TON',     col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
+      {r:5,n:'BlockArcher',   s:3800, p:'Prize: 0.09 TON',     col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
+      {r:6,n:'LedgerBlade',   s:3200, p:'Prize: 0.05 $TON',     col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'⚔️'},
+      {r:7,n:'VaultHunter',   s:2800, p:'Prize: 0.05 $TON',     col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🔥'},
+    ]
+  },
+  monthly: {
+    stars: [
+      {r:1,n:'CryptoKnight',  s:48200, p:'🥇 Season champion',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
+      {r:2,n:'TonWarlord',    s:41800, p:'🥈 Runner-up',        col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
+      {r:3,n:'BingoSage',     s:38400, p:'🥉 3rd place',        col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
+      {r:4,n:'LuckyArcher',   s:31200, p:'Top 5',               col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
+      {r:5,n:'SatoshiKnight', s:28900, p:'Top 5',               col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
+      {r:6,n:'Alice_TON',     s:24600, p:'Top 10',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
+      {r:7,n:'MaxBlade',      s:21200, p:'Top 10',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
+      {r:8,n:'BallDrop99',    s:19800, p:'Top 10',              col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🎯'},
+      {r:9,n:'TonHunter',     s:17400, p:'Top 10',              col:'radial-gradient(circle,#8B5500,#5A3000)',av:'🔥'},
+      {r:10,n:'BingoBot',     s:15100, p:'Top 10',              col:'radial-gradient(circle,#3A8B2A,#1A5A10)',av:'🐉'},
+    ],
+    ton: [
+      {r:1,n:'DiamondHands',  s:32400, p:'🥇 Season champion',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
+      {r:2,n:'WhaleKnight',   s:28600, p:'🥈 Runner-up',        col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
+      {r:3,n:'TonSage',       s:24200, p:'🥉 3rd place',        col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
+      {r:4,n:'CryptoWolf',    s:19800, p:'Top 5',               col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
+      {r:5,n:'BlockArcher',   s:16400, p:'Top 5',               col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
+      {r:6,n:'LedgerBlade',   s:13200, p:'Top 10',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'⚔️'},
+      {r:7,n:'VaultHunter',   s:11800, p:'Top 10',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🔥'},
+    ]
+  },
+  squads: {
+    stars: [
+      {r:1,n:'TON Wolves 🐺',   s:24100, p:'🥇 30% Stars pool · 18 members', col:'radial-gradient(circle,#CC8800,#8B6000)',av:'🐺'},
+      {r:2,n:'Iron Clan 🛡️',    s:19800, p:'🥈 18% Stars pool · 20 members', col:'radial-gradient(circle,#808080,#505050)',av:'🛡️'},
+      {r:3,n:'Crystal Guild 💎', s:17200, p:'🥉 12% Stars pool · 15 members', col:'radial-gradient(circle,#0060A0,#003060)',av:'💎'},
+      {r:4,n:'Stone Legion ⚔',  s:14100, p:'5% pool · 12 members',           col:'radial-gradient(circle,#3A7A24,#1A4010)',av:'⚔️'},
+      {r:5,n:'Lucky Seven 🍀',  s:11900, p:'5% pool · 9 members',            col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🍀'},
+      {r:6,n:'Dragon Fire 🐉',  s:9400,  p:'Top 10 · 14 members',            col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🐉'},
+      {r:7,n:'Moon Raiders 🌙', s:7200,  p:'Top 10 · 11 members',            col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🌙'},
+    ],
+    ton: [
+      {r:1,n:'TON Wolves 🐺',   s:48000, p:'🥇 30% $TON pool · 18 members',  col:'radial-gradient(circle,#CC8800,#8B6000)',av:'🐺'},
+      {r:2,n:'Crystal Guild 💎', s:38800, p:'🥈 18% $TON pool · 15 members',  col:'radial-gradient(circle,#0060A0,#003060)',av:'💎'},
+      {r:3,n:'Iron Clan 🛡️',    s:32200, p:'🥉 12% $TON pool · 20 members',  col:'radial-gradient(circle,#808080,#505050)',av:'🛡️'},
+      {r:4,n:'Stone Legion ⚔',  s:24100, p:'5% pool · 12 members',          col:'radial-gradient(circle,#3A7A24,#1A4010)',av:'⚔️'},
+      {r:5,n:'Dragon Fire 🐉',  s:19400, p:'5% pool · 14 members',          col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'🐉'},
+      {r:6,n:'Lucky Seven 🍀',  s:14900, p:'Top 10 · 9 members',            col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🍀'},
+      {r:7,n:'Moon Raiders 🌙', s:11200, p:'Top 10 · 11 members',           col:'radial-gradient(circle,#1A5C8B,#0A3060)',av:'🌙'},
+    ]
+  },
+  alltime: {
+    stars: [
+      {r:1,n:'CryptoKnight',  s:284000,p:'👑 All-time legend',   col:'radial-gradient(circle,#CC8800,#8B6000)',av:'⚔️'},
+      {r:2,n:'TonWarlord',    s:241800,p:'Hall of Fame',         col:'radial-gradient(circle,#808080,#505050)',av:'🗡️'},
+      {r:3,n:'BingoSage',     s:198400,p:'Hall of Fame',         col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🧙'},
+      {r:4,n:'LuckyArcher',   s:171200,p:'Elite',                col:'radial-gradient(circle,#0060A0,#003060)',av:'🏹'},
+      {r:5,n:'SatoshiKnight', s:158900,p:'Elite',                col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🛡️'},
+      {r:6,n:'Alice_TON',     s:134600,p:'Veteran',              col:'radial-gradient(circle,#2A5C1A,#1A3A0A)',av:'🦊'},
+      {r:7,n:'MaxBlade',      s:121200,p:'Veteran',              col:'radial-gradient(circle,#5A2D8B,#3A1A5A)',av:'⚡'},
+    ],
+    ton: [
+      {r:1,n:'DiamondHands',  s:184000,p:'👑 TON Legend',        col:'radial-gradient(circle,#CC8800,#8B6000)',av:'💎'},
+      {r:2,n:'WhaleKnight',   s:156800,p:'Hall of Fame',         col:'radial-gradient(circle,#808080,#505050)',av:'🐋'},
+      {r:3,n:'TonSage',       s:128400,p:'Hall of Fame',         col:'radial-gradient(circle,#CD7F32,#8B4513)',av:'🔮'},
+      {r:4,n:'CryptoWolf',    s:98200, p:'Elite',                col:'radial-gradient(circle,#0060A0,#003060)',av:'🐺'},
+      {r:5,n:'BlockArcher',   s:76400, p:'Elite',                col:'radial-gradient(circle,#8B2200,#5A1000)',av:'🏹'},
+    ]
+  }
+}
+
+const LB_LABELS = {
+  weekly:'Resets Monday', monthly:'Resets 1st of month',
+  squads:'Resets Monday', alltime:'Never resets'
+}
+
+const POOL_BASE = {
+  weekly:  { stars:{val:48200,  unit:'⭐'},   ton:{val:4.82, unit:'TON'}, tbola:{val:284000, unit:'$TBOLA'}, label:'This week · resets Monday' },
+  monthly: { stars:{val:186400, unit:'⭐'},   ton:{val:18.6, unit:'TON'}, tbola:{val:920000, unit:'$TBOLA'}, label:'This month · resets 1st' },
+  squads:  { stars:{val:24100, unit:'⭐'},   ton:{val:1.84, unit:'TON'}, tbola:{val:142000, unit:'$TBOLA'}, label:'Squad fund · resets Monday' },
+  alltime: { stars:{val:1284400,unit:'⭐'},   ton:{val:48.2, unit:'TON'}, tbola:{val:4820000,unit:'$TBOLA'}, label:'Cumulative all time' }
+}
+
+let poolGrowth = {stars:0, ton:0, tbola:0}
+let currentTab = 'weekly'
+
+function setTabStyle(id, on){
+  const el=document.getElementById(id); if(!el) return
+  if(on) el.classList.add('ltb-on'); else el.classList.remove('ltb-on')
+}
+
+function setTab(tab){
+  lbTab = tab
+  ;['weekly','monthly','squads','alltime'].forEach(t=>setTabStyle('lt-'+t, t===tab))
+  // show currency tabs for all tabs except alltime
+  const ctabs = document.getElementById('lb-currency-tabs')
+  if(ctabs) ctabs.style.display = tab==='alltime' ? 'none' : 'grid'
+  renderLb(tab)
+  const label = document.getElementById('lb-reset-label')
+  if(label) label.textContent = LB_LABELS[tab]||''
+  renderPoolBanner(tab)
+}
+
+function setCurrency(cur) {
+  lbCurrency = cur
+  setTabStyle('lc-stars', cur==='stars')
+  setTabStyle('lc-ton',   cur==='ton')
+  renderLb(lbTab)
+  renderPoolBanner(lbTab)
+}
+
+function renderLb(tab) {
+  lbTab = tab
+  const isSquads = tab === 'squads'
+  const ctabs = document.getElementById('lb-currency-tabs')
+  if(ctabs) ctabs.style.display = tab==='alltime' ? 'none' : 'grid'
+
+  let data
+  if(isSquads) {
+    data = LBD.squads[lbCurrency] || LBD.squads.stars
+  } else if(tab === 'alltime') {
+    data = LBD.alltime[lbCurrency] || LBD.alltime.stars
+  } else {
+    data = LBD[tab]?.[lbCurrency] || LBD[tab]?.stars || []
+  }
+
+  // Clone to avoid mutating original
+  data = [...data]
+
+  // Inject current user if not already in list
+  const myName = user.name || 'You'
+  const myScore = user.tbola || 0
+  const myScoreFmt = formatTbola(myScore)
+  const alreadyIn = data.some(r => r.n === myName)
+  if(!alreadyIn && myScore > 0) {
+    // Find where user would rank
+    const insertAt = data.findIndex(r => r.s < myScore)
+    const myEntry = {
+      r: insertAt === -1 ? data.length+1 : insertAt+1,
+      n: myName,
+      s: myScore,
+      p: isSquads ? (mySquad ? mySquad.name : 'No squad') : (lbCurrency==='stars' ? 'Your score' : 'Your score'),
+      col: 'radial-gradient(circle,#CC8800,#8B6000)',
+      av: user.avatar || '😊',
+      isMe: true
+    }
+    if(insertAt === -1) data.push(myEntry)
+    else data.splice(insertAt, 0, myEntry)
+    // Recalculate ranks
+    data.forEach((r,i) => r.r = i+1)
+  }
+
+  const medals = ['🥇','🥈','🥉']
+  const podiumBg = [
+    'background:linear-gradient(135deg,#3D2A00,#7A5200)',
+    'background:linear-gradient(135deg,#1A1F28,#2D3748)',
+    'background:linear-gradient(135deg,#2A1A0A,#4A2E12)'
+  ]
+  const podiumBorder = ['#FFD700','#9CA3AF','#CD7F32']
+  document.getElementById('lb-list').innerHTML = data.map(row => `
+    <div style="display:flex;align-items:center;gap:10px;padding:${row.r<=3?'14px 20px':'10px 14px'};margin:${row.r<=3?'0 10px':'0 10px'};
+      margin:${row.r<=3?'0 0 8px':'0 0 2px'};
+      border-radius:${row.r<=3?'10px':'6px'};
+      ${row.r<=3 ? podiumBg[row.r-1]+';border:2px solid '+podiumBorder[row.r-1]+';box-shadow:0 6px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)' : 'border-bottom:1px solid rgba(255,255,255,.05)'};
+      ${row.isMe && row.r>3 ? 'background:rgba(139,92,246,.08);border-left:3px solid #8B5CF6;' : ''}
+      cursor:default;position:relative">
+      <div style="font-size:${row.r<=3?'1.3rem':'1rem'};font-weight:700;width:28px;text-align:center;flex-shrink:0;
+        color:${row.r===1?'#FBBF24':row.r===2?'#9CA3AF':row.r===3?'#78716C':row.isMe?'#A78BFA':'rgba(255,255,255,.35)'};
+        text-shadow:${row.r<=3?'0 1px 3px rgba(0,0,0,.8)':'none'}">${medals[row.r-1]||row.r}</div>
+      <div style="width:${row.r<=3?'46px':'40px'};height:${row.r<=3?'46px':'40px'};border-radius:50%;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;
+        font-size:${row.r<=3?'1.3rem':'1.1rem'};background:${row.col};
+        border:${row.r<=3?'2px solid '+podiumBorder[row.r-1]:row.isMe?'2px solid #8B5CF6':'2px solid rgba(255,255,255,.08)'};
+        box-shadow:${row.r<=3?'0 0 12px rgba(0,0,0,.3)':row.isMe?'0 0 10px rgba(139,92,246,.4)':'none'}">
+        ${row.av||row.n[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.875rem;font-weight:700;
+          color:${row.isMe?'#A78BFA':'#fff'};
+          
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          ${row.n}${row.isMe?' 👈':''}
+        </div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.5)">${row.p||''}</div>
+      </div>
+      <div style="font-size:.95rem;font-weight:700;
+        color:${row.isMe?'#A78BFA':'#fff'};flex-shrink:0">${row.s.toLocaleString()}</div>
+    </div>`).join('')
+}
+
+function renderPoolBanner(tab) {
+  currentTab = tab
+  const base = POOL_BASE[tab]
+  const lbl = document.getElementById('lb-pool-label')
+  if(lbl) lbl.textContent = base.label
+  const grid = document.getElementById('lb-pool-grid')
+  if(!grid) return
+
+  const isAlltime = tab === 'alltime'
+  const isSquads  = tab === 'squads'
+
+  const starsVal = Math.floor(base.stars.val + (tab==='weekly'?poolGrowth.stars:tab==='monthly'?poolGrowth.stars*4:0))
+  const tonVal   = parseFloat((base.ton.val + (tab==='squads'?poolGrowth.ton:tab==='weekly'?poolGrowth.ton:0)).toFixed(2))
+  const tbolaVal = Math.floor(base.tbola.val + poolGrowth.tbola)
+
+  let boxes = []
+
+  if(isAlltime) {
+    // alltime: 2 top + 1 centered below
+    grid.style.gridTemplateColumns = '1fr 1fr'
+    grid.innerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);font-weight:800;margin-bottom:5px">◈ $NOT Paid</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--yellow);text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
+      </div>
+      <div style="background:rgba(61,158,255,.1);border:1.5px solid rgba(61,158,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px;opacity:.85">💎 $TON Paid</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
+      </div>
+      <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center;grid-column:1/-1;max-width:200px;margin:0 auto;width:100%">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px;opacity:.85">◆ $TBOLA Accumulated</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">airdrop snapshot</div>
+      </div>`
+    return
+  } else if(isSquads) {
+    boxes = lbCurrency === 'stars'
+      ? [{label:'◈ $NOT Pool', color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
+         {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
+      : [{label:'💎 $TON Pool',  color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',             sub:'top squads share'},
+         {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
+    grid.style.gridTemplateColumns = '1fr 1fr'
+  } else if(lbCurrency === 'stars') {
+    boxes = [
+      {label:'◈ $NOT Pool',  color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
+      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(),       sub:'airdrop snapshot'},
+    ]
+    grid.style.gridTemplateColumns = '1fr 1fr'
+  } else {
+    boxes = [
+      {label:'💎 $TON Pool',    color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',            sub:'top players share'},
+      {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'},
+    ]
+    grid.style.gridTemplateColumns = '1fr 1fr'
+  }
+
+  grid.innerHTML = boxes.map(b => `
+    <div style="background:${b.bg};border:1.5px solid ${b.border};
+      border-radius:10px;padding:10px 8px;text-align:center">
+      <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;
+        text-transform:uppercase;color:${b.color};margin-bottom:5px;opacity:.85">${b.label}</div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
+        color:${b.color};text-shadow:0 0 12px ${b.color}55">${b.value}</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:3px">${b.sub}</div>
+    </div>`).join('')
+}
+
+// Grow pool every few seconds to simulate live activity
+setInterval(()=>{
+  poolTick++
+  // ~1 card every 8 seconds on average across all rooms
+  poolGrowth.stars  += Math.random() < 0.4 ? Math.floor(Math.random()*100+50) : 0
+  poolGrowth.ton    += Math.random() < 0.2 ? parseFloat((Math.random()*0.1).toFixed(3)) : 0
+  poolGrowth.tbola  += Math.floor(Math.random()*20+10)
+  // Re-render banner if on leaderboard screen
+  if(document.getElementById('slb').classList.contains('active')) {
+    renderPoolBanner(currentTab)
+  }
+}, 8000)
+
+initHome();renderLb('weekly');renderPoolBanner('weekly')
+
+
+
+// ── PRIVATE ROOM VARS ──
+let crCurrency='stars', crPrice=50
+
+function selectCur(el, cur){
+  crCurrency=cur
+  // Reset highlight currency buttons
+  document.querySelectorAll('.cur-btn').forEach(b=>{
+    b.style.background='rgba(0,0,0,.2)'
+    b.style.borderColor='rgba(255,255,255,.1)'
+  })
+  el.style.background=(cur==='stars')?'rgba(200,200,200,.15)':cur==='ton'?'rgba(61,158,255,.2)':'rgba(58,255,138,.15)'
+  el.style.borderColor=(cur==='stars')?'#888':cur==='ton'?'#40B8FF':'#2A7A1A'
+  renderPriceChips(cur)
+}
+
+const CR_OPTS = {
+  stars: [{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1K $NOT'},{v:2000,l:'2K $NOT'},{v:5000,l:'5K $NOT'},{v:10000,l:'10K $NOT'}],
+  ton:   [{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}],
+  free:  []
+}
+
+let crPriceAccum = 0
+
+function renderPriceChips(cur){
+  crPriceAccum = 0
+  crPrice = 0
+  const wrap = document.getElementById('cr-price-wrap')
+  const pricesEl = document.getElementById('cr-prices')
+  if(!wrap || !pricesEl) return
+  if(cur === 'free'){
+    wrap.style.opacity = '.4'
+    wrap.style.pointerEvents = 'none'
+    pricesEl.innerHTML = ''
+  } else {
+    wrap.style.opacity = '1'
+    wrap.style.pointerEvents = 'auto'
+    const opts = CR_OPTS[cur] || CR_OPTS.stars
+    pricesEl.innerHTML = opts.map(o =>
+      `<div class="price-btn" data-price="${o.v}"
+        style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
+          background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.15);color:#fff;transition:all .15s"
+        onclick="selectPrice(this,${o.v})">${o.l}</div>`
+    ).join('')
+  }
+  updateTotalBadge()
+  updateRoomPreview()
+}
+
+function selectPrice(el, price){
+  crPriceAccum = Math.round((crPriceAccum + price) * 1000) / 1000
+  crPrice = crPriceAccum
+  // Glow sul bottone cliccato (non reset gli altri così si vede la history visiva)
+  el.style.background = 'rgba(167,139,250,.3)'
+  el.style.borderColor = '#A78BFA'
+  updateTotalBadge()
+  updateRoomPreview()
+}
+
+function updateTotalBadge(){
+  const badge = document.getElementById('cr-price-total')
+  if(!badge) return
+  const isNot = crCurrency === 'stars'
+  if(crPriceAccum === 0){
+    badge.textContent = 'Total: 0'
+    badge.style.color = '#888'
+    badge.style.borderColor = 'rgba(167,139,250,.3)'
+  } else {
+    const label = isNot
+      ? crPriceAccum.toLocaleString() + ' $NOT'
+      : crPriceAccum.toFixed(crPriceAccum < 1 ? 2 : 1) + ' TON'
+    badge.textContent = 'Total: ' + label
+    badge.style.color = '#fff'
+    badge.style.borderColor = '#A78BFA'
+  }
+}
+
+let autoSpinActive=false
+let autoSpinTimeout=null
+
+function toggleAutoSpin(){
+  if(!user.warriorPass){
+    document.getElementById('w-wp-gate').style.display='flex'
+    return
+  }
+  autoSpinActive=!autoSpinActive
+  updateWheelAutoSpinBtn()
+  if(autoSpinActive) autoSpinLoop()
+  else clearTimeout(autoSpinTimeout)
+}
+
+function autoSpinLoop(){
+  if(!autoSpinActive) return
+  if(wheelSpinsRemaining<=0){
+    autoSpinActive=false
+    updateWheelAutoSpinBtn()
+    return
+  }
+  spinWheel()
+  autoSpinTimeout=setTimeout(autoSpinLoop,4600)
+}
+
+function updateWheelAutoSpinBtn(){
+  const btn=document.getElementById('w-autospin-btn')
+  const lbl=document.getElementById('w-autospin-label')
+  if(!btn||!lbl) return
+  if(autoSpinActive){
+    btn.style.background='rgba(139,92,246,.3)'
+    btn.style.borderColor='#8B5CF6'
+    btn.style.color='#C4B5FD'
+    lbl.textContent='⏹ Stop Auto-Spin'
+  } else {
+    btn.style.background='rgba(139,92,246,.08)'
+    btn.style.borderColor='rgba(139,92,246,.4)'
+    btn.style.color='rgba(139,92,246,.7)'
+    lbl.textContent='Auto-Spin'
+  }
+}
+
+function resetPrice(){
+  crPriceAccum = 0; crPrice = 0
+  // Reset visual highlight on chips
+  document.querySelectorAll('.price-btn').forEach(b=>{
+    b.style.background='rgba(0,0,0,.2)'
+    b.style.borderColor='rgba(255,255,255,.15)'
+  })
+  updateTotalBadge()
+  updateRoomPreview()
+}
+
+function updateRoomPreview(){
+  const maxP = parseInt(document.getElementById('cr-players')?.value || 10)
+  const p = crPriceAccum || crPrice
+  const isNot = crCurrency === 'stars'
+  const earn = crCurrency==='free' ? '+$TBOLA' : isNot ? Math.round(p*.02)+' $NOT per card' : (p*.02).toFixed(3)+' TON/card'
+  const pool = crCurrency==='free' ? '$TBOLA' : isNot ? Math.round(p*maxP*.53)+' $NOT' : (p*maxP*.53).toFixed(2)+' TON'
+  const ep = document.getElementById('cr-earn-preview'); if(ep) ep.textContent = earn
+  const pp = document.getElementById('cr-pool-preview'); if(pp) pp.textContent = pool + ' max'
+}
+
+// Init al caricamento pagina
+;(function initCreateRoom(){
+  const firstCurBtn = document.querySelector('.cur-btn[data-cur="stars"]')
+  if(firstCurBtn) selectCur(firstCurBtn, 'stars')
+  else renderPriceChips('stars')
+})()
+
+document.getElementById('cr-players')?.addEventListener('input', updateRoomPreview)
+
+function generateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('')
+}
+
+function createRoom(){
+  const code=generateCode()
+  const pw=document.getElementById('cr-password')?.value||''
+  const maxP=document.getElementById('cr-players')?.value||10
+  // Show created room popup
+  const msg=`Room created!\n\nCode: ${code}\n\nShare this with your friends to join.${pw?'\nPassword: '+pw:''}`
+  if(tg?.showPopup){
+    tg.showPopup({title:'⚔ Room Ready!',message:msg,
+      buttons:[{id:'copy',type:'default',text:'📋 Copy Code'},{id:'ok',type:'ok'}]},
+      (id)=>{
+        if(id==='copy'&&navigator.clipboard) navigator.clipboard.writeText(code)
+        // Enter the lobby as creator
+        curRoom=crCurrency==='free'?'free':crCurrency==='ton'?'ton':'stars'
+        openLobby(curRoom)
+      })
+  } else {
+    alert(msg)
+    curRoom=crCurrency==='free'?'free':crCurrency==='ton'?'ton':'stars'
+    openLobby(curRoom)
+  }
+}
+
+function updateCodeBoxes(val){
+  val=val.toUpperCase().replace(/[^A-Z0-9]/g,'')
+  document.getElementById('join-code').value=val
+  const boxes=document.querySelectorAll('.code-box')
+  boxes.forEach((b,i)=>{
+    b.textContent=val[i]||''
+    b.style.borderColor=val[i]?'#A78BFA':'#4A3318'
+    b.style.background=val[i]?'rgba(255,184,0,.1)':'rgba(0,0,0,.3)'
+  })
+}
+
+function joinRoom(){
+  const code=document.getElementById('join-code')?.value.toUpperCase()
+  if(!code||code.length!==6){
+    if(tg?.showPopup) tg.showPopup({title:'❌ Invalid Code',message:'Please enter a 6-character room code.',buttons:[{type:'ok'}]})
+    return
+  }
+  // In demo: just open stars lobby with the code
+  // In production: API call to validate code and get room details
+  if(tg?.showPopup){
+    tg.showPopup({title:'🔑 Joining Room '+code,
+      message:'Connecting to private room...\n\nIn the live version this will connect you to the exact room with your friend.',
+      buttons:[{id:'ok',type:'default',text:'Enter Lobby'}]},
+      ()=>{ curRoom='stars'; openLobby('stars') })
+  } else {
+    curRoom='stars'; openLobby('stars')
+  }
+}
+// Restore active game if user left and came back
+setTimeout(()=>{ restoreGameState() }, 300)
+
+// ── AVATAR SYSTEM ──
+const PRESETS_USER = ['😊','😎','🦊','🐺','🦁','🐯','🦅','🐉','⚔️','🛡️','💎','🎱','🔥','⭐','👑','🏆','🎯','🧙','🤺','🦸']
+const PRESETS_SQUAD = ['🛡️','⚔️','🐺','🦁','🐯','🦅','🐉','🔥','💀','🏰','🌙','⚡','🎯','🏹','🗡️','🧊','🌊','🌋','🦊','👹']
+
+let avatarTarget = 'user' // 'user' or 'squad'
+let selectedPreset = user.avatar || '😊'
+let squadAvatar = '🛡️'
+
+function openAvatarPicker(target) {
+  avatarTarget = target
+  const isSquad = target === 'squad'
+  document.getElementById('avatar-screen-title').textContent = isSquad ? 'Squad Image' : 'Choose Avatar'
+  document.getElementById('avatar-back-btn').setAttribute('onclick', isSquad ? "go('s-create-squad')" : "go('sp')")
+  const presets = isSquad ? PRESETS_SQUAD : PRESETS_USER
+  const current = isSquad ? squadAvatar : (user.avatar || '😊')
+  document.getElementById('avatar-preview-big').textContent = current
+  // Render preset grid
+  document.getElementById('preset-grid').innerHTML = presets.map(p => `
+    <div onclick="selectPreset('${p}')"
+      style="aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
+        justify-content:center;font-size:1.6rem;cursor:pointer;
+        background:${p===current?'rgba(255,184,0,.2)':'rgba(0,0,0,.25)'};
+        border:2px solid ${p===current?'#A78BFA':'rgba(255,255,255,.08)'};
+        transition:all .15s">${p}</div>`).join('')
+  go('s-avatar')
+}
+
+function selectPreset(p) {
+  selectedPreset = p
+  document.getElementById('avatar-preview-big').textContent = p
+  document.querySelectorAll('#preset-grid div').forEach(el => {
+    const isSelected = el.textContent === p
+    el.style.background = isSelected ? 'rgba(255,184,0,.2)' : 'rgba(0,0,0,.25)'
+    el.style.borderColor = isSelected ? '#A78BFA' : 'rgba(255,255,255,.08)'
+  })
+}
+
+function handleAvatarUpload(e) {
+  const file = e.target.files[0]
+  if(!file) return
+  if(file.size > 2*1024*1024) {
+    if(tg?.showPopup) tg.showPopup({title:'Too large',message:'Max 2MB. Please choose a smaller image.',buttons:[{type:'ok'}]})
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = (ev) => {
+    const img = ev.target.result
+    const prev = document.getElementById('avatar-preview-big')
+    prev.innerHTML = `<img src="${img}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+    prev.style.fontSize = '0'
+    selectedPreset = '__custom__'
+    user.avatarImg = img
+  }
+  reader.readAsDataURL(file)
+}
+
+function confirmAvatar() {
+  if(avatarTarget === 'user') {
+    if(selectedPreset !== '__custom__') {
+      user.avatar = selectedPreset
+      const av = document.getElementById('p-av')
+      if(av) av.textContent = selectedPreset
+      const hav = document.getElementById('h-av')
+      if(hav) hav.textContent = selectedPreset
+    } else if(user.avatarImg) {
+      const av = document.getElementById('p-av')
+      if(av) av.innerHTML = `<img src="${user.avatarImg}" style="width:100%;height:100%;border-radius:50%;object-fit:cover"><div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FFB800);border:2px solid #3D1A00;display:flex;align-items:center;justify-content:center;font-size:.65rem">✏️</div>`
+      const hav = document.getElementById('h-av')
+      if(hav) hav.innerHTML = `<img src="${user.avatarImg}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+    }
+    go('sp')
+  } else {
+    squadAvatar = selectedPreset !== '__custom__' ? selectedPreset : '🛡️'
+    const prev = document.getElementById('squad-avatar-preview')
+    if(prev) prev.textContent = squadAvatar
+    go('s-create-squad')
+  }
+}
+
+// ── SQUAD SYSTEM ──
+let mySquad = null // null = no squad
+
+function renderSquad() {
+  const cont = document.getElementById('squad-content')
+  if(!cont) return
+
+  if(!mySquad) {
+    // ── NO SQUAD ──
+    cont.innerHTML = `
+      <div style="text-align:center;padding:20px 16px 12px">
+        <div style="font-size:3.5rem;margin-bottom:10px">🛡️</div>
+        <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">You have no squad</div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.6;max-width:260px;margin:0 auto">
+          Create your own squad or send a join request to an existing one.
+        </div>
+      </div>
+
+      <!-- CREATE -->
+      <button class="btn btn-gold" onclick="go('s-create-squad')" style="padding:14px;font-size:1rem">
+        ⚔ Create a Squad — 0.5 $TON or 500,000 NOT
       </button>
-      <button onclick="document.getElementById('w-wp-gate').style.display='none'"
-        style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">
-        ← Go back
-      </button>
-    </div>
-  </div>
+
+      <!-- JOIN WITH CODE -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:16px">
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--violet3);margin-bottom:10px">
+          🔑 JOIN WITH CODE
+        </div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
+            style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 12px;color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;text-transform:uppercase">
+          <button class="btn btn-stone btn-sm" onclick="joinSquad()" style="flex-shrink:0;padding:9px 14px">Join</button>
+        </div>
+      </div>
+
+      <!-- BROWSE SQUADS -->
+      <div class="sec" style="padding:4px 0">Open Squads</div>
+      ${renderSquadList()}
+    `
+  } else {
+    // ── HAS SQUAD ──
+    cont.innerHTML = `
+      <!-- MY SQUAD CARD -->
+      <div class="wood-panel" style="padding:16px;text-align:center">
+        <div class="nail-bl"></div><div class="nail-br"></div>
+        <div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;
+          background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1));border:1px solid rgba(139,92,246,.25);border:1px solid var(--border);
+          display:flex;align-items:center;justify-content:center;font-size:2rem">${mySquad.icon}</div>
+        <div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:2px">${mySquad.name}</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">${mySquad.desc||'No description'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:var(--yellow)">${mySquad.members}</div>
+            <div style="font-size:.65rem;color:var(--muted)">Members</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:#3AFF8A">${(mySquad.weekScore||0).toLocaleString()}</div>
+            <div style="font-size:.65rem;color:var(--muted)">Week Score</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700;color:var(--yellow)">#${mySquad.rank||'?'}</div>
+            <div style="font-size:.65rem;color:var(--muted)">Rank</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;
+          display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;cursor:pointer"
+          onclick="const c='${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}';navigator.clipboard?.writeText(c);if(tg?.showPopup)tg.showPopup({title:'Copied!',message:'Code '+c+' copied to clipboard.',buttons:[{type:'ok'}]})">
+          <span style="font-size:.75rem;color:var(--muted)">Squad code · tap to copy</span>
+          <span style="font-size:.85rem;font-weight:700;color:var(--yellow);letter-spacing:2px">
+            ${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
+          </span>
+        </div>
+      </div>
+
+      <!-- MEMBERS -->
+      <div class="stone-panel" style="padding:14px">
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+          color:var(--muted);margin-bottom:10px">Members · ${mySquad.members}/20</div>
+        ${(mySquad.memberList||[]).map((m,i)=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;
+            border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="width:32px;height:32px;border-radius:50%;
+              background:linear-gradient(145deg,#6B4423,#3A2810);
+              border:2px solid #4A3318;display:flex;align-items:center;
+              justify-content:center;font-size:.95rem;flex-shrink:0">${m.avatar||'😊'}</div>
+            <div style="flex:1;font-size:.85rem;font-weight:600;color:#fff">${m.name}</div>
+            ${i===0?'<div style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:var(--yellow);border:1px solid rgba(255,184,0,.3)">Captain</div>':''}
+          </div>`).join('')}
+      </div>
+
+      <!-- LEAVE -->
+      <button class="btn btn-stone" onclick="leaveSquad()" style="padding:12px;font-size:.85rem">
+        🚪 Leave Squad
+      </button>`
+  }
+
+  // Update profile widget
+  const pname = document.getElementById('p-squad-name')
+  const psub  = document.getElementById('p-squad-sub')
+  const picon = document.getElementById('p-squad-icon')
+  const pval  = document.getElementById('p-squad-value')
+  const prnk  = document.getElementById('p-squad-rank')
+  if(mySquad) {
+    if(pname) pname.textContent = mySquad.name
+    if(psub)  psub.textContent  = mySquad.members+' members'
+    if(picon) picon.textContent = mySquad.icon
+    if(pval)  pval.textContent  = (mySquad.weekScore||0).toLocaleString()+' pts'
+    if(prnk)  prnk.textContent  = mySquad.rank ? '#'+mySquad.rank+' this week' : 'unranked'
+  } else {
+    if(pname) pname.textContent = 'No Squad'
+    if(psub)  psub.textContent  = 'Tap to join or create'
+    if(picon) picon.textContent = '🛡️'
+    if(pval)  pval.textContent  = ''
+    if(prnk)  prnk.textContent  = ''
+  }
+}
+
+function renderSquadList() {
+  const medals = ['🥇','🥈','🥉']
+  const squads = SQUAD_REGISTRY.map((s,i)=>({
+    rank:i+1, name:s.name, icon:s.icon, code:s.code,
+    members:s.members, max:s.max, score:s.weekScore,
+    open:s.members < s.max
+  }))
+  return squads.map(s=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:${s.rank<=3?'12px 14px':'10px 12px'};
+      background:${s.rank===1?'linear-gradient(135deg,#3D2A00,#7A5200)':s.rank===2?'linear-gradient(135deg,#1A1F28,#2D3748)':s.rank===3?'linear-gradient(135deg,#2A1A0A,#4A2E12)':'var(--bg3)'};
+      border:${s.rank===1?'2px solid #FFD700':s.rank===2?'2px solid #9CA3AF':s.rank===3?'2px solid #CD7F32':'1px solid rgba(255,255,255,.07)'};
+      box-shadow:${s.rank<=3?'0 4px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08)':'none'};
+      border-radius:14px;margin-bottom:8px">
+      <!-- Rank medal -->
+      <div style="width:24px;text-align:center;font-size:1rem;flex-shrink:0">
+        ${s.rank<=3 ? medals[s.rank-1] : '<span style="font-size:.8rem;font-weight:700;color:var(--muted)">'+s.rank+'</span>'}
+      </div>
+      <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;
+        background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1));border:1px solid rgba(139,92,246,.25);border:1px solid var(--border);
+        display:flex;align-items:center;justify-content:center;font-size:1.2rem">${s.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.88rem;font-weight:700;color:#fff">${s.name}</span>
+        </div>
+        <div style="font-size:.7rem;color:var(--muted)">${s.members}/${s.max} members · ${s.score.toLocaleString()} pts</div>
+      </div>
+      ${s.open
+        ? `<button class="btn btn-stone btn-sm" onclick="requestJoinSquad('${s.name}')"
+            style="padding:6px 12px;font-size:.75rem;flex-shrink:0">Request</button>`
+        : `<div style="font-size:.7rem;color:var(--muted);padding:4px 8px;border-radius:50px;
+            border:1px solid #3D2810">Full</div>`
+      }
+    </div>`).join('')
+}
+
+function requestJoinSquad(name) {
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'📨 Join Request',
+      message:'Send a join request to "'+name+'"?\n\nThe captain will be notified and can accept or decline.',
+      buttons:[{id:'ok',type:'default',text:'Send Request'},{type:'cancel'}]
+    }, (id)=>{
+      if(id==='ok' && tg?.showPopup) {
+        tg.showPopup({title:'✅ Request Sent!',
+          message:'Your request has been sent to "'+name+'". You will be notified when the captain responds.',
+          buttons:[{type:'ok'}]})
+      }
+    })
+  }
+}
+
+function createSquad() {
+  const name = document.getElementById('squad-name')?.value.trim()
+  if(!name) {
+    if(tg?.showPopup) tg.showPopup({title:'Missing name',message:'Please enter a squad name.',buttons:[{type:'ok'}]})
+    return
+  }
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '500,000 NOT'
+  const feeIcon = squadFee === 'ton' ? '💎' : '⭐'
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title: feeIcon+' Confirm Payment',
+      message: 'Creating "'+name+'" costs '+feeStr+' (one-time).\n\nThis goes into the weekly squad prize pool.',
+      buttons:[{id:'pay',type:'default',text:'Pay '+feeStr+' ✓'},{type:'cancel',text:'Cancel'}]
+    }, (id) => { if(id==='pay') _doCreateSquad(name) })
+    return
+  }
+  _doCreateSquad(name)
+}
+
+function _doCreateSquad(name) {
+  const desc = document.getElementById('squad-desc')?.value.trim()
+  mySquad = {
+    name, desc, icon: squadAvatar,
+    members: 1, rank: null, weekScore: 0,
+    memberList:[{name:user.name, avatar:user.avatar||'😊'}]
+  }
+  const pname = document.getElementById('p-squad-name')
+  const psub = document.getElementById('p-squad-sub')
+  const picon = document.getElementById('p-squad-icon')
+  if(pname) pname.textContent = name
+  if(psub) psub.textContent = '1 member · Captain'
+  if(picon) picon.textContent = squadAvatar
+  const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '500,000 NOT'
+  if(tg?.showPopup) {
+    tg.showPopup({title:'⚔ Squad Created!',
+      message:'"'+name+'" is ready!\n\nShare this code:\n🔑 '+code+'\n\n'+feeStr+' added to squad prize pool.',
+      buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); renderSquad() })
+  } else {
+    go('s-squad'); renderSquad()
+  }
+}
+
+// Squad registry — in production this comes from Supabase
+const SQUAD_REGISTRY = [
+  {code:'TONWOL', name:'TON Wolves',  desc:'We hunt TON together',      icon:'🐺', members:18, max:20, rank:1, weekScore:48000, memberList:[{name:'WolfAlpha',avatar:'🐺'},{name:'TonHunter',avatar:'🦊'},{name:'CryptoFang',avatar:'⚔️'}]},
+  {code:'CRYSTL', name:'Crystal Guild',desc:'Crystal clear victories',  icon:'💎', members:15, max:20, rank:3, weekScore:38800, memberList:[{name:'DiamondHands',avatar:'💎'},{name:'GemCutter',avatar:'🔮'}]},
+  {code:'STONLG', name:'Stone Legion', desc:'Hard as stone, strong as one',icon:'⚔️',members:12, max:15, rank:4, weekScore:32100, memberList:[{name:'IronWall',avatar:'🛡️'},{name:'RockSolid',avatar:'🗿'}]},
+  {code:'DRAGFR', name:'Dragon Fire',  desc:'We breathe fire on the leaderboard',icon:'🐉',members:14,max:20,rank:5,weekScore:24400,memberList:[{name:'FireBreath',avatar:'🔥'},{name:'AshWing',avatar:'🐉'}]},
+  {code:'MOONRD', name:'Moon Raiders', desc:'Strike under the moonlight', icon:'🌙', members:11, max:15, rank:6, weekScore:21200, memberList:[{name:'NightStar',avatar:'🌙'},{name:'DarkArrow',avatar:'🏹'}]},
+]
+
+function joinSquad() {
+  const input = document.getElementById('squad-join-code')
+  const code = input?.value.trim().toUpperCase()
+  if(!code) {
+    if(tg?.showPopup) tg.showPopup({title:'Missing code',message:'Please enter the squad code.',buttons:[{type:'ok'}]})
+    return
+  }
+  const found = SQUAD_REGISTRY.find(s => s.code === code)
+  if(!found) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'Code not found',
+      message:'"'+code+'" does not match any squad.\nDouble check the code and try again.',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+  if(found.members >= found.max) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'Squad is full',
+      message:'"'+found.name+'" is at maximum capacity ('+found.max+' members).',
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
+  if(tg?.showPopup) {
+    tg.showPopup({
+      title:'Join "'+found.name+'"?',
+      message:found.icon+' '+found.name+'\n'+found.desc+'\n\n'+found.members+'/'+found.max+' members · Rank #'+found.rank,
+      buttons:[{id:'join',type:'default',text:'Join Squad'},{type:'cancel'}]
+    }, (id) => {
+      if(id === 'join') {
+        mySquad = {
+          name:found.name, desc:found.desc, icon:found.icon,
+          members:found.members+1, max:found.max,
+          rank:found.rank, weekScore:found.weekScore,
+          memberList:[...found.memberList, {name:user.name, avatar:user.avatar||'😊'}]
+        }
+        if(input) input.value = ''
+        go('s-squad'); renderSquad()
+      }
+    })
+  } else {
+    mySquad = {
+      name:found.name, desc:found.desc, icon:found.icon,
+      members:found.members+1, max:found.max,
+      rank:found.rank, weekScore:found.weekScore,
+      memberList:[...found.memberList, {name:user.name, avatar:user.avatar||'😊'}]
+    }
+    go('s-squad'); renderSquad()
+  }
+}
+
+function leaveSquad() {
+  if(tg?.showPopup) {
+    tg.showPopup({title:'Leave Squad?',message:'Are you sure you want to leave your squad?',
+      buttons:[{id:'yes',type:'destructive',text:'Leave'},{type:'cancel'}]},
+      (id)=>{ if(id==='yes'){ mySquad=null; renderSquad() }})
+  } else { mySquad=null; renderSquad() }
+}
+</script>
+</body>
+</html>
+/* deploy trigger */
 
