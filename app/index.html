@@ -1342,19 +1342,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="nail-bl"></div><div class="nail-br"></div>
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Currency</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div onclick="selectCur(this,'stars')" data-cur="stars"
+        <div onclick="selectCur(this,'stars')" data-cur="stars" class="cur-btn"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
             background:rgba(255,184,0,.2);border:2px solid #FFB800;transition:all .15s">
           <img src="assets/icon-not-coin.png" style="width:28px;height:28px;object-fit:contain">
           <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:3px">$NOT</div>
         </div>
-        <div onclick="selectCur(this,'ton')" data-cur="ton"
+        <div onclick="selectCur(this,'ton')" data-cur="ton" class="cur-btn"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
             background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
           <img src="assets/icon-ton-coin.png" style="width:28px;height:28px;object-fit:contain">
           <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:3px">$TON</div>
         </div>
-        <div onclick="selectCur(this,'free')" data-cur="free"
+        <div onclick="selectCur(this,'free')" data-cur="free" class="cur-btn"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
             background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
           <img src="assets/icon-free-coin.png" style="width:28px;height:28px;object-fit:contain">
@@ -3126,20 +3126,18 @@ function selectCur(el, cur){
   const pricesEl=document.getElementById('cr-prices')
   if(cur==='free'){
     priceWrap.style.opacity='.4';priceWrap.style.pointerEvents='none'
-  } else if(cur==='ton'){
-    priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
   } else {
     priceWrap.style.opacity='1';priceWrap.style.pointerEvents='auto'
-    const opts=(cur==='stars'||cur==='not')
+    const isNot=(cur==='stars'||cur==='not')
+    const opts=isNot
       ?[{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1,000 $NOT'},{v:2000,l:'2,000 $NOT'}]
-      :[{v:0.05,l:'0.05'},{v:0.1,l:'0.1'},{v:0.5,l:'0.5'},{v:1,l:'1'},{v:10,l:'10'},{v:100,l:'100'}]
+      :[{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}]
     pricesEl.innerHTML=opts.map((o,i)=>`
-      <div class="price-btn${i===0?' sel':''}" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
+      <div class="price-btn" data-price="${o.v}" onclick="selectPrice(this,${o.v})"
         style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-          background:${i===0?'rgba(255,184,0,.2)':'rgba(0,0,0,.2)'};
-          border:2px solid ${i===0?'#A78BFA':'rgba(255,255,255,.1)'};
-          color:${i===0?'#fff':'#fff'};transition:all .15s">${o.l}</div>`).join('')
-    crPrice=opts[0].v
+          background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);
+          color:#fff;transition:all .15s">${o.l}</div>`).join('')
+    crPrice=0;crPriceAccum=0
   }
   updateRoomPreview()
 }
