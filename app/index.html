@@ -21,8 +21,10 @@
 <link rel="preload" as="image" href="assets/ball-red.png">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap');
 @font-face {
   font-family: 'Clash';
   src: url('../fonts/Clash_Bold.otf') format('opentype');
@@ -68,7 +70,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);
-  font-family:'Outfit','Clash',sans-serif;-webkit-font-smoothing:antialiased}
+  font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ── */
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
@@ -109,7 +111,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   border-radius:50px;border:none;outline:none;cursor:pointer;
   -webkit-appearance:none;appearance:none;
   background:transparent;
-  font-family:'Clash',sans-serif;font-weight:700;
+  font-family:'Outfit',sans-serif;font-weight:700;
   transition:transform .1s;-webkit-user-select:none}
 .btn:active{transform:translateY(2px)}
 
@@ -245,7 +247,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .pg-lbl{font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
   margin-bottom:3px;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .pg-sub{font-size:.40rem;font-weight:700;margin-top:1px;text-shadow:0 1px 3px rgba(0,0,0,.95)}
-.pg-val{font-family:'Clash',sans-serif;font-size:.8rem;font-weight:700;
+.pg-val{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;
   text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.5)}
 
 .cpick{display:flex;gap:7px;padding:0 10px;justify-content:center;margin:6px 0}
@@ -292,7 +294,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .md{width:46px;height:46px;font-size:.95rem}
 .sm{width:36px;height:36px;font-size:.8rem}
 /* number text on top of ball image */
-.ball span{position:relative;z-index:2;font-family:'Clash',sans-serif;
+.ball span{position:relative;z-index:2;font-family:'Outfit',sans-serif;
   font-weight:700;color:#FFFFFF;
   text-shadow:0 1px 4px rgba(0,0,0,.95),0 0 10px rgba(0,0,0,.9),
     1px 1px 0 rgba(0,0,0,.8),-1px -1px 0 rgba(0,0,0,.8)}
@@ -320,7 +322,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .pbb{}
 .pblbl{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
   margin-bottom:3px;text-shadow:0 1px 4px rgba(0,0,0,.9)}
-.pbv{font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
+.pbv{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
   text-shadow:0 0 12px currentColor,0 2px 4px rgba(0,0,0,.9)}
 
 /* ── BINGO CARD ── */
@@ -441,7 +443,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 /* leaderboard tab buttons */
 .ltb{flex-shrink:0;border-radius:50px;font-weight:700;cursor:pointer;
   border:2px solid #4A3318;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
-  color:#8B6340;font-family:'Clash',sans-serif;padding:7px 8px;font-size:.78rem;
+  color:#8B6340;font-family:'Outfit',sans-serif;padding:7px 8px;font-size:.78rem;
   box-shadow:0 3px 0 #0A0602;-webkit-tap-highlight-color:transparent;
   user-select:none;-webkit-user-select:none;touch-action:manipulation;
   display:inline-flex;align-items:center;justify-content:center;
@@ -488,19 +490,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 @keyframes lvbpop{to{transform:scale(1)}}
 .lvup-badge{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;border:5px solid}
 .lvup-icon{font-size:3.8rem}
-.lvup-num{position:absolute;bottom:-10px;right:-10px;width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FF6A00);border:3px solid #1A0F08;display:flex;align-items:center;justify-content:center;font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#1A0500;box-shadow:0 0 14px rgba(255,184,0,.7)}
-.lvup-lbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:#FF9000;margin-top:16px;z-index:10;opacity:0;text-shadow:0 0 16px rgba(255,140,0,.8)}
+.lvup-num{position:absolute;bottom:-10px;right:-10px;width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#FFD93D,#FF6A00);border:3px solid #1A0F08;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#1A0500;box-shadow:0 0 14px rgba(255,184,0,.7)}
+.lvup-lbl{font-family:'Outfit',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:#FF9000;margin-top:16px;z-index:10;opacity:0;text-shadow:0 0 16px rgba(255,140,0,.8)}
 .lvup-ov.show .lvup-lbl{animation:lvsup .4s .4s cubic-bezier(.34,1.4,.64,1) forwards}
-.lvup-title{font-family:'Clash',sans-serif;font-weight:700;font-size:2.4rem;line-height:1.1;z-index:10;opacity:0;text-align:center;background:linear-gradient(155deg,#FFFFFF 0%,#FFD93D 40%,#FF7700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 14px rgba(255,184,0,.8))}
+.lvup-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:2.4rem;line-height:1.1;z-index:10;opacity:0;text-align:center;background:linear-gradient(155deg,#FFFFFF 0%,#FFD93D 40%,#FF7700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 14px rgba(255,184,0,.8))}
 .lvup-ov.show .lvup-title{animation:lvsup .45s .48s cubic-bezier(.34,1.4,.64,1) forwards}
 @keyframes lvsup{from{opacity:0;transform:translateY(20px) scale(.88)}to{opacity:1;transform:none}}
 .lvup-unlock{background:rgba(0,0,0,.5);border-radius:14px;padding:12px 18px;margin-top:12px;text-align:center;border:2px solid;z-index:10;opacity:0;max-width:260px;width:100%}
 .lvup-ov.show .lvup-unlock{animation:lvsup .4s .6s cubic-bezier(.34,1.4,.64,1) forwards}
-.lvup-ulbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.lvup-uval{font-family:'Clash',sans-serif;font-weight:700;font-size:.92rem}
-.lvup-tbola{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;background:rgba(58,255,138,.1);border:1.5px solid rgba(58,255,138,.3);border-radius:50px;padding:5px 14px;color:#3AFF8A;text-shadow:0 0 10px rgba(58,255,138,.4);z-index:10;opacity:0;margin-top:10px}
+.lvup-ulbl{font-family:'Outfit',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.lvup-uval{font-family:'Outfit',sans-serif;font-weight:700;font-size:.92rem}
+.lvup-tbola{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;background:rgba(58,255,138,.1);border:1.5px solid rgba(58,255,138,.3);border-radius:50px;padding:5px 14px;color:#3AFF8A;text-shadow:0 0 10px rgba(58,255,138,.4);z-index:10;opacity:0;margin-top:10px}
 .lvup-ov.show .lvup-tbola{animation:lvsup .4s .7s cubic-bezier(.34,1.4,.64,1) forwards}
-.lvup-btn{z-index:10;opacity:0;margin-top:16px;padding:13px 36px;border-radius:50px;background:linear-gradient(180deg,#FFE566,#FFD93D 40%,#FFB800);color:#3D1A00;font-family:'Clash',sans-serif;font-size:1.05rem;font-weight:700;border:3px solid #FFE566;box-shadow:0 5px 0 #7A5200,0 0 24px rgba(255,184,0,.4);cursor:pointer;transform:translateY(10px)}
+.lvup-btn{z-index:10;opacity:0;margin-top:16px;padding:13px 36px;border-radius:50px;background:linear-gradient(180deg,#FFE566,#FFD93D 40%,#FFB800);color:#3D1A00;font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;border:3px solid #FFE566;box-shadow:0 5px 0 #7A5200,0 0 24px rgba(255,184,0,.4);cursor:pointer;transform:translateY(10px)}
 .lvup-ov.show .lvup-btn{animation:lvsup .4s .82s cubic-bezier(.34,1.4,.64,1) forwards}
 .lvup-btn:active{transform:translateY(3px)!important;box-shadow:0 2px 0 #7A5200!important}
 .lvup-cp{position:absolute;z-index:20;border-radius:2px;animation:lvcp var(--d) var(--dl) ease-in both}
@@ -571,9 +573,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 @keyframes lineBannerOut{to{transform:translateY(-100%);opacity:0}}
 .line-banner-icon{font-size:1.6rem;animation:lineIconBounce .4s ease infinite alternate}
 @keyframes lineIconBounce{from{transform:scale(.9)}to{transform:scale(1.15)}}
-.line-banner-text{font-family:'Clash',sans-serif;font-weight:700;font-size:1.1rem;color:#3D1A00;
+.line-banner-text{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;color:#3D1A00;
   text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.line-banner-prize{font-family:'Clash',sans-serif;font-weight:700;font-size:.85rem;
+.line-banner-prize{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;
   color:#5A2A00;background:rgba(0,0,0,.15);border-radius:50px;padding:3px 10px}
 
 /* ── BINGO SHAKE ── */
@@ -599,9 +601,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .bingo-banner.hide{animation:lineBannerOut .35s 1.2s ease forwards}
 .bingo-banner-icon{font-size:2rem;animation:bingoBounce .35s ease infinite alternate}
 @keyframes bingoBounce{from{transform:scale(.85) rotate(-8deg)}to{transform:scale(1.2) rotate(8deg)}}
-.bingo-banner-text{font-family:'Clash',sans-serif;font-weight:700;font-size:1.3rem;color:#003310;
+.bingo-banner-text{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem;color:#003310;
   text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.bingo-banner-prize{font-family:'Clash',sans-serif;font-weight:700;font-size:.9rem;
+.bingo-banner-prize{font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;
   color:#004A18;background:rgba(0,0,0,.15);border-radius:50px;padding:3px 12px}
 
 /* ── MINOR LEVEL UP TOAST ── */
@@ -620,15 +622,15 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   background:linear-gradient(145deg,#FFD93D,#FF8C00);
   border:2px solid #FFE566;display:flex;align-items:center;
   justify-content:center;font-size:.75rem;font-weight:700;color:#3D1A00;
-  font-family:'Clash',sans-serif;flex-shrink:0}
-.lv-toast-text{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;color:#FFD93D}
-.lv-toast-sub{font-family:'Clash',sans-serif;font-size:.7rem;color:#8B6340}
+  font-family:'Outfit',sans-serif;flex-shrink:0}
+.lv-toast-text{font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;color:#FFD93D}
+.lv-toast-sub{font-family:'Outfit',sans-serif;font-size:.7rem;color:#8B6340}
 
 /* ── FORTUNE WHEEL ── */
 .spin-btn{
   flex:1;padding:8px 4px;border-radius:8px;border:2px solid #8B6340;
   background:linear-gradient(180deg,#5A4230,#3A2818);
-  color:#fff;font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;
+  color:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:700;
   cursor:pointer;transition:all .1s;
   box-shadow:0 3px 0 #1A0C04}
 .spin-btn:hover{transform:translateY(-1px)}
@@ -669,7 +671,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div>
           <div class="bal-lbl">$TBOLA Balance</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="font-family:'Clash',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7);flex-shrink:0">$TBOLA</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7);flex-shrink:0">$TBOLA</div>
             <div class="bal-amt" id="bc-tbola">505</div>
           </div>
           <div style="font-size:.68rem;color:rgba(255,255,255,.65);margin-top:2px">🚀 Airdrop coming soon</div>
@@ -762,13 +764,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="t-av" id="hub-av">T</div>
       </div>
       <div style="flex:1;margin:0 10px">
-        <div style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#fff" id="hub-name">Tommy</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;color:#fff" id="hub-name">Tommy</div>
         <div style="font-size:.65rem;color:rgba(255,255,255,.4)">@Tommyall</div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;background:#F0EEFF;
         border-radius:50px;padding:4px 10px;border:1.5px solid rgba(108,99,255,.2)">
-        <span style="font-family:'Clash',sans-serif;font-size:.72rem;font-weight:700;color:#6C63FF">$TBOLA</span>
-        <span style="font-family:'Clash',sans-serif;font-size:.82rem;font-weight:700;color:#6C63FF" id="hub-tbola">505</span>
+        <span style="font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;color:#6C63FF">$TBOLA</span>
+        <span style="font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;color:#6C63FF" id="hub-tbola">505</span>
       </div>
     </div>
   </div>
@@ -777,7 +779,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div style="padding:10px 10px 80px;overflow-y:auto">
 
     <!-- Section title -->
-    <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+    <div style="font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:700;
       letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);
       margin-bottom:10px;padding:0 2px">🎮 CHOOSE YOUR GAME</div>
 
@@ -789,7 +791,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       gap:14px;padding:0 18px;box-shadow:0 6px 20px rgba(0,0,0,.2);overflow:hidden">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🎱</div>
       <div style="flex:1">
-        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">🎱 Bingo</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Live draws every 5 min · NOT · TON · VIP
@@ -805,7 +807,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="text-align:right">
         <div style="font-size:.55rem;color:rgba(255,255,255,.7)">Prize Pool</div>
-        <div style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+        <div style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;
           color:#fff;font-weight:700" id="hub-bingo-pool">-- $TON</div>
       </div>
     </div>
@@ -823,7 +825,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         background:linear-gradient(180deg,rgba(255,255,255,.15),transparent);border-radius:20px 20px 0 0"></div>
       <div style="font-size:2.8rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2))">🎡</div>
       <div style="flex:1">
-        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2)">Fortune Wheel</div>
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
           Spin to win · Jackpot pool · $NOT · $TON
@@ -837,7 +839,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="text-align:right">
         <div style="font-size:.55rem;color:rgba(255,255,255,.7)">🎰 Jackpot</div>
-        <div id="hub-jackpot" style="font-family:'Clash',sans-serif;font-size:.9rem;font-weight:700;
+        <div id="hub-jackpot" style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;
           color:#fff">67.3 $TON</div>
       </div>
     </div>
@@ -851,7 +853,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       opacity:.55;cursor:not-allowed">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🃏</div>
       <div style="flex:1">
-        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">Scratch Cards</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Instant win · Gratta e vinci on TON
@@ -874,7 +876,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       opacity:.55;cursor:not-allowed">
       <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">⚔️</div>
       <div style="flex:1">
-        <div style="font-family:'Clash',sans-serif;font-size:1.1rem;font-weight:700;
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">PvP Battle</div>
         <div style="font-size:.72rem;color:#C4933F;margin-top:2px">
           Live 1v1 bingo · Challenge real players
@@ -896,10 +898,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="stone-header" style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.3))">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('s-hub');setNav('nb-h');initHub()">← Back</button>
-      <div style="flex:1;text-align:center;font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;color:#fff">🎡 Fortune Wheel</div>
+      <div style="flex:1;text-align:center;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:#fff">🎡 Fortune Wheel</div>
       <div style="display:flex;align-items:center;gap:6px">
         <img src="assets/token-tbola.png" style="width:22px;height:22px;object-fit:contain">
-        <div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFD93D" id="w-tbola">505</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#FFD93D" id="w-tbola">505</div>
       </div>
     </div>
   </div>
@@ -910,7 +912,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     display:flex;align-items:center;justify-content:space-between">
     <div>
       <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;color:#8B6340;text-transform:uppercase">🎰 Jackpot Pool</div>
-      <div id="w-jackpot-amt" style="font-family:'Clash',sans-serif;font-size:1.4rem;font-weight:700;
+      <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;
         color:#FFD700;text-shadow:0 0 12px rgba(255,184,0,.5)">67.3 $TON</div>
     </div>
     <div style="flex:1;margin:0 16px">
@@ -961,13 +963,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     padding:8px 16px;display:flex;align-items:center;justify-content:space-between">
     <div>
       <div style="font-size:.6rem;color:var(--muted);font-weight:700;letter-spacing:.5px">SESSION BALANCE</div>
-      <div id="w-session-bal" style="font-family:'Clash',sans-serif;font-size:1.1rem;
+      <div id="w-session-bal" style="font-family:'Outfit',sans-serif;font-size:1.1rem;
         font-weight:700;color:#3AFF8A">0</div>
     </div>
     <button id="w-collect-btn" onclick="collectWheelWinnings()"
       style="background:linear-gradient(180deg,#3AFF8A,#00C060);
         border:2px solid #3AFF8A;border-radius:8px;padding:8px 16px;
-        font-family:'Clash',sans-serif;font-size:.8rem;font-weight:700;
+        font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;
         color:#001A00;cursor:pointer;opacity:.4;pointer-events:none">
       💰 Collect
     </button>
@@ -990,13 +992,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       margin-top:8px;background:rgba(8,6,4,.9);border-radius:8px;padding:8px 14px">
       <div>
         <span style="font-size:.7rem;color:var(--muted)">Spins: </span>
-        <span id="w-spin-count" style="font-family:'Clash',sans-serif;font-size:1rem;
+        <span id="w-spin-count" style="font-family:'Outfit',sans-serif;font-size:1rem;
           font-weight:700;color:#fff">0</span>
         <span id="w-spins-remaining" style="font-size:.65rem;color:var(--muted);margin-left:8px"></span>
       </div>
       <div style="text-align:right">
         <div style="font-size:.6rem;color:var(--muted)">Total cost</div>
-        <div id="w-total-cost" style="font-family:'Clash',sans-serif;font-size:.95rem;
+        <div id="w-total-cost" style="font-family:'Outfit',sans-serif;font-size:.95rem;
           font-weight:700;color:#FFD93D">—</div>
       </div>
     </div>
@@ -1047,7 +1049,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="lpool">
     <div style="font-size:.55rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
       color:rgba(255,255,255,.7);margin-bottom:2px">🎯 Live Prize Pool</div>
-    <div style="font-family:'Clash',sans-serif;font-size:1.7rem;font-weight:700;
+    <div style="font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:700;
       color:#FFD93D;line-height:1;
       color:#fff"
       id="l-pool">880,000 NOT</div>
@@ -1126,7 +1128,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <!-- placeholder balls before first draw -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;opacity:.35">
           <div style="font-size:2rem">🎱</div>
-          <div style="font-size:.68rem;color:var(--muted);font-family:'Clash',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
+          <div style="font-size:.68rem;color:var(--muted);font-family:'Outfit',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
         </div>
       </div>
       <div class="dcount" id="g-dc">Get ready — first number coming up!</div>
@@ -1199,12 +1201,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     box-shadow:0 4px 0 rgba(0,0,0,.5)">
     <div style="font-size:2rem">⚔️</div>
     <div style="flex:1">
-      <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;
+      <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;
         color:#FFD93D;text-shadow:0 1px 3px rgba(0,0,0,.9)">Warrior Pass</div>
       <div style="font-size:.7rem;color:#8B6340;margin-top:1px">600 ⭐ Stars · 3 $TON / month</div>
     </div>
     <div style="background:linear-gradient(135deg,#CC8800,#FF6A00);border-radius:50px;
-      padding:3px 10px;font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;
+      padding:3px 10px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;
       color:#fff">UPGRADE</div>
   </div>
 
@@ -1355,7 +1357,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Password (optional)</div>
       <input type="text" id="cr-password" placeholder="Leave empty for open room" maxlength="20"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.9rem;
+          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;
           outline:none;box-sizing:border-box">
     </div>
 
@@ -1402,7 +1404,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <input type="text" id="join-code" maxlength="6" placeholder="Type code here"
         oninput="updateCodeBoxes(this.value)"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:1.1rem;
+          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:1.1rem;
           text-align:center;letter-spacing:6px;text-transform:uppercase;
           outline:none;box-sizing:border-box">
     </div>
@@ -1451,7 +1453,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Squad Name</div>
       <input type="text" id="squad-name" maxlength="24" placeholder="e.g. TON Wolves"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.95rem;
+          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;
           outline:none;box-sizing:border-box">
     </div>
 
@@ -1462,7 +1464,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <textarea id="squad-desc" maxlength="80" placeholder="What's your squad about?"
         rows="2"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.88rem;
+          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;
           outline:none;box-sizing:border-box;resize:none"></textarea>
     </div>
 
@@ -1623,11 +1625,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Header -->
     <div style="text-align:center;margin-bottom:16px">
       <div style="font-size:3rem;margin-bottom:6px">⚔️</div>
-      <div style="font-family:'Clash',sans-serif;font-size:1.8rem;font-weight:700;
+      <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;
         background:linear-gradient(155deg,#fff 0%,#FFD93D 40%,#FF8C00 100%);
         -webkit-background-clip:text;-webkit-text-fill-color:transparent;
         filter:drop-shadow(0 2px 8px rgba(255,184,0,.6))">Warrior Pass</div>
-      <div style="font-family:'Clash',sans-serif;font-size:.75rem;color:#8B6340;margin-top:4px">
+      <div style="font-family:'Outfit',sans-serif;font-size:.75rem;color:#8B6340;margin-top:4px">
         Monthly subscription · Renews automatically
       </div>
     </div>
@@ -1635,34 +1637,34 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Benefits -->
     <div style="background:rgba(0,0,0,.4);border:1.5px solid rgba(255,184,0,.2);
       border-radius:16px;padding:14px;margin-bottom:14px">
-      <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+      <div style="font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:700;
         letter-spacing:1.5px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">
         ⚡ Monthly Benefits
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">🃏</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Extra Free Cards</div><div style="font-size:.7rem;color:var(--muted)">+2 free cards/day (3 total)</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Extra Free Cards</div><div style="font-size:.7rem;color:var(--muted)">+2 free cards/day (3 total)</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">📈</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Gold Card Boost</div><div style="font-size:.7rem;color:var(--muted)">+5% win rate on every game</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Gold Card Boost</div><div style="font-size:.7rem;color:var(--muted)">+5% win rate on every game</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">👑</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">VIP Access</div><div style="font-size:.7rem;color:var(--muted)">VIP $TON Room — no level req</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">VIP Access</div><div style="font-size:.7rem;color:var(--muted)">VIP $TON Room — no level req</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">💰</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Double $TBOLA</div><div style="font-size:.7rem;color:var(--muted)">2× all $TBOLA earned this month</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Double $TBOLA</div><div style="font-size:.7rem;color:var(--muted)">2× all $TBOLA earned this month</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
         <div style="font-size:1.3rem;flex-shrink:0">🎖️</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Exclusive Badge</div><div style="font-size:.7rem;color:var(--muted)">Warrior badge on your profile</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Exclusive Badge</div><div style="font-size:.7rem;color:var(--muted)">Warrior badge on your profile</div></div>
       </div>
     </div>
 
     <!-- Currency selector -->
-    <div style="font-family:'Clash',sans-serif;font-size:.6rem;font-weight:700;
+    <div style="font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:700;
       letter-spacing:1.2px;text-transform:uppercase;color:#8B6340;margin-bottom:8px">
       Choose Payment
     </div>
@@ -1672,7 +1674,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
           background:rgba(255,184,0,.12);border:2px solid #FFB800;transition:all .15s">
         <div style="font-size:1.4rem;font-weight:700;color:#FFD93D;
-          font-family:'Clash',sans-serif">600</div>
+          font-family:'Outfit',sans-serif">600</div>
         <div style="font-size:.78rem;font-weight:700;color:#FFD93D;margin-top:2px">⭐ Stars</div>
         <div style="font-size:.62rem;color:rgba(255,217,61,.5);margin-top:3px">~€4.40/mo</div>
       </div>
@@ -1680,7 +1682,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
           background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
         <div style="font-size:1.4rem;font-weight:700;color:#40B8FF;
-          font-family:'Clash',sans-serif">3</div>
+          font-family:'Outfit',sans-serif">3</div>
         <div style="font-size:.78rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 $TON</div>
         <div style="font-size:.62rem;color:rgba(64,184,255,.4);margin-top:3px">~€3.45/mo</div>
       </div>
@@ -1691,12 +1693,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       style="padding:14px;font-size:1rem;width:100%">
       ⚔️ Subscribe — 600 ⭐ Stars
     </button>
-    <div style="font-family:'Clash',sans-serif;font-size:.65rem;color:#4A3318;
+    <div style="font-family:'Outfit',sans-serif;font-size:.65rem;color:#4A3318;
       text-align:center;margin-top:8px">
       Cancel anytime · No commitment
     </div>
     <button onclick="closeWarriorPass()"
-      style="background:none;border:none;color:#4A3318;font-family:'Clash',sans-serif;
+      style="background:none;border:none;color:#4A3318;font-family:'Outfit',sans-serif;
         font-size:.75rem;cursor:pointer;margin-top:8px;width:100%;padding:4px">
       ✕ Close
     </button>
@@ -1723,7 +1725,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div style="display:flex;align-items:center;justify-content:center;gap:10px">
     <div style="width:8px;height:8px;border-radius:50%;background:#3AFF8A;
       box-shadow:0 0 8px #3AFF8A;animation:pd 1.2s ease infinite"></div>
-    <span style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#fff">
+    <span style="font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;color:#fff">
       Game in progress — tap to return to your cards
     </span>
     <span style="font-size:1rem">🎱</span>
@@ -1970,7 +1972,7 @@ function renderCards(){
       </div>
       <div class="${cardStyle}">
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 4px 0;margin-bottom:0">
-          ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Clash',sans-serif;font-size:.65rem;font-weight:700;
+          ${['B','I','N','G','O'].map((l,i)=>`<div style="text-align:center;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;
             color:${['#4FC3F7','#FF8A65','#81C784','#CE93D8','#FFD54F'][i]};
             text-shadow:0 1px 2px rgba(0,0,0,.3);padding:2px 0">${l}</div>`).join('')}
         </div>
@@ -2487,7 +2489,7 @@ function handleWheelResult(segIdx) {
   }
   // Result flash
   if(resultEl) {
-    resultEl.innerHTML = `<div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:${resultColor};
+    resultEl.innerHTML = `<div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:${resultColor};
       animation:fadeUp .3s ease">${resultMsg}</div>`
   }
   // Enable collect if balance > 0
@@ -2919,17 +2921,17 @@ function renderPoolBanner(tab) {
     grid.innerHTML = `
       <div style="background:rgba(255,184,0,.1);border:1.5px solid rgba(255,184,0,.3);border-radius:10px;padding:10px 8px;text-align:center">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#FFD93D;margin-bottom:5px;opacity:.85">◈ $NOT Paid</div>
-        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#FFD93D;text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#FFD93D;text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
       <div style="background:rgba(61,158,255,.1);border:1.5px solid rgba(61,158,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px;opacity:.85">💎 $TON Paid</div>
-        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
       <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center;grid-column:1/-1;max-width:200px;margin:0 auto;width:100%">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px;opacity:.85">◆ $TBOLA Accumulated</div>
-        <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">airdrop snapshot</div>
       </div>`
     return
@@ -2959,7 +2961,7 @@ function renderPoolBanner(tab) {
       border-radius:10px;padding:10px 8px;text-align:center">
       <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;
         text-transform:uppercase;color:${b.color};margin-bottom:5px;opacity:.85">${b.label}</div>
-      <div style="font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
+      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
         color:${b.color};text-shadow:0 0 12px ${b.color}55">${b.value}</div>
       <div style="font-size:.62rem;color:var(--muted);margin-top:3px">${b.sub}</div>
     </div>`).join('')
@@ -3201,7 +3203,7 @@ function renderSquad() {
         <div style="display:flex;gap:8px">
           <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
             style="flex:1;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-              padding:9px 12px;color:#fff;font-family:'Clash',sans-serif;font-size:.9rem;
+              padding:9px 12px;color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;
               outline:none;box-sizing:border-box;text-transform:uppercase">
           <button class="btn btn-stone btn-sm" onclick="joinSquad()" style="flex-shrink:0;padding:9px 14px">Join</button>
         </div>
