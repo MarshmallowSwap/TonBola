@@ -22,6 +22,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap');
 @font-face {
   font-family: 'Clash';
   src: url('../fonts/Clash_Bold.otf') format('opentype');
@@ -54,46 +55,47 @@
 }
 
 :root{
-  --gold:#FFB800;--gold2:#FFD93D;--brown:#8B4513;--stone:#5A4A3A;
-  --crystal-blue:#4FC3FF;--crystal-gold:#FFD700;--crystal-purple:#B44FFF;
-  --ton:#0098EA;--ton2:#40B8FF;
-  --dark:#000;--dark2:#050505;--dark3:#0A0A0A;
-  --green:#2A5C1A;--green2:#3A7A24;
-  --red:#8B1A1A;--red2:#B22222;
+  --bg:#08080E;--bg2:#0F0F1A;--bg3:#13131F;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --text:rgba(255,255,255,.88);--muted:rgba(255,255,255,.38);--dim:rgba(255,255,255,.16);
+  --violet:#8B5CF6;--violet2:#6D28D9;--violet3:#A78BFA;
+  --cyan:#22D3EE;--orange:#FB923C;--pink:#F472B6;
+  --green:#34D399;--yellow:#FBBF24;--red:#F87171;
+  /* legacy aliases */
+  --gold:#FBBF24;--gold2:#A78BFA;--ton:#22D3EE;--ton2:#67E8F9;
+  --dark:#08080E;--dark2:#0F0F1A;--dark3:#13131F;
   --r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#F0F4FF;
-  font-family:'Clash',sans-serif;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden;background:var(--bg);
+  font-family:'Outfit','Clash',sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ── */
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
-  display:none;flex-direction:column;padding-bottom:76px;z-index:1;background:#000}
+  display:none;flex-direction:column;padding-bottom:76px;z-index:1;background:transparent}
 .screen.active{display:flex}
 ::-webkit-scrollbar{display:none}
 
 /* ── FANTASY BG ── */
-body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 50% at 20% 0%,rgba(109,40,217,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 80% 100%,rgba(34,211,238,.1) 0%,transparent 65%),var(--bg)}
 
 /* ── STONE HEADER ── */
 .stone-header{
-  background:#111;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  padding:10px 12px 8px;
+  background:rgba(8,8,14,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px 10px;
   position:sticky;top:0;z-index:50;
-  box-shadow:0 2px 12px rgba(0,0,0,.4);
 }
-.stone-header::after{content:'';position:absolute;bottom:-6px;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,#8B6340,#C4933F,#FFD700,#C4933F,#8B6340);opacity:.6}
+.stone-header::after{display:none}
 
 .topbar{display:flex;align-items:center;gap:8px}
-.t-av{width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(145deg,#D4880A,#8B4513);
-  border:3px solid #FFB800;display:flex;align-items:center;
-  justify-content:center;font-size:1rem;font-weight:700;
-  flex-shrink:0;box-shadow:0 0 10px rgba(255,184,0,.4),0 2px 0 rgba(0,0,0,.5)}
-.t-name{font-size:.88rem;font-weight:700;color:#FFE0A0;flex:1;
-  text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.t-av{width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet),#4F46E5);
+  border:2px solid rgba(139,92,246,.4);display:flex;align-items:center;
+  justify-content:center;font-size:.9rem;font-weight:800;color:#fff;
+  flex-shrink:0;}
+.t-name{font-size:.88rem;font-weight:700;color:#fff;flex:1}
 .coin-bag{display:flex;align-items:center;gap:4px;
   background:#F0EEFF;
   border:1.5px solid rgba(108,99,255,.2);border-radius:50px;
@@ -133,12 +135,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 2px 0 #1A0E04;padding:7px 12px;font-size:.8rem;width:auto}
 
 /* ── SECTION TITLE ── */
-.sec{font-size:.68rem;font-weight:700;letter-spacing:1.2px;
-  text-transform:uppercase;color:rgba(255,255,255,.3);padding:8px 12px 5px;
+.sec{font-size:.62rem;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);padding:10px 14px 6px;
   display:flex;align-items:center;gap:6px}
-.sec::before{content:'⚔';font-size:.7rem;color:#C4933F}
-.sec::after{content:'';flex:1;height:1px;
-  background:linear-gradient(90deg,#6B4423,transparent)}
+.sec::before{display:none}
+.sec::after{display:none}
 
 /* ── BALANCE CARD ── */
 .bal-card{margin:8px 10px;border-radius:20px;
@@ -149,7 +150,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
 .bal-inner{padding:16px 0 10px 0;position:relative;z-index:1}/* v3 */
 .bal-top{display:flex;align-items:flex-start;justify-content:space-between;padding:0 44px;margin-top:-10px}
-.bal-lbl{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:2px}
+.bal-lbl{font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:2px}
 .bal-amt{font-size:1.8rem;font-weight:900;color:#fff;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:-1px}
 .lv-badge{padding:4px 10px;text-align:center;position:relative;
   background:linear-gradient(135deg,#3A1A00,#1A0A00);
@@ -172,17 +173,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
 /* ── ROOM CARDS ── */
 .rooms{padding:0 10px;display:flex;flex-direction:column;gap:8px}
-.rc{border-radius:20px;overflow:hidden;cursor:pointer;
-  transition:transform .12s,box-shadow .12s;
-  border:none;
-  height:118px;
-  display:flex;flex-direction:column;position:relative;justify-content:space-between}
-.rc::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);z-index:0;border-radius:20px 20px 0 0}
-.rc:active{transform:scale(.97)}
-.rc.free{background:linear-gradient(135deg,#11998E,#38EF7D);border:4px solid #38EF7D!important;box-shadow:0 8px 24px rgba(17,153,142,.5),inset 0 1px 0 rgba(255,255,255,.25)}
-.rc.stars{background:linear-gradient(135deg,#373B44,#4286f4);border:4px solid #4286f4!important;box-shadow:0 8px 24px rgba(66,134,244,.5),inset 0 1px 0 rgba(255,255,255,.2)}
-.rc.ton{background:linear-gradient(135deg,#667EEA,#764BA2);border:4px solid #A78BFA!important;box-shadow:0 8px 24px rgba(102,126,234,.5),inset 0 1px 0 rgba(255,255,255,.2)}
-.rc.vip{background:linear-gradient(135deg,#F7971E,#FFD200);border:4px solid #FFD200!important;box-shadow:0 8px 24px rgba(247,151,30,.5),inset 0 1px 0 rgba(255,255,255,.25)}
+.rc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .12s;height:112px;display:flex;flex-direction:column;position:relative;justify-content:space-between;padding:13px 13px 11px}
+.rc:active{transform:scale(.96)}
+.rc::before{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.13),transparent);pointer-events:none}
+.rc.free{background:linear-gradient(135deg,#065F46,#34D399);box-shadow:0 6px 20px rgba(52,211,153,.25),inset 0 0 0 1px rgba(255,255,255,.12)}
+.rc.stars{background:linear-gradient(135deg,#1D3461,#4286f4);box-shadow:0 6px 20px rgba(66,134,244,.25),inset 0 0 0 1px rgba(255,255,255,.1)}
+.rc.ton{background:linear-gradient(135deg,#4C1D95,#8B5CF6);box-shadow:0 6px 20px rgba(139,92,246,.25),inset 0 0 0 1px rgba(255,255,255,.1)}
+.rc.vip{background:linear-gradient(135deg,#92400E,#F59E0B);box-shadow:0 6px 20px rgba(245,158,11,.25),inset 0 0 0 1px rgba(255,255,255,.12)}
 .rc:active{transform:scale(.97) translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.5)}
 
 
@@ -214,7 +211,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   overflow:hidden;text-overflow:ellipsis}
 .rbadge{padding:3px 8px;border-radius:50px;font-size:.58rem;font-weight:700;
   letter-spacing:.3px;border:1.5px solid;
-  background:rgba(0,0,0,.55)!important;color:#FFE0A0!important;
+  background:rgba(0,0,0,.55)!important;color:#fff!important;
   border-color:rgba(255,220,150,.5)!important;
   position:absolute;top:22px;right:24px}
 .rc.stars .rbadge{font-size:.65rem;padding:4px 10px;
@@ -222,25 +219,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   color:#E0E0E0!important}
 .rf{display:flex;align-items:center;justify-content:space-between;
   padding:0 24px 12px;background:none;border-top:none;flex-shrink:0}
-.rp{font-size:.72rem;color:rgba(255,255,255,.85);font-weight:700;display:flex;align-items:center;gap:4px}
+.rp{font-size:.7rem;color:rgba(255,255,255,.8);font-weight:700;display:flex;align-items:center;gap:4px}
 .live-dot{width:5px;height:5px;border-radius:50%;background:#3AFF8A;
   animation:pd 1.2s ease infinite;box-shadow:0 0 6px #3AFF8A}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.rprz{font-size:.72rem;font-weight:700;color:#fff}
+.rprz{font-size:.7rem;font-weight:700;color:#fff;opacity:.85}
 
 /* ── CRYSTAL decorations (CSS only) ── */
 .crystals{position:relative;height:3px;overflow:visible;margin:4px 10px}
 .crystal{position:absolute;bottom:0;width:0;height:0;border-style:solid;opacity:.6}
 
 /* ── LOBBY ── */
-.lobby-hdr{background:#fff;
-  border-bottom:1px solid rgba(0,0,0,.08);padding:10px 12px;
-  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.lpool{text-align:center;padding:24px 12px 20px;
-  background:linear-gradient(135deg,#6C63FF,#4158D0);
-  margin:8px 10px;border-radius:20px;
-  box-shadow:0 6px 20px rgba(108,99,255,.35)}
+.lobby-hdr{background:rgba(8,8,14,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.lpool{text-align:center;padding:22px 12px 18px;background:linear-gradient(135deg,#4C1D95,#6D28D9,#8B5CF6);margin:10px 12px;border-radius:20px;box-shadow:0 6px 24px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
 .pl{font-size:.62rem;font-weight:700;text-transform:uppercase;
   letter-spacing:1px;color:#8B6340;margin-bottom:3px}
 .pa{font-size:2rem;font-weight:700;color:#FFD93D;
@@ -257,13 +249,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.5)}
 
 .cpick{display:flex;gap:7px;padding:0 10px;justify-content:center;margin:6px 0}
-.cn{width:48px;height:48px;border-radius:12px;display:flex;
-  align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;
-  background:#f5f5f5;border:2px solid #e0e0e0;
-  cursor:pointer;transition:all .15s;color:#666;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.cn.sel{background:linear-gradient(135deg,#6C63FF,#4158D0);
-  border-color:#6C63FF;color:#fff;
-  box-shadow:0 4px 12px rgba(108,99,255,.4)}
+.cn{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;background:rgba(255,255,255,.07);border:1px solid var(--border);cursor:pointer;transition:all .12s;color:var(--muted)}
+.cn.sel{background:linear-gradient(135deg,var(--violet3),var(--violet));border-color:var(--violet);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,.4)}
 .cbox{margin:7px 10px;padding:10px 14px;border-radius:12px;
   background:linear-gradient(135deg,#1E1005,#130A02);
   border:1.5px solid #4A3318;
@@ -280,10 +267,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   font-size:.85rem;font-weight:700;border:2px solid #6B4423}
 
 /* ── GAME ── */
-.ghdr{padding:9px 12px;
-  background:#fff;
-  display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(0,0,0,.08);position:sticky;top:0;z-index:10}
+.ghdr{padding:10px 14px;background:rgba(8,8,14,.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
 .cdring{width:32px;height:32px;border-radius:50%;
   background:radial-gradient(circle,#3D2B1A,#1A0F08);
   border:2px solid #FFB800;display:flex;align-items:center;
@@ -291,14 +275,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 0 10px rgba(255,184,0,.3)}
 
 /* BALL MACHINE */
-.bmach{margin:8px 10px;padding:14px;
-  background:#fff;
-  border-radius:18px;border:none;
-  text-align:center;position:relative;overflow:hidden;
-  box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.bmach{margin:10px 12px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:18px;text-align:center;}
 .bmach::before{display:none}
-.bml{font-size:.62rem;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;color:#6C63FF;margin-bottom:8px}
+.bml{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--violet3);margin-bottom:8px}
 .barea{display:flex;align-items:center;justify-content:center;gap:6px;
   flex-wrap:wrap;min-height:60px}
 
@@ -329,7 +308,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 @keyframes bdrop{from{opacity:0;transform:scale(.2) translateY(-30px) rotate(-20deg)}
   to{opacity:1;transform:scale(1) translateY(0) rotate(0deg)}}
 .msep{font-size:.9rem;color:#4A3318}
-.dcount{margin-top:7px;font-size:.68rem;font-weight:700;color:#999}
+.dcount{margin-top:7px;font-size:.68rem;font-weight:600;color:var(--muted)}
 
 /* ── PRIZE ROW ── */
 .prow{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:5px 10px}
@@ -347,9 +326,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 /* ── BINGO CARD ── */
 .bcwrap{margin:5px 10px 10px}
 .bct{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.bcl{font-size:.65rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#6B4423}
+.bcl{font-size:.65rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
 .bcs{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:50px;border:1.5px solid}
-.bcs-p{background:rgba(107,68,35,.3);color:#C49040;border-color:#6B4423}
+.bcs-p{background:rgba(107,68,35,.3);color:#C49040;border-color:var(--muted)}
 .bcs-l{background:rgba(255,184,0,.15);color:#FFD93D;border-color:#8B6000}
 .bcs-b{background:rgba(46,204,113,.15);color:#2ECC71;border-color:#1A8040}
 .bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;border-radius:4px;container-type:inline-size}
@@ -401,7 +380,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   box-shadow:0 0 12px rgba(255,184,0,.6)!important;
   transform:scale(1.05)!important}
 .card-wood .bc{background:transparent;border:none;
-  color:#FFE0A0;font-size:4.5cqw;font-weight:700;
+  color:#fff;font-size:4.5cqw;font-weight:700;
   text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
 .card-stone .bc{background:transparent;border:none;
   color:#FFD07A;font-size:4.5cqw;font-weight:700;
@@ -454,8 +433,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   font-size:1.1rem;font-weight:700;
   border:2px solid rgba(0,0,0,.4);
   box-shadow:0 2px 6px rgba(0,0,0,.5),inset -1px -1px 4px rgba(0,0,0,.3)}
-.lbnm{font-size:.85rem;font-weight:700;color:#FFE0A0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbsub{font-size:.68rem;color:#6B4423}
+.lbnm{font-size:.85rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbsub{font-size:.68rem;color:var(--muted)}
 .lbsc{font-size:.95rem;font-weight:700;color:#FFD93D;
   text-shadow:0 0 8px rgba(255,184,0,.4)}
 
@@ -482,10 +461,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,#FFD700,transparent);opacity:.3}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:2px;cursor:pointer;border:none;background:transparent;
-  color:rgba(255,255,255,.35);font-family:'Clash',sans-serif;font-size:.68rem;font-weight:700;
-  padding:5px 4px}
-.nb.on{color:#A78BFA}
+  gap:3px;cursor:pointer;border:none;background:transparent;
+  color:var(--muted);font-family:'Outfit',sans-serif;font-size:.62rem;font-weight:700;
+  padding:4px 2px;transition:color .15s}
+.nb.on{color:var(--violet3)}
 .ni{font-size:1.2rem;transition:transform .15s}
 .nb.on .ni{transform:scale(1.15)}
 
@@ -517,7 +496,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 @keyframes lvsup{from{opacity:0;transform:translateY(20px) scale(.88)}to{opacity:1;transform:none}}
 .lvup-unlock{background:rgba(0,0,0,.5);border-radius:14px;padding:12px 18px;margin-top:12px;text-align:center;border:2px solid;z-index:10;opacity:0;max-width:260px;width:100%}
 .lvup-ov.show .lvup-unlock{animation:lvsup .4s .6s cubic-bezier(.34,1.4,.64,1) forwards}
-.lvup-ulbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:#6B4423;margin-bottom:5px}
+.lvup-ulbl{font-family:'Clash',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
 .lvup-uval{font-family:'Clash',sans-serif;font-weight:700;font-size:.92rem}
 .lvup-tbola{font-family:'Clash',sans-serif;font-weight:700;font-size:.88rem;background:rgba(58,255,138,.1);border:1.5px solid rgba(58,255,138,.3);border-radius:50px;padding:5px 14px;color:#3AFF8A;text-shadow:0 0 10px rgba(58,255,138,.4);z-index:10;opacity:0;margin-top:10px}
 .lvup-ov.show .lvup-tbola{animation:lvsup .4s .7s cubic-bezier(.34,1.4,.64,1) forwards}
@@ -540,7 +519,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   border:4px solid #FFB800;display:flex;align-items:center;
   justify-content:center;font-size:1.9rem;font-weight:700;
   box-shadow:0 0 20px rgba(255,184,0,.4),0 4px 0 rgba(0,0,0,.5)}
-.pname{font-size:1.25rem;font-weight:700;color:#FFE0A0;
+.pname{font-size:1.25rem;font-weight:700;color:#fff;
   text-shadow:0 2px 4px rgba(0,0,0,.8)}
 .pusername{font-size:.78rem;color:#8B6340;margin-bottom:10px}
 .xpt{height:10px;border-radius:50px;
@@ -558,7 +537,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   border:2px solid #4A3318;border-radius:12px;padding:9px;text-align:center}
 .sbn{font-size:1.3rem;font-weight:700;color:#FFD93D;
   text-shadow:0 0 10px rgba(255,184,0,.4)}
-.sbl{font-size:.65rem;color:#6B4423;margin-top:2px}
+.sbl{font-size:.65rem;color:var(--muted);margin-top:2px}
 .refcard{margin:0 10px 8px;padding:12px 14px;border-radius:12px;
   background:linear-gradient(135deg,#001A0A,#000E06);
   border:2px solid #1A5A2A;cursor:pointer}
@@ -572,8 +551,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   display:flex;align-items:center;justify-content:center;font-size:1.1rem}
 .ulv-d{background:linear-gradient(145deg,#3A3000,#1A1500);border:2px solid #6B6000}
 .ulv-l{background:linear-gradient(145deg,#2A1C0A,#1A0F06);border:2px solid #3D2810}
-.utext h4{font-size:.85rem;font-weight:700;color:#FFE0A0;margin-bottom:1px}
-.utext p{font-size:.72rem;color:#6B4423;line-height:1.3}
+.utext h4{font-size:.85rem;font-weight:700;color:#fff;margin-bottom:1px}
+.utext p{font-size:.72rem;color:var(--muted);line-height:1.3}
 .utag{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:50px;flex-shrink:0}
 .utag-d{background:rgba(107,96,0,.3);color:#C4B040;border:1px solid #5A5000}
 .utag-l{background:rgba(42,28,10,.5);color:#4A3318;border:1px solid #3D2810}
@@ -649,7 +628,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 .spin-btn{
   flex:1;padding:8px 4px;border-radius:8px;border:2px solid #8B6340;
   background:linear-gradient(180deg,#5A4230,#3A2818);
-  color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;
+  color:#fff;font-family:'Clash',sans-serif;font-size:.78rem;font-weight:700;
   cursor:pointer;transition:all .1s;
   box-shadow:0 3px 0 #1A0C04}
 .spin-btn:hover{transform:translateY(-1px)}
@@ -674,7 +653,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div>
         <div class="t-name" id="h-name">TonPlayer</div>
-        <div style="font-size:.67rem;color:#6B4423" id="h-user"></div>
+        <div style="font-size:.67rem;color:var(--muted)" id="h-user"></div>
       </div>
       <div style="flex:1"></div>
       <div class="coin-bag">
@@ -917,7 +896,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="stone-header" style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.3))">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('s-hub');setNav('nb-h');initHub()">← Back</button>
-      <div style="flex:1;text-align:center;font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;color:#FFE0A0">🎡 Fortune Wheel</div>
+      <div style="flex:1;text-align:center;font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;color:#fff">🎡 Fortune Wheel</div>
       <div style="display:flex;align-items:center;gap:6px">
         <img src="assets/token-tbola.png" style="width:22px;height:22px;object-fit:contain">
         <div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFD93D" id="w-tbola">505</div>
@@ -935,7 +914,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         color:#FFD700;text-shadow:0 0 12px rgba(255,184,0,.5)">67.3 $TON</div>
     </div>
     <div style="flex:1;margin:0 16px">
-      <div style="display:flex;justify-content:space-between;font-size:.62rem;color:#5A3D1A;margin-bottom:4px">
+      <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);margin-bottom:4px">
         <span id="w-jp-cur">67.3</span><span id="w-jp-thresh">100 $TON to unlock</span>
       </div>
       <div style="height:8px;background:rgba(0,0,0,.4);border-radius:4px;overflow:hidden">
@@ -944,7 +923,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
     </div>
     <div style="text-align:right">
-      <div style="font-size:.6rem;color:#5A3D1A">Unlocks at</div>
+      <div style="font-size:.6rem;color:var(--muted)">Unlocks at</div>
       <div style="font-size:.85rem;font-weight:700;color:#FFD93D">100 $TON</div>
     </div>
   </div>
@@ -981,7 +960,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div style="margin:0 10px 8px;background:rgba(6,4,2,.92);border-radius:10px;
     padding:8px 16px;display:flex;align-items:center;justify-content:space-between">
     <div>
-      <div style="font-size:.6rem;color:#5A3D1A;font-weight:700;letter-spacing:.5px">SESSION BALANCE</div>
+      <div style="font-size:.6rem;color:var(--muted);font-weight:700;letter-spacing:.5px">SESSION BALANCE</div>
       <div id="w-session-bal" style="font-family:'Clash',sans-serif;font-size:1.1rem;
         font-weight:700;color:#3AFF8A">0</div>
     </div>
@@ -1010,13 +989,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     <div style="display:flex;align-items:center;justify-content:space-between;
       margin-top:8px;background:rgba(8,6,4,.9);border-radius:8px;padding:8px 14px">
       <div>
-        <span style="font-size:.7rem;color:#5A3D1A">Spins: </span>
+        <span style="font-size:.7rem;color:var(--muted)">Spins: </span>
         <span id="w-spin-count" style="font-family:'Clash',sans-serif;font-size:1rem;
-          font-weight:700;color:#FFE0A0">0</span>
-        <span id="w-spins-remaining" style="font-size:.65rem;color:#5A3D1A;margin-left:8px"></span>
+          font-weight:700;color:#fff">0</span>
+        <span id="w-spins-remaining" style="font-size:.65rem;color:var(--muted);margin-left:8px"></span>
       </div>
       <div style="text-align:right">
-        <div style="font-size:.6rem;color:#5A3D1A">Total cost</div>
+        <div style="font-size:.6rem;color:var(--muted)">Total cost</div>
         <div id="w-total-cost" style="font-family:'Clash',sans-serif;font-size:.95rem;
           font-weight:700;color:#FFD93D">—</div>
       </div>
@@ -1105,8 +1084,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
   <div class="cbox">
     <div>
-      <div style="font-size:.7rem;color:#6B4423">You pay</div>
-      <div style="font-size:1rem;font-weight:700;color:#FFE0A0" id="l-cost">500 $NOT</div>
+      <div style="font-size:.7rem;color:var(--muted)">You pay</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff" id="l-cost">500 $NOT</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:.7rem;color:#999">You earn</div>
@@ -1116,9 +1095,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 
   <div class="sec">Warriors in Lobby</div>
   <div class="lpr">
-    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#8B4513,#5A2D0A)">T</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#FFE0A0">TonKnight_1</div><div style="font-size:.7rem;color:#6B4423;background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">2 cards</div></div>
-    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#0060A0,#003060)">A</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#FFE0A0">Alice_TON</div><div style="font-size:.7rem;color:#6B4423;background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">3 cards</div></div>
-    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#3A7A24,#1A4010)">M</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#FFE0A0">MaxBingo</div><div style="font-size:.7rem;color:#6B4423;background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">1 card</div></div>
+    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#8B4513,#5A2D0A)">T</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#fff">TonKnight_1</div><div style="font-size:.7rem;color:var(--muted);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">2 cards</div></div>
+    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#0060A0,#003060)">A</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#fff">Alice_TON</div><div style="font-size:.7rem;color:var(--muted);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">3 cards</div></div>
+    <div class="lpr-row"><div class="lav" style="background:radial-gradient(#3A7A24,#1A4010)">M</div><div style="flex:1;font-size:.82rem;font-weight:600;color:#fff">MaxBingo</div><div style="font-size:.7rem;color:var(--muted);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">1 card</div></div>
   </div>
 
   <div style="padding:6px 10px 14px">
@@ -1136,7 +1115,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <div style="font-size:.67rem;color:#999" id="g-di">0 numbers drawn</div>
       </div>
       <div style="display:flex;align-items:center;gap:5px">
-        <div style="font-size:.68rem;color:#6B4423">Next in</div>
+        <div style="font-size:.68rem;color:var(--muted)">Next in</div>
         <div class="cdring" id="g-cd">5</div>
       </div>
     </div>
@@ -1147,7 +1126,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
         <!-- placeholder balls before first draw -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;opacity:.35">
           <div style="font-size:2rem">🎱</div>
-          <div style="font-size:.68rem;color:#6B4423;font-family:'Clash',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
+          <div style="font-size:.68rem;color:var(--muted);font-family:'Clash',sans-serif">Game starts in <span id="g-cd2" style="color:#FFD93D;font-weight:700">5</span>s</div>
         </div>
       </div>
       <div class="dcount" id="g-dc">Get ready — first number coming up!</div>
@@ -1175,7 +1154,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 <div class="screen" id="sp">
   <div class="stone-header">
     <div class="topbar">
-      <div style="font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Profile</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff">⚔ Profile</div>
       <div style="flex:1"></div>
       <button class="btn btn-stone btn-sm" onclick="copyRef()">🔗 Invite</button>
     </div>
@@ -1199,7 +1178,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
     <div class="pusername" id="p-usr"></div>
     <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
       <span style="color:#FFD93D;font-weight:700" id="p-lv">Level 1</span>
-      <span style="color:#5A3D1A" id="p-nxp">80 XP to next</span>
+      <span style="color:var(--muted)" id="p-nxp">80 XP to next</span>
     </div>
     <div class="xpt"><div class="xpf" id="p-xpf" style="width:20%"></div></div>
     <div class="ptbola" id="p-tbola">505 $TBOLA</div>
@@ -1242,14 +1221,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
           border:2px solid #6B4423;display:flex;align-items:center;
           justify-content:center;font-size:1.4rem;flex-shrink:0">🛡️</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.9rem;font-weight:700;color:#FFE0A0" id="p-squad-name">No Squad</div>
-        <div style="font-size:.75rem;color:#5A3D1A" id="p-squad-sub">Tap to join or create</div>
+        <div style="font-size:.9rem;font-weight:700;color:#fff" id="p-squad-name">No Squad</div>
+        <div style="font-size:.75rem;color:var(--muted)" id="p-squad-sub">Tap to join or create</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:.9rem;font-weight:700;color:#FFD93D" id="p-squad-value"></div>
-        <div style="font-size:.65rem;color:#5A3D1A" id="p-squad-rank"></div>
+        <div style="font-size:.65rem;color:var(--muted)" id="p-squad-rank"></div>
       </div>
-      <div style="font-size:.85rem;color:#5A3D1A;margin-left:4px">›</div>
+      <div style="font-size:.85rem;color:var(--muted);margin-left:4px">›</div>
     </div>
   </div>
 
@@ -1270,9 +1249,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div style="position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#3D2B1A,#2A1C0E);
     border-bottom:3px solid #6B4423;padding:10px 12px 8px">
     <div style="display:flex;align-items:center;margin-bottom:10px">
-      <div style="font-size:1rem;font-weight:700;color:#FFE0A0">🏆 Leaderboard</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff">🏆 Leaderboard</div>
       <div style="flex:1"></div>
-      <div style="font-size:.65rem;color:#5A3D1A" id="lb-reset-label">Resets Monday</div>
+      <div style="font-size:.65rem;color:var(--muted)" id="lb-reset-label">Resets Monday</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;padding-bottom:2px">
       <div id="lt-weekly"  class="ltb ltb-on" onclick="setTab('weekly')" style="justify-content:center;padding:7px 4px">Weekly</div>
@@ -1309,7 +1288,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Create Private Room</div>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff">⚔ Create Private Room</div>
       <div style="width:60px"></div>
     </div>
   </div>
@@ -1349,13 +1328,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
             background:rgba(255,184,0,.2);border:2px solid #FFB800;color:#FFD93D">50 ⭐</div>
         <div onclick="selectPrice(this,100)" data-price="100"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">100 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">100 ⭐</div>
         <div onclick="selectPrice(this,200)" data-price="200"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">200 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">200 ⭐</div>
         <div onclick="selectPrice(this,500)" data-price="500"
           style="padding:8px 14px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.85rem;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#FFE0A0">500 ⭐</div>
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);color:#fff">500 ⭐</div>
       </div>
     </div>
 
@@ -1368,7 +1347,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <input type="range" min="2" max="20" value="10" id="cr-players"
         oninput="document.getElementById('cr-players-val').textContent=this.value;updateRoomPreview()"
         style="width:100%;accent-color:#FFB800;height:6px">
-      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#5A3D1A;margin-top:4px"><span>2</span><span>20</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px"><span>2</span><span>20</span></div>
     </div>
 
     <div class="wood-panel" style="padding:16px">
@@ -1376,7 +1355,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Password (optional)</div>
       <input type="text" id="cr-password" placeholder="Leave empty for open room" maxlength="20"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
+          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.9rem;
           outline:none;box-sizing:border-box">
     </div>
 
@@ -1388,7 +1367,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div style="display:flex;justify-content:space-between;padding:5px 0">
         <span style="font-size:.82rem;color:#8B6340">Prize pool (53%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#FFE0A0" id="cr-pool-preview">265 ⭐ max</span>
+        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">265 ⭐ max</span>
       </div>
     </div>
 
@@ -1401,7 +1380,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('sh')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">🔑 Enter Room Code</div>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff">🔑 Enter Room Code</div>
       <div style="width:60px"></div>
     </div>
   </div>
@@ -1413,21 +1392,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <div class="nail-bl"></div><div class="nail-br"></div>
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:14px">Room Code</div>
       <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="code-boxes">
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
-        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#FFE0A0"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
+        <div class="code-box" style="width:44px;height:52px;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff"></div>
       </div>
       <input type="text" id="join-code" maxlength="6" placeholder="Type code here"
         oninput="updateCodeBoxes(this.value)"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:1.1rem;
+          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:1.1rem;
           text-align:center;letter-spacing:6px;text-transform:uppercase;
           outline:none;box-sizing:border-box">
     </div>
-    <div style="font-size:.75rem;color:#5A3D1A">Code is 6 characters — letters and numbers</div>
+    <div style="font-size:.75rem;color:var(--muted)">Code is 6 characters — letters and numbers</div>
     <button class="btn btn-gold" onclick="joinRoom()" style="padding:14px;font-size:1rem;width:100%">🔑 Join Room</button>
   </div>
 </div>
@@ -1436,7 +1415,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
 <div class="screen" id="s-squad">
   <div class="stone-header">
     <div class="topbar">
-      <div style="font-size:1rem;font-weight:700;color:#FFE0A0">👥 Squads</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff">👥 Squads</div>
     </div>
   </div>
   <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px"></div>
@@ -1447,7 +1426,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('s-squad')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0">⚔ Create Squad</div>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff">⚔ Create Squad</div>
       <div style="width:60px"></div>
     </div>
   </div>
@@ -1463,7 +1442,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
           border:3px solid #6B4423;display:flex;align-items:center;
           justify-content:center;font-size:2.5rem;cursor:pointer;
           box-shadow:0 4px 0 rgba(0,0,0,.5)">🛡️</div>
-      <div style="font-size:.75rem;color:#6B4423">Tap to change squad image</div>
+      <div style="font-size:.75rem;color:var(--muted)">Tap to change squad image</div>
     </div>
 
     <!-- Squad Name -->
@@ -1472,7 +1451,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8B6340;margin-bottom:10px">Squad Name</div>
       <input type="text" id="squad-name" maxlength="24" placeholder="e.g. TON Wolves"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.95rem;
+          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.95rem;
           outline:none;box-sizing:border-box">
     </div>
 
@@ -1483,7 +1462,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <textarea id="squad-desc" maxlength="80" placeholder="What's your squad about?"
         rows="2"
         style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.88rem;
+          padding:10px 14px;color:#fff;font-family:'Clash',sans-serif;font-size:.88rem;
           outline:none;box-sizing:border-box;resize:none"></textarea>
     </div>
 
@@ -1497,7 +1476,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       <input type="range" min="2" max="20" value="20" id="squad-max"
         oninput="document.getElementById('squad-max-val').textContent=this.value"
         style="width:100%;accent-color:#FFB800;height:6px">
-      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#5A3D1A;margin-top:4px">
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px">
         <span>2</span><span>20</span>
       </div>
     </div>
@@ -1547,7 +1526,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" id="avatar-back-btn" onclick="go('sp')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#FFE0A0" id="avatar-screen-title">Choose Avatar</div>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff" id="avatar-screen-title">Choose Avatar</div>
       <div style="width:60px"></div>
     </div>
   </div>
@@ -1561,7 +1540,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
           justify-content:center;font-size:2.8rem;
           background:linear-gradient(145deg,#3A2810,#1A1005);
           box-shadow:0 0 20px rgba(255,184,0,.3),0 4px 0 rgba(0,0,0,.5)">😊</div>
-      <div style="font-size:.75rem;color:#6B4423">Selected avatar</div>
+      <div style="font-size:.75rem;color:var(--muted)">Selected avatar</div>
     </div>
 
     <!-- Preset gallery -->
@@ -1662,23 +1641,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">🃏</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFE0A0">Extra Free Cards</div><div style="font-size:.7rem;color:#5A3D1A">+2 free cards/day (3 total)</div></div>
+        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Extra Free Cards</div><div style="font-size:.7rem;color:var(--muted)">+2 free cards/day (3 total)</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">📈</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFE0A0">Gold Card Boost</div><div style="font-size:.7rem;color:#5A3D1A">+5% win rate on every game</div></div>
+        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Gold Card Boost</div><div style="font-size:.7rem;color:var(--muted)">+5% win rate on every game</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">👑</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFE0A0">VIP Access</div><div style="font-size:.7rem;color:#5A3D1A">VIP $TON Room — no level req</div></div>
+        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">VIP Access</div><div style="font-size:.7rem;color:var(--muted)">VIP $TON Room — no level req</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">💰</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFE0A0">Double $TBOLA</div><div style="font-size:.7rem;color:#5A3D1A">2× all $TBOLA earned this month</div></div>
+        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Double $TBOLA</div><div style="font-size:.7rem;color:var(--muted)">2× all $TBOLA earned this month</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
         <div style="font-size:1.3rem;flex-shrink:0">🎖️</div>
-        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#FFE0A0">Exclusive Badge</div><div style="font-size:.7rem;color:#5A3D1A">Warrior badge on your profile</div></div>
+        <div><div style="font-family:'Clash',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Exclusive Badge</div><div style="font-size:.7rem;color:var(--muted)">Warrior badge on your profile</div></div>
       </div>
     </div>
 
@@ -1744,7 +1723,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:#000}
   <div style="display:flex;align-items:center;justify-content:center;gap:10px">
     <div style="width:8px;height:8px;border-radius:50%;background:#3AFF8A;
       box-shadow:0 0 8px #3AFF8A;animation:pd 1.2s ease infinite"></div>
-    <span style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#FFE0A0">
+    <span style="font-family:'Clash',sans-serif;font-size:.88rem;font-weight:700;color:#fff">
       Game in progress — tap to return to your cards
     </span>
     <span style="font-size:1rem">🎱</span>
@@ -2941,17 +2920,17 @@ function renderPoolBanner(tab) {
       <div style="background:rgba(255,184,0,.1);border:1.5px solid rgba(255,184,0,.3);border-radius:10px;padding:10px 8px;text-align:center">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#FFD93D;margin-bottom:5px;opacity:.85">◈ $NOT Paid</div>
         <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#FFD93D;text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
-        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">all time total</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
       <div style="background:rgba(61,158,255,.1);border:1.5px solid rgba(61,158,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px;opacity:.85">💎 $TON Paid</div>
         <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
-        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">all time total</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
       <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center;grid-column:1/-1;max-width:200px;margin:0 auto;width:100%">
         <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px;opacity:.85">◆ $TBOLA Accumulated</div>
         <div style="font-family:'Clash',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
-        <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">airdrop snapshot</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">airdrop snapshot</div>
       </div>`
     return
   } else if(isSquads) {
@@ -2982,7 +2961,7 @@ function renderPoolBanner(tab) {
         text-transform:uppercase;color:${b.color};margin-bottom:5px;opacity:.85">${b.label}</div>
       <div style="font-family:'Clash',sans-serif;font-size:1rem;font-weight:700;
         color:${b.color};text-shadow:0 0 12px ${b.color}55">${b.value}</div>
-      <div style="font-size:.62rem;color:#5A3D1A;margin-top:3px">${b.sub}</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:3px">${b.sub}</div>
     </div>`).join('')
 }
 
@@ -3202,8 +3181,8 @@ function renderSquad() {
     cont.innerHTML = `
       <div style="text-align:center;padding:20px 16px 12px">
         <div style="font-size:3.5rem;margin-bottom:10px">🛡️</div>
-        <div style="font-size:1.1rem;font-weight:700;color:#FFE0A0;margin-bottom:6px">You have no squad</div>
-        <div style="font-size:.82rem;color:#6B4423;line-height:1.6;max-width:260px;margin:0 auto">
+        <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">You have no squad</div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.6;max-width:260px;margin:0 auto">
           Create your own squad or send a join request to an existing one.
         </div>
       </div>
@@ -3222,7 +3201,7 @@ function renderSquad() {
         <div style="display:flex;gap:8px">
           <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
             style="flex:1;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-              padding:9px 12px;color:#FFE0A0;font-family:'Clash',sans-serif;font-size:.9rem;
+              padding:9px 12px;color:#fff;font-family:'Clash',sans-serif;font-size:.9rem;
               outline:none;box-sizing:border-box;text-transform:uppercase">
           <button class="btn btn-stone btn-sm" onclick="joinSquad()" style="flex-shrink:0;padding:9px 14px">Join</button>
         </div>
@@ -3241,26 +3220,26 @@ function renderSquad() {
         <div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;
           background:linear-gradient(145deg,#3A2810,#1A1005);border:3px solid #6B4423;
           display:flex;align-items:center;justify-content:center;font-size:2rem">${mySquad.icon}</div>
-        <div style="font-size:1.2rem;font-weight:700;color:#FFE0A0;margin-bottom:2px">${mySquad.name}</div>
-        <div style="font-size:.78rem;color:#6B4423;margin-bottom:14px">${mySquad.desc||'No description'}</div>
+        <div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:2px">${mySquad.name}</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">${mySquad.desc||'No description'}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
           <div style="text-align:center">
             <div style="font-size:1.1rem;font-weight:700;color:#FFD93D">${mySquad.members}</div>
-            <div style="font-size:.65rem;color:#6B4423">Members</div>
+            <div style="font-size:.65rem;color:var(--muted)">Members</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:1.1rem;font-weight:700;color:#3AFF8A">${(mySquad.weekScore||0).toLocaleString()}</div>
-            <div style="font-size:.65rem;color:#6B4423">Week Score</div>
+            <div style="font-size:.65rem;color:var(--muted)">Week Score</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:1.1rem;font-weight:700;color:#FFD93D">#${mySquad.rank||'?'}</div>
-            <div style="font-size:.65rem;color:#6B4423">Rank</div>
+            <div style="font-size:.65rem;color:var(--muted)">Rank</div>
           </div>
         </div>
         <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;
           display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;cursor:pointer"
           onclick="const c='${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}';navigator.clipboard?.writeText(c);if(tg?.showPopup)tg.showPopup({title:'Copied!',message:'Code '+c+' copied to clipboard.',buttons:[{type:'ok'}]})">
-          <span style="font-size:.75rem;color:#6B4423">Squad code · tap to copy</span>
+          <span style="font-size:.75rem;color:var(--muted)">Squad code · tap to copy</span>
           <span style="font-size:.85rem;font-weight:700;color:#FFD93D;letter-spacing:2px">
             ${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
           </span>
@@ -3270,7 +3249,7 @@ function renderSquad() {
       <!-- MEMBERS -->
       <div class="stone-panel" style="padding:14px">
         <div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-          color:#6B4423;margin-bottom:10px">Members · ${mySquad.members}/20</div>
+          color:var(--muted);margin-bottom:10px">Members · ${mySquad.members}/20</div>
         ${(mySquad.memberList||[]).map((m,i)=>`
           <div style="display:flex;align-items:center;gap:8px;padding:8px 0;
             border-bottom:1px solid rgba(255,255,255,.05)">
@@ -3278,7 +3257,7 @@ function renderSquad() {
               background:linear-gradient(145deg,#6B4423,#3A2810);
               border:2px solid #4A3318;display:flex;align-items:center;
               justify-content:center;font-size:.95rem;flex-shrink:0">${m.avatar||'😊'}</div>
-            <div style="flex:1;font-size:.85rem;font-weight:600;color:#FFE0A0">${m.name}</div>
+            <div style="flex:1;font-size:.85rem;font-weight:600;color:#fff">${m.name}</div>
             ${i===0?'<div style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:#FFD93D;border:1px solid rgba(255,184,0,.3)">Captain</div>':''}
           </div>`).join('')}
       </div>
@@ -3323,21 +3302,21 @@ function renderSquadList() {
       border:2px solid ${s.open?'#3A5C1A':'#3D2810'};border-radius:12px;margin-bottom:6px">
       <!-- Rank medal -->
       <div style="width:24px;text-align:center;font-size:1rem;flex-shrink:0">
-        ${s.rank<=3 ? medals[s.rank-1] : '<span style="font-size:.8rem;font-weight:700;color:#5A3D1A">'+s.rank+'</span>'}
+        ${s.rank<=3 ? medals[s.rank-1] : '<span style="font-size:.8rem;font-weight:700;color:var(--muted)">'+s.rank+'</span>'}
       </div>
       <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;
         background:linear-gradient(145deg,#3A2810,#1A1005);border:2px solid #6B4423;
         display:flex;align-items:center;justify-content:center;font-size:1.2rem">${s.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:5px">
-          <span style="font-size:.88rem;font-weight:700;color:#FFE0A0">${s.name}</span>
+          <span style="font-size:.88rem;font-weight:700;color:#fff">${s.name}</span>
         </div>
-        <div style="font-size:.7rem;color:#5A3D1A">${s.members}/${s.max} members · ${s.score.toLocaleString()} pts</div>
+        <div style="font-size:.7rem;color:var(--muted)">${s.members}/${s.max} members · ${s.score.toLocaleString()} pts</div>
       </div>
       ${s.open
         ? `<button class="btn btn-stone btn-sm" onclick="requestJoinSquad('${s.name}')"
             style="padding:6px 12px;font-size:.75rem;flex-shrink:0">Request</button>`
-        : `<div style="font-size:.7rem;color:#5A3D1A;padding:4px 8px;border-radius:50px;
+        : `<div style="font-size:.7rem;color:var(--muted);padding:4px 8px;border-radius:50px;
             border:1px solid #3D2810">Full</div>`
       }
     </div>`).join('')
