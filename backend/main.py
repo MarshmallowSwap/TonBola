@@ -7,6 +7,7 @@ import os, json, random, asyncio, hashlib, hmac, uuid
 from datetime import datetime, timedelta, timezone, date
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -16,6 +17,7 @@ from supabase import create_client, Client
 SUPABASE_URL = "https://lajeiwuumqbzcmdgsczq.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhamVpd3V1bXFiemNtZGdzY3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ4NTgzNiwiZXhwIjoyMDkwMDYxODM2fQ.bmUUgJfpoOyj8QR9NfH_7Fyzg360VkuH-ReZsz-fRyk"
 BOT_TOKEN = os.getenv("TONBOLA_BOT_TOKEN", "")
+TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 JACKPOT_SENTINEL = "2099-01-01"  # week_start used as jackpot store
 JACKPOT_THRESHOLD = 100.0
 
@@ -288,6 +290,62 @@ def wheel_collect(session_id: str, tg: dict = Depends(get_user)):
         }).execute()
     except: pass
     return {"ok": True, "collected": balance, "currency": sess["currency"]}
+
+
+# ══════════════════════════════════════════
+# TELEGRAM STARS PAYMENTS
+# ══════════════════════════════════════════
+
+ROOM_STARS = {"free": 0, "stars": 100, "ton": 50, "vip": 250}
+
+@app.post("/payments/invoice")
+async def create_invoice(room: str, n_cards: int, tg: dict = Depends(get_user)):
+    price = ROOM_STARS.get(room, 50)
+    if price == 0:
+        return {"ok": True, "free": True, "invoice_url": None}
+    total = price * n_cards
+    if not BOT_TOKEN:
+        return {"ok": False, "error": "Bot token not configured"}
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(f"{TELEGRAM_API}/createInvoiceLink", json={
+                "title": f"TonBola {room.upper()} Room",
+                "description": f"{n_cards} bingo card{'s' if n_cards>1 else ''}",
+                "payload": f"bingo:{room}:{n_cards}:{tg['id']}",
+                "currency": "XTR",
+                "prices": [{"label": f"{n_cards} card{'s' if n_cards>1 else ''}", "amount": total}],
+            })
+        data = resp.json()
+        if not data.get("ok"):
+            raise HTTPException(400, str(data))
+        return {"ok": True, "invoice_url": data["result"], "stars": total}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/telegram/webhook")
+async def telegram_webhook(req: Request):
+    from fastapi import Request
+    update = await req.json()
+    if "pre_checkout_query" in update:
+        pcq = update["pre_checkout_query"]
+        async with httpx.AsyncClient() as client:
+            await client.post(f"{TELEGRAM_API}/answerPreCheckoutQuery",
+                json={"pre_checkout_query_id": pcq["id"], "ok": True})
+    if "message" in update:
+        msg = update["message"]
+        if "successful_payment" in msg:
+            sp = msg["successful_payment"]
+            parts = sp.get("invoice_payload","").split(":")
+            if len(parts)==4 and parts[0]=="bingo":
+                uid = int(parts[3])
+                try:
+                    sb.table("tbola_ledger").insert({
+                        "user_id": uid, "amount": sp["total_amount"],
+                        "balance_after": 0, "type": "stars_payment",
+                        "note": f"Stars: {sp['total_amount']} XTR room={parts[1]}"
+                    }).execute()
+                except: pass
+    return {"ok": True}
 
 # ══════════════════════════════════════════
 # WEBSOCKET — Bingo Engine
