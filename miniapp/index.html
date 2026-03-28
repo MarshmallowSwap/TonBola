@@ -502,11 +502,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 @keyframes lvcp{0%{opacity:1;transform:translateY(-8px) rotate(0)}80%{opacity:.9}100%{opacity:0;transform:translateY(680px) rotate(840deg)}}
 
 /* ── PROFILE ── */
-.phero{margin:10px 12px;padding:24px 18px;border-radius:20px;background:linear-gradient(135deg,#3B0764,#4C1D95,#6D28D9);text-align:center;box-shadow:0 8px 28px rgba(109,40,217,.5),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+.phero{margin:10px 12px;padding:20px 18px 24px;border-radius:20px;background:linear-gradient(135deg,#3B0764,#4C1D95,#6D28D9);text-align:center;box-shadow:0 8px 28px rgba(109,40,217,.5),inset 0 1px 0 rgba(255,255,255,.2);position:relative}
 .phero::before{content:'';display:block;height:2px;margin:-24px -32px 16px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
   background:linear-gradient(90deg,#8B6340,#FFD700,#C4933F,#FFD700,#8B6340);
   border-radius:var(--r) var(--r) 0 0}
-.pav{width:76px;height:76px;border-radius:50%;margin:0 auto;background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:700;box-shadow:0 0 20px rgba(255,255,255,.1)}
+.pav{width:72px;height:72px;border-radius:50%;margin:0 auto;background:linear-gradient(135deg,var(--violet),#4F46E5);border:3px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#fff;box-shadow:0 4px 16px rgba(109,40,217,.5)}
 .pname{font-size:1.25rem;font-weight:700;color:#fff;
   text-shadow:0 2px 4px rgba(0,0,0,.8)}
 .pusername{font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:10px}
@@ -517,7 +517,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .srow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:7px 10px}
 .sb{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}
 .sbn{font-size:1.3rem;font-weight:800;color:#fff}
-.sbl{font-size:.65rem;color:var(--muted);margin-top:2px}
+.sbl{font-size:.62rem;font-weight:600;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
 .refcard{margin:0 10px 8px;padding:12px 14px;border-radius:12px;
   background:linear-gradient(135deg,#001A0A,#000E06);
   border:2px solid #1A5A2A;cursor:pointer}
@@ -645,6 +645,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 #s-squad{background:var(--bg)}
 #s-wheel{background:var(--bg)}
 #s-create,#s-join{background:var(--bg)}
+
+#p-wins-box{background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1))!important;border:1px solid rgba(139,92,246,.35)!important}
+#p-wins-box .sbn{color:var(--violet3)!important}
+#p-lines-box{background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(6,182,212,.08))!important;border:1px solid rgba(34,211,238,.3)!important}
+#p-lines-box .sbn{color:var(--cyan)!important}
+#p-cards-box{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(245,158,11,.08))!important;border:1px solid rgba(251,191,36,.3)!important}
+#p-cards-box .sbn{color:var(--yellow)!important}
 </style>
 </head>
 <body>
@@ -1195,20 +1202,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
 
   <div class="srow">
-    <div class="sb"><div class="sbn" id="p-wins">0</div><div class="sbl">Wins</div></div>
+    <div class="sb" id="p-wins-box"><div class="sbn" id="p-wins">0</div><div class="sbl">Wins</div></div>
     <div class="sb" id="p-lines-box"><div class="sbn" id="p-li">0</div><div class="sbl">Lines</div></div>
-    <div class="sb"><div class="sbn" id="p-cd">6</div><div class="sbl">Cards</div></div>
+    <div class="sb" id="p-cards-box"><div class="sbn" id="p-cd">6</div><div class="sbl">Cards</div></div>
   </div>
 
   <!-- Warrior Pass -->
   <div onclick="showWarriorPass()" style="margin:0 10px 8px;cursor:pointer;
     background:linear-gradient(135deg,rgba(109,40,217,.18),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.35);
-    border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:12px;
-    box-shadow:0 4px 0 rgba(0,0,0,.5)">
+    border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:12px">
     <div style="font-size:2rem">⚔️</div>
     <div style="flex:1">
       <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;
-        color:var(--yellow);text-shadow:0 1px 3px rgba(0,0,0,.9)">Warrior Pass</div>
+        color:#fff">⚔️ Warrior Pass</div>
       <div style="font-size:.7rem;color:var(--muted);margin-top:1px">600 ⭐ Stars · 3 $TON / month</div>
     </div>
     <div style="background:linear-gradient(135deg,var(--violet),#4F46E5);border-radius:50px;
