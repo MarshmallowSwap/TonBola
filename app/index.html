@@ -2582,7 +2582,7 @@ async function payAndEnterLobby(room, nCards) {
       if (btnId !== 'pay') return
       const comment = 'TonBola:bingo:' + room + ':' + nCards
       await sendTonPayment(total, comment,
-        () => { startGame() },
+        () => { paymentVerified = true; startGame() },
         (err) => {
           if (err !== 'no_wallet') {
             if (tg?.showPopup) tg.showPopup({
