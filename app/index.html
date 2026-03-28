@@ -1820,7 +1820,7 @@ const ROOMS={
   vip:{name:'VIP $TON Room',cur:'ton',price:1,tbola:150,icon:'👑'}
 }
 const BC=['c1','c2','c3','c4','c5','c6']
-let curRoom='stars',nCards=1,drawn=[],cards=[],timer=null,cd=5
+let curRoom='stars',nCards=1,drawn=[],cards=[],timer=null,cd=3
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function setNav(id){
@@ -1942,17 +1942,17 @@ function restoreGameState(){
     if(timer) clearInterval(timer)
     const cdEl=document.getElementById('g-cd')
     const cdEl2=document.getElementById('g-cd2')
-    cd=5
+    cd=3
     timer=setInterval(()=>{
       cd--;if(cdEl)cdEl.textContent=cd;if(cdEl2)cdEl2.textContent=cd
-      if(cd<=0){cd=5;saveGameState();drawN()}
+      if(cd<=0){cd=3;saveGameState();drawN()}
     },1000)
     return true
   } catch(e){ sessionStorage.removeItem('tbgame'); return false }
 }
 
 function startGame(){
-  go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=5;gameOver=false
+  go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=3;gameOver=false
   document.getElementById('game-bar').style.display='block'
   isGameActive = true
   setRoomCardsEnabled(false)
@@ -2002,7 +2002,7 @@ function startGame(){
     cd--
     if(cdEl)cdEl.textContent=cd
     if(cdEl2)cdEl2.textContent=cd
-    if(cd<=0){cd=5;drawN()}
+    if(cd<=0){cd=3;drawN()}
   },1000)
 }
 
