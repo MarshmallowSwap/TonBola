@@ -621,11 +621,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 /* ── WIN OVERLAY ── */
 .wov{
   position:fixed;inset:0;z-index:999;
-  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
+  background:rgba(0,0,0,.88);backdrop-filter:blur(8px);
   display:none;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:24px;
+  text-align:center;padding:24px;overflow:hidden;
 }
 .wov.show{display:flex}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(110vh) rotate(720deg)}}
 
 #p-wins{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(109,40,217,.08));border:1px solid rgba(139,92,246,.3)!important}
 #p-wins .sbn{color:var(--violet3)}
@@ -2144,6 +2145,21 @@ function showWin(type){
   document.getElementById('wt').textContent=type==='bingo'?'BINGO!':'LINE!'
   document.getElementById('wamt').textContent='+'+prizeFmt
   document.getElementById('wtbola').textContent='+'+tbolaWon+' $TBOLA earned'
+  // Winner info
+  const wname=document.getElementById('w-winner-name')
+  const wroom=document.getElementById('w-winner-room')
+  if(wname) wname.textContent=user.name||(user.username?'@'+user.username:'Player')
+  if(wroom) wroom.textContent=(ROOMS[curRoom]?.name||curRoom)+' · '+(nCards>1?nCards+' cards':'1 card')
+  // Confetti burst
+  const conf=document.getElementById('wov-confetti')
+  if(conf&&type==='bingo'){
+    conf.innerHTML=Array.from({length:30},(_,i)=>{
+      const colors=['#FFD700','#FF6B6B','#4ECDC4','#A78BFA','#FB923C']
+      const c=colors[i%colors.length]
+      const x=Math.random()*100, delay=Math.random()*0.8, dur=1.2+Math.random()*1
+      return`<div style="position:absolute;left:${x}%;top:-10px;width:8px;height:8px;background:${c};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${dur}s ${delay}s ease-in forwards;opacity:0"></div>`
+    }).join('')
+  }
   user.tbola+=tbolaWon
   user.wins+=(type==='bingo'?1:0)
   user.lines+=(type==='line'?1:0)
