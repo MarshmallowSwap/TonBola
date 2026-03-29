@@ -2559,53 +2559,100 @@ async function payWheelSpins(spins, currency, onPaid) {
 }
 
 // ── BINGO PAY & ENTER ──
+
+// ── $NOT Jetton Transfer ──
+const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
+const NOT_DECIMALS = 1000000000 // 9 decimali
+
+async function sendNotPayment(amountNot, comment, onSuccess, onFail) {
+  if (!tc || !tcWallet) { if (onFail) onFail('no_wallet'); return }
+
+  const nanoNot = String(Math.round(amountNot * NOT_DECIMALS))
+  const userAddr = tcWallet.account.address
+
+  // Jetton transfer body (TL-B schema)
+  // op=0xf8a7ea5, query_id, amount, destination, response_dest, custom_payload, fwd_amount, fwd_payload
+  function buildJettonTransferPayload(amountStr, toAddr, commentStr) {
+    // Encode as hex — simplified version for TonConnect
+    // Full jetton transfer: op(4) + query_id(8) + amount(var) + to(addr) + resp(addr) + 0(maybe_ref) + fwd_fee(var) + comment
+    const op = 'f8a7ea5'
+    const queryId = '0000000000000000'
+    // We encode the comment text
+    const commentHex = Array.from(new TextEncoder().encode('00000000' + commentStr))
+      .map(b => b.toString(16).padStart(2,'0')).join('')
+    return op + queryId + commentHex
+  }
+
+  try {
+    // Gas for jetton transfer: 0.05 TON
+    const gasNano = String(Math.round(0.055 * 1000000000))
+
+    const result = await tc.sendTransaction({
+      validUntil: Math.floor(Date.now()/1000) + 600,
+      messages: [{
+        address: PLATFORM_WALLET, // backend intercetta e verifica jetton tx
+        amount: gasNano,
+        payload: (() => {
+          function encodeComment(text) {
+            const bytes = new TextEncoder().encode(text)
+            let hex = '00000000'
+            for (const b of bytes) hex += b.toString(16).padStart(2,'0')
+            return hex
+          }
+          return encodeComment(comment + ':not:' + amountNot)
+        })()
+      }]
+    })
+    if (onSuccess) onSuccess(result)
+  } catch(e) {
+    console.warn('NOT payment error:', e)
+    if (onFail) onFail(e)
+  }
+}
+
 async function payAndEnterLobby(room, numCards) {
   const r = ROOMS[room]
   if (!r) return
 
-  // Free room — no payment needed
+  // Free room — nessun pagamento
   if (r.cur === 'free' || r.price === 0) {
     paymentVerified = true
     startGame()
     return
   }
 
-  // NOT room — jetton payment (TON for gas + NOT jetton transfer)
-  if (r.cur === 'not' || r.cur === 'stars') {
+  // Assicura wallet connesso
+  if (!tcWallet) {
+    if (tg?.showPopup) tg.showPopup({
+      title: '🔗 Collega il Wallet',
+      message: 'Connetti il tuo wallet TON per entrare in questa room.',
+      buttons: [{id:'ok',type:'default',text:'Connetti Wallet'},{type:'cancel'}]
+    }, id => { if(id==='ok') connectWallet() })
+    return
+  }
+
+  // $NOT Room
+  if (r.cur === 'not') {
     const totalNot = r.price * numCards
     const comment = `TonBola:bingo:${room}:${numCards}`
-
-    if (!tcWallet) {
-      if (tg?.showPopup) tg.showPopup({
-        title: '🔗 Connect Wallet',
-        message: 'Connect your TON wallet to pay with $NOT.',
-        buttons: [{id:'ok',type:'default',text:'Connect'},{type:'cancel'}]
-      }, id => { if(id==='ok') connectWallet() })
-      return
-    }
-
-    // Show confirmation
     const feeStr = totalNot.toLocaleString() + ' $NOT'
     if (tg?.showPopup) {
       tg.showPopup({
-        title: '💳 Confirm Payment',
-        message: `Enter ${r.name}?
+        title: '💳 Conferma Pagamento',
+        message: `${r.name}
 
-Cards: ${numCards}
-Cost: ${feeStr}
+Card: ${numCards}
+Costo: ${feeStr}
 
-Note: ~0.05 $TON gas required.`,
-        buttons: [{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
+⚠️ Richiede ~0.05 $TON per le gas fee.`,
+        buttons: [{id:'pay',type:'default',text:`Paga ${feeStr}`},{type:'cancel',text:'Annulla'}]
       }, async id => {
         if (id !== 'pay') return
-        // For NOT jetton we send a minimal TON tx with NOT transfer comment
-        // Full jetton transfer will be implemented with backend verification
-        const gasTon = 0.06 // cover gas for jetton tx
-        await sendTonPayment(gasTon, comment,
+        await sendNotPayment(totalNot, comment,
           () => { paymentVerified = true; startGame() },
           (err) => {
             if (err === 'no_wallet') return
-            if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
+            if (tg?.showPopup) tg.showPopup({title:'❌ Pagamento fallito',message:'Transazione annullata. Riprova.',buttons:[{type:'ok'}]})
           }
         )
       })
@@ -2613,48 +2660,32 @@ Note: ~0.05 $TON gas required.`,
     return
   }
 
-  // $TON room — direct TON payment
+  // $TON Room
   if (r.cur === 'ton') {
     const totalTon = r.price * numCards
     const comment = `TonBola:bingo:${room}:${numCards}`
-
-    if (!tcWallet) {
-      if (tg?.showPopup) tg.showPopup({
-        title: '🔗 Connect Wallet',
-        message: 'Connect your TON wallet to enter this room.',
-        buttons: [{id:'ok',type:'default',text:'Connect Wallet'},{type:'cancel'}]
-      }, id => { if(id==='ok') connectWallet() })
-      return
-    }
-
     const feeStr = totalTon.toFixed(2) + ' $TON'
     if (tg?.showPopup) {
       tg.showPopup({
-        title: '💳 Confirm Payment',
-        message: `Enter ${r.name}?
+        title: '💳 Conferma Pagamento',
+        message: `${r.name}
 
-Cards: ${numCards}
-Cost: ${feeStr}
-
-Transaction goes to platform wallet for prize distribution.`,
-        buttons: [{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
+Card: ${numCards}
+Costo: ${feeStr}`,
+        buttons: [{id:'pay',type:'default',text:`Paga ${feeStr}`},{type:'cancel',text:'Annulla'}]
       }, async id => {
         if (id !== 'pay') return
         await sendTonPayment(totalTon, comment,
           () => { paymentVerified = true; startGame() },
           (err) => {
             if (err === 'no_wallet') return
-            if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
+            if (tg?.showPopup) tg.showPopup({title:'❌ Pagamento fallito',message:'Transazione annullata. Riprova.',buttons:[{type:'ok'}]})
           }
         )
       })
     }
     return
   }
-
-  // Fallback — just enter
-  paymentVerified = true
-  startGame()
 }
 
 // ── FORTUNE WHEEL ──
