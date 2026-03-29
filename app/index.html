@@ -1143,7 +1143,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <div class="sec">Warriors in Lobby</div>
   <div class="lpr" id="l-players-list">
-    <div style="text-align:center;padding:14px;color:var(--muted);font-size:.8rem">Waiting for players...</div>
+    <div style="text-align:center;padding:14px;color:var(--muted);font-size:.8rem">You're in! Pay to start your game.</div>
   </div>
 
   <div style="padding:6px 10px 14px">
@@ -1904,7 +1904,7 @@ function openLobby(r){
   updateCost()
   // Reset lobby player list
   const lpl = document.getElementById('l-players-list')
-  if(lpl) lpl.innerHTML = '<div style="text-align:center;padding:14px;color:var(--muted);font-size:.8rem">Waiting for players...</div>'
+  if(lpl) lpl.innerHTML = '<div style="text-align:center;padding:14px;color:var(--muted);font-size:.8rem">Ready — pay to start your game.</div>'
   // Add yourself
   const myRow = document.createElement('div')
   myRow.className = 'lpr-row'
@@ -1913,9 +1913,9 @@ function openLobby(r){
     '<div style="font-size:.7rem;color:var(--muted);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:50px">1 card</div>'
   if(lpl) { lpl.innerHTML = ''; lpl.appendChild(myRow) }
   go('sl')
-  let s=108
-  const iv=setInterval(()=>{s--;if(s<0){clearInterval(iv);return}
-    const el=document.getElementById('l-cd');if(el)el.textContent=Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0')},1000)
+  // Countdown: parte subito dopo pagamento — nessun timer falso
+  const el=document.getElementById('l-cd')
+  if(el) el.textContent='Ready'
 }
 
 function selC(n,el){
