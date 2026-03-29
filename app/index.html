@@ -1834,11 +1834,8 @@ function getTgUser(){return{
 const user={...getTgUser(),tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
 
 setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
-// Clear any stale game session on fresh load
-if(!sessionStorage.getItem('_tc_active')) {
-  sessionStorage.removeItem('tbgame')
-  sessionStorage.setItem('_tc_active','1')
-}
+// Always clear stale game on fresh load — user must explicitly resume
+sessionStorage.removeItem('tbgame')
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
@@ -1879,6 +1876,7 @@ function setRoomCardsEnabled(enabled){
 function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
+  go('sh'); setNav('nb-h')
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
@@ -3901,7 +3899,8 @@ function joinRoom(){
   }
 }
 // Restore active game if user left and came back
-setTimeout(()=>{ restoreGameState() }, 300)
+// restoreGameState disabled — game does not persist across sessions
+// setTimeout(()=>{ restoreGameState() }, 300)
 
 // ── AVATAR SYSTEM ──
 const PRESETS_USER = ['😊','😎','🦊','🐺','🦁','🐯','🦅','🐉','⚔️','🛡️','💎','🎱','🔥','⭐','👑','🏆','🎯','🧙','🤺','🦸']
