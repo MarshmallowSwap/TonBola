@@ -2462,33 +2462,44 @@ function updateWalletUI() {
 async function connectWallet() {
   if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
   if (!tc) { alert('TonConnect unavailable'); return }
+
   if (tcWallet) {
-    // Already connected — show info + disconnect option
+    const short = tcWallet.account.address.slice(0,6)+'...'+tcWallet.account.address.slice(-4)
     if (tg?.showPopup) tg.showPopup({
       title: '💎 Wallet Connected',
-      message: 'Address:\n' + tcWallet.account.address + '\n\nDisconnect?',
+      message: 'Address: ' + short + '\n\nDisconnect?',
       buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
     }, id => { if(id==='dc') tc.disconnect() })
     return
   }
+
   try {
-    // Get available wallets and open best one
     const wallets = await tc.getWallets()
-    // Filter to ones with universalLink (work in Telegram)
-    const tgWallets = wallets.filter(w => w.universalLink || w.bridgeUrl)
-    if (!tgWallets.length) { alert('No TON wallets found'); return }
-    // Use first available (usually Tonkeeper or Telegram Wallet)
-    const wallet = tgWallets[0]
-    const link = tc.connect({ universalLink: wallet.universalLink, bridgeUrl: wallet.bridgeUrl })
-    // Open wallet link
-    if (tg?.openLink) tg.openLink(link)
-    else window.open(link, '_blank')
+    // Priorizza Telegram Wallet (wallet integrato in Telegram)
+    const tgWallet = wallets.find(w => w.appName === 'telegram-wallet' || w.name === 'Wallet')
+    const tonkeeper = wallets.find(w => w.appName === 'tonkeeper')
+    const target = tgWallet || tonkeeper || wallets.find(w => w.universalLink || w.bridgeUrl)
+
+    if (!target) {
+      tg?.openLink('https://t.me/wallet')
+      return
+    }
+
+    // Usa universalLink per aprire direttamente in Telegram
+    const link = tc.connect({
+      universalLink: target.universalLink,
+      bridgeUrl: target.bridgeUrl
+    })
+
+    if (tg?.openLink) {
+      tg.openLink(link)
+    } else {
+      window.open(link, '_blank')
+    }
   } catch(e) {
     console.warn('Connect error:', e)
-    // Fallback: deep link to Tonkeeper
-    const link = 'https://app.tonkeeper.com/ton-connect?v=2&id=' + encodeURIComponent(MANIFEST_URL)
-    if (tg?.openLink) tg.openLink(link)
-    else window.open(link, '_blank')
+    // Fallback diretto a Telegram Wallet
+    tg?.openLink('https://t.me/wallet?attach=1')
   }
 }
 
@@ -2621,14 +2632,23 @@ async function payAndEnterLobby(room, numCards) {
     return
   }
 
-  // Assicura wallet connesso
+  // Assicura wallet connesso — apri direttamente senza popup intermedio
   if (!tcWallet) {
-    if (tg?.showPopup) tg.showPopup({
-      title: '🔗 Collega il Wallet',
-      message: 'Connetti il tuo wallet TON per entrare in questa room.',
-      buttons: [{id:'ok',type:'default',text:'Connetti Wallet'},{type:'cancel'}]
-    }, id => { if(id==='ok') connectWallet() })
-    return
+    await connectWallet()
+    // Aspetta fino a 20s che il wallet si connetta
+    let waited = 0
+    while (!tcWallet && waited < 20000) {
+      await new Promise(r => setTimeout(r, 500))
+      waited += 500
+    }
+    if (!tcWallet) {
+      if (tg?.showPopup) tg.showPopup({
+        title: '🔗 Wallet Required',
+        message: 'Please connect your TON wallet (Tonkeeper or Telegram Wallet) and try again.',
+        buttons: [{type:'ok'}]
+      })
+      return
+    }
   }
 
   // $NOT Room
@@ -2652,7 +2672,7 @@ Costo: ${feeStr}
           () => { paymentVerified = true; startGame() },
           (err) => {
             if (err === 'no_wallet') return
-            if (tg?.showPopup) tg.showPopup({title:'❌ Pagamento fallito',message:'Transazione annullata. Riprova.',buttons:[{type:'ok'}]})
+            if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Please try again.',buttons:[{type:'ok'}]})
           }
         )
       })
@@ -2679,7 +2699,7 @@ Costo: ${feeStr}`,
           () => { paymentVerified = true; startGame() },
           (err) => {
             if (err === 'no_wallet') return
-            if (tg?.showPopup) tg.showPopup({title:'❌ Pagamento fallito',message:'Transazione annullata. Riprova.',buttons:[{type:'ok'}]})
+            if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Please try again.',buttons:[{type:'ok'}]})
           }
         )
       })
