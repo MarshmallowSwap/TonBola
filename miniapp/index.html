@@ -895,25 +895,36 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- Scratch Cards — Coming Soon -->
-    <div style="margin-bottom:10px;position:relative;
-      background:linear-gradient(135deg,#11998E,#38EF7D);
-      border:none;
+    <!-- Scratch Cards -->
+    <div onclick="openScratch()" style="cursor:pointer;margin-bottom:10px;position:relative;
+      background:linear-gradient(135deg,#065F46,#047857);
+      border:1.5px solid rgba(52,211,153,.3);
       border-radius:12px;height:110px;display:flex;align-items:center;
-      gap:14px;padding:0 18px;box-shadow:0 6px 24px rgba(17,153,142,.45);overflow:hidden">
-      <div style="font-size:3rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))">🃏</div>
+      gap:14px;padding:0 18px;box-shadow:0 6px 24px rgba(4,120,87,.5);overflow:hidden">
+      <!-- Shine -->
+      <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;
+        background:radial-gradient(circle,rgba(52,211,153,.15) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="font-size:3rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))">🎟️</div>
       <div style="flex:1">
-        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
-          color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">Scratch Cards</div>
-        <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
-          Instant win · Gratta e vinci on TON
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;
+          color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)">Scratch Cards</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
+          Instant win · Scratch &amp; reveal on TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
-          <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
-            color:var(--yellow);font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
-            🔜 COMING SOON
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+          <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
+            color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            💵 USDT
+          </span>
+          <span style="background:rgba(0,152,234,.15);border:1px solid rgba(0,152,234,.3);
+            color:#40B8FF;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            💎 TON
           </span>
         </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.55rem;color:rgba(255,255,255,.5)">From</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;color:#34D399">0.10 USDT</div>
       </div>
     </div>
 
@@ -1078,6 +1089,99 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         ← Back
       </button>
     </div>
+  </div>
+
+</div>
+
+<div class="screen" id="s-scratch" style="background:#08080E;overflow-y:auto;padding-bottom:80px">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
+    background:rgba(0,0,0,.7);backdrop-filter:blur(12px);position:sticky;top:0;z-index:20;
+    border-bottom:1px solid rgba(52,211,153,.1)">
+    <button class="btn btn-back btn-sm" onclick="go('s-hub');setNav('nb-h');initHub()">← Back</button>
+    <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#fff">🎟️ Scratch Cards</div>
+    <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:#34D399" id="sc-tbola-bal">0 $TBOLA</div>
+  </div>
+
+  <!-- Card tier selector -->
+  <div style="padding:12px 12px 6px;font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase">Choose your card</div>
+  <div style="display:flex;flex-direction:column;gap:8px;padding:0 12px 12px">
+
+    <!-- Bronze 0.10 USDT -->
+    <div onclick="selectScratchCard('usdt_low')" id="sc-card-usdt_low"
+      style="cursor:pointer;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;
+      background:linear-gradient(135deg,rgba(4,120,87,.6),rgba(6,78,59,.8));
+      border:2px solid rgba(52,211,153,.35);transition:all .2s">
+      <div style="font-size:2.2rem">🎟️</div>
+      <div style="flex:1">
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Bronze Card</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 9 cells — match 3 to win</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <span style="font-size:.6rem;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:#34D399;padding:1px 7px;border-radius:50px;font-weight:700">0.10 USDT</span>
+          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 5 USDT</span>
+        </div>
+      </div>
+      <div id="sc-sel-usdt_low" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(52,211,153,.4);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0"></div>
+    </div>
+
+    <!-- Silver 0.50 USDT -->
+    <div onclick="selectScratchCard('usdt_mid')" id="sc-card-usdt_mid"
+      style="cursor:pointer;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;
+      background:linear-gradient(135deg,rgba(37,99,235,.6),rgba(29,78,216,.8));
+      border:2px solid rgba(96,165,250,.3);transition:all .2s">
+      <div style="font-size:2.2rem">🎟️</div>
+      <div style="flex:1">
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Silver Card</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — better odds</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <span style="font-size:.6rem;background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);color:#60A5FA;padding:1px 7px;border-radius:50px;font-weight:700">0.50 USDT</span>
+          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 25 USDT</span>
+        </div>
+      </div>
+      <div id="sc-sel-usdt_mid" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0"></div>
+    </div>
+
+    <!-- Gold 0.20 TON -->
+    <div onclick="selectScratchCard('ton')" id="sc-card-ton"
+      style="cursor:pointer;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;
+      background:linear-gradient(135deg,rgba(91,33,182,.6),rgba(109,40,217,.8));
+      border:2px solid rgba(167,139,250,.3);transition:all .2s">
+      <div style="font-size:2.2rem">🎟️</div>
+      <div style="flex:1">
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Gold Card</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — max prizes</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <span style="font-size:.6rem;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#A78BFA;padding:1px 7px;border-radius:50px;font-weight:700">0.20 TON</span>
+          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 2 TON</span>
+        </div>
+      </div>
+      <div id="sc-sel-ton" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0"></div>
+    </div>
+  </div>
+
+  <!-- Buy button -->
+  <div style="padding:0 12px 14px">
+    <button id="sc-buy-btn" onclick="buyScratchCard()"
+      style="width:100%;padding:16px;border-radius:16px;border:none;
+      font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#001A00;
+      cursor:pointer;opacity:.4;pointer-events:none;
+      background:linear-gradient(180deg,#34D399,#059669);
+      box-shadow:0 4px 0 #065F46;transition:all .2s">
+      🎟️ Buy &amp; Scratch — select a card first
+    </button>
+  </div>
+
+  <!-- Active scratch game area -->
+  <div id="sc-game-area" style="display:none;padding:0 12px 16px">
+    <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase;margin-bottom:10px;text-align:center">Tap to scratch!</div>
+    <div id="sc-grid" style="display:grid;gap:8px;max-width:340px;margin:0 auto"></div>
+    <div id="sc-result-msg" style="text-align:center;margin-top:16px;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;min-height:40px;color:#fff;line-height:1.4"></div>
+    <button id="sc-new-btn" onclick="openScratch()" style="display:none;width:100%;margin-top:10px;
+      padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#34D399,#059669);
+      font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#001A00;cursor:pointer">
+      🎟️ Play Again
+    </button>
   </div>
 
 </div>
@@ -2533,6 +2637,185 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
   // TON
   const total = +((wheelPricePerSpin.ton || 0.1) * spins).toFixed(2)
   await sendTonPayment(total, `TonBola:wheel:ton:${spins}`, success, fail)
+}
+
+
+// ── SCRATCH CARDS ──
+const SCRATCH_TIERS = {
+  usdt_low: { name:'Bronze', price:0.10, cur:'usdt', cells:3, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'], maxWin:5,   prizes:[0,0,0,0.20,0.50,1,5]   },
+  usdt_mid: { name:'Silver', price:0.50, cur:'usdt', cells:5, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔','🃏'], maxWin:25,  prizes:[0,0,0,0,1,5,25]          },
+  ton:      { name:'Gold',   price:0.20, cur:'ton',  cells:6, symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],       maxWin:2,   prizes:[0,0,0,0,0.5,1,2]         }
+}
+let scratchSelected = null
+let scratchRevealed = 0
+let scratchTotal    = 0
+
+function openScratch() {
+  go('s-scratch'); setNav('nb-h')
+  scratchSelected = null
+  scratchRevealed = 0
+  document.getElementById('sc-game-area').style.display = 'none'
+  document.getElementById('sc-grid').innerHTML = ''
+  document.getElementById('sc-result-msg').textContent = ''
+  document.getElementById('sc-new-btn').style.display = 'none'
+  document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola||0) + ' $TBOLA'
+  // Reset selectors
+  Object.keys(SCRATCH_TIERS).forEach(k => {
+    const card = document.getElementById('sc-card-'+k)
+    const sel  = document.getElementById('sc-sel-'+k)
+    if(card){ card.style.opacity='1'; card.style.transform='scale(1)' }
+    if(sel){ sel.textContent=''; sel.style.background='transparent' }
+  })
+  const btn = document.getElementById('sc-buy-btn')
+  if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='🎟️ Buy & Scratch — select a card first' }
+}
+
+function selectScratchCard(tier) {
+  scratchSelected = tier
+  const t = SCRATCH_TIERS[tier]
+  // Update UI
+  Object.keys(SCRATCH_TIERS).forEach(k => {
+    const card = document.getElementById('sc-card-'+k)
+    const sel  = document.getElementById('sc-sel-'+k)
+    if(k === tier) {
+      if(card){ card.style.opacity='1'; card.style.transform='scale(1.02)'; card.style.boxShadow='0 0 20px rgba(52,211,153,.3)' }
+      if(sel){ sel.textContent='✓'; sel.style.background='rgba(52,211,153,.3)'; sel.style.color='#34D399' }
+    } else {
+      if(card){ card.style.opacity='.6'; card.style.transform='scale(1)'; card.style.boxShadow='' }
+      if(sel){ sel.textContent=''; sel.style.background='transparent' }
+    }
+  })
+  const sym = t.cur === 'usdt' ? t.price.toFixed(2)+' USDT' : t.price.toFixed(2)+' TON'
+  const btn = document.getElementById('sc-buy-btn')
+  if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; btn.textContent='🎟️ Buy & Scratch — '+sym }
+}
+
+async function buyScratchCard() {
+  if(!scratchSelected) return
+  const t = SCRATCH_TIERS[scratchSelected]
+  const btn = document.getElementById('sc-buy-btn')
+  if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; btn.textContent='⏳ Processing...' }
+
+  const comment = 'TonBola:scratch:'+scratchSelected
+
+  const onSuccess = () => {
+    if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Card purchased!' }
+    revealScratchCard(t)
+  }
+  const onFail = () => {
+    if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto' }
+    selectScratchCard(scratchSelected)
+  }
+
+  if(t.cur === 'usdt') await sendUsdtPayment(t.price, comment, onSuccess, onFail)
+  else await sendTonPayment(t.price, comment, onSuccess, onFail)
+}
+
+function revealScratchCard(tier) {
+  scratchRevealed = 0
+  scratchTotal    = 0
+  const grid = document.getElementById('sc-grid')
+  const area = document.getElementById('sc-game-area')
+  grid.innerHTML = ''
+  area.style.display = 'block'
+  document.getElementById('sc-result-msg').textContent = '👆 Tap cells to scratch!'
+  document.getElementById('sc-new-btn').style.display = 'none'
+
+  // Generate symbols — guarantee at least 1 match pair sometimes
+  const symbols = [...tier.symbols]
+  const cells = []
+  const n = tier.cells * 3 // 3 rows of n columns
+  // Fill with random, sometimes add a winning combo
+  const rand = Math.random()
+  let winSymbol = null
+  if(rand < 0.35) { // 35% chance of 3-match win
+    winSymbol = symbols[Math.floor(Math.random()*symbols.length)]
+  }
+
+  for(let i=0; i<n; i++) cells.push(symbols[Math.floor(Math.random()*symbols.length)])
+  if(winSymbol) {
+    // Place 3 of the winning symbol
+    const positions = [0,1,2].map(() => Math.floor(Math.random()*n))
+    positions.forEach(p => cells[p] = winSymbol)
+  }
+
+  // Adjust grid columns
+  grid.style.gridTemplateColumns = `repeat(${tier.cells},1fr)`
+
+  cells.forEach((sym, i) => {
+    const cell = document.createElement('div')
+    cell.style.cssText = `
+      aspect-ratio:1;border-radius:12px;
+      background:linear-gradient(135deg,#1A2A1A,#0D1A0D);
+      border:2px solid rgba(52,211,153,.2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.8rem;cursor:pointer;position:relative;overflow:hidden;
+      transition:transform .15s;
+    `
+    // Scratch overlay
+    const overlay = document.createElement('div')
+    overlay.style.cssText = `
+      position:absolute;inset:0;border-radius:10px;
+      background:linear-gradient(135deg,#2D6A4F,#1B4332);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;transition:opacity .3s;
+    `
+    overlay.textContent = '🔒'
+    cell.appendChild(overlay)
+
+    // Hidden symbol
+    const symEl = document.createElement('div')
+    symEl.textContent = sym
+    symEl.style.opacity = '0'
+    symEl.style.transition = 'opacity .3s'
+    cell.appendChild(symEl)
+
+    cell.addEventListener('click', () => {
+      if(overlay.style.opacity === '0') return
+      overlay.style.opacity = '0'
+      symEl.style.opacity = '1'
+      cell.style.transform = 'scale(1.05)'
+      setTimeout(() => cell.style.transform = 'scale(1)', 150)
+      scratchRevealed++
+      checkScratchResult(cells, tier, scratchRevealed, n)
+    })
+
+    grid.appendChild(cell)
+  })
+}
+
+function checkScratchResult(cells, tier, revealed, total) {
+  const msg = document.getElementById('sc-result-msg')
+  const remaining = total - revealed
+
+  if(remaining > 0) {
+    msg.textContent = `${remaining} cell${remaining>1?'s':''} remaining...`
+    msg.style.color = 'rgba(255,255,255,.5)'
+    return
+  }
+
+  // Count matches
+  const counts = {}
+  cells.forEach(s => counts[s] = (counts[s]||0)+1)
+  const maxMatch = Math.max(...Object.values(counts))
+  const matchSym = Object.keys(counts).find(k => counts[k] === maxMatch)
+
+  let prize = 0
+  if(maxMatch >= 3) prize = tier.prizes[Math.min(maxMatch, tier.prizes.length-1)]
+
+  const newBtn = document.getElementById('sc-new-btn')
+  newBtn.style.display = 'block'
+
+  if(prize > 0) {
+    const sym = tier.cur==='usdt' ? prize.toFixed(2)+' USDT' : prize.toFixed(2)+' TON'
+    msg.textContent = `🎉 You won ${sym}! ${matchSym.repeat(3)}`
+    msg.style.color = '#34D399'
+    user.tbola = (user.tbola||0) + 50
+    document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola) + ' $TBOLA'
+  } else {
+    msg.textContent = '😔 No match — try again!'
+    msg.style.color = 'rgba(255,255,255,.4)'
+  }
 }
 
 // ── BINGO PAY & ENTER ──
