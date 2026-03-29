@@ -1886,7 +1886,7 @@ function setRoomCardsEnabled(enabled){
 function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
-  go('sh'); setNav('nb-h')
+  go('s-hub'); setNav('nb-h'); initHub()
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
