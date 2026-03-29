@@ -1834,6 +1834,11 @@ function getTgUser(){return{
 const user={...getTgUser(),tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
 
 setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
+// Clear any stale game session on fresh load
+if(!sessionStorage.getItem('_tc_active')) {
+  sessionStorage.removeItem('tbgame')
+  sessionStorage.setItem('_tc_active','1')
+}
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
@@ -1858,7 +1863,7 @@ function setRoomCardsEnabled(enabled){
   document.querySelectorAll('.rc').forEach(card=>{
     card.style.opacity = enabled ? '1' : '.45'
     card.style.filter  = enabled ? '' : 'grayscale(.4)'
-    card.style.pointerEvents = enabled ? '' : 'auto'
+    card.style.pointerEvents = enabled ? 'auto' : 'none'
   })
   // Create Room & Enter Code buttons
   document.querySelectorAll('.private-room-btn').forEach(btn=>{
@@ -1872,6 +1877,8 @@ function setRoomCardsEnabled(enabled){
 }
 
 function initHome(){
+  setRoomCardsEnabled(true)
+  isGameActive = false
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
