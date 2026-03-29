@@ -2739,119 +2739,86 @@ async function payAndEnterLobby(room, numCards) {
   const r = ROOMS[room]
   if (!r) return
 
-  console.log('payAndEnterLobby', room, numCards, 'cur:', r.cur, 'wallet:', !!tcWallet)
-
-  // Free room — entra diretto
+  // Free room — no payment
   if (r.cur === 'free' || r.price === 0) {
     paymentVerified = true
     startGame()
     return
   }
 
-  function showAlert(title, msg) {
-    if (tg?.showPopup) tg.showPopup({title:title, message:msg, buttons:[{type:'ok'}]})
-    else alert(title + ': ' + msg)
+  function showAlert(msg) {
+    if (tg?.showPopup) tg.showPopup({title:'TonBola', message:msg, buttons:[{type:'ok'}]})
+    else alert(msg)
+  }
+
+  // Helper: ensure wallet connected, returns true if ok
+  async function ensureWallet() {
+    if (tcWallet) return true
+    // Open wallet
+    await connectWallet()
+    let w = 0
+    while (!tcWallet && w < 25000) {
+      await new Promise(r => setTimeout(r, 500))
+      w += 500
+    }
+    if (!tcWallet) {
+      showAlert('Wallet not connected. Open Tonkeeper or Telegram Wallet, connect, then try again.')
+      return false
+    }
+    return true
   }
 
   // USDT room
   if (r.cur === 'usdt') {
-    const total = +(r.price * numCards).toFixed(2)
-    const feeStr = total.toFixed(2) + ' $USDT'
+    const total   = +(r.price * numCards).toFixed(2)
+    const feeStr  = total.toFixed(2) + ' USDT'
     const comment = `TonBola:bingo:${room}:${numCards}`
-    console.log('USDT payment, total:', total, 'wallet:', !!tcWallet)
 
-    // Se wallet non connesso → connetti prima, poi ritorna
-    if (!tcWallet) {
-      console.log('No wallet — opening connect')
-      await connectWallet()
-      let waited = 0
-      while (!tcWallet && waited < 20000) {
-        await new Promise(r => setTimeout(r, 500))
-        waited += 500
-      }
-      if (!tcWallet) {
-        showAlert('Wallet Required', 'Connect Tonkeeper or Telegram Wallet, then tap the room again.')
-        return
-      }
+    const doPay = async () => {
+      if (!await ensureWallet()) return
+      await sendUsdtPayment(total, comment,
+        () => { paymentVerified = true; startGame() },
+        (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') }
+      )
     }
 
-    console.log('Wallet ready, showing confirm popup')
-    // Mostra conferma
     if (tg?.showPopup) {
       tg.showPopup({
         title: 'Confirm Payment',
-        message: `${r.name}
-Cards: ${numCards}
-Cost: ${feeStr}
-
-Needs ~0.07 TON for gas.`,
+        message: `${r.name}\n\nCards: ${numCards}\nCost: ${feeStr}\n\nNeeds ~0.07 TON for gas fees.`,
         buttons: [{id:'pay', type:'default', text:'Pay ' + feeStr}, {type:'cancel', text:'Cancel'}]
-      }, id => {
-        console.log('Popup result:', id)
-        if (id !== 'pay') return
-        sendUsdtPayment(total, comment,
-          () => { paymentVerified = true; startGame() },
-          () => showAlert('Payment Failed', 'Transaction cancelled.')
-        )
-      })
-    } else if (window.confirm('Pay ' + feeStr + ' for ' + r.name + '?')) {
-      sendUsdtPayment(total, comment,
-        () => { paymentVerified = true; startGame() },
-        () => showAlert('Payment Failed', 'Transaction cancelled.')
-      )
+      }, id => { if (id === 'pay') doPay() })
+    } else if (window.confirm('Pay ' + feeStr + '?')) {
+      doPay()
     }
     return
   }
 
   // TON room (includes VIP)
   if (r.cur === 'ton') {
-    const total = +(r.price * numCards).toFixed(2)
-    const feeStr = total.toFixed(2) + ' $TON'
+    const total   = +(r.price * numCards).toFixed(2)
+    const feeStr  = total.toFixed(2) + ' TON'
     const comment = `TonBola:bingo:${room}:${numCards}`
-    console.log('TON payment, total:', total, 'wallet:', !!tcWallet)
 
-    if (!tcWallet) {
-      console.log('No wallet — opening connect')
-      await connectWallet()
-      let waited = 0
-      while (!tcWallet && waited < 20000) {
-        await new Promise(r => setTimeout(r, 500))
-        waited += 500
-      }
-      if (!tcWallet) {
-        showAlert('Wallet Required', 'Connect Tonkeeper or Telegram Wallet, then tap the room again.')
-        return
-      }
+    const doPay = async () => {
+      if (!await ensureWallet()) return
+      await sendTonPayment(total, comment,
+        () => { paymentVerified = true; startGame() },
+        (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') }
+      )
     }
 
-    console.log('Wallet ready, showing TON confirm')
     if (tg?.showPopup) {
       tg.showPopup({
         title: 'Confirm Payment',
-        message: `${r.name}
-Cards: ${numCards}
-Cost: ${feeStr}`,
+        message: `${r.name}\n\nCards: ${numCards}\nCost: ${feeStr}`,
         buttons: [{id:'pay', type:'default', text:'Pay ' + feeStr}, {type:'cancel', text:'Cancel'}]
-      }, id => {
-        console.log('TON popup result:', id)
-        if (id !== 'pay') return
-        sendTonPayment(total, comment,
-          () => { paymentVerified = true; startGame() },
-          () => showAlert('Payment Failed', 'Transaction cancelled.')
-        )
-      })
-    } else if (window.confirm('Pay ' + feeStr + ' for ' + r.name + '?')) {
-      sendTonPayment(total, comment,
-        () => { paymentVerified = true; startGame() },
-        () => showAlert('Payment Failed', 'Transaction cancelled.')
-      )
+      }, id => { if (id === 'pay') doPay() })
+    } else if (window.confirm('Pay ' + feeStr + '?')) {
+      doPay()
     }
     return
   }
-
-  // Fallback
-  paymentVerified = true
-  startGame()
 }
 
 // ── FORTUNE WHEEL ──
