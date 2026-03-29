@@ -1174,12 +1174,42 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <!-- Active scratch game area -->
   <div id="sc-game-area" style="display:none;padding:0 12px 16px">
-    <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase;margin-bottom:10px;text-align:center">Tap to scratch!</div>
-    <div id="sc-grid" style="display:grid;gap:8px;max-width:340px;margin:0 auto"></div>
-    <div id="sc-result-msg" style="text-align:center;margin-top:16px;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;min-height:40px;color:#fff;line-height:1.4"></div>
-    <button id="sc-new-btn" onclick="openScratch()" style="display:none;width:100%;margin-top:10px;
+    <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);
+      text-transform:uppercase;margin-bottom:8px;text-align:center">🖐️ Scratch to reveal!</div>
+
+    <!-- The actual scratch ticket -->
+    <div style="position:relative;max-width:340px;margin:0 auto;border-radius:16px;overflow:hidden;
+      box-shadow:0 8px 32px rgba(0,0,0,.6);border:2px solid rgba(255,215,0,.3)">
+
+      <!-- Prize symbols layer (behind canvas) -->
+      <div id="sc-prizes-layer" style="background:linear-gradient(135deg,#1A0D00,#2D1800);
+        padding:20px 16px;display:grid;gap:8px" ></div>
+
+      <!-- Scratch canvas (on top) -->
+      <canvas id="sc-canvas"
+        style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;border-radius:14px"></canvas>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="max-width:340px;margin:10px auto 0;background:rgba(255,255,255,.05);border-radius:50px;height:6px;overflow:hidden">
+      <div id="sc-progress" style="height:100%;background:linear-gradient(90deg,#34D399,#059669);border-radius:50px;width:0%;transition:width .3s"></div>
+    </div>
+    <div id="sc-scratch-pct" style="text-align:center;font-size:.62rem;color:rgba(255,255,255,.3);margin-top:4px">0% scratched</div>
+
+    <div id="sc-result-msg" style="text-align:center;margin-top:14px;font-family:'Outfit',sans-serif;
+      font-size:1.15rem;font-weight:800;min-height:44px;color:#fff;line-height:1.5;padding:0 8px"></div>
+
+    <button id="sc-reveal-btn" onclick="revealAll()" style="display:none;width:100%;margin-top:6px;
+      padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.06);font-family:'Outfit',sans-serif;font-size:.85rem;
+      font-weight:700;color:rgba(255,255,255,.5);cursor:pointer">
+      Reveal all
+    </button>
+
+    <button id="sc-new-btn" onclick="openScratch()" style="display:none;width:100%;margin-top:8px;
       padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#34D399,#059669);
-      font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#001A00;cursor:pointer">
+      font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#001A00;cursor:pointer;
+      box-shadow:0 4px 0 #065F46">
       🎟️ Play Again
     </button>
   </div>
@@ -2643,8 +2673,8 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
 // ── SCRATCH CARDS ──
 const SCRATCH_TIERS = {
   usdt_low: { name:'Bronze', price:0.10, cur:'usdt', cells:3, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'], maxWin:5,   prizes:[0,0,0,0.20,0.50,1,5]   },
-  usdt_mid: { name:'Silver', price:0.50, cur:'usdt', cells:5, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔','🃏'], maxWin:25,  prizes:[0,0,0,0,1,5,25]          },
-  ton:      { name:'Gold',   price:0.20, cur:'ton',  cells:6, symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],       maxWin:2,   prizes:[0,0,0,0,0.5,1,2]         }
+  usdt_mid: { name:'Silver', price:0.50, cur:'usdt', cells:4, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔','🃏'], maxWin:25,  prizes:[0,0,0,0,1,5,25]          },
+  ton:      { name:'Gold',   price:0.20, cur:'ton',  cells:4, symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],       maxWin:2,   prizes:[0,0,0,0,0.5,1,2]         }
 }
 let scratchSelected = null
 let scratchRevealed = 0
@@ -2711,110 +2741,154 @@ async function buyScratchCard() {
   else await sendTonPayment(t.price, comment, onSuccess, onFail)
 }
 
+let scCanvas = null, scCtx = null, scIsScratching = false
+let scCells = [], scTier = null, scScratchedPx = 0, scTotalPx = 0
+
 function revealScratchCard(tier) {
-  scratchRevealed = 0
-  scratchTotal    = 0
-  const grid = document.getElementById('sc-grid')
+  scTier = tier
   const area = document.getElementById('sc-game-area')
-  grid.innerHTML = ''
   area.style.display = 'block'
-  document.getElementById('sc-result-msg').textContent = '👆 Tap cells to scratch!'
+  document.getElementById('sc-result-msg').textContent = ''
   document.getElementById('sc-new-btn').style.display = 'none'
+  document.getElementById('sc-reveal-btn').style.display = 'none'
+  document.getElementById('sc-progress').style.width = '0%'
+  document.getElementById('sc-scratch-pct').textContent = '0% scratched'
 
-  // Generate symbols — guarantee at least 1 match pair sometimes
-  const symbols = [...tier.symbols]
-  const cells = []
-  const n = tier.cells * 3 // 3 rows of n columns
-  // Fill with random, sometimes add a winning combo
-  const rand = Math.random()
-  let winSymbol = null
-  if(rand < 0.35) { // 35% chance of 3-match win
-    winSymbol = symbols[Math.floor(Math.random()*symbols.length)]
+  // Generate cells — 3 columns always
+  const cols = 3
+  const rows = tier.cells  // usdt_low=3, others=4
+  const n = cols * rows
+  const syms = [...tier.symbols]
+  scCells = Array.from({length:n}, () => syms[Math.floor(Math.random()*syms.length)])
+
+  // Maybe add winning triple (35% chance)
+  if(Math.random() < 0.35) {
+    const w = syms[Math.floor(Math.random()*syms.length)]
+    const pos = [0,1,2].map(() => Math.floor(Math.random()*n))
+    pos.forEach(p => scCells[p] = w)
   }
 
-  for(let i=0; i<n; i++) cells.push(symbols[Math.floor(Math.random()*symbols.length)])
-  if(winSymbol) {
-    // Place 3 of the winning symbol
-    const positions = [0,1,2].map(() => Math.floor(Math.random()*n))
-    positions.forEach(p => cells[p] = winSymbol)
-  }
-
-  // Adjust grid columns
-  grid.style.gridTemplateColumns = `repeat(${tier.cells},1fr)`
-
-  cells.forEach((sym, i) => {
+  // Build prize layer
+  const layer = document.getElementById('sc-prizes-layer')
+  layer.style.gridTemplateColumns = `repeat(${cols},1fr)`
+  layer.innerHTML = ''
+  scCells.forEach(sym => {
     const cell = document.createElement('div')
     cell.style.cssText = `
-      aspect-ratio:1;border-radius:12px;
-      background:linear-gradient(135deg,#1A2A1A,#0D1A0D);
-      border:2px solid rgba(52,211,153,.2);
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.8rem;cursor:pointer;position:relative;overflow:hidden;
-      transition:transform .15s;
+      background:linear-gradient(135deg,#0D1F0D,#122012);
+      border:1.5px solid rgba(52,211,153,.15);border-radius:10px;
+      aspect-ratio:1;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:2px;
     `
-    // Scratch overlay
-    const overlay = document.createElement('div')
-    overlay.style.cssText = `
-      position:absolute;inset:0;border-radius:10px;
-      background:linear-gradient(135deg,#2D6A4F,#1B4332);
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.4rem;transition:opacity .3s;
-    `
-    overlay.textContent = '🔒'
-    cell.appendChild(overlay)
+    cell.innerHTML = `<div style="font-size:1.6rem;line-height:1">${sym}</div>`
+    layer.appendChild(cell)
+  })
 
-    // Hidden symbol
-    const symEl = document.createElement('div')
-    symEl.textContent = sym
-    symEl.style.opacity = '0'
-    symEl.style.transition = 'opacity .3s'
-    cell.appendChild(symEl)
+  // Wait for DOM, then size and draw canvas
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('sc-canvas')
+    const rect = layer.getBoundingClientRect()
+    canvas.width  = Math.round(rect.width  * devicePixelRatio)
+    canvas.height = Math.round(rect.height * devicePixelRatio)
+    scCanvas = canvas
+    scCtx = canvas.getContext('2d')
+    scCtx.scale(devicePixelRatio, devicePixelRatio)
 
-    cell.addEventListener('click', () => {
-      if(overlay.style.opacity === '0') return
-      overlay.style.opacity = '0'
-      symEl.style.opacity = '1'
-      cell.style.transform = 'scale(1.05)'
-      setTimeout(() => cell.style.transform = 'scale(1)', 150)
-      scratchRevealed++
-      checkScratchResult(cells, tier, scratchRevealed, n)
-    })
+    // Fill with silver scratch surface
+    const W = rect.width, H = rect.height
+    const grad = scCtx.createLinearGradient(0,0,W,H)
+    grad.addColorStop(0,  '#9CA3AF')
+    grad.addColorStop(0.3,'#D1D5DB')
+    grad.addColorStop(0.6,'#9CA3AF')
+    grad.addColorStop(1,  '#6B7280')
+    scCtx.fillStyle = grad
+    scCtx.fillRect(0, 0, W, H)
 
-    grid.appendChild(cell)
+    // Texture pattern
+    scCtx.fillStyle = 'rgba(0,0,0,.06)'
+    for(let x=0;x<W;x+=4) for(let y=0;y<H;y+=4) {
+      if((x+y)%8===0) scCtx.fillRect(x,y,2,2)
+    }
+
+    // "SCRATCH HERE" text
+    scCtx.font = `bold ${Math.min(18,W/10)}px Outfit,sans-serif`
+    scCtx.fillStyle = 'rgba(80,80,80,.6)'
+    scCtx.textAlign = 'center'
+    scCtx.fillText('SCRATCH HERE', W/2, H/2)
+
+    scCtx.globalCompositeOperation = 'destination-out'
+    scScratchedPx = 0
+    scTotalPx = canvas.width * canvas.height
+
+    // Touch & mouse events
+    const getPos = e => {
+      const r = canvas.getBoundingClientRect()
+      const src = e.touches ? e.touches[0] : e
+      return { x: src.clientX - r.left, y: src.clientY - r.top }
+    }
+    const scratch = pos => {
+      scCtx.beginPath()
+      scCtx.arc(pos.x, pos.y, 22, 0, Math.PI*2)
+      scCtx.fill()
+      updateScratchProgress()
+    }
+
+    canvas.onmousedown  = e => { scIsScratching=true; scratch(getPos(e)) }
+    canvas.onmousemove  = e => { if(scIsScratching) scratch(getPos(e)) }
+    canvas.onmouseup    = ()  => { scIsScratching=false }
+    canvas.ontouchstart = e => { e.preventDefault(); scIsScratching=true; scratch(getPos(e)) }
+    canvas.ontouchmove  = e => { e.preventDefault(); if(scIsScratching) scratch(getPos(e)) }
+    canvas.ontouchend   = ()  => { scIsScratching=false }
+
+    document.getElementById('sc-reveal-btn').style.display = 'block'
   })
 }
 
-function checkScratchResult(cells, tier, revealed, total) {
-  const msg = document.getElementById('sc-result-msg')
-  const remaining = total - revealed
-
-  if(remaining > 0) {
-    msg.textContent = `${remaining} cell${remaining>1?'s':''} remaining...`
-    msg.style.color = 'rgba(255,255,255,.5)'
-    return
+function updateScratchProgress() {
+  if(!scCtx || !scCanvas) return
+  const data = scCtx.getImageData(0,0,scCanvas.width,scCanvas.height).data
+  let transparent = 0
+  for(let i=3; i<data.length; i+=4) if(data[i]<128) transparent++
+  const pct = Math.min(100, Math.round(transparent/(scCanvas.width*scCanvas.height)*100))
+  document.getElementById('sc-progress').style.width = pct+'%'
+  document.getElementById('sc-scratch-pct').textContent = pct+'% scratched'
+  if(pct >= 70 && !document.getElementById('sc-result-msg').textContent) {
+    finalizeScratch()
   }
+}
+
+function revealAll() {
+  if(!scCtx||!scCanvas) return
+  const r = scCanvas.getBoundingClientRect ? scCanvas.getBoundingClientRect() : {width:scCanvas.width,height:scCanvas.height}
+  scCtx.fillRect(0,0,scCanvas.width/devicePixelRatio,scCanvas.height/devicePixelRatio)
+  document.getElementById('sc-progress').style.width = '100%'
+  document.getElementById('sc-scratch-pct').textContent = '100% scratched'
+  finalizeScratch()
+}
+
+function finalizeScratch() {
+  if(document.getElementById('sc-result-msg').textContent) return // already done
+  document.getElementById('sc-reveal-btn').style.display = 'none'
 
   // Count matches
   const counts = {}
-  cells.forEach(s => counts[s] = (counts[s]||0)+1)
+  scCells.forEach(s => counts[s]=(counts[s]||0)+1)
   const maxMatch = Math.max(...Object.values(counts))
-  const matchSym = Object.keys(counts).find(k => counts[k] === maxMatch)
-
+  const matchSym = Object.keys(counts).find(k=>counts[k]===maxMatch)
   let prize = 0
-  if(maxMatch >= 3) prize = tier.prizes[Math.min(maxMatch, tier.prizes.length-1)]
+  if(maxMatch>=3) prize = scTier.prizes[Math.min(maxMatch,scTier.prizes.length-1)]
 
+  const msg = document.getElementById('sc-result-msg')
   const newBtn = document.getElementById('sc-new-btn')
   newBtn.style.display = 'block'
 
-  if(prize > 0) {
-    const sym = tier.cur==='usdt' ? prize.toFixed(2)+' USDT' : prize.toFixed(2)+' TON'
-    msg.textContent = `🎉 You won ${sym}! ${matchSym.repeat(3)}`
-    msg.style.color = '#34D399'
-    user.tbola = (user.tbola||0) + 50
-    document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola) + ' $TBOLA'
+  if(prize>0) {
+    const sym = scTier.cur==='usdt' ? prize.toFixed(2)+' USDT' : prize.toFixed(2)+' TON'
+    msg.innerHTML = `🎉 <span style="color:#34D399">You won ${sym}!</span><br><span style="font-size:1.5rem">${matchSym} ${matchSym} ${matchSym}</span>`
+    user.tbola = (user.tbola||0)+50
+    document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola)+' $TBOLA'
   } else {
-    msg.textContent = '😔 No match — try again!'
-    msg.style.color = 'rgba(255,255,255,.4)'
+    msg.innerHTML = `😔 <span style="color:rgba(255,255,255,.4)">No match — better luck next time!</span>`
   }
 }
 
