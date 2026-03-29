@@ -299,7 +299,7 @@ def wheel_collect(session_id: str, tg: dict = Depends(get_user)):
 ROOM_STARS = {"free": 0, "stars": 100, "ton": 50, "vip": 250}
 
 @app.post("/payments/invoice")
-async def create_invoice(room: str, n_cards: int, tg: dict = Depends(get_user)):
+async def create_invoice(room: str, n_cards: int, user_id: int = 0):
     price = ROOM_STARS.get(room, 50)
     if price == 0:
         return {"ok": True, "free": True, "invoice_url": None}
@@ -311,7 +311,7 @@ async def create_invoice(room: str, n_cards: int, tg: dict = Depends(get_user)):
             resp = await client.post(f"{TELEGRAM_API}/createInvoiceLink", json={
                 "title": f"TonBola {room.upper()} Room",
                 "description": f"{n_cards} bingo card{'s' if n_cards>1 else ''}",
-                "payload": f"bingo:{room}:{n_cards}:{tg['id']}",
+                "payload": f"bingo:{room}:{n_cards}:{user_id}",
                 "currency": "XTR",
                 "prices": [{"label": f"{n_cards} card{'s' if n_cards>1 else ''}", "amount": total}],
             })
