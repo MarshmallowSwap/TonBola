@@ -654,6 +654,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 #p-lines-box .sbn{color:var(--cyan)!important}
 #p-cards-box{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(245,158,11,.08))!important;border:1px solid rgba(251,191,36,.3)!important}
 #p-cards-box .sbn{color:var(--yellow)!important}
+
+/* Force rc cards always clickable */
+#sh .rc { pointer-events: auto !important; }
 </style>
 
 <!-- TonConnect SDK -->
@@ -1894,6 +1897,7 @@ function initHome(){
 }
 
 function openLobby(r){
+  console.log('openLobby called:', r, 'isGameActive:', isGameActive, 'pointerEvents:', document.querySelector('.rc')?.style?.pointerEvents)
   // Block if game in progress
   if(isGameActive){
     if(tg?.showPopup) tg.showPopup({
@@ -3682,8 +3686,8 @@ async function loadRoomStats() {
 async function initBackend() {
   // Init TonConnect with slight delay to ensure SDK loaded
   setTimeout(initTonConnect, 500)
-  await backendLogin()
-  await Promise.all([loadJackpot(), loadRoomStats()])
+  try { await backendLogin() } catch(e) { console.warn('backend login:', e) }
+  try { await Promise.all([loadJackpot(), loadRoomStats()]) } catch(e) { console.warn('init load:', e) }
   // Refresh jackpot every 30s
   setInterval(loadJackpot, 30000)
   // Refresh room stats every 20s
