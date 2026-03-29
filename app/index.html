@@ -1085,13 +1085,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="lobby-hdr">
     <div style="display:flex;align-items:center;gap:8px">
       <button class="btn btn-back btn-sm" onclick="go('s-hub');initHub()">← Back</button>
-      <div>
-        <div style="font-size:.95rem;font-weight:700;color:#333" id="l-nm">$USDT Room</div>
+      <div style="flex:1">
+        <div style="font-size:.95rem;font-weight:700;color:#fff" id="l-nm">$USDT Room</div>
         <div style="font-size:.7rem;color:#999"><span id="l-cd" style="color:rgba(255,255,255,.4);font-size:.65rem"></span></div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:4px;font-size:.75rem;color:#999">
       <span class="live-dot"></span><span id="l-pl">0/20</span>
+      &nbsp;·&nbsp;
+      <button id="lobby-wallet-btn" class="tc-connect-btn"
+        onclick="connectWallet()"
+        style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:8px;padding:3px 10px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;color:var(--violet3);cursor:pointer">
+        🔗 Connect Wallet
+      </button>
     </div>
   </div>
 
@@ -2802,7 +2808,27 @@ async function payAndEnterLobby(room, numCards) {
     const comment = `TonBola:bingo:${room}:${numCards}`
 
     const doPay = async () => {
-      if (!await ensureWallet()) return
+      if (!tcWallet) {
+        // Open wallet directly
+        if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,800)) }
+        if (tc) {
+          try {
+            const wlist = await tc.getWallets()
+            const tgt = wlist.find(w=>w.appName==='telegram-wallet')||wlist.find(w=>w.appName==='tonkeeper')||wlist.find(w=>w.universalLink)
+            if (tgt) {
+              const link = tc.connect({universalLink:tgt.universalLink,bridgeUrl:tgt.bridgeUrl})
+              if (tg?.openLink) tg.openLink(link)
+              else window.open(link,'_blank')
+            } else {
+              if (tg?.openLink) tg.openLink('https://t.me/wallet')
+            }
+          } catch(e) { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
+        } else {
+          if (tg?.openLink) tg.openLink('https://t.me/wallet')
+        }
+        showAlert('Connect your wallet, then tap Pay again.')
+        return
+      }
       await sendUsdtPayment(total, comment,
         () => { paymentVerified = true; startGame() },
         (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') }
@@ -2828,7 +2854,26 @@ async function payAndEnterLobby(room, numCards) {
     const comment = `TonBola:bingo:${room}:${numCards}`
 
     const doPay = async () => {
-      if (!await ensureWallet()) return
+      if (!tcWallet) {
+        if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,800)) }
+        if (tc) {
+          try {
+            const wlist = await tc.getWallets()
+            const tgt = wlist.find(w=>w.appName==='telegram-wallet')||wlist.find(w=>w.appName==='tonkeeper')||wlist.find(w=>w.universalLink)
+            if (tgt) {
+              const link = tc.connect({universalLink:tgt.universalLink,bridgeUrl:tgt.bridgeUrl})
+              if (tg?.openLink) tg.openLink(link)
+              else window.open(link,'_blank')
+            } else {
+              if (tg?.openLink) tg.openLink('https://t.me/wallet')
+            }
+          } catch(e) { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
+        } else {
+          if (tg?.openLink) tg.openLink('https://t.me/wallet')
+        }
+        showAlert('Connect your wallet, then tap Pay again.')
+        return
+      }
       await sendTonPayment(total, comment,
         () => { paymentVerified = true; startGame() },
         (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') }
