@@ -13,7 +13,7 @@
 <link rel="preload" as="image" href="assets/icon-free-coin.png">
 <link rel="preload" as="image" href="assets/icon-vip.png">
 <link rel="preload" as="image" href="assets/icon-ton.png">
-<link rel="preload" as="image" href="assets/icon-not-coin.png">
+<link rel="preload" as="image" href="assets/icon-usdt-coin.png">
 <link rel="preload" as="image" href="assets/bal-card.png">
 <link rel="preload" as="image" href="assets/ball-blue.png">
 <link rel="preload" as="image" href="assets/ball-gold.png">
@@ -724,12 +724,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
     <div class="rc stars" onclick="openLobby('stars')">
       <div class="ri">
-        <div class="r-icon ri-stars" style="background-image:url(assets/icon-not-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
+        <div class="r-icon ri-stars" style="background-image:url(assets/icon-usdt-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">$USDT Room</div>
           <div class="rd">Pay $USDT · Win $USDT · +$TBOLA</div>
         </div>
-        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#E0E0E0;border-color:#666">$NOT</div>
+        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#E0E0E0;border-color:#666">$USDT</div>
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">0</span> warriors</div>
@@ -761,7 +761,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">0</span> warriors</div>
-        <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 2,000 $NOT</div></div>
+        <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 5 $USDT</div></div>
       </div>
     </div>
   </div>
@@ -812,7 +812,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:1.4rem">⚔️</div>
         <div style="flex:1">
           <div style="font-size:.92rem;font-weight:800;color:#fff">Warrior Pass</div>
-          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">600 ⭐ or 3 $TON / month</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">5 $USDT or 3 $TON / month</div>
         </div>
         <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
           border-radius:50px;padding:4px 12px;font-size:.68rem;font-weight:800;color:#fff">UPGRADE</div>
@@ -872,7 +872,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2)">Fortune Wheel</div>
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
-          Spin to win · Jackpot pool · $NOT · $TON
+          Spin to win · Jackpot pool · $USDT · $TON
         </div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <span style="background:rgba(255,255,255,.25);
@@ -997,9 +997,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div style="margin:0 12px 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
     <div id="w-cur-not" onclick="setWheelCur('not')"
       style="padding:10px 8px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(200,150,0,.08);border:1.5px solid rgba(200,150,0,.2);transition:all .15s">
-      <img src="assets/icon-not-coin.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:2px">
-      <div style="font-size:.72rem;font-weight:700;color:#FFB800">$NOT</div>
-      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-top:1px">250 $NOT / spin</div>
+      <img src="assets/icon-usdt-coin.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:2px">
+      <div style="font-size:.72rem;font-weight:700;color:#FFB800">$USDT</div>
+      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-top:1px">0.25 $USDT / spin</div>
     </div>
     <div id="w-cur-ton" onclick="setWheelCur('ton')"
       style="padding:10px 8px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(0,100,180,.12);border:1.5px solid #0098EA;transition:all .15s">
@@ -1063,7 +1063,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass include</div>
       <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on the Fortune Wheel</span><br>🏆 +10% jackpot share</div>
     </div>
-    <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">600,000 $NOT or 3 $TON / month</div>
+    <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">5 $USDT or 3 $TON / month</div>
     <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
       <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()"
         style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">
@@ -1246,7 +1246,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1.5rem">⚔️</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:.95rem;font-weight:800;color:#fff">Warrior Pass</div>
-        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">600 ⭐ or 3 $TON / month · All games</div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">5 $USDT or 3 $TON / month · All games</div>
       </div>
       <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
         border-radius:50px;padding:5px 14px;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0">UPGRADE</div>
@@ -1314,7 +1314,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <!-- CURRENCY SUB-TABS -->
   <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:var(--bg)">
-    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">💵 $USDT</div>
+    <div id="lc-usdt" class="ltb ltb-sm ltb-on" onclick="setCurrency('usdt')" style="justify-content:center">💵 $USDT</div>
     <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')" style="justify-content:center">💎 $TON</div>
   </div>
 
@@ -1348,11 +1348,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="nail-bl"></div><div class="nail-br"></div>
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Currency</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div onclick="selectCur(this,'stars')" data-cur="stars" class="cur-btn"
+        <div onclick="selectCur(this,'usdt')" data-cur="usdt" class="cur-btn"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
             background:rgba(255,184,0,.2);border:2px solid #FFB800;transition:all .15s">
-          <img src="assets/icon-not-coin.png" style="width:28px;height:28px;object-fit:contain">
-          <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:3px">$NOT</div>
+          <img src="assets/icon-usdt-coin.png" style="width:28px;height:28px;object-fit:contain">
+          <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:3px">$USDT</div>
         </div>
         <div onclick="selectCur(this,'ton')" data-cur="ton" class="cur-btn"
           style="padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
@@ -1404,11 +1404,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Preview</div>
       <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <span style="font-size:.82rem;color:var(--muted)">Your earnings (2%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">2 $NOT per card</span>
+        <span style="font-size:.85rem;font-weight:700;color:var(--yellow)" id="cr-earn-preview">0.25 $USDT per card</span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:5px 0">
         <span style="font-size:.82rem;color:var(--muted)">Prize pool (53%)</span>
-        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">530 $NOT max</span>
+        <span style="font-size:.85rem;font-weight:700;color:#fff" id="cr-pool-preview">5 $USDT max</span>
       </div>
     </div>
 
@@ -1730,7 +1730,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Subscribe button -->
     <button id="wp-btn" class="btn btn-gold" onclick="subscribeWarriorPass()"
       style="padding:14px;font-size:1rem;width:100%">
-      ⚔️ Activate — 600,000 $NOT
+      ⚔️ Activate — 5 $USDT
     </button>
     <div style="font-family:'Outfit',sans-serif;font-size:.65rem;color:#4A3318;
       text-align:center;margin-top:8px">
@@ -1787,7 +1787,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 <nav class="nav">
   <button class="nb on" id="nb-h" onclick="go('s-hub');setNav('nb-h');initHub()"><div class="ni">⚔</div>Play</button>
-  <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');lbCurrency='stars';lbTab='weekly';renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
+  <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');lbCurrency='usdt';lbTab='weekly';renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
   <button class="nb" id="nb-s" onclick="go('s-squad');setNav('nb-s');renderSquad()"><div class="ni">👥</div>Squads</button>
   <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile()"><div class="ni">🛡️</div>Profile</button>
 </nav>
@@ -2102,7 +2102,7 @@ function renderCards(){
     ton:'rgba(139,92,246,.4)',
     vip:'rgba(245,158,11,.4)'
   }
-  const cardLabel={free:'🆓 Card',stars:'◈ Card',ton:'💎 Card',vip:'👑 Card'}[curRoom]||'Card'
+  const cardLabel={free:'🆓 Card',stars:'💵 Card',ton:'💎 Card',vip:'👑 Card'}[curRoom]||'Card'
   const bg=roomBg[curRoom]||roomBg.ton
   const bd=roomBorder[curRoom]||roomBorder.ton
   cont.innerHTML=cards.map((card,ci)=>`
@@ -2290,7 +2290,7 @@ function selectWPCur(cur) {
   if(cur === 'stars') {
     stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#A78BFA'
     ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
-    btn.textContent = '⚔️ Activate — 600,000 $NOT'
+    btn.textContent = '⚔️ Activate — 5 $USDT'
   } else {
     ton.style.background   = 'rgba(0,152,234,.12)'; ton.style.borderColor   = '#0098EA'
     stars.style.background = 'rgba(0,0,0,.2)';      stars.style.borderColor = 'rgba(255,255,255,.1)'
@@ -2339,8 +2339,8 @@ function closeWarriorPass() {
   setTimeout(()=>{ ov.classList.remove('show'); ov.style.opacity=''; ov.style.transition='' }, 220)
 }
 function subscribeWarriorPass() {
-  const feeStr = wpCur === 'stars' ? '600,000 $NOT' : '3 $TON'
-  const icon   = wpCur === 'stars' ? '◈' : '💎'
+  const feeStr = wpCur === 'usdt' ? '5 $USDT' : '3 $TON'
+  const icon   = wpCur === 'usdt' ? '💵' : '💎'
   if(tg?.showPopup) {
     tg.showPopup({
       title:'⚔️ Warrior Pass',
@@ -2555,13 +2555,10 @@ async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
 
 // ── Buy wheel spins with TON ──
 async function payWheelSpins(spins, currency, onPaid) {
-  if (currency === 'not') {
-    // NOT jetton — coming soon
-    if (tg?.showPopup) tg.showPopup({
-      title:'⚠️ $NOT Payment',
-      message:'$NOT Jetton payments coming soon! Use $TON for now.',
-      buttons:[{type:'ok'}]
-    })
+  if (currency === 'usdt') {
+    const total = (WHEEL_PRICE['not'] || 0.25) * spins
+    const comment = 'TonBola:wheel:usdt:' + spins
+    await sendUsdtPayment(total, comment, () => { if (onPaid) onPaid() }, () => {})
     return
   }
 
@@ -2585,7 +2582,7 @@ async function payWheelSpins(spins, currency, onPaid) {
 
 // ── BINGO PAY & ENTER ──
 
-// ── $NOT Jetton Transfer ──
+// ── Jetton Transfer ──
 const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
 const USDT_JETTON_MASTER = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
 const USDT_DECIMALS = 6 // USDT has 6 decimals on TON
@@ -2762,7 +2759,7 @@ async function payAndEnterLobby(room, numCards) {
   // NOT Room
   if (r.cur === 'not') {
     const totalNot = r.price * numCards
-    const feeStr = totalNot.toLocaleString() + ' $NOT'
+    const feeStr = totalNot.toFixed(2) + ' $USDT'
     const comment = `TonBola:bingo:${room}:${numCards}:not:${totalNot}`
 
     showConfirm(
@@ -2846,7 +2843,7 @@ let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
-let wheelPricePerSpin = {not:250, ton:0.1}
+let wheelPricePerSpin = {not:0.25, ton:0.1}
 
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
@@ -3352,7 +3349,7 @@ function copyRef(){
 }
 
 // ── LEADERBOARD DATA — Opzione A: Stars vs TON separate ──
-let lbCurrency = 'stars' // 'stars' or 'ton'
+let lbCurrency = 'usdt' // 'stars' or 'ton'
 let lbTab = 'weekly'
 
 const LBD = {
@@ -3396,7 +3393,7 @@ function setTab(tab){
 
 function setCurrency(cur) {
   lbCurrency = cur
-  setTabStyle('lc-stars', cur==='stars')
+  setTabStyle('lc-usdt', cur==='stars')
   setTabStyle('lc-ton',   cur==='ton')
   renderLb(lbTab)
   renderPoolBanner(lbTab)
@@ -3410,11 +3407,11 @@ function renderLb(tab) {
 
   let data
   if(isSquads) {
-    data = LBD.squads[lbCurrency] || LBD.squads.stars
+    data = LBD.squads[lbCurrency] || LBD.squads.usdt
   } else if(tab === 'alltime') {
-    data = LBD.alltime[lbCurrency] || LBD.alltime.stars
+    data = LBD.alltime[lbCurrency] || LBD.alltime.usdt
   } else {
-    data = LBD[tab]?.[lbCurrency] || LBD[tab]?.stars || []
+    data = LBD[tab]?.[lbCurrency] || LBD[tab]?.usdt || []
   }
 
   // Clone to avoid mutating original
@@ -3432,7 +3429,7 @@ function renderLb(tab) {
       r: insertAt === -1 ? data.length+1 : insertAt+1,
       n: myName,
       s: myScore,
-      p: isSquads ? (mySquad ? mySquad.name : 'No squad') : (lbCurrency==='stars' ? 'Your score' : 'Your score'),
+      p: isSquads ? (mySquad ? mySquad.name : 'No squad') : (lbCurrency==='usdt' ? 'Your score' : 'Your score'),
       col: 'radial-gradient(circle,#CC8800,#8B6000)',
       av: user.avatar || '😊',
       isMe: true
@@ -3518,13 +3515,13 @@ function renderPoolBanner(tab) {
       </div>`
     return
   } else if(isSquads) {
-    boxes = lbCurrency === 'stars'
+    boxes = lbCurrency === 'usdt'
       ? [{label:'💵 $USDT Pool', color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
       : [{label:'💎 $TON Pool',  color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',             sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
     grid.style.gridTemplateColumns = '1fr 1fr'
-  } else if(lbCurrency === 'stars') {
+  } else if(lbCurrency === 'usdt') {
     boxes = [
       {label:'💵 $USDT Pool',  color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
       {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(),       sub:'airdrop snapshot'},
@@ -3684,7 +3681,7 @@ function selectCur(el, cur){
 }
 
 const CR_OPTS = {
-  stars: [{v:100,l:'100 $NOT'},{v:200,l:'200 $NOT'},{v:1000,l:'1K $NOT'},{v:2000,l:'2K $NOT'},{v:5000,l:'5K $NOT'},{v:10000,l:'10K $NOT'}],
+  usdt: [{v:0.25,l:'0.25 $USDT'},{v:0.5,l:'0.5 $USDT'},{v:1,l:'1 $USDT'},{v:2,l:'2 $USDT'},{v:5,l:'5 $USDT'}],
   ton:   [{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}],
   free:  []
 }
@@ -3729,14 +3726,14 @@ function selectPrice(el, price){
 function updateTotalBadge(){
   const badge = document.getElementById('cr-price-total')
   if(!badge) return
-  const isNot = crCurrency === 'stars'
+  const isUsdt = crCurrency === 'usdt'
   if(crPriceAccum === 0){
     badge.textContent = 'Total: 0'
     badge.style.color = '#888'
     badge.style.borderColor = 'rgba(167,139,250,.3)'
   } else {
     const label = isNot
-      ? crPriceAccum.toLocaleString() + ' $NOT'
+      ? crPriceAccum.toLocaleString() + ' $USDT'
       : crPriceAccum.toFixed(crPriceAccum < 1 ? 2 : 1) + ' TON'
     badge.textContent = 'Total: ' + label
     badge.style.color = '#fff'
@@ -3800,16 +3797,16 @@ function resetPrice(){
 function updateRoomPreview(){
   const maxP = parseInt(document.getElementById('cr-players')?.value || 10)
   const p = crPriceAccum || crPrice
-  const isNot = crCurrency === 'stars'
-  const earn = crCurrency==='free' ? '+$TBOLA' : isNot ? Math.round(p*.02)+' $NOT per card' : (p*.02).toFixed(3)+' TON/card'
-  const pool = crCurrency==='free' ? '$TBOLA' : isNot ? Math.round(p*maxP*.53)+' $NOT' : (p*maxP*.53).toFixed(2)+' TON'
+  const isUsdt = crCurrency === 'usdt'
+  const earn = crCurrency==='free' ? '+$TBOLA' : isUsdt ? (p*.02).toFixed(3)+' $USDT per card' : (p*.02).toFixed(3)+' TON/card'
+  const pool = crCurrency==='free' ? '$TBOLA' : isUsdt ? (p*maxP*.53).toFixed(2)+' $USDT' : (p*maxP*.53).toFixed(2)+' TON'
   const ep = document.getElementById('cr-earn-preview'); if(ep) ep.textContent = earn
   const pp = document.getElementById('cr-pool-preview'); if(pp) pp.textContent = pool + ' max'
 }
 
 // Init al caricamento pagina
 ;(function initCreateRoom(){
-  const firstCurBtn = document.querySelector('.cur-btn[data-cur="stars"]')
+  const firstCurBtn = document.querySelector('.cur-btn[data-cur="usdt"]')
   if(firstCurBtn) selectCur(firstCurBtn, 'stars')
   else renderPriceChips('stars')
 })()
@@ -4237,7 +4234,7 @@ function leaveSquad() {
     <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass includes</div>
     <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on Fortune Wheel</span><br>🏆 +10% jackpot share</div>
   </div>
-  <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">600,000 $NOT or 3 $TON / month</div>
+  <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">5 $USDT or 3 $TON / month</div>
   <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
     <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()" style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">⚔️ Get Warrior Pass</button>
     <button onclick="document.getElementById('w-wp-gate').style.display='none'" style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">← Go back</button>
