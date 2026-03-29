@@ -838,7 +838,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">🎱 Bingo</div>
         <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
-          Live draws every 5 min · NOT · TON · VIP
+          Live draws every 5 min · $USDT · $TON · VIP
         </div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
@@ -1637,14 +1637,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 <div class="line-banner" id="line-banner">
   <div class="line-banner-icon">📏</div>
   <div class="line-banner-text">Line Complete!</div>
-  <div class="line-banner-prize" id="line-banner-prize">+125,000 NOT</div>
+  <div class="line-banner-prize" id="line-banner-prize">+1.25 USDT</div>
 </div>
 
 <!-- BINGO BANNER -->
 <div class="bingo-banner" id="bingo-banner">
   <div class="bingo-banner-icon">🎱</div>
   <div class="bingo-banner-text">BINGO!</div>
-  <div class="bingo-banner-prize" id="bingo-banner-prize">+375,000 NOT</div>
+  <div class="bingo-banner-prize" id="bingo-banner-prize">+3.75 USDT</div>
 </div>
 
 <!-- MINOR LEVEL UP TOAST -->
@@ -1761,7 +1761,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <div style="background:rgba(255,60,60,.1);border:1px solid rgba(255,60,60,.3);border-radius:50px;padding:4px 16px;margin:6px 0;font-size:.68rem;font-weight:700;color:#FF8080;letter-spacing:1.5px;text-transform:uppercase">⛔ Partita Finita</div>
 
-  <div class="wamt" id="wamt">+880,000 NOT</div>
+  <div class="wamt" id="wamt">+8.80 USDT</div>
   <div class="wtbola" id="wtbola">+500 $TBOLA earned</div>
 
   <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:270px;margin-top:10px">
@@ -1928,12 +1928,12 @@ function updateCost(){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const discount=c.cur!=='free'&&nCards>=2?0.9:1
   const totalPrice=c.price*nCards*discount
-  const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
+  const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
   const el=document.getElementById('l-cost')
   if(el){
     const isFree=c.cur==='free'
     const isNot=c.cur==='not'||c.cur==='stars'
-    let costStr=isFree?'Free':isNot?Math.floor(totalPrice).toLocaleString()+' NOT':totalPrice.toFixed(2)+' TON'
+    let costStr=isFree?'Free':isUsdt?totalPrice.toFixed(2)+' USDT':totalPrice.toFixed(2)+' TON'
     if(!isFree&&nCards>=2) costStr+=' <span style="color:#3AFF8A;font-size:.65rem;font-weight:700;margin-left:4px">-10%</span>'
     el.innerHTML=costStr
   }
@@ -2025,7 +2025,7 @@ function startGame(){
   document.querySelectorAll('.pblbl').forEach(el=>el.style.color='rgba(255,255,255,.65)')
   document.querySelectorAll('.pbv').forEach(el=>el.style.color='#fff')
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
-  const fmt=v=>(c.cur==='stars'||c.cur==='not')?Math.floor(v).toLocaleString()+' NOT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
+  const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
   document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(pool*0.25)
   document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(pool*0.75)
@@ -2172,7 +2172,7 @@ function showWin(type){
   const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
-    (c.cur==='stars'||c.cur==='not')?Math.floor(prizeVal).toLocaleString()+' NOT':prizeVal.toFixed(2)+' TON'
+    c.cur==='usdt'?prizeVal.toFixed(2)+' USDT':prizeVal.toFixed(2)+' TON'
   const tbolaWon=(type==='bingo'?250:50)+(c.tbola*nCards)
   document.getElementById('wb').textContent=type==='bingo'?'🎱':'📏'
   document.getElementById('wtype').textContent=type==='bingo'?'FULL HOUSE':'FIRST LINE'
@@ -2395,7 +2395,7 @@ function showTonFeeError() {
   if(tg?.showPopup) {
     tg.showPopup({
       title:'⚠️ Insufficient TON for Fees',
-      message:'Your wallet does not have enough TON to cover the network fee.\n\nEven when paying with NOT, a small amount of TON is required for gas fees (~0.05 $TON).\n\nPlease add at least 0.1 $TON to your wallet and try again.',
+      message:'Your wallet does not have enough TON to cover the network fee.\n\nEven when paying with USDT, a small amount of TON is required for gas fees (~0.07 $TON).\n\nPlease add at least 0.1 $TON to your wallet and try again.',
       buttons:[{type:'ok',text:'Got it'}]
     })
   } else {
@@ -2962,9 +2962,9 @@ function setWheelCur(cur) {
   const balEl = document.getElementById('w-session-bal')
   if(balEl) {
     if(wheelSessionBal > 0) {
-      balEl.textContent = cur==='ton' ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+      balEl.textContent = cur==='ton' ? wheelSessionBal.toFixed(3)+' TON' : wheelSessionBal.toFixed(2)+' USDT'
     } else {
-      balEl.textContent = cur==='ton' ? '0 TON' : '0 NOT'
+      balEl.textContent = cur==='ton' ? '0 TON' : '0.00 USDT'
     }
   }
   updateWheelUI()
@@ -2987,7 +2987,7 @@ function updateWheelUI() {
   const discountW = wheelSpinsSelected >= 50 ? 0.9 : 1
   const totalDisc = total * discountW
   if(wheelSpinsSelected > 0) {
-    const costStr = isTon ? totalDisc.toFixed(2)+' TON' : Math.floor(totalDisc).toLocaleString()+' NOT'
+    const costStr = isTon ? totalDisc.toFixed(2)+' TON' : totalDisc.toFixed(2)+' USDT'
     const discTag = discountW < 1 ? ' <span style="color:#3AFF8A;font-size:.6rem">-10%</span>' : ''
     document.getElementById('w-total-cost').innerHTML = costStr + discTag
   } else {
@@ -2998,7 +2998,7 @@ function updateWheelUI() {
   if(btn) {
     if(wheelSpinsSelected > 0) {
       const discW = wheelSpinsSelected >= 50 ? 0.9 : 1
-      const costStr = isTon ? (total*discW).toFixed(2)+' TON' : Math.floor(total*discW).toLocaleString()+' NOT'
+      const costStr = isTon ? (total*discW).toFixed(2)+' TON' : (total*discW).toFixed(2)+' USDT'
       const discLabel = discW < 1 ? ' (-10%)' : ''
       btn.textContent = '🎡 Start & Pay — '+costStr+discLabel
       btn.removeAttribute('disabled'); btn.style.pointerEvents='auto'
@@ -3115,7 +3115,7 @@ function handleWheelResult(segIdx) {
       // Jackpot locked — treat as x1
       const won = price * 1
       wheelSessionBal += won
-      resultMsg = `⚔️ ×1 — ${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
+      resultMsg = `⚔️ ×1 — ${isTon?won.toFixed(3)+' TON':won.toFixed(2)+' USDT'}`
       resultColor = '#fff'
     }
   } else if(seg.mult === -1) {
@@ -3133,13 +3133,13 @@ function handleWheelResult(segIdx) {
   } else {
     const won = price * seg.mult
     wheelSessionBal += won
-    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toLocaleString()+' NOT'}`
+    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toFixed(2)+' USDT'}`
     resultColor = seg.textColor
   }
   // Update session balance display
   const balEl = document.getElementById('w-session-bal')
   if(balEl) {
-    balEl.textContent = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+    balEl.textContent = isTon ? wheelSessionBal.toFixed(3)+' TON' : wheelSessionBal.toFixed(2)+' USDT'
   }
   // Result flash
   if(resultEl) {
@@ -3178,7 +3178,7 @@ function handleWheelResult(segIdx) {
 function collectWheelWinnings() {
   if(wheelSessionBal <= 0) return
   const isTon = wheelCur === 'ton'
-  const amtStr = isTon ? wheelSessionBal.toFixed(3)+' TON' : Math.floor(wheelSessionBal).toLocaleString()+' NOT'
+  const amtStr = isTon ? wheelSessionBal.toFixed(3)+' TON' : wheelSessionBal.toFixed(2)+' USDT'
   if(tg?.showPopup) {
     tg.showPopup({
       title:'💰 Collect Winnings',
@@ -3189,7 +3189,7 @@ function collectWheelWinnings() {
         // TODO: real TonConnect withdrawal
         wheelSessionBal = 0
         const balEl = document.getElementById('w-session-bal')
-        if(balEl) balEl.textContent = '0 NOT'
+        if(balEl) balEl.textContent = '0.00 USDT'
         const collectBtn = document.getElementById('w-collect-btn')
         if(collectBtn) { collectBtn.style.opacity='.4'; collectBtn.style.pointerEvents='none' }
         if(tg?.showPopup) tg.showPopup({
@@ -3317,7 +3317,7 @@ function renderProfile(){
   document.getElementById('p-ref').textContent='t.me/TonBolaBot_bot?start=ref_'+user.id
 
   const levels=[
-    {lv:1, icon:'🏕️',label:'Rookie',    unlocks:'Free & NOT rooms access',color:'#3A7A24'},
+    {lv:1, icon:'🏕️',label:'Rookie',    unlocks:'Free & USDT rooms access',color:'#3A7A24'},
     {lv:6, icon:'⚔', label:'Player',    unlocks:'Referral program activated',color:'#4080CC'},
     {lv:10,icon:'⭐',label:'Gold Cards', unlocks:'+5% win probability forever',color:'#CC8800'},
     {lv:16,icon:'🔥',label:'Expert',     unlocks:'Monthly leaderboard prizes',color:'#CC5500'},
@@ -3970,7 +3970,7 @@ function renderSquad() {
 
       <!-- CREATE -->
       <button class="btn btn-gold" onclick="go('s-create-squad')" style="padding:14px;font-size:1rem">
-        ⚔ Create a Squad — 0.5 $TON or 500,000 NOT
+        ⚔ Create a Squad — 0.5 $TON or 2 $USDT
       </button>
 
       <!-- JOIN WITH CODE -->
@@ -4124,7 +4124,7 @@ function createSquad() {
     if(tg?.showPopup) tg.showPopup({title:'Missing name',message:'Please enter a squad name.',buttons:[{type:'ok'}]})
     return
   }
-  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '500,000 NOT'
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '2 $USDT'
   const feeIcon = squadFee === 'ton' ? '💎' : '⭐'
   if(tg?.showPopup) {
     tg.showPopup({
@@ -4151,7 +4151,7 @@ function _doCreateSquad(name) {
   if(psub) psub.textContent = '1 member · Captain'
   if(picon) picon.textContent = squadAvatar
   const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
-  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '500,000 NOT'
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '2 $USDT'
   if(tg?.showPopup) {
     tg.showPopup({title:'⚔ Squad Created!',
       message:'"'+name+'" is ready!\n\nShare this code:\n🔑 '+code+'\n\n'+feeStr+' added to squad prize pool.',
