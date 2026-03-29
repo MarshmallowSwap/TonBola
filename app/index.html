@@ -2476,61 +2476,40 @@ function updateWalletUI() {
 }
 
 async function connectWallet() {
-  // Init SDK if not ready
-  if (!tc) {
-    initTonConnect()
-    await new Promise(r=>setTimeout(r,1500))
-  }
-
-  // If still no tc, try direct deep link to Telegram Wallet
-  if (!tc) {
-    console.warn('TonConnect SDK not loaded — fallback to t.me/wallet')
-    if (tg?.openLink) tg.openLink('https://t.me/wallet?startattach=tonconnect-' + encodeURIComponent(MANIFEST_URL))
-    else window.open('https://t.me/wallet', '_blank')
-    return
-  }
-
-  // Already connected
+  // Already connected — show info
   if (tcWallet) {
     const addr = tcWallet.account.address
     const short = addr.slice(0,6)+'...'+addr.slice(-4)
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: '💎 Wallet Connected',
-        message: 'Address: ' + short + '\n\nDisconnect?',
-        buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
-      }, id => { if(id==='dc') tc.disconnect() })
-    } else {
-      if (confirm('Wallet: ' + short + '\nDisconnect?')) tc.disconnect()
-    }
+    if (tg?.showPopup) tg.showPopup({
+      title: '💎 Wallet Connected',
+      message: 'Address: ' + short + '\n\nDisconnect?',
+      buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
+    }, id => { if(id==='dc' && tc) tc.disconnect() })
     return
   }
 
-  try {
-    const wallets = await tc.getWallets()
-    // Priority: Telegram Wallet → Tonkeeper → first available
-    const target =
-      wallets.find(w => w.appName === 'telegram-wallet') ||
-      wallets.find(w => w.appName === 'tonkeeper') ||
-      wallets.find(w => w.universalLink || w.bridgeUrl)
+  // Init SDK
+  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
 
-    if (!target) {
-      if (tg?.openLink) tg.openLink('https://t.me/wallet')
-      return
-    }
-
-    const link = tc.connect({
-      universalLink: target.universalLink,
-      bridgeUrl: target.bridgeUrl
-    })
-
-    if (tg?.openLink) tg.openLink(link)
-    else window.open(link, '_blank')
-
-  } catch(e) {
-    console.warn('connectWallet error:', e)
-    if (tg?.openLink) tg.openLink('https://t.me/wallet')
+  // Always use Telegram Wallet (built-in TON wallet in Telegram)
+  if (tc) {
+    try {
+      const wallets = await tc.getWallets()
+      const tgWallet = wallets.find(w => w.appName === 'telegram-wallet' || w.name === 'Wallet')
+      if (tgWallet) {
+        const link = tc.connect({ universalLink: tgWallet.universalLink, bridgeUrl: tgWallet.bridgeUrl })
+        console.log('Opening Telegram Wallet:', link)
+        if (tg?.openLink) tg.openLink(link)
+        else window.open(link, '_blank')
+        return
+      }
+    } catch(e) { console.warn('getWallets error:', e) }
   }
+
+  // Fallback: open t.me/wallet directly
+  console.log('Fallback: opening t.me/wallet')
+  if (tg?.openLink) tg.openLink('https://t.me/wallet')
+  else window.open('https://t.me/wallet', '_blank')
 }
 
 async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
@@ -2812,21 +2791,18 @@ async function payAndEnterLobby(room, numCards) {
       if (!tcWallet) {
         // Open wallet directly
         if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,800)) }
+        // Open Telegram Wallet
         if (tc) {
           try {
             const wlist = await tc.getWallets()
-            const tgt = wlist.find(w=>w.appName==='telegram-wallet')||wlist.find(w=>w.appName==='tonkeeper')||wlist.find(w=>w.universalLink)
-            if (tgt) {
-              const link = tc.connect({universalLink:tgt.universalLink,bridgeUrl:tgt.bridgeUrl})
+            const tgW = wlist.find(w=>w.appName==='telegram-wallet'||w.name==='Wallet')
+            if (tgW) {
+              const link = tc.connect({universalLink:tgW.universalLink,bridgeUrl:tgW.bridgeUrl})
               if (tg?.openLink) tg.openLink(link)
               else window.open(link,'_blank')
-            } else {
-              if (tg?.openLink) tg.openLink('https://t.me/wallet')
-            }
+            } else { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
           } catch(e) { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
-        } else {
-          if (tg?.openLink) tg.openLink('https://t.me/wallet')
-        }
+        } else { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
         showAlert('Connect your wallet, then tap Pay again.')
         return
       }
@@ -2857,21 +2833,18 @@ async function payAndEnterLobby(room, numCards) {
     const doPay = async () => {
       if (!tcWallet) {
         if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,800)) }
+        // Open Telegram Wallet
         if (tc) {
           try {
             const wlist = await tc.getWallets()
-            const tgt = wlist.find(w=>w.appName==='telegram-wallet')||wlist.find(w=>w.appName==='tonkeeper')||wlist.find(w=>w.universalLink)
-            if (tgt) {
-              const link = tc.connect({universalLink:tgt.universalLink,bridgeUrl:tgt.bridgeUrl})
+            const tgW = wlist.find(w=>w.appName==='telegram-wallet'||w.name==='Wallet')
+            if (tgW) {
+              const link = tc.connect({universalLink:tgW.universalLink,bridgeUrl:tgW.bridgeUrl})
               if (tg?.openLink) tg.openLink(link)
               else window.open(link,'_blank')
-            } else {
-              if (tg?.openLink) tg.openLink('https://t.me/wallet')
-            }
+            } else { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
           } catch(e) { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
-        } else {
-          if (tg?.openLink) tg.openLink('https://t.me/wallet')
-        }
+        } else { if (tg?.openLink) tg.openLink('https://t.me/wallet') }
         showAlert('Connect your wallet, then tap Pay again.')
         return
       }
