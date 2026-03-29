@@ -2736,6 +2736,8 @@ async function payAndEnterLobby(room, numCards) {
   const r = ROOMS[room]
   if (!r) return
 
+  console.log('payAndEnterLobby', room, numCards, 'cur:', r.cur, 'wallet:', !!tcWallet)
+
   // Free room — entra diretto
   if (r.cur === 'free' || r.price === 0) {
     paymentVerified = true
@@ -2743,78 +2745,110 @@ async function payAndEnterLobby(room, numCards) {
     return
   }
 
-  // ── Helper: popup con fallback nativo ──
-  function showConfirm(title, msg, okText, onOk) {
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: title, message: msg,
-        buttons: [{id:'ok',type:'default',text:okText},{type:'cancel',text:'Cancel'}]
-      }, id => { if(id==='ok') onOk() })
-    } else {
-      if (window.confirm(title + '\n\n' + msg)) onOk()
-    }
-  }
   function showAlert(title, msg) {
-    if (tg?.showPopup) tg.showPopup({title:title,message:msg,buttons:[{type:'ok'}]})
+    if (tg?.showPopup) tg.showPopup({title:title, message:msg, buttons:[{type:'ok'}]})
     else alert(title + ': ' + msg)
   }
 
-  // ── Step 1: se wallet non connesso, connetti prima di tutto ──
-  if (!tcWallet) {
-    // Mostra messaggio e apri wallet
-    showConfirm(
-      '🔗 Connect Wallet',
-      'You need a TON wallet to enter paid rooms.\n\nConnect Tonkeeper or Telegram Wallet to continue.',
-      'Connect Wallet',
-      async () => {
-        await connectWallet()
-        // Dopo connessione, aspetta e richiama la funzione
-        let w = 0
-        while (!tcWallet && w < 30000) {
-          await new Promise(r => setTimeout(r, 500))
-          w += 500
-        }
-        if (tcWallet) {
-          // Richiama payAndEnterLobby ora che il wallet è connesso
-          payAndEnterLobby(room, numCards)
-        } else {
-          showAlert('❌ Wallet Required', 'Could not connect wallet. Open Tonkeeper or Telegram Wallet and try again.')
-        }
+  // USDT room
+  if (r.cur === 'usdt') {
+    const total = +(r.price * numCards).toFixed(2)
+    const feeStr = total.toFixed(2) + ' $USDT'
+    const comment = `TonBola:bingo:${room}:${numCards}`
+    console.log('USDT payment, total:', total, 'wallet:', !!tcWallet)
+
+    // Se wallet non connesso → connetti prima, poi ritorna
+    if (!tcWallet) {
+      console.log('No wallet — opening connect')
+      await connectWallet()
+      let waited = 0
+      while (!tcWallet && waited < 20000) {
+        await new Promise(r => setTimeout(r, 500))
+        waited += 500
       }
-    )
+      if (!tcWallet) {
+        showAlert('Wallet Required', 'Connect Tonkeeper or Telegram Wallet, then tap the room again.')
+        return
+      }
+    }
+
+    console.log('Wallet ready, showing confirm popup')
+    // Mostra conferma
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: 'Confirm Payment',
+        message: `${r.name}
+Cards: ${numCards}
+Cost: ${feeStr}
+
+Needs ~0.07 TON for gas.`,
+        buttons: [{id:'pay', type:'default', text:'Pay ' + feeStr}, {type:'cancel', text:'Cancel'}]
+      }, id => {
+        console.log('Popup result:', id)
+        if (id !== 'pay') return
+        sendUsdtPayment(total, comment,
+          () => { paymentVerified = true; startGame() },
+          () => showAlert('Payment Failed', 'Transaction cancelled.')
+        )
+      })
+    } else if (window.confirm('Pay ' + feeStr + ' for ' + r.name + '?')) {
+      sendUsdtPayment(total, comment,
+        () => { paymentVerified = true; startGame() },
+        () => showAlert('Payment Failed', 'Transaction cancelled.')
+      )
+    }
     return
   }
 
-  // ── Step 2: wallet connesso — mostra conferma pagamento ──
-  let feeStr, comment, payFn
+  // TON room (includes VIP)
+  if (r.cur === 'ton') {
+    const total = +(r.price * numCards).toFixed(2)
+    const feeStr = total.toFixed(2) + ' $TON'
+    const comment = `TonBola:bingo:${room}:${numCards}`
+    console.log('TON payment, total:', total, 'wallet:', !!tcWallet)
 
-  if (r.cur === 'usdt') {
-    const total = r.price * numCards
-    feeStr  = total.toFixed(2) + ' $USDT'
-    comment = `TonBola:bingo:${room}:${numCards}`
-    payFn   = cb => sendUsdtPayment(total, comment, cb.ok, cb.fail)
-  } else if (r.cur === 'ton') {
-    const total = r.price * numCards
-    feeStr  = total.toFixed(2) + ' $TON'
-    comment = `TonBola:bingo:${room}:${numCards}`
-    payFn   = cb => sendTonPayment(total, comment, cb.ok, cb.fail)
-  } else {
-    // fallback
-    paymentVerified = true; startGame(); return
+    if (!tcWallet) {
+      console.log('No wallet — opening connect')
+      await connectWallet()
+      let waited = 0
+      while (!tcWallet && waited < 20000) {
+        await new Promise(r => setTimeout(r, 500))
+        waited += 500
+      }
+      if (!tcWallet) {
+        showAlert('Wallet Required', 'Connect Tonkeeper or Telegram Wallet, then tap the room again.')
+        return
+      }
+    }
+
+    console.log('Wallet ready, showing TON confirm')
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: 'Confirm Payment',
+        message: `${r.name}
+Cards: ${numCards}
+Cost: ${feeStr}`,
+        buttons: [{id:'pay', type:'default', text:'Pay ' + feeStr}, {type:'cancel', text:'Cancel'}]
+      }, id => {
+        console.log('TON popup result:', id)
+        if (id !== 'pay') return
+        sendTonPayment(total, comment,
+          () => { paymentVerified = true; startGame() },
+          () => showAlert('Payment Failed', 'Transaction cancelled.')
+        )
+      })
+    } else if (window.confirm('Pay ' + feeStr + ' for ' + r.name + '?')) {
+      sendTonPayment(total, comment,
+        () => { paymentVerified = true; startGame() },
+        () => showAlert('Payment Failed', 'Transaction cancelled.')
+      )
+    }
+    return
   }
 
-  const gasNote = r.cur === 'usdt' ? '\n\nRequires ~0.07 $TON for gas.' : ''
-  showConfirm(
-    '💳 Confirm Payment',
-    `${r.name}\n\nCards: ${numCards}\nCost: ${feeStr}${gasNote}`,
-    `Pay ${feeStr}`,
-    () => {
-      payFn({
-        ok:   () => { paymentVerified = true; startGame() },
-        fail: () => showAlert('❌ Payment Failed', 'Transaction cancelled. Please try again.')
-      })
-    }
-  )
+  // Fallback
+  paymentVerified = true
+  startGame()
 }
 
 // ── FORTUNE WHEEL ──
