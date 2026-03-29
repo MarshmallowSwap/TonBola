@@ -974,13 +974,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <!-- WHEEL canvas -->
   <div style="display:flex;justify-content:center;align-items:center;margin:14px 0 8px;position:relative">
-    <div style="position:relative;width:300px;height:300px">
+    <div style="position:relative;width:320px;height:320px;margin:0 auto">
       <div style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(255,184,0,.06) 0%,transparent 70%);pointer-events:none"></div>
       <!-- Pointer -->
       <div style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10">
         <div style="width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:28px solid #FFD700;margin:0 auto;filter:drop-shadow(0 2px 6px rgba(255,215,0,.6))"></div>
       </div>
-      <canvas id="wheel-canvas" width="300" height="300" style="border-radius:50%;display:block;box-shadow:0 0 40px rgba(139,92,246,.3)"></canvas>
+      <canvas id="wheel-canvas" width="320" height="320" style="width:300px;height:300px;border-radius:50%;display:block;box-shadow:0 0 40px rgba(139,92,246,.3)"></canvas>
     </div>
   </div>
 
@@ -2518,27 +2518,21 @@ async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
 }
 
 // ── Buy wheel spins with TON ──
-async function payWheelSpins(spins, currency, onPaid) {
-  const onFail = () => {
-    // Re-enable button
-    const btn = document.getElementById('w-start-btn')
-    if(btn){ btn.style.pointerEvents='auto'; btn.style.opacity='1'; }
-    updateWheelUI()
+async function payWheelSpins(spins, currency, onPaid, onFail) {
+  const fail = (e) => {
     if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
+    if (onFail) onFail(e)
   }
+  const success = () => { if (onPaid) onPaid() }
 
   if (currency === 'usdt') {
-    const total = +((WHEEL_PRICE['usdt'] || WHEEL_PRICE['not'] || 0.25) * spins).toFixed(2)
-    const comment = `TonBola:wheel:usdt:${spins}`
-    await sendUsdtPayment(total, comment, () => { if (onPaid) onPaid() }, onFail)
+    const total = +((wheelPricePerSpin.usdt || 0.25) * spins).toFixed(2)
+    await sendUsdtPayment(total, `TonBola:wheel:usdt:${spins}`, success, fail)
     return
   }
-
   // TON
-  const price = WHEEL_PRICE['ton'] || 0.1
-  const total = +(price * spins).toFixed(2)
-  const comment = `TonBola:wheel:ton:${spins}`
-  await sendTonPayment(total, comment, () => { if (onPaid) onPaid() }, onFail)
+  const total = +((wheelPricePerSpin.ton || 0.1) * spins).toFixed(2)
+  await sendTonPayment(total, `TonBola:wheel:ton:${spins}`, success, fail)
 }
 
 // ── BINGO PAY & ENTER ──
@@ -3039,55 +3033,43 @@ function updateWheelUI() {
 
 async function startWheelSession() {
   if(wheelSpinsSelected <= 0) {
-    alert('Select at least 1 spin first!')
-    return
-  }
-  // Disable button during payment
-  const btn = document.getElementById('w-start-btn')
-  if(btn){ btn.style.pointerEvents='none'; btn.style.opacity='.6'; btn.textContent='⏳ Processing...' }
-  // Real TonConnect payment
-  if(wheelCur === 'ton') {
-    payWheelSpins(wheelSpinsSelected, 'ton', () => {
-      wheelSpinsRemaining += wheelSpinsSelected
-      wheelSpinsSelected = 0
-      updateWheelUI()
-      const startBtn = document.getElementById('w-start-btn')
-      if(startBtn) {
-        startBtn.textContent = '🎡 Spin!'
-        startBtn.onclick = spinWheel
-        startBtn.style.opacity='1'; startBtn.style.pointerEvents='auto'
-      }
-      if(tg?.showPopup) tg.showPopup({
-        title:'⚔️ Session Started!',
-        message:'Your spins are loaded. Good luck, warrior!\n\nRemember: collect your winnings before leaving.',
-        buttons:[{type:'ok',text:"Let's spin!"}]
-      })
-    })
-    return
-  }
-  // USDT
-  if(wheelCur === 'usdt') {
-    payWheelSpins(wheelSpinsSelected, 'usdt', () => {
-      wheelSpinsRemaining += wheelSpinsSelected
-      wheelSpinsSelected = 0
-      updateWheelUI()
-      const btn = document.getElementById('w-start-btn')
-      if(btn){ btn.textContent='🎡 Spin!'; btn.onclick=spinWheel; btn.style.opacity='1'; btn.style.pointerEvents='auto' }
-      if(tg?.showPopup) tg.showPopup({title:'⚔️ Session Started!',message:'Your spins are loaded!',buttons:[{type:'ok',text:"Let's spin!"}]})
-    })
+    if(tg?.showPopup) tg.showPopup({title:'Select Spins',message:'Tap +1, +3, +5... to select spins first.',buttons:[{type:'ok'}]})
+    else alert('Select at least 1 spin first!')
     return
   }
 
-  // Fallback (free/other)
-  wheelSpinsRemaining += wheelSpinsSelected
-  wheelSpinsSelected = 0
-  updateWheelUI()
-  const startBtn2 = document.getElementById('w-start-btn')
-  if(startBtn2) {
-    startBtn2.textContent = '🎡 Spin!'
-    startBtn2.onclick = spinWheel
-    startBtn2.style.opacity='1'; startBtn2.style.pointerEvents='auto'
+  const btn = document.getElementById('w-start-btn')
+  const resetBtn = () => {
+    if(btn){ btn.style.pointerEvents='none'; btn.style.opacity='.4'; btn.textContent='🎡 Start & Pay — select spins first'; btn.onclick=startWheelSession }
+    updateWheelUI()
   }
+  const activateSpinBtn = () => {
+    if(btn){ btn.textContent='🎡 Spin!'; btn.onclick=spinWheel; btn.style.opacity='1'; btn.style.pointerEvents='auto'; btn.style.background='linear-gradient(180deg,#3AFF8A,#00C060)'; btn.style.color='#001A00' }
+  }
+
+  // Show processing
+  if(btn){ btn.style.pointerEvents='none'; btn.style.opacity='.6'; btn.textContent='⏳ Processing...' }
+
+  const spins = wheelSpinsSelected
+  const cur   = wheelCur
+
+  await payWheelSpins(spins, cur,
+    () => {
+      // Success
+      wheelSpinsRemaining += spins
+      wheelSpinsSelected = 0
+      activateSpinBtn()
+      if(tg?.showPopup) tg.showPopup({
+        title:'⚔️ Ready!',
+        message:`${spins} spin${spins>1?'s':''} loaded! Tap Spin to start.`,
+        buttons:[{type:'ok',text:"Let's go!"}]
+      })
+    },
+    () => {
+      // Fail — reset
+      resetBtn()
+    }
+  )
 }
 
 function spinWheel() {
