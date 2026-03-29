@@ -664,7 +664,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@3.0.6/dist/tonconnect-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.0.2/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 
@@ -2452,19 +2452,18 @@ let tcWallet = null
 
 function initTonConnect() {
   try {
-    const SDK = window.TonConnectSDK
-    if (!SDK) { setTimeout(initTonConnect, 800); return }
-    tc = new SDK.TonConnect({ manifestUrl: MANIFEST_URL })
-    // Restore previous session
-    tc.restoreConnection()
+    const UI = window.TON_CONNECT_UI
+    if (!UI) { setTimeout(initTonConnect, 800); return }
+    tc = new UI.TonConnectUI({ manifestUrl: MANIFEST_URL, buttonRootId: null })
     tc.onStatusChange(w => {
       tcWallet = w
       updateWalletUI()
-      console.log(w ? '✅ Wallet: ' + w.account.address : '❌ Wallet disconnected')
+      console.log(w ? '✅ Wallet: ' + w.account.address : '❌ Disconnected')
     })
-    console.log('✅ TonConnect SDK ready')
+    console.log('✅ TonConnect UI ready')
   } catch(e) {
-    console.warn('TC init error:', e)
+    console.warn('TonConnect init error:', e)
+    setTimeout(initTonConnect, 1000)
   }
 }
 
@@ -2480,75 +2479,40 @@ function updateWalletUI() {
 }
 
 async function connectWallet() {
-  // Already connected — show info
+  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1200)) }
+  if (!tc) { alert('TonConnect not ready'); return }
+
   if (tcWallet) {
     const addr = tcWallet.account.address
     const short = addr.slice(0,6)+'...'+addr.slice(-4)
-    if (tg?.showPopup) tg.showPopup({
-      title: '💎 Wallet Connected',
-      message: 'Address: ' + short + '\n\nDisconnect?',
-      buttons: [{id:'dc',type:'destructive',text:'Disconnect'},{type:'cancel',text:'Close'}]
-    }, id => { if(id==='dc' && tc) tc.disconnect() })
+    if (confirm('Wallet: ' + short + '\nDisconnect?')) tc.disconnect()
     return
   }
 
-  // Init SDK
-  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
-
-  // Always use Telegram Wallet (built-in TON wallet in Telegram)
-  if (tc) {
-    try {
-      const wallets = await tc.getWallets()
-      const tgWallet = wallets.find(w => w.appName === 'telegram-wallet' || w.name === 'Wallet')
-      if (tgWallet) {
-        const link = tc.connect({ universalLink: tgWallet.universalLink, bridgeUrl: tgWallet.bridgeUrl })
-        console.log('Opening Telegram Wallet:', link)
-        if (tg?.openLink) tg.openLink(link)
-        else window.open(link, '_blank')
-        return
-      }
-    } catch(e) { console.warn('getWallets error:', e) }
-  }
-
-  // Fallback: open t.me/wallet directly
-  console.log('Fallback: opening t.me/wallet')
-  if (tg?.openLink) tg.openLink('https://t.me/wallet')
-  else window.open('https://t.me/wallet', '_blank')
+  // TonConnectUI opens the wallet selection modal automatically
+  await tc.openModal()
 }
 
 async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
-  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1000)) }
-  if (!tcWallet) {
-    await connectWallet()
-    // Wait up to 30s for wallet connection
-    let waited = 0
-    while (!tcWallet && waited < 30000) {
-      await new Promise(r=>setTimeout(r,500))
-      waited += 500
-    }
-    if (!tcWallet) { if (onFail) onFail('no_wallet'); return }
-  }
-  const nanotons = String(Math.round(amountTon * TON_DECIMALS))
-  // Encode text comment as hex for TON transaction (OP=0 + comment)
-  function encodeComment(text) {
-    const bytes = new TextEncoder().encode(text)
-    let hex = '00000000' // OP code 0 = text comment
-    for (const b of bytes) hex += b.toString(16).padStart(2,'0')
-    return hex
-  }
+  if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1200)) }
+  if (!tc) { if(onFail) onFail('no_tc'); return }
+
+  const nanotons = String(Math.round(amountTon * 1000000000))
+  console.log('sendTonPayment', amountTon, 'TON =', nanotons, 'nanoton to', PLATFORM_WALLET)
+
   try {
     const result = await tc.sendTransaction({
       validUntil: Math.floor(Date.now()/1000) + 600,
       messages: [{
         address: PLATFORM_WALLET,
         amount: nanotons
-        // no payload — plain TON transfer
       }]
     })
-    console.log('TON TX sent:', result)
+    console.log('✅ TON TX ok:', result)
     if (onSuccess) onSuccess(result)
   } catch(e) {
-    console.warn('TX error:', e)
+    console.warn('❌ TX error:', e)
+    if (e?.message) alert('TX Error: ' + e.message)
     if (onFail) onFail(e)
   }
 }
