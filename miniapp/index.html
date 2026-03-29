@@ -2445,9 +2445,9 @@ async function payAndEnterLobby(room, nCards) {
   const stars = (ROOM_STARS[room] || 50) * nCards
 
   // Get invoice from backend
-  const inv = await apiCall('/payments/invoice?room=' + room + '&n_cards=' + nCards, {method:'POST'})
+  const inv = await apiCall('/payments/invoice?room=' + room + '&n_cards=' + nCards + '&user_id=' + (user.id||0), {method:'POST'})
   if (!inv) {
-    alert('Payment service unavailable. Try again.')
+    if(tg?.showPopup) tg.showPopup({title:'⚠️ Error',message:'Payment service unavailable. Try again.',buttons:[{type:'ok'}]})
     return
   }
   if (inv.free) {
