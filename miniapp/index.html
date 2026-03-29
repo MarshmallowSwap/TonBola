@@ -726,14 +726,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="ri">
         <div class="r-icon ri-stars" style="background-image:url(assets/icon-not-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
-          <div class="rn">$NOT Room</div>
-          <div class="rd">Pay $NOT · Win $NOT · +$TBOLA</div>
+          <div class="rn">$USDT Room</div>
+          <div class="rd">Pay $USDT · Win $USDT · +$TBOLA</div>
         </div>
         <div class="rbadge" style="background:rgba(139,112,0,.25);color:#E0E0E0;border-color:#666">$NOT</div>
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">0</span> warriors</div>
-        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">500 $NOT / card</div>
+        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.50 $USDT / card</div>
       </div>
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
@@ -1083,7 +1083,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="display:flex;align-items:center;gap:8px">
       <button class="btn btn-back btn-sm" onclick="go('s-hub');initHub()">← Back</button>
       <div>
-        <div style="font-size:.95rem;font-weight:700;color:#333" id="l-nm">$NOT Room</div>
+        <div style="font-size:.95rem;font-weight:700;color:#333" id="l-nm">$USDT Room</div>
         <div style="font-size:.7rem;color:#999"><span id="l-cd" style="color:rgba(255,255,255,.4);font-size:.65rem"></span></div>
       </div>
     </div>
@@ -1157,7 +1157,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div id="g-top" style="flex-shrink:0">
     <div class="ghdr">
       <div>
-        <div style="font-size:.9rem;font-weight:700;color:#fff" id="g-rm">$NOT Room</div>
+        <div style="font-size:.9rem;font-weight:700;color:#fff" id="g-rm">$USDT Room</div>
         <div style="font-size:.67rem;color:#999" id="g-di">0 numbers drawn</div>
       </div>
       <div style="display:flex;align-items:center;gap:5px">
@@ -1314,7 +1314,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <!-- CURRENCY SUB-TABS -->
   <div id="lb-currency-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 10px 4px;background:var(--bg)">
-    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">◈ $NOT</div>
+    <div id="lc-stars" class="ltb ltb-sm ltb-on" onclick="setCurrency('stars')" style="justify-content:center">💵 $USDT</div>
     <div id="lc-ton"   class="ltb ltb-sm" onclick="setCurrency('ton')" style="justify-content:center">💎 $TON</div>
   </div>
 
@@ -1714,7 +1714,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           background:rgba(255,184,0,.12);border:2px solid #FFB800;transition:all .15s">
         <div style="font-size:1.4rem;font-weight:700;color:var(--yellow);
           font-family:'Outfit',sans-serif">600,000</div>
-        <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:2px">◈ $NOT</div>
+        <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:2px">💵 $USDT</div>
         <div style="font-size:.62rem;color:rgba(255,217,61,.5);margin-top:3px">equiv. a 3 $TON</div>
       </div>
       <div id="wp-ton" onclick="selectWPCur('ton')"
@@ -1752,7 +1752,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div style="background:linear-gradient(135deg,rgba(255,184,0,.15),rgba(196,147,63,.08));border:1.5px solid rgba(255,184,0,.45);border-radius:18px;padding:16px 24px;margin-bottom:14px;width:100%;max-width:300px;box-shadow:0 0 30px rgba(255,184,0,.15)">
     <div style="font-size:.65rem;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:4px">🏆 Winner</div>
     <div id="w-winner-name" style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#FFD700;text-shadow:0 0 16px rgba(255,215,0,.5)">Tommy</div>
-    <div id="w-winner-room" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:2px">$NOT Room</div>
+    <div id="w-winner-room" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:2px">$USDT Room</div>
   </div>
 
   <div class="wb" id="wb">🎱</div>
@@ -1837,7 +1837,7 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
-  stars:{name:'$NOT Room',cur:'not',price:500,tbola:25,icon:'◈'},
+  stars:{name:'$USDT Room',cur:'usdt',price:0.5,tbola:50,icon:'💵'},
   ton:{name:'$TON Room',cur:'ton',price:0.2,tbola:100,icon:'💎'},
   vip:{name:'VIP $TON Room',cur:'ton',price:1,tbola:150,icon:'👑'}
 }
@@ -2587,53 +2587,146 @@ async function payWheelSpins(spins, currency, onPaid) {
 
 // ── $NOT Jetton Transfer ──
 const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
-const NOT_DECIMALS = 1000000000 // 9 decimali
+const USDT_JETTON_MASTER = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
+const USDT_DECIMALS = 6 // USDT has 6 decimals on TON
+const NOT_DECIMALS = 100000000000 // 9 decimali
 
-async function sendNotPayment(amountNot, comment, onSuccess, onFail) {
-  if (!tc || !tcWallet) { if (onFail) onFail('no_wallet'); return }
 
-  const nanoNot = String(Math.round(amountNot * NOT_DECIMALS))
-  const userAddr = tcWallet.account.address
+// ── Minimal BOC builder for jetton transfer ──
+function parseTonAddress(addr) {
+  // Accept both friendly (EQ.../UQ...) and raw (0:hex) formats
+  if (addr.includes(':')) {
+    const [wc, hex] = addr.split(':')
+    return { workchain: parseInt(wc), hash: new Uint8Array(hex.match(/.{2}/g).map(h=>parseInt(h,16))) }
+  }
+  const b64 = addr.replace(/-/g,'+').replace(/_/g,'/')
+  const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0))
+  // byte[0]=tag, byte[1]=workchain(int8), bytes[2..33]=hash(32), bytes[34..35]=crc
+  const wc = bytes[1] > 127 ? bytes[1]-256 : bytes[1]
+  return { workchain: wc, hash: bytes.slice(2, 34) }
+}
 
-  // Jetton transfer body (TL-B schema)
-  // op=0xf8a7ea5, query_id, amount, destination, response_dest, custom_payload, fwd_amount, fwd_payload
-  function buildJettonTransferPayload(amountStr, toAddr, commentStr) {
-    // Encode as hex — simplified version for TonConnect
-    // Full jetton transfer: op(4) + query_id(8) + amount(var) + to(addr) + resp(addr) + 0(maybe_ref) + fwd_fee(var) + comment
-    const op = 'f8a7ea5'
-    const queryId = '0000000000000000'
-    // We encode the comment text
-    const commentHex = Array.from(new TextEncoder().encode('00000000' + commentStr))
-      .map(b => b.toString(16).padStart(2,'0')).join('')
-    return op + queryId + commentHex
+function buildJettonTransferBOC(nanoAmount, destAddr, senderAddr, fwdTon, comment) {
+  // BitWriter
+  const buf = new Uint8Array(128)
+  let bitPos = 0
+  const writeBit = b => {
+    const by = bitPos >> 3, bi = 7 - (bitPos & 7)
+    if (b) buf[by] |= 1 << bi
+    bitPos++
+  }
+  const writeBits = (v, n) => { for (let i=n-1;i>=0;i--) writeBit((v>>i)&1) }
+  const writeBigBits = (v, n) => { for (let i=n-1;i>=0;i--) writeBit(Number((v>>BigInt(i))&1n)) }
+  const writeCoins = v => {
+    if (v===0n){ writeBits(0,4); return }
+    let b=0, t=v; while(t>0n){t>>=8n;b++}
+    writeBits(b,4); writeBigBits(v,b*8)
+  }
+  const writeAddr = a => {
+    writeBits(0b10,2); writeBit(0)          // addr_std, no anycast
+    const wc = a.workchain < 0 ? a.workchain+256 : a.workchain
+    writeBits(wc,8)                          // workchain int8
+    for (const b of a.hash) writeBits(b,8)  // 256-bit hash
   }
 
-  try {
-    // Gas for jetton transfer: 0.05 TON
-    const gasNano = String(Math.round(0.055 * 1000000000))
+  // op: 0x0f8a7ea5
+  writeBits(0x0f8a7ea5, 32)
+  // query_id: 0
+  writeBits(0, 64)
+  // amount
+  writeCoins(BigInt(nanoAmount))
+  // destination
+  writeAddr(parseTonAddress(destAddr))
+  // response_destination (sender)
+  writeAddr(parseTonAddress(senderAddr))
+  // custom_payload: none
+  writeBit(0)
+  // forward_ton_amount
+  writeCoins(BigInt(Math.round(fwdTon * 1e9)))
+  // forward_payload: inline (0 bit) + comment
+  writeBit(0)
+  if (comment) {
+    writeBits(0, 32) // text comment op
+    for (const ch of new TextEncoder().encode(comment)) writeBits(ch, 8)
+  }
 
+  // Serialize cell
+  const dataBits = bitPos
+  const dataBytes = Math.ceil(dataBits / 8)
+  // Add completion bit if not byte-aligned
+  if (dataBits % 8 !== 0) {
+    const bi = 7 - (dataBits & 7)
+    buf[dataBytes-1] |= 1 << bi
+  }
+  const d2 = Math.floor(dataBits/8)*2 + (dataBits%8 !== 0 ? 1 : 0)
+  const totSize = 2 + dataBytes
+
+  // BOC: magic + flags + counts + size + root_index + cell
+  const boc = [0xb5,0xee,0x9c,0x72, 0x01, 0x01, 0x01, 0x00, totSize, 0x00, 0x00, d2]
+  for (let i=0;i<dataBytes;i++) boc.push(buf[i])
+
+  return btoa(String.fromCharCode(...boc))
+}
+
+async function sendJettonPayment(masterAddr, nanoAmount, decimals, comment, onSuccess, onFail) {
+  if (!tc || !tcWallet) { if (onFail) onFail('no_wallet'); return }
+
+  const userAddr = tcWallet.account.address
+
+  // Get user's jetton wallet address via TON API
+  let jettonWalletAddr
+  try {
+    const res = await fetch(
+      `https://tonapi.io/v2/accounts/${encodeURIComponent(userAddr)}/jettons/${encodeURIComponent(masterAddr)}`
+    )
+    if (!res.ok) throw new Error('api_error')
+    const data = await res.json()
+    jettonWalletAddr = data?.wallet_address?.address
+    if (!jettonWalletAddr) throw new Error('no_wallet_found')
+  } catch(e) {
+    console.warn('Jetton wallet lookup failed:', e)
+    if (tg?.showPopup) tg.showPopup({
+      title: '❌ Error',
+      message: 'Could not find your jetton wallet. Make sure you hold the token in your TON wallet.',
+      buttons:[{type:'ok'}]
+    })
+    if (onFail) onFail('no_jetton_wallet')
+    return
+  }
+
+  // Build jetton transfer BOC
+  const payload = buildJettonTransferBOC(
+    nanoAmount,
+    PLATFORM_WALLET,   // destination
+    userAddr,           // response_destination (get change back)
+    0.000000001,        // forward_ton_amount (1 nanoton)
+    comment
+  )
+
+  // Send: to = user's jetton wallet, value = 0.065 TON (gas + storage)
+  const gasNano = String(Math.round(0.065 * 1e9))
+  try {
     const result = await tc.sendTransaction({
       validUntil: Math.floor(Date.now()/1000) + 600,
-      messages: [{
-        address: PLATFORM_WALLET, // backend intercetta e verifica jetton tx
-        amount: gasNano,
-        payload: (() => {
-          function encodeComment(text) {
-            const bytes = new TextEncoder().encode(text)
-            let hex = '00000000'
-            for (const b of bytes) hex += b.toString(16).padStart(2,'0')
-            return hex
-          }
-          return encodeComment(comment + ':not:' + amountNot)
-        })()
-      }]
+      messages: [{ address: jettonWalletAddr, amount: gasNano, payload }]
     })
     if (onSuccess) onSuccess(result)
   } catch(e) {
-    console.warn('NOT payment error:', e)
+    console.warn('Jetton TX error:', e)
     if (onFail) onFail(e)
   }
 }
+
+async function sendNotPayment(amountNot, comment, onSuccess, onFail) {
+  const nano = Math.round(amountNot * NOT_DECIMALS)
+  await sendJettonPayment(NOT_JETTON_MASTER, nano, NOT_DECIMALS, comment, onSuccess, onFail)
+}
+
+async function sendUsdtPayment(amountUsdt, comment, onSuccess, onFail) {
+  const nano = Math.round(amountUsdt * Math.pow(10, USDT_DECIMALS))
+  await sendJettonPayment(USDT_JETTON_MASTER, nano, USDT_DECIMALS, comment, onSuccess, onFail)
+}
+
 
 async function payAndEnterLobby(room, numCards) {
   const r = ROOMS[room]
@@ -3409,7 +3502,7 @@ function renderPoolBanner(tab) {
     grid.style.gridTemplateColumns = '1fr 1fr'
     grid.innerHTML = `
       <div style="background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:10px 8px;text-align:center">
-        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);font-weight:800;margin-bottom:5px">◈ $NOT Paid</div>
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);font-weight:800;margin-bottom:5px">💵 $USDT Paid</div>
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--yellow);text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
@@ -3426,14 +3519,14 @@ function renderPoolBanner(tab) {
     return
   } else if(isSquads) {
     boxes = lbCurrency === 'stars'
-      ? [{label:'◈ $NOT Pool', color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
+      ? [{label:'💵 $USDT Pool', color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:Math.floor(POOL_BASE.squads.stars.val+poolGrowth.stars).toLocaleString()+' ⭐', sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
       : [{label:'💎 $TON Pool',  color:'#40B8FF', bg:'rgba(61,158,255,.1)',   border:'rgba(61,158,255,.3)',   value:tonVal+' TON',             sub:'top squads share'},
          {label:'◆ $TBOLA Pool',color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(), sub:'airdrop snapshot'}]
     grid.style.gridTemplateColumns = '1fr 1fr'
   } else if(lbCurrency === 'stars') {
     boxes = [
-      {label:'◈ $NOT Pool',  color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
+      {label:'💵 $USDT Pool',  color:'#fff', bg:'rgba(255,184,0,.1)',   border:'rgba(255,184,0,.3)',   value:starsVal.toLocaleString()+' ⭐', sub:'top players share'},
       {label:'◆ $TBOLA Pool', color:'#C080FF', bg:'rgba(192,128,255,.1)', border:'rgba(192,128,255,.3)', value:tbolaVal.toLocaleString(),       sub:'airdrop snapshot'},
     ]
     grid.style.gridTemplateColumns = '1fr 1fr'
