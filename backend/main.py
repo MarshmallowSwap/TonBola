@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone, date
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Depends, Header
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from supabase import create_client, Client
@@ -324,7 +324,6 @@ async def create_invoice(room: str, n_cards: int, tg: dict = Depends(get_user)):
 
 @app.post("/telegram/webhook")
 async def telegram_webhook(req: Request):
-    from fastapi import Request
     update = await req.json()
     if "pre_checkout_query" in update:
         pcq = update["pre_checkout_query"]
