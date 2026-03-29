@@ -2519,29 +2519,22 @@ async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
 
 // ── Buy wheel spins with TON ──
 async function payWheelSpins(spins, currency, onPaid) {
+  const onFail = () => {
+    if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
+  }
+
   if (currency === 'usdt') {
-    const total = (WHEEL_PRICE['not'] || 0.25) * spins
-    const comment = 'TonBola:wheel:usdt:' + spins
-    await sendUsdtPayment(total, comment, () => { if (onPaid) onPaid() }, () => {})
+    const total = +((WHEEL_PRICE['usdt'] || WHEEL_PRICE['not'] || 0.25) * spins).toFixed(2)
+    const comment = `TonBola:wheel:usdt:${spins}`
+    await sendUsdtPayment(total, comment, () => { if (onPaid) onPaid() }, onFail)
     return
   }
 
-  const price = WHEEL_PRICE[currency] || 0.1
-  const total = price * spins
-  const comment = 'TonBola:wheel:' + spins
-
-  await sendTonPayment(total, comment,
-    (result) => {
-      if (onPaid) onPaid()
-    },
-    (err) => {
-      if (err !== 'no_wallet' && tg?.showPopup) tg.showPopup({
-        title: '❌ Payment Failed',
-        message: 'Transaction cancelled. Try again.',
-        buttons: [{type:'ok'}]
-      })
-    }
-  )
+  // TON
+  const price = WHEEL_PRICE['ton'] || 0.1
+  const total = +(price * spins).toFixed(2)
+  const comment = `TonBola:wheel:ton:${spins}`
+  await sendTonPayment(total, comment, () => { if (onPaid) onPaid() }, onFail)
 }
 
 // ── BINGO PAY & ENTER ──
@@ -2859,7 +2852,7 @@ let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
-let wheelPricePerSpin = {not:0.25, ton:0.1}
+let wheelPricePerSpin = {usdt:0.25, not:0.25, ton:0.1}
 
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
@@ -3057,7 +3050,20 @@ function startWheelSession() {
     })
     return
   }
-  // NOT currency — direct (no payment yet)
+  // USDT
+  if(wheelCur === 'usdt') {
+    payWheelSpins(wheelSpinsSelected, 'usdt', () => {
+      wheelSpinsRemaining += wheelSpinsSelected
+      wheelSpinsSelected = 0
+      updateWheelUI()
+      const btn = document.getElementById('w-start-btn')
+      if(btn){ btn.textContent='🎡 Spin!'; btn.onclick=spinWheel; btn.style.opacity='1'; btn.style.pointerEvents='auto' }
+      if(tg?.showPopup) tg.showPopup({title:'⚔️ Session Started!',message:'Your spins are loaded!',buttons:[{type:'ok',text:"Let's spin!"}]})
+    })
+    return
+  }
+
+  // Fallback (free/other)
   wheelSpinsRemaining += wheelSpinsSelected
   wheelSpinsSelected = 0
   updateWheelUI()
