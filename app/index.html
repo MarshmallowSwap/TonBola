@@ -1941,7 +1941,8 @@ function updateCost(){
   const el=document.getElementById('l-cost')
   if(el){
     const isFree=c.cur==='free'
-    const isNot=c.cur==='not'||c.cur==='stars'
+    const isNot=c.cur==='not'
+    const isUsdt=c.cur==='usdt'
     let costStr=isFree?'Free':isUsdt?totalPrice.toFixed(2)+' USDT':totalPrice.toFixed(2)+' TON'
     if(!isFree&&nCards>=2) costStr+=' <span style="color:#3AFF8A;font-size:.65rem;font-weight:700;margin-left:4px">-10%</span>'
     el.innerHTML=costStr
