@@ -2558,10 +2558,11 @@ async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
       validUntil: Math.floor(Date.now()/1000) + 600,
       messages: [{
         address: PLATFORM_WALLET,
-        amount: nanotons,
-        payload: encodeComment(comment)
+        amount: nanotons
+        // no payload — plain TON transfer
       }]
     })
+    console.log('TON TX sent:', result)
     if (onSuccess) onSuccess(result)
   } catch(e) {
     console.warn('TX error:', e)
