@@ -1002,11 +1002,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <!-- Currency selector -->
   <div style="margin:0 12px 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-    <div id="w-cur-not" onclick="setWheelCur('not')"
+    <div id="w-cur-usdt" onclick="setWheelCur('usdt')"
       style="padding:10px 8px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(200,150,0,.08);border:1.5px solid rgba(200,150,0,.2);transition:all .15s">
       <img src="assets/icon-usdt-coin.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:2px">
       <div style="font-size:.72rem;font-weight:700;color:#FFB800">$USDT</div>
-      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-top:1px">0.25 $USDT / spin</div>
+      <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-top:1px">0.25 USDT / spin</div>
     </div>
     <div id="w-cur-ton" onclick="setWheelCur('ton')"
       style="padding:10px 8px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(0,100,180,.12);border:1.5px solid #0098EA;transition:all .15s">
@@ -2847,7 +2847,7 @@ const SEG_COUNT = WHEEL_SEGMENTS.length
 const JACKPOT_THRESHOLD = 100
 let wheelAngle = 0
 let wheelSpinning = false
-let wheelCur = 'ton'
+let wheelCur = 'usdt'
 let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
@@ -2857,7 +2857,7 @@ let wheelPricePerSpin = {usdt:0.25, not:0.25, ton:0.1}
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   drawWheel(0)
-  setWheelCur(wheelCur) // refresh currency display
+  setWheelCur('usdt')
   updateWheelUI()
   document.getElementById('w-tbola').textContent = formatTbola(user.tbola||0)
 }
@@ -2958,24 +2958,23 @@ function drawWheel(angle) {
 
 function setWheelCur(cur) {
   wheelCur = cur
-  const not = document.getElementById('w-cur-not')
-  const ton = document.getElementById('w-cur-ton')
-  if(cur==='not') {
-    not.style.background='rgba(15,15,15,.9)'; not.style.borderColor='#CCC'
-    ton.style.background='rgba(0,30,60,.9)'; ton.style.borderColor='rgba(0,152,234,.4)'
+  const usdtBtn = document.getElementById('w-cur-usdt')
+  const tonBtn  = document.getElementById('w-cur-ton')
+  if (!usdtBtn || !tonBtn) return
+  if (cur === 'usdt') {
+    usdtBtn.style.background = 'rgba(15,80,15,.9)'; usdtBtn.style.borderColor = '#26A17B'
+    tonBtn.style.background  = 'rgba(0,30,60,.9)';  tonBtn.style.borderColor  = 'rgba(0,152,234,.4)'
   } else {
-    ton.style.background='rgba(0,40,80,.9)'; ton.style.borderColor='#0098EA'
-    not.style.background='rgba(10,10,10,.9)'; not.style.borderColor='rgba(200,200,200,.3)'
+    tonBtn.style.background  = 'rgba(0,40,80,.9)';  tonBtn.style.borderColor  = '#0098EA'
+    usdtBtn.style.background = 'rgba(15,15,15,.9)'; usdtBtn.style.borderColor = 'rgba(200,150,0,.2)'
   }
-  // Update session balance label to reflect selected currency
-  const balEl = document.getElementById('w-session-bal')
-  if(balEl) {
-    if(wheelSessionBal > 0) {
-      balEl.textContent = cur==='ton' ? wheelSessionBal.toFixed(3)+' TON' : wheelSessionBal.toFixed(2)+' USDT'
-    } else {
-      balEl.textContent = cur==='ton' ? '0 TON' : '0.00 USDT'
-    }
-  }
+  // Update cost display
+  const price = cur === 'usdt' ? (wheelPricePerSpin.usdt||0.25) : (wheelPricePerSpin.ton||0.1)
+  const sym   = cur === 'usdt' ? 'USDT' : 'TON'
+  document.querySelectorAll('.w-spin-price').forEach(el => {
+    const n = parseInt(el.dataset.spins) || 1
+    el.textContent = (price * n).toFixed(2) + ' ' + sym
+  })
   updateWheelUI()
 }
 
