@@ -2026,7 +2026,7 @@ function xpForLevel(lv) {
 
 const XP_MILESTONES = {
   1:  { name:'Rookie',   icon:'\u{1F3D5}', color:'#3A7A24',
-        unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false, wheelUsdt:false, wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true, scratchSilver:false, scratchGold:false, tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false, wheelUsdt:true, wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true, scratchSilver:true, scratchGold:false, tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
   5:  { name:'Player',   icon:'\u2694\uFE0F', color:'#0060A0',
         unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false, wheelUsdt:true, wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true, scratchSilver:true, scratchGold:false, tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
   10: { name:'Warrior',  icon:'\u{1F6E1}\uFE0F', color:'#0F6E56',
@@ -2166,14 +2166,14 @@ function initHome(){
 
   // Show lock overlays on gated room cards
   const ul = getMilestoneUnlocks()
-  const roomGates = {stars:'usdtRoom', ton:'tonRoom', vip:'vipRoom'}
+  const roomGates = {ton:'tonRoom', vip:'vipRoom'}
   Object.entries(roomGates).forEach(([room, key]) => {
     const card = document.querySelector('.rc.'+room)
     if (!card) return
     const existing = card.querySelector('.rc-lock')
     if (existing) existing.remove()
     if (!ul[key]) {
-      const lvMap = {usdtRoom:5, tonRoom:10, vipRoom:15}
+      const lvMap = {tonRoom:10, vipRoom:15}
       const lv = lvMap[key]
       const lock = document.createElement('div')
       lock.className = 'rc-lock'
@@ -2536,7 +2536,7 @@ function spawnConf(){
 
 // ── LEVEL UP SYSTEM ──
 const LEVEL_THRESHOLDS = [
-  {lv:5,  icon:'\u2694\uFE0F', title:'Player',   unlock:'USDT Room + Silver Scratch + Wheel USDT', color:'#0060A0', bg:'#00102A', tbola:100},
+  {lv:5,  icon:'\u2694\uFE0F', title:'Player',   unlock:'+5% $TBOLA rewards', color:'#0060A0', bg:'#00102A', tbola:100},
   {lv:10, icon:'\u{1F6E1}\uFE0F', title:'Warrior',  unlock:'TON Room + PvP Battle + Gold Scratch',   color:'#0F6E56', bg:'#001A10', tbola:200},
   {lv:15, icon:'\u{1F525}', title:'Expert',   unlock:'VIP Room + 5% prize bonus',           color:'#854F0B', bg:'#1A0800', tbola:300},
   {lv:20, icon:'\u{1F3C6}', title:'Champion', unlock:'Jackpot +5% share + 3 free scratches', color:'#D85A30', bg:'#1A0500', tbola:400},
@@ -3516,7 +3516,6 @@ function drawWheel(angle) {
 
 function setWheelCur(cur) {
   const ul=getMilestoneUnlocks()
-  if(cur==='usdt'&&!ul.wheelUsdt){showLevelGatePopup('Wheel USDT',getCurrentLevel(),5,'Player',['USDT Room','Silver Scratch']);return}
   if(cur==='ton'&&!ul.wheelTon){showLevelGatePopup('Wheel TON',getCurrentLevel(),10,'Warrior',['TON Room','PvP','Gold Scratch']);return}
   wheelCur = cur
   const usdtBtn = document.getElementById('w-cur-usdt')
