@@ -159,158 +159,208 @@ cat > tact.config.json << 'EOF'
 EOF
 
 echo "🔨 Compiling..." && ./node_modules/.bin/tact --config tact.config.json
-echo "✅ Done:" && for f in build/*/*.code.boc; do echo "  $(basename $f): $(wc -c < $f) bytes"; done
+echo "✅ Compiled"
 
-# --- DEPLOY SCRIPT con fix BOC escaping ---
+# ── DEPLOY SCRIPT con external message corretto ──────────────
 cat > deploy.ts << 'TSEOF'
-import{Address,Cell,contractAddress,fromNano,internal,SendMode,toNano,WalletContractV4,beginCell}from"@ton/ton";
-import{KeyPair,mnemonicToPrivateKey}from"@ton/crypto";
-import{execSync,spawnSync}from"child_process";
-import*as fs from"fs";
+import {
+  Address, Cell, contractAddress, fromNano, toNano,
+  WalletContractV4, beginCell,
+  external, storeMessage, internal, SendMode
+} from "@ton/ton";
+import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
+import { execSync } from "child_process";
+import * as fs from "fs";
 
-function curl(u:string):any{
-  try{return JSON.parse(execSync(`curl -sf --max-time 12 "${u}"`,{encoding:"utf-8"}));}
-  catch{return{};}
+function curl(u: string): any {
+  try { return JSON.parse(execSync(`curl -sf --max-time 12 "${u}"`, { encoding: "utf-8" })); }
+  catch { return {}; }
 }
 
-// Fix: scrive il BOC su file temporaneo per evitare problemi di escaping
-function sendBoc(boc:string):any{
-  try{
-    fs.writeFileSync("/tmp/boc_payload.json",JSON.stringify({boc}));
-    const o=execSync(
-      `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' -d @/tmp/boc_payload.json "https://testnet.toncenter.com/api/v2/sendBoc"`,
-      {encoding:"utf-8"}
+function sendBoc(boc: string): any {
+  fs.writeFileSync("/tmp/tboc.json", JSON.stringify({ boc }));
+  try {
+    const o = execSync(
+      `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' ` +
+      `-d @/tmp/tboc.json "https://testnet.toncenter.com/api/v2/sendBoc"`,
+      { encoding: "utf-8" }
     );
     return JSON.parse(o);
-  }catch(e:any){
-    // Try alternative endpoint
-    try{
-      const o2=execSync(
-        `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' -d @/tmp/boc_payload.json "https://testnet.tonhubapi.com/jsonRPC"`,
-        {encoding:"utf-8"}
+  } catch (e: any) {
+    // toncenter fallita, prova sandbox v4
+    try {
+      const o2 = execSync(
+        `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' ` +
+        `-d @/tmp/tboc.json "https://testnet-v4.tonhubapi.com/block/apply"`,
+        { encoding: "utf-8" }
       );
       return JSON.parse(o2);
-    }catch{return{error:"both endpoints failed"};}
+    } catch { return { error: "failed" }; }
   }
 }
 
-function getSeqno(a:string):number{
-  const d=curl(`https://testnet.toncenter.com/api/v2/runGetMethod?address=${encodeURIComponent(a)}&method=seqno&stack=%5B%5D`);
-  try{return parseInt(d.result?.stack?.[0]?.[1]??"0x0",16);}catch{return 0;}
+function getSeqno(addr: string): number {
+  const d = curl(
+    `https://testnet.toncenter.com/api/v2/runGetMethod?address=${encodeURIComponent(addr)}&method=seqno&stack=%5B%5D`
+  );
+  try { return parseInt(d.result?.stack?.[0]?.[1] ?? "0x0", 16); }
+  catch { return 0; }
 }
 
-async function getInfo(a:string){
-  const d=curl(`https://testnet.tonapi.io/v2/accounts/${a}`);
-  return{status:d.status??"unknown",balance:BigInt(d.balance??0)};
+async function getInfo(addr: string) {
+  const d = curl(`https://testnet.tonapi.io/v2/accounts/${addr}`);
+  return { status: d.status ?? "unknown", balance: BigInt(d.balance ?? 0) };
 }
 
-async function sleep(ms:number){return new Promise(r=>setTimeout(r,ms));}
+async function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
-async function deploy(
-  name:string,pkg:string,data:Cell,
-  kp:KeyPair,w:WalletContractV4,seq:number
-):Promise<string>{
-  const p=JSON.parse(fs.readFileSync(pkg,"utf-8"));
-  const si={code:Cell.fromBase64(p.code),data};
-  const ca=contractAddress(0,si);
-  const cs=ca.toString({testOnly:true,bounceable:false});
-  console.log(`\n📦 ${name}\n   ${cs}`);
-
-  const{status}=await getInfo(cs);
-  if(status==="active"){console.log("   ✅ già deployato!");return cs;}
-
-  // Build signed external message
-  const tx=w.createTransfer({
-    secretKey:kp.secretKey,seqno:seq,
-    sendMode:SendMode.PAY_GAS_SEPARATELY+SendMode.IGNORE_ERRORS,
-    messages:[internal({to:ca,value:toNano("0.15"),init:si,body:"deploy",bounce:false})]
+// Costruisce il BOC esterno corretto per inviare al nodo TON
+function buildExternalBoc(
+  wallet: WalletContractV4,
+  kp: KeyPair,
+  seqno: number,
+  contractAddr: Address,
+  contractInit: { code: Cell; data: Cell }
+): string {
+  // 1. Crea il transfer body (firma inclusa)
+  const transfer = wallet.createTransfer({
+    secretKey: kp.secretKey,
+    seqno,
+    sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
+    messages: [
+      internal({
+        to: contractAddr,
+        value: toNano("0.15"),
+        init: contractInit,
+        body: "deploy",
+        bounce: false,
+      })
+    ],
   });
 
-  const boc=tx.toBoc().toString("base64");
-  console.log(`   BOC size: ${boc.length} chars`);
+  // 2. Wrappa in external message con stateInit del wallet (se uninit)
+  const extMsg = external({
+    to: wallet.address,
+    init: seqno === 0 ? wallet.init : undefined,
+    body: transfer,
+  });
 
-  const r=sendBoc(boc);
-  if(r.ok||r.result){
-    console.log("   TX: ✅ inviata");
-  }else{
-    console.log(`   TX: ⚠️ ${JSON.stringify(r).slice(0,100)}`);
-    console.log("   Continuo ad aspettare conferma...");
-  }
-
-  process.stdout.write("   ⏳ ");
-  for(let i=0;i<40;i++){
-    await sleep(3000);
-    const{status:st,balance:b}=await getInfo(cs);
-    if(st==="active"||st==="frozen"){
-      console.log(` ✅ ${st} (${fromNano(b)} TON)`);
-      return cs;
-    }
-    process.stdout.write("·");
-    // Retry ogni 15s se ancora uninit
-    if(i>0&&i%5===0){
-      console.log("\n   🔄 Retry TX...");
-      const r2=sendBoc(boc);
-      console.log(`   Retry: ${r2.ok?"ok":JSON.stringify(r2).slice(0,60)}`);
-      process.stdout.write("   ⏳ ");
-    }
-  }
-  console.log(`\n   ⚠️ Timeout. Controlla: https://testnet.tonscan.io/address/${cs}`);
-  return cs;
+  // 3. Serializza come BOC
+  return beginCell()
+    .store(storeMessage(extMsg))
+    .endCell()
+    .toBoc()
+    .toString("base64");
 }
 
-async function main(){
+async function deploy(
+  name: string,
+  pkgFile: string,
+  initData: Cell,
+  kp: KeyPair,
+  wallet: WalletContractV4,
+  seqno: number
+): Promise<string> {
+  const pkg = JSON.parse(fs.readFileSync(pkgFile, "utf-8"));
+  const code = Cell.fromBase64(pkg.code);
+  const contractInit = { code, data: initData };
+  const caddr = contractAddress(0, contractInit);
+  const caddrStr = caddr.toString({ testOnly: true, bounceable: false });
+
+  console.log(`\n📦 ${name}\n   ${caddrStr}`);
+
+  const { status } = await getInfo(caddrStr);
+  if (status === "active") { console.log("   ✅ Già deployato!"); return caddrStr; }
+
+  const boc = buildExternalBoc(wallet, kp, seqno, caddr, contractInit);
+  console.log(`   BOC: ${boc.length} chars`);
+
+  const r = sendBoc(boc);
+  console.log(`   TX: ${r.ok ? "✅ inviata" : "⚠️ " + JSON.stringify(r).slice(0, 80)}`);
+
+  process.stdout.write("   ⏳ ");
+  for (let i = 0; i < 40; i++) {
+    await sleep(3000);
+    const { status: st, balance: b } = await getInfo(caddrStr);
+    if (st === "active" || st === "frozen") {
+      console.log(` ✅ ${st} (${fromNano(b)} TON)`);
+      return caddrStr;
+    }
+    process.stdout.write("·");
+    // Retry TX ogni 30s
+    if (i > 0 && i % 10 === 0) {
+      process.stdout.write("\n   🔄 retry ");
+      sendBoc(boc);
+    }
+  }
+  console.log(`\n   ⚠️ https://testnet.tonscan.io/address/${caddrStr}`);
+  return caddrStr;
+}
+
+async function main() {
   console.log("\n🚀 TonBola Deploy Testnet\n");
 
-  const wf=JSON.parse(fs.readFileSync("build/wallet.json","utf-8"));
-  const kp:KeyPair=await mnemonicToPrivateKey(wf.mnemonic);
-  const w=WalletContractV4.create({publicKey:kp.publicKey,workchain:0});
-  const wa=w.address.toString({testOnly:true,bounceable:false});
+  const wf = JSON.parse(fs.readFileSync("build/wallet.json", "utf-8"));
+  const kp: KeyPair = await mnemonicToPrivateKey(wf.mnemonic);
+  const wallet = WalletContractV4.create({ publicKey: kp.publicKey, workchain: 0 });
+  const waddr = wallet.address.toString({ testOnly: true, bounceable: false });
 
-  console.log(`Wallet: ${wa}`);
-  const{balance:bal,status:wst}=await getInfo(wa);
-  console.log(`Balance: ${fromNano(bal)} TON  (${wst})`);
+  console.log(`Wallet : ${waddr}`);
+  const { balance: bal, status: wst } = await getInfo(waddr);
+  console.log(`Balance: ${fromNano(bal)} TON (${wst})`);
+  if (bal < toNano("0.4")) { console.log("❌ Serve 0.4 TON"); process.exit(1); }
 
-  if(bal<toNano("0.4")){
-    console.log("❌ Serve almeno 0.4 TON testnet");
-    process.exit(1);
-  }
+  const seqno = getSeqno(waddr);
+  console.log(`Seqno  : ${seqno}`);
+  const o = wallet.address;
+  const ORACLE = BigInt("81596930447221648253673168568189894254664175305553746201413230980358321864729");
 
-  const seq=getSeqno(wa);
-  console.log(`Seqno: ${seq}`);
-  const o=w.address;
-  const ORACLE=BigInt("81596930447221648253673168568189894254664175305553746201413230980358321864729");
-
-  const usdt=await deploy("MockUSDT",
+  // Deploy 3 contratti con seqno incrementale
+  const usdt = await deploy(
+    "MockUSDT (tUSDT Faucet)",
     "build/MockUSDT/MockUSDT_MockUSDT.pkg",
-    beginCell().storeUint(0,1).storeAddress(o).endCell(),
-    kp,w,seq);
+    beginCell().storeUint(0, 1).storeAddress(o).endCell(),
+    kp, wallet, seqno
+  );
   await sleep(10000);
 
-  const vault=await deploy("TonBolaVault",
+  const vault = await deploy(
+    "TonBolaVault (Split 55/32/8/3/2%)",
     "build/TonBolaVault/TonBolaVault_TonBolaVault.pkg",
-    beginCell().storeUint(0,1).storeAddress(o).storeAddress(o).storeAddress(o)
-      .storeRef(beginCell().storeAddress(o).storeInt(ORACLE,257).endCell())
+    beginCell().storeUint(0, 1)
+      .storeAddress(o).storeAddress(o).storeAddress(o)
+      .storeRef(beginCell().storeAddress(o).storeInt(ORACLE, 257).endCell())
       .endCell(),
-    kp,w,seq+1);
+    kp, wallet, seqno + 1
+  );
   await sleep(10000);
 
-  const tbola=await deploy("TbolaJetton",
+  const tbola = await deploy(
+    "$TBOLA Jetton (1B supply)",
     "build/TbolaJetton/TbolaJetton_TbolaJetton.pkg",
-    beginCell().storeUint(0,1).storeCoins(0).storeBit(true)
+    beginCell().storeUint(0, 1).storeCoins(0).storeBit(true)
       .storeAddress(o).storeAddress(o).storeAddress(o)
       .storeRef(beginCell().storeAddress(o).storeAddress(o).storeAddress(o).endCell())
-      .storeRef(beginCell().storeCoins(0).storeCoins(0).storeCoins(0)
-        .storeCoins(0).storeCoins(0).storeCoins(0).storeUint(0,32).storeCoins(0).endCell())
+      .storeRef(beginCell()
+        .storeCoins(0).storeCoins(0).storeCoins(0)
+        .storeCoins(0).storeCoins(0).storeCoins(0)
+        .storeUint(0, 32).storeCoins(0).endCell())
       .endCell(),
-    kp,w,seq+2);
+    kp, wallet, seqno + 2
+  );
 
-  const res={TESTNET_USDT_MASTER:usdt,TESTNET_VAULT_ADDRESS:vault,TESTNET_TBOLA_MASTER:tbola};
-  fs.writeFileSync("build/deployed.json",JSON.stringify(res,null,2));
+  const res = {
+    TESTNET_USDT_MASTER: usdt,
+    TESTNET_VAULT_ADDRESS: vault,
+    TESTNET_TBOLA_MASTER: tbola,
+    deployed_at: new Date().toISOString()
+  };
+  fs.writeFileSync("build/deployed.json", JSON.stringify(res, null, 2));
 
   console.log(`
-╔══════════════════════════════════╗
-║  ✅ DEPLOY COMPLETATO!           ║
-╚══════════════════════════════════╝
+╔══════════════════════════════════════╗
+║   ✅ DEPLOY COMPLETATO!              ║
+╚══════════════════════════════════════╝
 MockUSDT : ${usdt}
 Vault    : ${vault}
 TBOLA    : ${tbola}
@@ -319,15 +369,15 @@ TBOLA    : ${tbola}
 🔍 https://testnet.tonscan.io/address/${vault}
 🔍 https://testnet.tonscan.io/address/${tbola}
 
-Salvato: build/deployed.json
-  `);
+Salvato: build/deployed.json`);
 }
-main().catch(e=>{console.error("❌",e.message);process.exit(1);});
+
+main().catch(e => { console.error("❌", e.message); process.exit(1); });
 TSEOF
 
 echo ""
 echo "╔══════════════════════════════════════╗"
-echo "║  ✅ Setup completo! Ora:             ║"
+echo "║  ✅ Setup OK!                        ║"
 echo "║  npx ts-node --transpile-only        ║"
 echo "║              deploy.ts               ║"
 echo "╚══════════════════════════════════════╝"
