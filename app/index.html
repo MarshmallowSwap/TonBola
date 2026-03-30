@@ -1965,6 +1965,10 @@ window.addEventListener('error', function(e){
 const SQUAD_REGISTRY = []
 const PRESETS_SQUAD = ['🛡️','⚔️','🐺','🦁','🐯','🦅','🐉','🔥','💀','🏰','🌙','⚡','🎯','🏹','🗡️','🧊','🌊','🌋','🦊','👹']
 const PRESETS_USER = ['😊','😎','🦊','🐺','🦁','🐯','🦅','🐉','⚔️','🛡️','💎','🎱','🔥','⭐','👑','🏆','🎯','🧙','🤺','🦸']
+let avatarTarget = 'user'
+let selectedPreset = '😊'
+let squadAvatar = '🛡️'
+let squadFee = 'ton'
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
 
@@ -4450,9 +4454,6 @@ function joinRoom(){
 
 
 
-let avatarTarget = 'user' // 'user' or 'squad'
-let selectedPreset = '😊'
-let squadAvatar = '🛡️'
 
 function openAvatarPicker(target) {
   try {
@@ -4684,7 +4685,6 @@ function requestJoinSquad(name) {
 }
 
 
-let squadFee = 'ton'
 
 function selectSquadFee(fee) {
   squadFee = fee
