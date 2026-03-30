@@ -902,10 +902,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           </span>
         </div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:.55rem;color:rgba(255,255,255,.7)">🎰 Jackpot</div>
-        <div id="hub-jackpot" style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;
-          color:#fff">0 $TON</div>
+      <div style="text-align:right;flex-shrink:0" onclick="event.stopPropagation();hubWheelJpToggle()">
+        <div style="font-size:.48rem;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">🎰 Jackpot</div>
+        <div id="hub-jackpot" style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;color:#fff;line-height:1">0.00 TON</div>
+        <div id="hub-jackpot-usdt" style="font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.3">0.00 USDT</div>
+        <div style="font-size:.48rem;color:rgba(255,255,255,.45);margin-top:3px">tap to toggle</div>
       </div>
     </div>
 
@@ -978,25 +979,32 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
   </div>
 
-  <!-- Jackpot banner -->
-  <div style="margin:10px 12px 0;background:linear-gradient(135deg,#1A0D00,#2A1500);border:1.5px solid rgba(255,184,0,.35);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px">
-    <div style="font-size:2rem">🎰</div>
-    <div style="flex:1">
-      <div style="font-size:.55rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:2px">Jackpot Pool</div>
-      <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#FFD700;line-height:1.2">0.00 TON</div>
-      <div style="font-size:.75rem;font-weight:700;color:rgba(255,184,0,.6);margin-top:2px" id="w-jackpot-usdt">0.00 USDT</div>
-      <div style="height:5px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden;margin-top:6px">
-        <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#CC7A00,#FFD700);border-radius:3px;width:0%;transition:width .8s"></div>
+    <!-- Jackpot banner -->
+  <div style="margin:10px 12px 0;background:linear-gradient(135deg,#1A0D00,#2A1500);border:1.5px solid rgba(255,184,0,.35);border-radius:16px;padding:12px 14px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div style="font-size:1.4rem">🎰</div>
+      <div style="flex:1">
+        <div style="font-size:.52rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:4px">Jackpot Pools</div>
+        <div style="display:flex;gap:16px">
+          <div>
+            <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:900;color:#FFD700">0.00 TON</div>
+            <div style="font-size:.5rem;color:rgba(255,184,0,.4)">TON pool</div>
+          </div>
+          <div>
+            <div id="w-jackpot-usdt" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:900;color:#FFD700">0.00 USDT</div>
+            <div style="font-size:.5rem;color:rgba(255,184,0,.4)">USDT pool</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div style="text-align:right;font-family:'Outfit',sans-serif">
-      <div style="font-size:.55rem;color:rgba(255,255,255,.3)">target</div>
-      <div style="font-size:.85rem;font-weight:700;color:#FFB800" id="w-jp-thresh">100 TON</div>
-      <div style="font-size:.6rem;color:rgba(255,184,0,.4)" id="w-jp-cur">0 / 100</div>
+    <div style="height:4px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden">
+      <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#CC7A00,#FFD700);border-radius:3px;width:0%;transition:width .8s"></div>
     </div>
+    <div style="display:none" id="w-jp-thresh"></div>
+    <div style="display:none" id="w-jp-cur"></div>
   </div>
 
-  <!-- WHEEL canvas -->
+<!-- WHEEL canvas -->
   <div style="display:flex;justify-content:center;align-items:center;margin:14px 0 8px;position:relative">
     <div style="position:relative;width:320px;height:320px;margin:0 auto">
       <div style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(255,184,0,.06) 0%,transparent 70%);pointer-events:none"></div>
@@ -2872,6 +2880,21 @@ function openBingo() {
   go('sh'); setNav('nb-h')
 }
 
+
+let hubWheelJpCur = 'ton'
+function hubWheelJpToggle() {
+  hubWheelJpCur = hubWheelJpCur === 'ton' ? 'usdt' : 'ton'
+  const jp   = document.getElementById('hub-jackpot')
+  const jpU  = document.getElementById('hub-jackpot-usdt')
+  if(hubWheelJpCur === 'ton') {
+    if(jp)  { jp.style.fontSize='.9rem'; jp.style.color='#fff'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
+    if(jpU) { jpU.style.fontSize='.75rem'; jpU.style.color='rgba(255,255,255,.7)'; jpU.textContent=wheelJackpotUsdt.toFixed(2)+' USDT' }
+  } else {
+    if(jpU) { jpU.style.fontSize='.9rem'; jpU.style.color='#fff'; jpU.textContent=wheelJackpotUsdt.toFixed(2)+' USDT' }
+    if(jp)  { jp.style.fontSize='.75rem'; jp.style.color='rgba(255,255,255,.7)'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
+  }
+}
+
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   wheelSpinsSelected = 0
@@ -3625,7 +3648,19 @@ let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
 let wheelJackpotUsdt = 0
-let wheelPricePerSpin = {usdt:0.25, not:0.25, ton:0.1}
+let wheelPricePerSpin = {usdt:0.25, 'not':0.25, ton:0.1}
+function hubWheelJpToggle() {
+  hubWheelJpCur = hubWheelJpCur === 'ton' ? 'usdt' : 'ton'
+  const jp   = document.getElementById('hub-jackpot')
+  const jpU  = document.getElementById('hub-jackpot-usdt')
+  if(hubWheelJpCur === 'ton') {
+    if(jp)  { jp.style.fontSize='.9rem'; jp.style.color='#fff'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
+    if(jpU) { jpU.style.fontSize='.75rem'; jpU.style.color='rgba(255,255,255,.7)'; jpU.textContent=wheelJackpotUsdt.toFixed(2)+' USDT' }
+  } else {
+    if(jpU) { jpU.style.fontSize='.9rem'; jpU.style.color='#fff'; jpU.textContent=wheelJackpotUsdt.toFixed(2)+' USDT' }
+    if(jp)  { jp.style.fontSize='.75rem'; jp.style.color='rgba(255,255,255,.7)'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
+  }
+}
 
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
