@@ -2045,130 +2045,154 @@ sessionStorage.removeItem('tbgame')
 
 
 // ── XP & LEVEL SYSTEM ──
-const XP_LEVELS = [
-  { lv:1, name:'Rookie',  xp:0,      icon:'🏕️', color:'#3A7A24',
-    unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false,
-              wheelUsdt:false, wheelTon:false,
-              scratchBronze:true, scratchSilver:false, scratchGold:false,
-              pvp:false, autoSpin:false,
-              tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
-  },
-  { lv:2, name:'Player',  xp:500,    icon:'⚔️', color:'#0060A0',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false,
-              wheelUsdt:true, wheelTon:false,
-              scratchBronze:true, scratchSilver:true, scratchGold:false,
-              pvp:false, autoSpin:false,
-              tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
-  },
-  { lv:3, name:'Warrior', xp:2000,   icon:'🛡️', color:'#0F6E56',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:false,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:false,
-              tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 }
-  },
-  { lv:4, name:'Expert',  xp:10000,  icon:'🔥', color:'#854F0B',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:false,
-              tbola_bonus:0.15, prize_bonus:0.05, free_scratches_week:2, jackpot_share:0 }
-  },
-  { lv:5, name:'Master',  xp:50000,  icon:'💎', color:'#534AB7',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:true,
-              tbola_bonus:0.20, prize_bonus:0.10, free_scratches_week:3, jackpot_share:0.05 }
-  },
-  { lv:6, name:'Legend',  xp:200000, icon:'👑', color:'#A32D2D',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:true,
-              tbola_bonus:0.25, prize_bonus:0.20, free_scratches_week:5, jackpot_share:0.10 }
-  },
-]
+// XP rate: 500 XP per USDT, 2500 XP per TON
+const XP_PER_USDT = 500
+const XP_PER_TON  = 2500
 
-// XP per currency unit spent
-const XP_PER_USDT = 100  // 1 USDT = 100 XP
-const XP_PER_TON  = 500  // 1 TON  = 500 XP (fixed rate)
+// XP needed for level N: 200 * (N-1)^2
+function xpForLevel(lv) {
+  if (lv <= 1) return 0
+  return Math.round(200 * Math.pow(lv - 1, 2))
+}
+
+// Milestone unlocks every 5 levels
+const XP_MILESTONES = {
+  1:  { name:'Rookie',   icon:'🏕️', color:'#3A7A24',
+        unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false,
+                  wheelUsdt:false, wheelTon:false, pvp:false, autoSpin:false,
+                  scratchBronze:true, scratchSilver:false, scratchGold:false,
+                  tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
+  5:  { name:'Player',   icon:'⚔️', color:'#0060A0',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false,
+                  wheelUsdt:true, wheelTon:false, pvp:false, autoSpin:false,
+                  scratchBronze:true, scratchSilver:true, scratchGold:false,
+                  tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
+  10: { name:'Warrior',  icon:'🛡️', color:'#0F6E56',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:false,
+                  wheelUsdt:true, wheelTon:true, pvp:true, autoSpin:false,
+                  scratchBronze:true, scratchSilver:true, scratchGold:true,
+                  tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 } },
+  15: { name:'Expert',   icon:'🔥', color:'#854F0B',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+                  wheelUsdt:true, wheelTon:true, pvp:true, autoSpin:false,
+                  scratchBronze:true, scratchSilver:true, scratchGold:true,
+                  tbola_bonus:0.15, prize_bonus:0.05, free_scratches_week:2, jackpot_share:0 } },
+  20: { name:'Champion', icon:'🏆', color:'#D85A30',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+                  wheelUsdt:true, wheelTon:true, pvp:true, autoSpin:false,
+                  scratchBronze:true, scratchSilver:true, scratchGold:true,
+                  tbola_bonus:0.15, prize_bonus:0.10, free_scratches_week:3, jackpot_share:0.05 } },
+  25: { name:'Master',   icon:'💎', color:'#534AB7',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+                  wheelUsdt:true, wheelTon:true, pvp:true, autoSpin:true,
+                  scratchBronze:true, scratchSilver:true, scratchGold:true,
+                  tbola_bonus:0.20, prize_bonus:0.15, free_scratches_week:4, jackpot_share:0.08 } },
+  30: { name:'Legend',   icon:'👑', color:'#A32D2D',
+        unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+                  wheelUsdt:true, wheelTon:true, pvp:true, autoSpin:true,
+                  scratchBronze:true, scratchSilver:true, scratchGold:true,
+                  tbola_bonus:0.25, prize_bonus:0.20, free_scratches_week:5, jackpot_share:0.12 } },
+}
+
+function getCurrentLevel() {
+  const xp = user.xp || 0
+  let lv = 1
+  while (xpForLevel(lv + 1) <= xp) lv++
+  return lv
+}
+
+function getMilestoneUnlocks() {
+  const lv = getCurrentLevel()
+  // Find highest milestone <= current level
+  const keys = Object.keys(XP_MILESTONES).map(Number).sort((a,b)=>b-a)
+  const key = keys.find(k => k <= lv) || 1
+  return XP_MILESTONES[key].unlocks
+}
+
+function getMilestoneName() {
+  const lv = getCurrentLevel()
+  const keys = Object.keys(XP_MILESTONES).map(Number).sort((a,b)=>b-a)
+  const key = keys.find(k => k <= lv) || 1
+  return XP_MILESTONES[key]
+}
+
+function getNextMilestoneLv() {
+  const lv = getCurrentLevel()
+  const keys = Object.keys(XP_MILESTONES).map(Number).sort((a,b)=>a-b)
+  return keys.find(k => k > lv) || null
+}
+
+// Backwards compat alias
+function getUserUnlocks() { return getMilestoneUnlocks() }
 
 function getXpForAmount(amount, cur) {
   return Math.floor(cur === 'ton' ? amount * XP_PER_TON : amount * XP_PER_USDT)
 }
 
-function getCurrentLevel() {
-  const xp = user.xp || 0
-  let level = XP_LEVELS[0]
-  for (const l of XP_LEVELS) { if (xp >= l.xp) level = l }
-  return level
-}
-
-function getNextLevel() {
-  const cur = getCurrentLevel()
-  return XP_LEVELS.find(l => l.lv === cur.lv + 1) || null
-}
-
-function getUserUnlocks() {
-  return getCurrentLevel().unlocks
-}
-
 function addXP(amount, cur) {
-  const xpGained = getXpForAmount(amount, cur)
-  const prevLevel = getCurrentLevel()
-  user.xp = (user.xp || 0) + xpGained
-  user.tbola = (user.tbola || 0) + xpGained  // $TBOLA mirrors XP gain
-  const newLevel = getCurrentLevel()
-  if (newLevel.lv > prevLevel.lv) {
-    // Level up!
-    showLevelUp(newLevel)
-  }
-  // Update UI
+  const gained = getXpForAmount(amount, cur)
+  const prevLv = getCurrentLevel()
+  user.xp = (user.xp || 0) + gained
+  user.tbola = (user.tbola || 0) + gained
+  const newLv = getCurrentLevel()
+  if (newLv > prevLv) showLevelUp(newLv)
   updateXpUI()
-  return xpGained
+  return gained
 }
 
-function showLevelUp(level) {
-  if (tg?.showPopup) {
-    tg.showPopup({
-      title: '🎉 Level Up!',
-      message: `You reached ${level.icon} ${level.name}!
+function showLevelUp(lv) {
+  const ms = Object.keys(XP_MILESTONES).map(Number).includes(lv)
+  const name = getMilestoneName()
+  if (tg?.showPopup) tg.showPopup({
+    title: ms ? '🎉 Milestone Unlocked!' : '⬆️ Level Up!',
+    message: ms
+      ? `You reached ${name.icon} ${name.name} (Lv ${lv})!
 
-New unlocks available — check your profile.`,
-      buttons: [{ type: 'ok', text: "Let's go!" }]
-    })
-  }
-  // Trigger level up animation
-  const ov = document.getElementById('lvup-ov')
-  if (ov) {
-    document.getElementById('lvup-lv-new')?.setAttribute('data-lv', level.lv)
-    ov.classList.add('show')
-    setTimeout(() => ov.classList.remove('show'), 3000)
-  }
+New features unlocked — check your profile!`
+      : `You reached Level ${lv}!
+
+Keep playing to reach the next milestone!`,
+    buttons: [{ type:'ok', text:"Let's go!" }]
+  })
 }
 
 function updateXpUI() {
   const xp  = user.xp || 0
-  const cur = getCurrentLevel()
-  const nxt = getNextLevel()
-  // Profile XP bar
+  const lv  = getCurrentLevel()
+  const ms  = getMilestoneName()
+  const nextMs = getNextMilestoneLv()
+  const nextMsXp = nextMs ? xpForLevel(nextMs) : null
+  const curLvXp  = xpForLevel(lv)
+  const nextLvXp = xpForLevel(lv + 1)
+
+  // Level badge in header
+  const hbadge = document.getElementById('h-lv-badge')
+  if (hbadge) { hbadge.textContent = ms.icon; hbadge.style.background = ms.color+'33'; hbadge.style.borderColor = ms.color+'88' }
+  const lvEl = document.getElementById('bc-lv')
+  if (lvEl) lvEl.textContent = lv
+
+  // XP bar (progress to next level)
   const xpBar  = document.getElementById('p-xp-bar')
   const xpText = document.getElementById('p-xp-text')
-  const lvEl   = document.getElementById('bc-lv')
-  if (lvEl) lvEl.textContent = cur.lv
-  if (xpText) xpText.textContent = nxt ? xp.toLocaleString()+' / '+nxt.xp.toLocaleString()+' XP' : xp.toLocaleString()+' XP (MAX)'
-  if (xpBar && nxt) {
-    const pct = Math.min(((xp - cur.xp) / (nxt.xp - cur.xp)) * 100, 100)
+  const xpNext = document.getElementById('p-xp-next')
+  const lvName = document.getElementById('p-level-name')
+  if (lvName) lvName.textContent = ms.icon + ' Lv ' + lv + ' — ' + ms.name
+  if (xpText) xpText.textContent = xp.toLocaleString() + ' XP'
+  if (xpBar) {
+    const pct = nextLvXp > curLvXp ? Math.min((xp - curLvXp) / (nextLvXp - curLvXp) * 100, 100) : 100
     xpBar.style.width = pct + '%'
   }
-  // Header badge
-  const hbadge = document.getElementById('h-lv-badge')
-  if (hbadge) { hbadge.textContent = cur.icon; hbadge.style.background = cur.color+'33'; hbadge.style.borderColor = cur.color+'88' }
+  if (xpNext && nextMs) {
+    const toNext = nextMsXp - xp
+    if (toNext > 0) xpNext.textContent = toNext.toLocaleString() + ' XP to Lv ' + nextMs + ' — ' + XP_MILESTONES[nextMs].name
+    else xpNext.textContent = 'Milestone reached!'
+  } else if (xpNext) {
+    xpNext.textContent = '👑 Legend — max level!'
+  }
 }
 
 function applyPrizeBonus(amount) {
-  const bonus = getUserUnlocks().prize_bonus || 0
+  const bonus = getMilestoneUnlocks().prize_bonus || 0
   return +(amount * (1 + bonus)).toFixed(4)
 }
 
