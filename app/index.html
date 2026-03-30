@@ -915,7 +915,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       border:1.5px solid rgba(52,211,153,.3);
       border-radius:12px;height:110px;display:flex;align-items:center;
       gap:14px;padding:0 18px;box-shadow:0 6px 24px rgba(4,120,87,.5);overflow:hidden">
-      <!-- Shine -->
       <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;
         background:radial-gradient(circle,rgba(52,211,153,.15) 0%,transparent 70%);pointer-events:none"></div>
       <div style="font-size:3rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))">🎟️</div>
@@ -923,22 +922,21 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;
           color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)">Scratch Cards</div>
         <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
-          Instant win · Scratch &amp; reveal on TON
+          Instant win · Row match wins
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
           <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
-            color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
-            💵 USDT
-          </span>
-          <span style="background:rgba(0,152,234,.15);border:1px solid rgba(0,152,234,.3);
-            color:#40B8FF;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
-            💎 TON
+            color:#34D399;font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;letter-spacing:.5px">● LIVE</span>
+          <span style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);
+            color:rgba(255,255,255,.7);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">
+            💵 USDT · 💎 TON
           </span>
         </div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:.55rem;color:rgba(255,255,255,.5)">From</div>
-        <div style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;color:#34D399">0.10 USDT</div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:.5rem;color:rgba(255,184,0,.6);font-weight:700;letter-spacing:.5px;text-transform:uppercase">🎰 Jackpot</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:800;color:#FFD700" id="hub-sc-jackpot">0.00 USDT</div>
+        <div style="font-size:.5rem;color:rgba(255,255,255,.35);margin-top:1px" id="hub-sc-jp-ton">0.00 TON</div>
       </div>
     </div>
 
@@ -2334,6 +2332,11 @@ function initHome(){
   const lvInfo = getLevelIcon(getCurrentLevel())
   const hbadge = document.getElementById('h-lv-badge')
   if(hbadge){hbadge.textContent=lvInfo.icon;hbadge.style.background=lvInfo.color+'33';hbadge.style.borderColor=lvInfo.color+'88'}
+  // Update scratch jackpot on hub card
+  const hubJp = document.getElementById('hub-sc-jackpot')
+  const hubJpTon = document.getElementById('hub-sc-jp-ton')
+  if(hubJp) hubJp.textContent = scratchJpUsdt.toFixed(2)+' USDT'
+  if(hubJpTon) hubJpTon.textContent = scratchJpTon.toFixed(2)+' TON'
   // warrior counts loaded from backend via loadRoomStats()
 
   // Show lock overlays on gated room cards
@@ -2855,6 +2858,11 @@ function initHub() {
   // Update bingo players
   const bp = document.getElementById('hub-bingo-players')
   if(bp) bp.textContent = '-- players'
+  // Scratch jackpot on hub card
+  const hubJp    = document.getElementById('hub-sc-jackpot')
+  const hubJpTon = document.getElementById('hub-sc-jp-ton')
+  if(hubJp)    hubJp.textContent    = (scratchJpUsdt||0).toFixed(2)+' USDT'
+  if(hubJpTon) hubJpTon.textContent = (scratchJpTon||0).toFixed(2)+' TON'
 }
 
 function openBingo() {
@@ -3058,6 +3066,21 @@ let scratchSelected = null
 let scratchRevealed = 0
 let scratchTotal    = 0
 
+
+function updateScratchJackpot() {
+  const usdtEl  = document.getElementById('sc-jp-usdt')
+  const tonEl   = document.getElementById('sc-jp-ton')
+  const usdtBar = document.getElementById('sc-jp-usdt-bar')
+  const tonBar  = document.getElementById('sc-jp-ton-bar')
+  if(usdtEl)  usdtEl.textContent  = scratchJpUsdt.toFixed(2)+' USDT'
+  if(tonEl)   tonEl.textContent   = scratchJpTon.toFixed(2)+' TON'
+  if(usdtBar) usdtBar.style.width = Math.min(scratchJpUsdt/5*100,100)+'%'
+  if(tonBar)  tonBar.style.width  = Math.min(scratchJpTon/1*100,100)+'%'
+  const hubJp    = document.getElementById('hub-sc-jackpot')
+  const hubJpTon = document.getElementById('hub-sc-jp-ton')
+  if(hubJp)    hubJp.textContent    = scratchJpUsdt.toFixed(2)+' USDT'
+  if(hubJpTon) hubJpTon.textContent = scratchJpTon.toFixed(2)+' TON'
+}
 function openScratch() {
   go('s-scratch'); setNav('nb-h')
   scratchSelected = null
