@@ -940,7 +940,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
 
     <!-- PvP Battle — Coming Soon -->
-    <div style="margin-bottom:10px;position:relative;
+    <div onclick="openPvpGated()" style="cursor:pointer;margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
@@ -2149,6 +2149,11 @@ let pvpOppLines = 0
 let pvpStats = { wins:0, losses:0, earned:0 }
 let pvpCurrentCode = ''
 let pvpChallenges = {} // code → bet info
+let crCurrency='usdt', crPrice=0.25
+let crPriceAccum = 0
+let autoSpinActive = false
+let autoSpinTimeout = null
+let mySquad = null
 const PVP_BOT_NAMES = ['CryptoWolf','TonShark','BingoKing','LuckyAce','TONinja','WhaleHunter']
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
@@ -4430,7 +4435,6 @@ initBackend()
 
 
 // ── PRIVATE ROOM VARS ──
-let crCurrency='stars', crPrice=50
 
 function selectCur(el, cur){
   crCurrency=cur
@@ -4450,7 +4454,6 @@ const CR_OPTS = {
   free:  []
 }
 
-let crPriceAccum = 0
 
 function renderPriceChips(cur){
   crPriceAccum = 0
@@ -4505,8 +4508,6 @@ function updateTotalBadge(){
   }
 }
 
-let autoSpinActive=false
-let autoSpinTimeout=null
 
 function toggleAutoSpin(){
   if(!user.warriorPass){
@@ -4724,7 +4725,6 @@ function confirmAvatar() {
 }
 
 // ── SQUAD SYSTEM ──
-let mySquad = null // null = no squad
 
 function openCreateSquad(){ go('s-create-squad') }
 
