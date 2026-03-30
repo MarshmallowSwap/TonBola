@@ -1443,7 +1443,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
   <div class="sec">Squad</div>
   <div id="p-squad-section" style="padding:0 10px 8px">
-    <div onclick="go('s-squad');setNav('nb-s');try{renderSquad()}catch(e){document.getElementById('squad-content').innerHTML='<div style=\'color:red;padding:20px\'>'+(e.message||e)+'</div>'}"
+    <div onclick="go('s-squad');setNav('nb-s');renderSquad()"
       style="display:flex;align-items:center;gap:10px;padding:12px 14px;
         border-radius:12px;cursor:pointer;
         background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(16,185,129,.06));
@@ -1640,12 +1640,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1rem;font-weight:700;color:#fff">👥 Squads</div>
     </div>
   </div>
-  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px">
-  <!-- populated by renderSquad() -->
-  <div id="squad-placeholder" style="text-align:center;padding:40px 16px;color:rgba(255,255,255,.4);font-size:.9rem">
-    Loading squads...
-  </div>
-</div>
+  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
 <!-- CREATE SQUAD SCREEN -->
@@ -1974,7 +1969,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 <nav class="nav">
   <button class="nb on" id="nb-h" onclick="go('s-hub');setNav('nb-h');initHub()"><div class="ni">⚔</div>Play</button>
   <button class="nb" id="nb-l" onclick="go('slb');setNav('nb-l');lbCurrency='usdt';lbTab='weekly';renderLb('weekly');renderPoolBanner('weekly')"><div class="ni">🏆</div>Ranks</button>
-  <button class="nb" id="nb-s" onclick="go('s-squad');setNav('nb-s');try{renderSquad()}catch(e){document.getElementById('squad-content').innerHTML='<div style=\'color:red;padding:20px\'>'+(e.message||e)+'</div>'}"><div class="ni">👥</div>Squads</button>
+  <button class="nb" id="nb-s" onclick="go('s-squad');setNav('nb-s');renderSquad()"><div class="ni">👥</div>Squads</button>
   <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile()"><div class="ni">🛡️</div>Profile</button>
 </nav>
 
@@ -2152,6 +2147,7 @@ function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
+  renderSquad()
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
