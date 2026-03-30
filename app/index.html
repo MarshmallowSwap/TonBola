@@ -1660,107 +1660,75 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- CREATE SQUAD SCREEN -->
-<div class="screen" id="s-create-squad">
+<div class="screen" id="s-create-squad" style="background:var(--bg)">
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" onclick="go('s-squad')">← Back</button>
-      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff">⚔ Create Squad</div>
+      <div style="flex:1;text-align:center;font-size:1rem;font-weight:700;color:#fff">⚔️ Create Squad</div>
       <div style="width:60px"></div>
     </div>
   </div>
-  <div style="padding:14px 12px;display:flex;flex-direction:column;gap:10px">
+  <div style="padding:14px 12px;display:flex;flex-direction:column;gap:12px">
 
-    <!-- Squad Avatar -->
-    <div class="wood-panel" style="padding:16px;text-align:center">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Squad Image</div>
+    <!-- Avatar -->
+    <div style="text-align:center;padding:16px 0 8px">
       <div id="squad-avatar-preview" onclick="openAvatarPicker('squad')"
-        style="width:80px;height:80px;border-radius:16px;margin:0 auto 10px;
-          background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1));border:1px solid rgba(139,92,246,.25);
-          border:1px solid var(--border);display:flex;align-items:center;
-          justify-content:center;font-size:2.5rem;cursor:pointer;
-          box-shadow:0 4px 0 rgba(0,0,0,.5)">🛡️</div>
-      <div style="font-size:.75rem;color:var(--muted)">Tap to change squad image</div>
+        style="width:80px;height:80px;border-radius:16px;margin:0 auto 8px;
+          background:rgba(139,92,246,.15);border:2px solid rgba(139,92,246,.4);
+          display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer">🛡️</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.4)">Tap to change image</div>
     </div>
 
-    <!-- Squad Name -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Squad Name</div>
+    <!-- Name -->
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Squad Name</div>
       <input type="text" id="squad-name" maxlength="24" placeholder="e.g. TON Wolves"
-        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;
-          outline:none;box-sizing:border-box">
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+          border-radius:12px;padding:12px 14px;color:#fff;font-size:.95rem;outline:none;box-sizing:border-box">
     </div>
 
     <!-- Description -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Description (optional)</div>
-      <textarea id="squad-desc" maxlength="80" placeholder="What's your squad about?"
-        rows="2"
-        style="width:100%;background:rgba(0,0,0,.3);border:2px solid #4A3318;border-radius:10px;
-          padding:10px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;
-          outline:none;box-sizing:border-box;resize:none"></textarea>
-    </div>
-
-    <!-- Max Members -->
-    <div class="wood-panel" style="padding:16px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Max Members</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--yellow)" id="squad-max-val">20</div>
-      </div>
-      <input type="range" min="2" max="20" value="20" id="squad-max"
-        oninput="document.getElementById('squad-max-val').textContent=this.value"
-        style="width:100%;accent-color:#FFB800;height:6px">
-      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px">
-        <span>2</span><span>20</span>
-      </div>
-    </div>
-
-    <!-- Preview earnings -->
-    <div class="stone-panel" style="padding:14px">
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Squad Fund</div>
-      <div style="font-size:.82rem;color:rgba(255,200,120,.55);line-height:1.6">
-        2% of every card bought by squad members goes into the squad prize fund. Distributed every week based on activity.
-      </div>
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Description (optional)</div>
+      <textarea id="squad-desc" maxlength="80" placeholder="Short description..."
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+          border-radius:12px;padding:12px 14px;color:#fff;font-size:.88rem;outline:none;
+          box-sizing:border-box;resize:none;height:64px;font-family:'Outfit',sans-serif"></textarea>
     </div>
 
     <!-- Fee selector -->
-    <div class="stone-panel" style="padding:14px">
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;
-        text-transform:uppercase;color:var(--muted);margin-bottom:4px">Creation Fee</div>
-      <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.5">One-time fee — goes into the weekly squad prize pool.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="squad-fee-options">
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px">Creation Fee (one-time)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <button id="sf-ton" onclick="selectSquadFee('ton')"
-          style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
-            background:rgba(0,152,234,.15);border:2px solid #0098EA;transition:all .15s;
-            font-family:'Outfit',sans-serif;width:100%">
-          <div style="font-size:1.6rem;font-weight:700;color:#40B8FF;line-height:1">0.5</div>
-          <div style="font-size:.75rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 $TON</div>
-          <div style="font-size:.65rem;color:rgba(64,184,255,.5);margin-top:3px">~$1.50</div>
+          style="padding:14px 8px;border-radius:12px;text-align:center;cursor:pointer;
+            background:rgba(0,152,234,.2);border:2px solid #0098EA;
+            font-family:'Outfit',sans-serif;width:100%;transition:all .15s">
+          <div style="font-size:1.5rem;font-weight:800;color:#40B8FF">0.5</div>
+          <div style="font-size:.8rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 TON</div>
         </button>
         <button id="sf-usdt" onclick="selectSquadFee('usdt')"
-          style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s;
-            font-family:'Outfit',sans-serif;width:100%">
-          <div style="font-size:1.6rem;font-weight:700;color:#26A17B;line-height:1">1.50</div>
-          <div style="font-size:.75rem;font-weight:700;color:#26A17B;margin-top:2px">💵 $USDT</div>
-          <div style="font-size:.65rem;color:rgba(38,161,123,.5);margin-top:3px">~$1.50</div>
+          style="padding:14px 8px;border-radius:12px;text-align:center;cursor:pointer;
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.12);
+            font-family:'Outfit',sans-serif;width:100%;transition:all .15s">
+          <div style="font-size:1.5rem;font-weight:800;color:#26A17B">1.50</div>
+          <div style="font-size:.8rem;font-weight:700;color:#26A17B;margin-top:2px">💵 USDT</div>
         </button>
       </div>
     </div>
 
-    <button class="btn btn-gold" id="squad-create-btn"
-      onclick="createSquad()" style="padding:14px;font-size:1rem">
-      💎 Pay 0.5 $TON & Create Squad
+    <button onclick="createSquad()"
+      style="width:100%;padding:16px;border-radius:14px;border:none;
+        background:linear-gradient(180deg,#FFD700,#CC9900);color:#000;
+        font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer">
+      ⚔️ Create Squad
     </button>
+
   </div>
 </div>
 
 <!-- AVATAR PICKER SCREEN -->
-<div class="screen" id="s-avatar">
+<div class="screen" id="s-avatar" style="background:var(--bg)">
   <div class="stone-header">
     <div class="topbar">
       <button class="btn btn-back btn-sm" id="avatar-back-btn" onclick="go('sp')">← Back</button>
@@ -1770,41 +1738,39 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
   <div style="padding:14px 12px">
 
-    <!-- Current preview -->
+    <!-- Preview -->
     <div style="text-align:center;margin-bottom:16px">
       <div id="avatar-preview-big"
         style="width:90px;height:90px;border-radius:50%;margin:0 auto 8px;
-          border:4px solid #FFB800;display:flex;align-items:center;
-          justify-content:center;font-size:2.8rem;
-          background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1));border:1px solid rgba(139,92,246,.25);
-          box-shadow:0 0 20px rgba(255,184,0,.3),0 4px 0 rgba(0,0,0,.5)">😊</div>
-      <div style="font-size:.75rem;color:var(--muted)">Selected avatar</div>
+          background:rgba(139,92,246,.15);border:3px solid #8B5CF6;
+          display:flex;align-items:center;justify-content:center;font-size:2.8rem">😊</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.4)">Selected avatar</div>
     </div>
 
-    <!-- Preset gallery -->
-    <div class="wood-panel" style="padding:16px;margin-bottom:10px">
-      <div class="nail-bl"></div><div class="nail-br"></div>
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Choose Preset</div>
+    <!-- Preset grid -->
+    <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px">Choose</div>
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px" id="preset-grid"></div>
     </div>
 
-    <!-- Upload custom -->
-    <div class="stone-panel" style="padding:14px;margin-bottom:10px">
-      <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Upload Custom Image</div>
+    <!-- Custom image upload -->
+    <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px">Custom image</div>
       <label style="display:flex;align-items:center;justify-content:center;gap:8px;
         padding:12px;border-radius:10px;cursor:pointer;
-        background:rgba(255,184,0,.08);border:2px dashed rgba(255,184,0,.25);
+        background:rgba(255,184,0,.08);border:2px dashed rgba(255,184,0,.3);
         color:#C8A040;font-size:.88rem;font-weight:700">
         📁 Choose from gallery
-        <input type="file" accept="image/*" id="avatar-upload" onchange="handleAvatarUpload(event)"
-          style="display:none">
+        <input type="file" accept="image/*" id="avatar-upload" onchange="handleAvatarUpload(event)" style="display:none">
       </label>
-      <div style="font-size:.72rem;color:#4A3318;text-align:center;margin-top:6px">
-        Square image recommended · Max 2MB
-      </div>
     </div>
 
-    <button class="btn btn-gold" onclick="confirmAvatar()" style="padding:14px;font-size:1rem">✅ Confirm</button>
+    <button onclick="confirmAvatar()"
+      style="width:100%;padding:14px;border-radius:14px;border:none;
+        background:linear-gradient(180deg,#FFD700,#CC9900);color:#000;
+        font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer">
+      ✅ Confirm
+    </button>
   </div>
 </div>
 
