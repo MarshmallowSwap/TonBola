@@ -983,7 +983,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="font-size:2rem">🎰</div>
     <div style="flex:1">
       <div style="font-size:.55rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:2px">Jackpot Pool</div>
-      <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:900;color:#FFD700">0 TON</div>
+      <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#FFD700;line-height:1.2">0.00 TON</div>
+      <div style="font-size:.75rem;font-weight:700;color:rgba(255,184,0,.6);margin-top:2px" id="w-jackpot-usdt">0.00 USDT</div>
       <div style="height:5px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden;margin-top:6px">
         <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#CC7A00,#FFD700);border-radius:3px;width:0%;transition:width .8s"></div>
       </div>
@@ -2854,7 +2855,9 @@ function initHub() {
   if(tb) tb.textContent = formatTbola(u.tbola || 0)
   // Update jackpot
   const jp = document.getElementById('hub-jackpot')
-  if(jp) jp.textContent = wheelJackpot.toFixed(1) + ' TON'
+  if(jp) jp.textContent = wheelJackpot.toFixed(2)+' TON'
+  const jpU = document.getElementById('hub-jackpot-usdt')
+  if(jpU) jpU.textContent = wheelJackpotUsdt.toFixed(2)+' USDT'
   // Update bingo players
   const bp = document.getElementById('hub-bingo-players')
   if(bp) bp.textContent = '-- players'
@@ -3621,6 +3624,7 @@ let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
+let wheelJackpotUsdt = 0
 let wheelPricePerSpin = {usdt:0.25, not:0.25, ton:0.1}
 
 function openWheel() {
@@ -3959,11 +3963,19 @@ function handleWheelResult(segIdx) {
   const rem = document.getElementById('w-spins-remaining')
   if(rem) rem.textContent = wheelSpinsRemaining > 0 ? '('+wheelSpinsRemaining+' remaining)' : ''
   // Update jackpot
-  wheelJackpot += price * 0.15
+  if(wheelCur === 'ton') {
+    wheelJackpot += price * 0.15
+  } else {
+    wheelJackpotUsdt += price * 0.15
+  }
   const jel = document.getElementById('w-jackpot-amt')
-  if(jel) jel.textContent = wheelJackpot.toFixed(1)+' TON'
+  if(jel) jel.textContent = wheelJackpot.toFixed(2)+' TON'
   const hw = document.getElementById('hw-jackpot')
-  if(hw) hw.textContent = wheelJackpot.toFixed(1)+' TON'
+  if(hw) hw.textContent = wheelJackpot.toFixed(2)+' TON'
+  const hwU = document.getElementById('hub-jackpot-usdt')
+  if(hwU) hwU.textContent = wheelJackpotUsdt.toFixed(2)+' USDT'
+  const hwT = document.getElementById('hub-jackpot')
+  if(hwT) hwT.textContent = wheelJackpot.toFixed(2)+' TON'
   updateWheelUI()
 }
 
@@ -4376,9 +4388,13 @@ async function loadJackpot() {
   if(data?.pool_ton !== undefined) {
     wheelJackpot = parseFloat(data.pool_ton)
     const el = document.getElementById('w-jackpot-amt')
-    if(el) el.textContent = wheelJackpot.toFixed(1) + ' $TON'
+    if(el) el.textContent = wheelJackpot.toFixed(2)+' TON'
+    const ju = document.getElementById('w-jackpot-usdt')
+    if(ju) ju.textContent = wheelJackpotUsdt.toFixed(2)+' USDT'
     const hw = document.getElementById('hub-jackpot')
-    if(hw) hw.textContent = wheelJackpot.toFixed(1) + ' $TON'
+    if(hw) hw.textContent = wheelJackpot.toFixed(2)+' TON'
+    const hwU = document.getElementById('hub-jackpot-usdt')
+    if(hwU) hwU.textContent = wheelJackpotUsdt.toFixed(2)+' USDT'
     const jpBar = document.getElementById('w-jp-bar')
     if(jpBar) jpBar.style.width = Math.min(100, (wheelJackpot/parseFloat(data.threshold||100))*100) + '%'
     const jpCur = document.getElementById('w-jp-cur')
