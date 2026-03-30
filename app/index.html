@@ -2286,13 +2286,16 @@ function openLobby(r){
   const gates = { free:'freeRoom', stars:'usdtRoom', ton:'tonRoom', vip:'vipRoom' }
   const gateKey = gates[r]
   if (gateKey && !ul[gateKey]) {
-    const needed = XP_LEVELS.find(l=>l.unlocks[gateKey])
-    if(tg?.showPopup) tg.showPopup({
-      title:'🔒 Locked',
-      message:(ROOMS[r]?.name||r)+' unlocks at Level '+(needed?.lv||'?')+' — '+(needed?.name||'')+'.\n\nKeep playing to earn XP!',
-      buttons:[{type:'ok'}]
-    })
-    else alert('Reach Level '+(needed?.lv||'?')+' to unlock this room!')
+    const lvMap = {freeRoom:1,usdtRoom:5,tonRoom:10,vipRoom:15}
+    const lv = lvMap[gateKey] || 5
+    const ms = XP_MILESTONES[lv]
+    const unlockNames = {
+      freeRoom:['Free Room bingo','Bronze Scratch'],
+      usdtRoom:['USDT Room bingo','Wheel USDT','Silver Scratch','+5% $TBOLA'],
+      tonRoom: ['TON Room bingo','PvP Battle','Gold Scratch','Wheel TON','1 free scratch/week'],
+      vipRoom: ['VIP Room','+5% prizes','2 free scratch/week']
+    }
+    showLevelGatePopup(ROOMS[r]?.name||r, getCurrentLevel(), lv, ms?.name||'', unlockNames[gateKey]||[])
     return
   }
   // Block if game in progress
@@ -2816,16 +2819,6 @@ function openBingo() {
   go('sh'); setNav('nb-h')
 }
 
-function openWheel() {
-  go('s-wheel'); setNav('nb-h')
-  wheelSpinsSelected = 0
-  // Draw wheel with slight delay so canvas is visible
-  setTimeout(() => drawWheel(wheelAngle), 50)
-  setWheelCur('usdt')
-  updateWheelUI()
-  const tb = document.getElementById('w-tbola')
-  if(tb) tb.textContent = formatTbola(user.tbola||0)
-}
 
 function showTonFeeError() {
   if(tg?.showPopup) {
@@ -5411,50 +5404,6 @@ sessionStorage.removeItem('tbgame')
 
 
 // ── XP & LEVEL SYSTEM ──
-const XP_LEVELS = [
-  { lv:1, name:'Rookie',  xp:0,      icon:'🏕️', color:'#3A7A24',
-    unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false,
-              wheelUsdt:false, wheelTon:false,
-              scratchBronze:true, scratchSilver:false, scratchGold:false,
-              pvp:false, autoSpin:false,
-              tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
-  },
-  { lv:2, name:'Player',  xp:500,    icon:'⚔️', color:'#0060A0',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false,
-              wheelUsdt:true, wheelTon:false,
-              scratchBronze:true, scratchSilver:true, scratchGold:false,
-              pvp:false, autoSpin:false,
-              tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
-  },
-  { lv:3, name:'Warrior', xp:2000,   icon:'🛡️', color:'#0F6E56',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:false,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:false,
-              tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 }
-  },
-  { lv:4, name:'Expert',  xp:10000,  icon:'🔥', color:'#854F0B',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:false,
-              tbola_bonus:0.15, prize_bonus:0.05, free_scratches_week:2, jackpot_share:0 }
-  },
-  { lv:5, name:'Master',  xp:50000,  icon:'💎', color:'#534AB7',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:true,
-              tbola_bonus:0.20, prize_bonus:0.10, free_scratches_week:3, jackpot_share:0.05 }
-  },
-  { lv:6, name:'Legend',  xp:200000, icon:'👑', color:'#A32D2D',
-    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
-              wheelUsdt:true, wheelTon:true,
-              scratchBronze:true, scratchSilver:true, scratchGold:true,
-              pvp:true, autoSpin:true,
-              tbola_bonus:0.25, prize_bonus:0.20, free_scratches_week:5, jackpot_share:0.10 }
-  },
-]
 
 // XP per currency unit spent
 const XP_PER_USDT = 100  // 1 USDT = 100 XP
@@ -5464,17 +5413,7 @@ function getXpForAmount(amount, cur) {
   return Math.floor(cur === 'ton' ? amount * XP_PER_TON : amount * XP_PER_USDT)
 }
 
-function getCurrentLevel() {
-  const xp = user.xp || 0
-  let level = XP_LEVELS[0]
-  for (const l of XP_LEVELS) { if (xp >= l.xp) level = l }
-  return level
-}
-
-function getNextLevel() {
-  const cur = getCurrentLevel()
-  return XP_LEVELS.find(l => l.lv === cur.lv + 1) || null
-}
+// removed old getCurrentLevel
 
 function getUserUnlocks() {
   return getCurrentLevel().unlocks
@@ -5601,13 +5540,16 @@ function openLobby(r){
   const gates = { free:'freeRoom', stars:'usdtRoom', ton:'tonRoom', vip:'vipRoom' }
   const gateKey = gates[r]
   if (gateKey && !ul[gateKey]) {
-    const needed = XP_LEVELS.find(l=>l.unlocks[gateKey])
-    if(tg?.showPopup) tg.showPopup({
-      title:'🔒 Locked',
-      message:(ROOMS[r]?.name||r)+' unlocks at Level '+(needed?.lv||'?')+' — '+(needed?.name||'')+'.\n\nKeep playing to earn XP!',
-      buttons:[{type:'ok'}]
-    })
-    else alert('Reach Level '+(needed?.lv||'?')+' to unlock this room!')
+    const lvMap = {freeRoom:1,usdtRoom:5,tonRoom:10,vipRoom:15}
+    const lv = lvMap[gateKey] || 5
+    const ms = XP_MILESTONES[lv]
+    const unlockNames = {
+      freeRoom:['Free Room bingo','Bronze Scratch'],
+      usdtRoom:['USDT Room bingo','Wheel USDT','Silver Scratch','+5% $TBOLA'],
+      tonRoom: ['TON Room bingo','PvP Battle','Gold Scratch','Wheel TON','1 free scratch/week'],
+      vipRoom: ['VIP Room','+5% prizes','2 free scratch/week']
+    }
+    showLevelGatePopup(ROOMS[r]?.name||r, getCurrentLevel(), lv, ms?.name||'', unlockNames[gateKey]||[])
     return
   }
   // Block if game in progress
