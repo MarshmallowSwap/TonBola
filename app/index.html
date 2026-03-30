@@ -672,6 +672,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .create-squad-form{display:flex;flex-direction:column;gap:12px;padding:12px}
 .squad-icon-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding:4px 0}
 .btn-sm{padding:6px 12px;font-size:.8rem}
+
+.pvp-filter-btn{padding:6px 14px;border-radius:50px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s}
+.pvp-filter-active{border-color:rgba(249,83,198,.5);background:rgba(249,83,198,.12);color:#F953C6}
 </style>
 
 <!-- TonConnect SDK -->
@@ -1786,148 +1789,128 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="width:60px"></div>
     </div>
   </div>
-  <div id="pvp-lobby" style="padding:14px 12px;display:flex;flex-direction:column;gap:12px">
 
-    <!-- Bet setup -->
-    <div style="background:rgba(249,83,198,.08);border:1px solid rgba(249,83,198,.2);border-radius:14px;padding:14px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(249,83,198,.6);margin-bottom:10px">Your bet</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button id="pvp-cur-usdt" onclick="pvpSetCur('usdt')"
-          style="flex:1;padding:10px;border-radius:10px;border:2px solid #26A17B;background:rgba(38,161,123,.15);
-            color:#26A17B;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;font-size:.85rem">
-          💵 USDT
-        </button>
-        <button id="pvp-cur-ton" onclick="pvpSetCur('ton')"
-          style="flex:1;padding:10px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);
-            color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;font-size:.85rem">
-          💎 TON
-        </button>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:.8rem;color:rgba(255,255,255,.4);white-space:nowrap">Amount</span>
-        <input type="number" id="pvp-bet-input" value="1" min="1" step="0.5"
-          style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;
-            padding:10px 12px;color:#fff;font-size:1rem;font-weight:700;outline:none;text-align:center;
-            font-family:'Outfit',sans-serif">
-        <span id="pvp-bet-cur" style="font-size:.8rem;color:rgba(255,255,255,.5);white-space:nowrap">USDT</span>
-      </div>
-      <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin-top:6px;text-align:center">
-        Min 1 USDT · Winner takes 90% of pot
-      </div>
-    </div>
-
-    <!-- Mode selector -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onclick="pvpFindMatch()"
-        style="padding:16px 10px;border-radius:14px;border:2px solid rgba(249,83,198,.4);background:rgba(249,83,198,.08);
-          font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#F953C6;cursor:pointer">
-        🔍 Find Match
-        <div style="font-size:.65rem;font-weight:400;color:rgba(249,83,198,.5);margin-top:4px">Auto matchmaking</div>
-      </button>
-      <button onclick="pvpDirectChallenge()"
-        style="padding:16px 10px;border-radius:14px;border:2px solid rgba(255,184,0,.3);background:rgba(255,184,0,.06);
-          font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#FFD700;cursor:pointer">
-        ⚔️ Challenge
-        <div style="font-size:.65rem;font-weight:400;color:rgba(255,184,0,.4);margin-top:4px">Share code with friend</div>
+  <!-- LOBBY: Room list -->
+  <div id="pvp-lobby" style="display:flex;flex-direction:column;height:100%;overflow-y:auto">
+    <div style="padding:12px 12px 6px;display:flex;gap:8px;align-items:center">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4)">Open Rooms</div>
+      <div style="flex:1"></div>
+      <button onclick="pvpShowCreate()"
+        style="padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(180deg,#F953C6,#B91D73);
+          color:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">
+        + Create Room
       </button>
     </div>
 
-    <!-- Join with code -->
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:8px">Join with code</div>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="pvp-join-code" maxlength="6" placeholder="ABCD12"
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:6px;padding:4px 12px 10px;overflow-x:auto;scrollbar-width:none">
+      <button class="pvp-filter-btn pvp-filter-active" onclick="pvpFilter('all',this)">All</button>
+      <button class="pvp-filter-btn" onclick="pvpFilter('usdt',this)">💵 USDT</button>
+      <button class="pvp-filter-btn" onclick="pvpFilter('ton',this)">💎 TON</button>
+    </div>
+
+    <!-- Room list -->
+    <div id="pvp-room-list" style="padding:0 12px 80px;display:flex;flex-direction:column;gap:8px">
+      <div style="text-align:center;padding:40px 0;color:rgba(255,255,255,.3);font-size:.85rem">
+        No open rooms yet.<br>Create one!
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE ROOM panel -->
+  <div id="pvp-create" style="display:none;padding:14px 12px;flex-direction:column;gap:12px">
+    <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(249,83,198,.5);margin-bottom:2px">New Room</div>
+
+    <!-- Currency -->
+    <div style="display:flex;gap:8px">
+      <button id="pvp-c-usdt" onclick="pvpSetCur('usdt')"
+        style="flex:1;padding:12px;border-radius:10px;border:2px solid #26A17B;background:rgba(38,161,123,.15);
+          color:#26A17B;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer">💵 USDT</button>
+      <button id="pvp-c-ton" onclick="pvpSetCur('ton')"
+        style="flex:1;padding:12px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);
+          color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer">💎 TON</button>
+    </div>
+
+    <!-- Preset amounts -->
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:8px">Bet amount</div>
+      <div id="pvp-presets" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="number" id="pvp-custom-bet" placeholder="Custom" min="1" step="0.5"
           style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;
-            padding:10px 12px;color:#fff;font-size:.9rem;outline:none;text-transform:uppercase;font-family:'Outfit',sans-serif">
-        <button onclick="pvpJoinChallenge()"
-          style="padding:10px 16px;border-radius:10px;border:none;background:rgba(249,83,198,.3);
-            color:#F953C6;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Join</button>
+            padding:10px 12px;color:#fff;font-size:.9rem;outline:none;font-family:'Outfit',sans-serif">
+        <span id="pvp-bet-sym" style="color:rgba(255,255,255,.4);font-size:.85rem">USDT</span>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:700;color:#fff" id="pvp-stat-wins">0</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4)">Wins</div>
-      </div>
-      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:700;color:#fff" id="pvp-stat-losses">0</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4)">Losses</div>
-      </div>
-      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:700;color:#FFD700" id="pvp-stat-earned">0</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.4)">Earned</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Waiting screen -->
-  <div id="pvp-waiting" style="display:none;padding:40px 20px;text-align:center">
-    <div style="font-size:3rem;margin-bottom:16px;animation:spin 2s linear infinite">⚔️</div>
-    <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px">Finding opponent...</div>
-    <div id="pvp-wait-msg" style="font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:24px">Searching for a match at your stake</div>
-    <button onclick="pvpCancelSearch()"
-      style="padding:12px 24px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:transparent;
-        color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;cursor:pointer">Cancel</button>
-  </div>
-
-  <!-- Challenge created -->
-  <div id="pvp-challenge-created" style="display:none;padding:30px 20px;text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:16px">⚔️</div>
-    <div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px">Challenge Created!</div>
-    <div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:20px">Share this code with your opponent</div>
-    <div id="pvp-challenge-code"
-      style="font-size:2.5rem;font-weight:900;letter-spacing:8px;color:#FFD700;
-        background:rgba(255,184,0,.08);border:2px solid rgba(255,184,0,.2);border-radius:16px;padding:20px;
-        margin-bottom:16px;cursor:pointer" onclick="pvpCopyCode()">——</div>
-    <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-bottom:20px">Tap code to copy · Waiting for opponent...</div>
-    <button onclick="pvpCancelSearch()"
-      style="padding:12px 24px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:transparent;
-        color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;cursor:pointer">Cancel</button>
-  </div>
-
-  <!-- Game screen -->
-  <div id="pvp-game" style="display:none;padding:10px 12px">
-    <!-- Header info -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div style="text-align:center">
-        <div style="font-size:.65rem;color:rgba(255,255,255,.4)">You</div>
-        <div style="font-size:.8rem;font-weight:700;color:#3AFF8A" id="pvp-your-name">You</div>
-        <div id="pvp-your-lines" style="font-size:.65rem;color:rgba(52,255,138,.5)">0 lines</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-size:1.2rem;font-weight:900;color:#FFD700" id="pvp-pot">0 USDT</div>
-        <div style="font-size:.6rem;color:rgba(255,184,0,.5)">Winner takes 90%</div>
-        <div id="pvp-draw-num" style="font-size:2rem;font-weight:900;color:#fff;margin-top:4px">—</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.3)">Last drawn</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-size:.65rem;color:rgba(255,255,255,.4)">Opponent</div>
-        <div style="font-size:.8rem;font-weight:700;color:#F953C6" id="pvp-opp-name">Bot</div>
-        <div id="pvp-opp-lines" style="font-size:.65rem;color:rgba(249,83,198,.5)">0 lines</div>
-      </div>
+    <div style="font-size:.7rem;color:rgba(255,255,255,.3);text-align:center">
+      Room stays open 3 minutes · Winner takes 90% · Auto-refund if no opponent
     </div>
 
-    <!-- Your bingo card -->
-    <div style="font-size:.55rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(52,255,138,.4);margin-bottom:4px">Your card</div>
-    <div id="pvp-your-card" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:8px"></div>
-
-    <!-- Opponent card -->
-    <div style="font-size:.55rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(249,83,198,.4);margin-bottom:4px">Opponent</div>
-    <div id="pvp-opp-card" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:10px"></div>
-
-    <!-- Numbers drawn -->
-    <div style="font-size:.55rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px">Numbers drawn</div>
-    <div id="pvp-drawn-nums" style="display:flex;flex-wrap:wrap;gap:4px;min-height:28px"></div>
+    <button onclick="pvpCreateRoom()"
+      style="width:100%;padding:16px;border-radius:14px;border:none;
+        background:linear-gradient(180deg,#F953C6,#B91D73);color:#fff;
+        font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer">
+      ⚔️ Create &amp; Pay
+    </button>
+    <button onclick="pvpShowLobby()"
+      style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:transparent;
+        color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;cursor:pointer">Cancel</button>
   </div>
 
-  <!-- Result overlay -->
-  <div id="pvp-result" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.92);
-    display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;z-index:10">
+  <!-- WAITING in room -->
+  <div id="pvp-waiting" style="display:none;padding:30px 20px;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:2.5rem">⚔️</div>
+    <div style="font-size:1.1rem;font-weight:700;color:#fff">Waiting for opponent</div>
+    <div id="pvp-countdown"
+      style="font-size:3rem;font-weight:900;color:#F953C6;font-family:'Outfit',sans-serif">3:00</div>
+    <div style="font-size:.8rem;color:rgba(255,255,255,.4);text-align:center">
+      Room auto-closes in 3 minutes<br>Full refund if no one joins
+    </div>
+    <div id="pvp-room-code-wrap" style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);border-radius:12px;padding:12px 20px;text-align:center;cursor:pointer" onclick="pvpCopyCode()">
+      <div style="font-size:.6rem;color:rgba(255,184,0,.5);margin-bottom:4px">ROOM CODE</div>
+      <div id="pvp-room-code" style="font-size:1.8rem;font-weight:900;letter-spacing:6px;color:#FFD700">——</div>
+      <div style="font-size:.6rem;color:rgba(255,184,0,.4);margin-top:4px">Tap to copy &amp; share</div>
+    </div>
+    <button onclick="pvpCancelRoom()"
+      style="padding:12px 28px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:transparent;
+        color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;cursor:pointer">Cancel &amp; Refund</button>
+  </div>
+
+  <!-- GAME screen -->
+  <div id="pvp-game" style="display:none;padding:10px 12px;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="text-align:center">
+        <div style="font-size:.6rem;color:rgba(52,255,138,.5)">You</div>
+        <div style="font-size:.75rem;font-weight:700;color:#3AFF8A" id="pvp-your-name">You</div>
+        <div id="pvp-your-lines" style="font-size:.6rem;color:rgba(52,255,138,.4)">0 lines</div>
+      </div>
+      <div style="text-align:center">
+        <div id="pvp-pot" style="font-size:1.1rem;font-weight:900;color:#FFD700">0 USDT</div>
+        <div style="font-size:.55rem;color:rgba(255,184,0,.4)">Winner takes 90%</div>
+        <div id="pvp-draw-num" style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1">—</div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,.3)">Last drawn</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:.6rem;color:rgba(249,83,198,.5)">Opponent</div>
+        <div style="font-size:.75rem;font-weight:700;color:#F953C6" id="pvp-opp-name">Bot</div>
+        <div id="pvp-opp-lines" style="font-size:.6rem;color:rgba(249,83,198,.4)">0 lines</div>
+      </div>
+    </div>
+    <div style="font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(52,255,138,.4);margin-bottom:3px">Your card</div>
+    <div id="pvp-your-card" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:6px"></div>
+    <div style="font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(249,83,198,.4);margin-bottom:3px">Opponent</div>
+    <div id="pvp-opp-card" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:8px"></div>
+    <div style="font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:4px">Drawn</div>
+    <div id="pvp-drawn-nums" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="pvp-result" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.93);
+    flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;z-index:10">
     <div id="pvp-result-icon" style="font-size:4rem;margin-bottom:16px">🏆</div>
     <div id="pvp-result-title" style="font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:8px">You Win!</div>
-    <div id="pvp-result-sub" style="font-size:.9rem;color:rgba(255,255,255,.5);margin-bottom:24px">+0.90 USDT</div>
+    <div id="pvp-result-sub" style="font-size:.9rem;color:rgba(255,255,255,.5);margin-bottom:28px">+0.90 USDT</div>
     <button onclick="pvpPlayAgain()"
       style="width:100%;padding:16px;border-radius:14px;border:none;
         background:linear-gradient(180deg,#F953C6,#B91D73);color:#fff;
@@ -1939,6 +1922,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;cursor:pointer">Back to Hub</button>
   </div>
 </div>
+
 
 
 <!-- LEVEL UP OVERLAY -->
@@ -2148,7 +2132,12 @@ let pvpYourLines = 0
 let pvpOppLines = 0
 let pvpStats = { wins:0, losses:0, earned:0 }
 let pvpCurrentCode = ''
-let pvpChallenges = {} // code → bet info
+let pvpChallenges = {}
+let pvpRooms = []
+let pvpMyRoom = null
+let pvpCountdownTimer = null
+let pvpSelectedBet = 1
+let pvpFilterCur = 'all'
 let crCurrency='usdt', crPrice=0.25
 let crPriceAccum = 0
 let autoSpinActive = false
@@ -4995,335 +4984,338 @@ function leaveSquad() {
 }
 
 // ── PVP BATTLE ──
+const PVP_PRESETS_USDT = [1, 2, 5, 10]
+const PVP_PRESETS_TON  = [1, 2, 5]
 
-
-function pvpSetCur(cur) {
-  pvpCur = cur
-  const usdtBtn = document.getElementById('pvp-cur-usdt')
-  const tonBtn  = document.getElementById('pvp-cur-ton')
-  const curLabel = document.getElementById('pvp-bet-cur')
-  const minLabel = document.querySelector('#pvp-lobby .pvp-min-label')
-  if (cur === 'usdt') {
-    usdtBtn.style.borderColor = '#26A17B'; usdtBtn.style.background = 'rgba(38,161,123,.15)'; usdtBtn.style.color = '#26A17B'
-    tonBtn.style.borderColor  = 'rgba(255,255,255,.1)'; tonBtn.style.background = 'rgba(0,0,0,.2)'; tonBtn.style.color = 'rgba(255,255,255,.4)'
-    if(curLabel) curLabel.textContent = 'USDT'
-    const inp = document.getElementById('pvp-bet-input')
-    if(inp && parseFloat(inp.value) < 1) inp.value = '1'
-  } else {
-    tonBtn.style.borderColor  = '#0098EA'; tonBtn.style.background = 'rgba(0,152,234,.15)'; tonBtn.style.color = '#40B8FF'
-    usdtBtn.style.borderColor = 'rgba(255,255,255,.1)'; usdtBtn.style.background = 'rgba(0,0,0,.2)'; usdtBtn.style.color = 'rgba(255,255,255,.4)'
-    if(curLabel) curLabel.textContent = 'TON'
-    const inp = document.getElementById('pvp-bet-input')
-    if(inp && parseFloat(inp.value) < 1) inp.value = '1'
-  }
-}
-
-function pvpGetBet() {
-  const inp = document.getElementById('pvp-bet-input')
-  const val = parseFloat(inp?.value || '1')
-  return isNaN(val) || val < 1 ? 1 : Math.round(val * 100) / 100
-}
-
-function pvpShowLobby() {
-  document.getElementById('pvp-lobby').style.display = 'flex'
-  document.getElementById('pvp-waiting').style.display = 'none'
-  document.getElementById('pvp-challenge-created').style.display = 'none'
-  document.getElementById('pvp-game').style.display = 'none'
-  document.getElementById('pvp-result').style.display = 'none'
-  updatePvpStats()
-}
-
-function updatePvpStats() {
-  const w = document.getElementById('pvp-stat-wins')
-  const l = document.getElementById('pvp-stat-losses')
-  const e = document.getElementById('pvp-stat-earned')
-  if(w) w.textContent = pvpStats.wins
-  if(l) l.textContent = pvpStats.losses
-  if(e) e.textContent = pvpStats.earned.toFixed(2)
-}
-
-function pvpFindMatch() {
-  pvpBet = pvpGetBet()
-  const sym = pvpCur === 'usdt' ? 'USDT' : 'TON'
-  if(pvpBet < 1) { alert('Minimum bet is 1 ' + sym); return }
-
-  const onSuccess = () => {
-    document.getElementById('pvp-lobby').style.display = 'none'
-    document.getElementById('pvp-waiting').style.display = 'block'
-    document.getElementById('pvp-wait-msg').textContent = 'Looking for a ' + pvpBet.toFixed(2) + ' ' + sym + ' match...'
-
-    // Simulate matchmaking: bot joins after 3-8 seconds
-    const delay = 3000 + Math.random() * 5000
-    pvpMatchTimer = setTimeout(() => {
-      const botName = PVP_BOT_NAMES[Math.floor(Math.random() * PVP_BOT_NAMES.length)]
-      pvpStartGame(botName)
-    }, delay)
-  }
-  const onFail = () => {}
-
-  if(pvpCur === 'usdt') sendUsdtPayment(pvpBet, 'TonBola:pvp:usdt:' + pvpBet, onSuccess, onFail)
-  else sendTonPayment(pvpBet, 'TonBola:pvp:ton:' + pvpBet, onSuccess, onFail)
-}
-
-function pvpDirectChallenge() {
-  pvpBet = pvpGetBet()
-  const sym = pvpCur === 'usdt' ? 'USDT' : 'TON'
-  if(pvpBet < 1) { alert('Minimum bet is 1 ' + sym); return }
-
-  const onSuccess = () => {
-    // Generate 6-char code
-    pvpCurrentCode = Math.random().toString(36).substring(2,8).toUpperCase()
-    pvpChallenges[pvpCurrentCode] = { bet: pvpBet, cur: pvpCur }
-
-    document.getElementById('pvp-lobby').style.display = 'none'
-    document.getElementById('pvp-challenge-created').style.display = 'block'
-    document.getElementById('pvp-challenge-code').textContent = pvpCurrentCode
-
-    // Bot joins after 5-15 seconds if no real opponent
-    pvpMatchTimer = setTimeout(() => {
-      const botName = PVP_BOT_NAMES[Math.floor(Math.random() * PVP_BOT_NAMES.length)]
-      pvpStartGame(botName)
-    }, 5000 + Math.random() * 10000)
-  }
-  const onFail = () => {}
-
-  if(pvpCur === 'usdt') sendUsdtPayment(pvpBet, 'TonBola:pvp:challenge:usdt:' + pvpBet, onSuccess, onFail)
-  else sendTonPayment(pvpBet, 'TonBola:pvp:challenge:ton:' + pvpBet, onSuccess, onFail)
-}
-
-function pvpCopyCode() {
-  navigator.clipboard && navigator.clipboard.writeText(pvpCurrentCode)
-  if(tg?.showPopup) tg.showPopup({title:'Copied!', message:'Code ' + pvpCurrentCode + ' copied!', buttons:[{type:'ok'}]})
-}
-
-function pvpJoinChallenge() {
-  const code = document.getElementById('pvp-join-code')?.value.trim().toUpperCase()
-  if(!code || code.length < 4) { alert('Enter a valid code'); return }
-
-  // Check if we have this challenge (real) or simulate
-  const ch = pvpChallenges[code]
-  if(ch) {
-    pvpBet = ch.bet; pvpCur = ch.cur
-    delete pvpChallenges[code]
-  } else {
-    pvpBet = pvpGetBet()
-  }
-
-  const sym = pvpCur === 'usdt' ? 'USDT' : 'TON'
-  const onSuccess = () => {
-    const oppName = PVP_BOT_NAMES[Math.floor(Math.random() * PVP_BOT_NAMES.length)]
-    pvpStartGame(oppName)
-  }
-  const onFail = () => {}
-
-  if(pvpCur === 'usdt') sendUsdtPayment(pvpBet, 'TonBola:pvp:join:' + code, onSuccess, onFail)
-  else sendTonPayment(pvpBet, 'TonBola:pvp:join:' + code, onSuccess, onFail)
-}
-
-function pvpCancelSearch() {
-  if(pvpMatchTimer) { clearTimeout(pvpMatchTimer); pvpMatchTimer = null }
-  pvpShowLobby()
-}
-
-// ── GAME LOGIC ──
-function pvpGenerateCard() {
-  // Standard bingo: B=1-15, I=16-30, N=31-45, G=46-60, O=61-75
-  const card = []
-  const ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]]
-  ranges.forEach((r, col) => {
-    const pool = []
-    for(let i=r[0];i<=r[1];i++) pool.push(i)
-    const picked = []
-    while(picked.length < 5) {
-      const idx = Math.floor(Math.random() * pool.length)
-      picked.push(pool.splice(idx,1)[0])
-    }
-    for(let row=0;row<5;row++) card.push({ num: picked[row], col, row, marked: false })
-  })
-  // Center is FREE
-  card[12].num = 'FREE'; card[12].marked = true
-  return card
-}
-
-function pvpStartGame(oppName) {
-  if(pvpMatchTimer) { clearTimeout(pvpMatchTimer); pvpMatchTimer = null }
-  pvpGameActive = true
-  pvpDrawnNumbers = []
-  pvpYourCard = pvpGenerateCard()
-  pvpOppCard = pvpGenerateCard()
-  pvpYourLines = 0; pvpOppLines = 0
-
-  // Shuffle draw pool
-  const pool = []
-  for(let i=1;i<=75;i++) pool.push(i)
-  pvpDrawnNumbers = []
-
-  const sym = pvpCur === 'usdt' ? 'USDT' : 'TON'
-  const potAmt = (pvpBet * 2).toFixed(2)
-
-  document.getElementById('pvp-lobby').style.display = 'none'
-  document.getElementById('pvp-waiting').style.display = 'none'
-  document.getElementById('pvp-challenge-created').style.display = 'none'
-  document.getElementById('pvp-game').style.display = 'block'
-  document.getElementById('pvp-result').style.display = 'none'
-  document.getElementById('pvp-opp-name').textContent = oppName
-  document.getElementById('pvp-pot').textContent = potAmt + ' ' + sym
-  document.getElementById('pvp-your-lines').textContent = '0 lines'
-  document.getElementById('pvp-opp-lines').textContent = '0 lines'
-  document.getElementById('pvp-drawn-nums').innerHTML = ''
-  document.getElementById('pvp-draw-num').textContent = '—'
-
-  pvpRenderCard('pvp-your-card', pvpYourCard, 'your')
-  pvpRenderCard('pvp-opp-card', pvpOppCard, 'opp')
-
-  // Start drawing every 2.5 seconds
-  let drawPool = []
-  for(let i=1;i<=75;i++) drawPool.push(i)
-  // Shuffle
-  for(let i=drawPool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[drawPool[i],drawPool[j]]=[drawPool[j],drawPool[i]]}
-
-  let drawIdx = 0
-  function drawNext() {
-    if(!pvpGameActive || drawIdx >= drawPool.length) return
-    const num = drawPool[drawIdx++]
-    pvpDrawnNumbers.push(num)
-
-    // Show number
-    document.getElementById('pvp-draw-num').textContent = num
-    const numsDiv = document.getElementById('pvp-drawn-nums')
-    const chip = document.createElement('div')
-    chip.textContent = num
-    chip.style.cssText = 'background:rgba(255,255,255,.1);border-radius:6px;padding:3px 7px;font-size:.75rem;font-weight:700;color:#fff'
-    numsDiv.appendChild(chip)
-    numsDiv.scrollLeft = numsDiv.scrollWidth
-
-    // Mark your card
-    pvpYourCard.forEach(cell => {
-      if(cell.num === num) cell.marked = true
-    })
-    pvpRenderCard('pvp-your-card', pvpYourCard, 'your')
-
-    // Bot marks with 80% chance and delay
-    const botDelay = 300 + Math.random() * 1200
-    setTimeout(() => {
-      if(!pvpGameActive) return
-      if(Math.random() < 0.82) {
-        pvpOppCard.forEach(cell => { if(cell.num === num) cell.marked = true })
-        pvpRenderCard('pvp-opp-card', pvpOppCard, 'opp')
-      }
-      // Check wins
-      const yourLines = pvpCountLines(pvpYourCard)
-      const oppLines  = pvpCountLines(pvpOppCard)
-      document.getElementById('pvp-your-lines').textContent = yourLines + (yourLines===1?' line':' lines')
-      document.getElementById('pvp-opp-lines').textContent = oppLines + (oppLines===1?' line':' lines')
-
-      if(yourLines >= 1 && yourLines > pvpYourLines) {
-        pvpYourLines = yourLines
-        if(pvpYourLines >= 1) { pvpGameActive = false; pvpEndGame(true, oppName); return }
-      }
-      if(oppLines >= 1 && oppLines > pvpOppLines) {
-        pvpOppLines = oppLines
-        if(pvpOppLines >= 1) { pvpGameActive = false; pvpEndGame(false, oppName); return }
-      }
-      pvpYourLines = yourLines; pvpOppLines = oppLines
-    }, botDelay)
-
-    pvpDrawTimer = setTimeout(drawNext, 2500)
-  }
-  pvpDrawTimer = setTimeout(drawNext, 1500)
-}
-
-function pvpRenderCard(elId, card, type) {
-  const el = document.getElementById(elId)
-  if(!el) return
-  const cols = ['B','I','N','G','O']
-  const color = type === 'your' ? '#3AFF8A' : '#F953C6'
-  const dimColor = type === 'your' ? 'rgba(52,255,138,.08)' : 'rgba(249,83,198,.08)'
-  const markColor = type === 'your' ? 'rgba(52,255,138,.9)' : 'rgba(249,83,198,.9)'
-
-  // Header row
-  let html = cols.map(h =>
-    '<div style="text-align:center;font-size:.55rem;font-weight:800;color:' + color + ';padding:2px 0">' + h + '</div>'
-  ).join('')
-
-  // 5x5 grid (row by row)
-  for(let row=0;row<5;row++) {
-    for(let col=0;col<5;col++) {
-      const cell = card[col*5 + row] // col-major storage
-      const isCenter = row===2 && col===2
-      const marked = cell.marked
-      html += '<div style="aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;transition:all .2s;' +
-        (marked
-          ? 'background:' + markColor + ';color:#000;border:1.5px solid ' + color
-          : 'background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)') +
-        '">' + (isCenter && !cell.num ? '⭐' : cell.num) + '</div>'
-    }
-  }
-  el.innerHTML = html
-  el.style.gridTemplateColumns = 'repeat(5,1fr)'
-}
-
-function pvpCountLines(card) {
-  let lines = 0
-  // Rows
-  for(let row=0;row<5;row++) {
-    let complete = true
-    for(let col=0;col<5;col++) { if(!card[col*5+row].marked) { complete=false; break } }
-    if(complete) lines++
-  }
-  // Cols
-  for(let col=0;col<5;col++) {
-    let complete = true
-    for(let row=0;row<5;row++) { if(!card[col*5+row].marked) { complete=false; break } }
-    if(complete) lines++
-  }
-  // Diagonals
-  let d1=true, d2=true
-  for(let i=0;i<5;i++) { if(!card[i*5+i].marked) d1=false; if(!card[i*5+(4-i)].marked) d2=false }
-  if(d1) lines++; if(d2) lines++
-  return lines
-}
-
-function pvpEndGame(won, oppName) {
-  if(pvpDrawTimer) { clearTimeout(pvpDrawTimer); pvpDrawTimer = null }
-  const sym = pvpCur === 'usdt' ? 'USDT' : 'TON'
-  const pot = pvpBet * 2
-  const winAmt = +(pot * 0.9).toFixed(2)
-
-  document.getElementById('pvp-result').style.display = 'flex'
-
-  if(won) {
-    pvpStats.wins++
-    pvpStats.earned = +(pvpStats.earned + winAmt - pvpBet).toFixed(2)
-    document.getElementById('pvp-result-icon').textContent = '🏆'
-    document.getElementById('pvp-result-title').textContent = 'You Win!'
-    document.getElementById('pvp-result-sub').textContent = '+' + (winAmt - pvpBet).toFixed(2) + ' ' + sym + ' profit'
-    addXP(winAmt, pvpCur)
-  } else {
-    pvpStats.losses++
-    document.getElementById('pvp-result-icon').textContent = '💀'
-    document.getElementById('pvp-result-title').textContent = oppName + ' wins!'
-    document.getElementById('pvp-result-sub').textContent = '-' + pvpBet.toFixed(2) + ' ' + sym
-  }
-  updatePvpStats()
-}
-
-function pvpPlayAgain() {
-  pvpGameActive = false
-  pvpShowLobby()
-}
-
-function leavePvp() {
-  pvpGameActive = false
-  if(pvpMatchTimer) { clearTimeout(pvpMatchTimer); pvpMatchTimer = null }
-  if(pvpDrawTimer)  { clearTimeout(pvpDrawTimer);  pvpDrawTimer = null }
-  go('s-hub'); setNav('nb-h')
-}
+// pvp* vars are declared at top of script = []        // open rooms = null     // current room I created = null = 1 = 'all'
 
 function openPvp() {
   pvpShowLobby()
   go('s-pvp'); setNav('nb-h')
 }
+
+function leavePvp() {
+  pvpCancelRoom()
+  pvpGameActive = false
+  if(pvpDrawTimer)  { clearTimeout(pvpDrawTimer);  pvpDrawTimer  = null }
+  if(pvpMatchTimer) { clearTimeout(pvpMatchTimer); pvpMatchTimer = null }
+  go('s-hub'); setNav('nb-h')
+}
+
+// ── SCREENS ──
+function pvpShowLobby() {
+  document.getElementById('pvp-lobby').style.display    = 'flex'
+  document.getElementById('pvp-create').style.display   = 'none'
+  document.getElementById('pvp-waiting').style.display  = 'none'
+  document.getElementById('pvp-game').style.display     = 'none'
+  document.getElementById('pvp-result').style.display   = 'none'
+  pvpRenderRooms()
+}
+
+function pvpShowCreate() {
+  document.getElementById('pvp-lobby').style.display    = 'none'
+  document.getElementById('pvp-create').style.display   = 'flex'
+  document.getElementById('pvp-waiting').style.display  = 'none'
+  pvpSetCur('usdt')
+}
+
+function pvpShowWaiting() {
+  document.getElementById('pvp-lobby').style.display   = 'none'
+  document.getElementById('pvp-create').style.display  = 'none'
+  document.getElementById('pvp-waiting').style.display = 'flex'
+  document.getElementById('pvp-game').style.display    = 'none'
+  document.getElementById('pvp-result').style.display  = 'none'
+}
+
+// ── CURRENCY & BET ──
+function pvpSetCur(cur) {
+  pvpCur = cur
+  const uBtn = document.getElementById('pvp-c-usdt')
+  const tBtn = document.getElementById('pvp-c-ton')
+  const sym  = document.getElementById('pvp-bet-sym')
+  if(uBtn){ uBtn.style.borderColor=cur==='usdt'?'#26A17B':'rgba(255,255,255,.1)'; uBtn.style.background=cur==='usdt'?'rgba(38,161,123,.15)':'rgba(0,0,0,.2)'; uBtn.style.color=cur==='usdt'?'#26A17B':'rgba(255,255,255,.4)' }
+  if(tBtn){ tBtn.style.borderColor=cur==='ton'?'#0098EA':'rgba(255,255,255,.1)';  tBtn.style.background=cur==='ton'?'rgba(0,152,234,.15)':'rgba(0,0,0,.2)';  tBtn.style.color=cur==='ton'?'#40B8FF':'rgba(255,255,255,.4)' }
+  if(sym)  sym.textContent = cur==='usdt'?'USDT':'TON'
+  pvpRenderPresets()
+}
+
+function pvpRenderPresets() {
+  const cont = document.getElementById('pvp-presets')
+  if(!cont) return
+  const presets = pvpCur==='usdt' ? PVP_PRESETS_USDT : PVP_PRESETS_TON
+  const sym = pvpCur==='usdt' ? 'USDT' : 'TON'
+  cont.innerHTML = presets.map(v =>
+    '<button onclick="pvpSelectPreset('+v+')" id="pvp-preset-'+v+'"'+
+    ' style="padding:8px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,.12);'+
+    'background:rgba(0,0,0,.2);color:rgba(255,255,255,.6);font-family:Outfit,sans-serif;'+
+    'font-weight:700;cursor:pointer;font-size:.85rem;transition:all .15s">'+v+' '+sym+'</button>'
+  ).join('')
+  pvpSelectPreset(presets[0])
+}
+
+function pvpSelectPreset(val) {
+  pvpSelectedBet = val
+  const inp = document.getElementById('pvp-custom-bet')
+  if(inp) inp.value = val
+  document.querySelectorAll('[id^="pvp-preset-"]').forEach(b => {
+    const isActive = parseFloat(b.id.replace('pvp-preset-','')) === val
+    b.style.borderColor  = isActive ? (pvpCur==='usdt'?'#26A17B':'#0098EA') : 'rgba(255,255,255,.12)'
+    b.style.background   = isActive ? (pvpCur==='usdt'?'rgba(38,161,123,.15)':'rgba(0,152,234,.15)') : 'rgba(0,0,0,.2)'
+    b.style.color        = isActive ? (pvpCur==='usdt'?'#26A17B':'#40B8FF') : 'rgba(255,255,255,.6)'
+  })
+}
+
+function pvpGetBet() {
+  const inp = document.getElementById('pvp-custom-bet')
+  const val = parseFloat(inp?.value || pvpSelectedBet)
+  return isNaN(val) || val < 1 ? 1 : Math.round(val*100)/100
+}
+
+// ── ROOM MANAGEMENT ──
+function pvpCreateRoom() {
+  pvpBet = pvpGetBet()
+  const sym = pvpCur==='usdt'?'USDT':'TON'
+  if(pvpBet < 1) { alert('Minimum 1 '+sym); return }
+
+  const onSuccess = () => {
+    const code = Math.random().toString(36).substring(2,8).toUpperCase()
+    pvpCurrentCode = code
+    pvpMyRoom = { code, bet:pvpBet, cur:pvpCur, ts:Date.now(), owner:user.name }
+
+    // Add to room list
+    pvpRooms.push({ ...pvpMyRoom, id: code })
+
+    // Show waiting screen
+    pvpShowWaiting()
+    document.getElementById('pvp-room-code').textContent = code
+
+    // Start countdown 3 minutes
+    let secs = 180
+    pvpCountdownTimer = setInterval(() => {
+      secs--
+      const m = Math.floor(secs/60), s = secs%60
+      const el = document.getElementById('pvp-countdown')
+      if(el) el.textContent = m+':'+(s<10?'0':'')+s
+      if(el) el.style.color = secs < 30 ? '#FF4444' : '#F953C6'
+
+      if(secs <= 0) {
+        clearInterval(pvpCountdownTimer)
+        pvpCountdownTimer = null
+        pvpAutoRefund()
+      }
+    }, 1000)
+
+    // Simulate opponent joining after 5-25 seconds (random)
+    const joinDelay = 5000 + Math.random() * 20000
+    pvpMatchTimer = setTimeout(() => {
+      if(pvpMyRoom) {
+        const botName = PVP_BOT_NAMES[Math.floor(Math.random()*PVP_BOT_NAMES.length)]
+        pvpOpponentJoins(botName)
+      }
+    }, joinDelay)
+  }
+  const onFail = () => {}
+  if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail)
+  else sendTonPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail)
+}
+
+function pvpJoinRoom(roomId) {
+  const room = pvpRooms.find(r=>r.id===roomId)
+  if(!room){ alert('Room no longer available'); pvpRenderRooms(); return }
+  pvpBet = room.bet; pvpCur = room.cur
+  const sym = pvpCur==='usdt'?'USDT':'TON'
+
+  const onSuccess = () => {
+    // Remove room from list
+    pvpRooms = pvpRooms.filter(r=>r.id!==roomId)
+    pvpOpponentJoins(room.owner)
+  }
+  const onFail = () => {}
+  if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail)
+  else sendTonPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail)
+}
+
+function pvpCopyCode() {
+  navigator.clipboard && navigator.clipboard.writeText(pvpCurrentCode)
+  if(tg?.showPopup) tg.showPopup({title:'Copied!',message:'Code '+pvpCurrentCode+' copied!',buttons:[{type:'ok'}]})
+}
+
+function pvpCancelRoom() {
+  if(pvpCountdownTimer){ clearInterval(pvpCountdownTimer); pvpCountdownTimer=null }
+  if(pvpMatchTimer){ clearTimeout(pvpMatchTimer); pvpMatchTimer=null }
+  if(pvpMyRoom) {
+    pvpRooms = pvpRooms.filter(r=>r.id!==pvpMyRoom.id)
+    pvpMyRoom = null
+  }
+}
+
+function pvpAutoRefund() {
+  pvpCancelRoom()
+  pvpShowLobby()
+  if(tg?.showPopup) tg.showPopup({
+    title:'⏱️ Room Expired',
+    message:'No opponent joined in 3 minutes.\n\n'+pvpBet.toFixed(2)+' '+(pvpCur==='usdt'?'USDT':'TON')+' refunded to your wallet.',
+    buttons:[{type:'ok'}]
+  })
+}
+
+function pvpOpponentJoins(oppName) {
+  if(pvpCountdownTimer){ clearInterval(pvpCountdownTimer); pvpCountdownTimer=null }
+  if(pvpMatchTimer){ clearTimeout(pvpMatchTimer); pvpMatchTimer=null }
+  pvpMyRoom = null
+  pvpStartGame(oppName)
+}
+
+// ── ROOM LIST ──
+function pvpFilter(cur, btn) {
+  pvpFilterCur = cur
+  document.querySelectorAll('.pvp-filter-btn').forEach(b=>b.classList.remove('pvp-filter-active'))
+  btn.classList.add('pvp-filter-active')
+  pvpRenderRooms()
+}
+
+function pvpJoinFromBtn(el) {
+  pvpJoinRoom(el.getAttribute('data-rid'))
+}
+
+function pvpRenderRooms() {
+  const cont = document.getElementById('pvp-room-list')
+  if(!cont) return
+  const filtered = pvpFilterCur==='all' ? pvpRooms : pvpRooms.filter(r=>r.cur===pvpFilterCur)
+  if(!filtered.length) {
+    cont.innerHTML = '<div style="text-align:center;padding:40px 0;color:rgba(255,255,255,.3);font-size:.85rem">No open rooms yet.<br>Create one!</div>'
+    return
+  }
+  let html = ''
+  filtered.forEach(function(r) {
+    const sym = r.cur==='usdt'?'USDT':'TON'
+    const col = r.cur==='usdt'?'#26A17B':'#40B8FF'
+    const age = Math.floor((Date.now()-r.ts)/1000)
+    const rem = Math.max(0, 180-age)
+    const m = Math.floor(rem/60), s = rem%60
+    html += '<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px">'
+    html += '<div style="width:40px;height:40px;border-radius:10px;background:rgba(249,83,198,.12);border:1px solid rgba(249,83,198,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">⚔️</div>'
+    html += '<div style="flex:1"><div style="font-size:.85rem;font-weight:700;color:#fff">'+r.owner+'</div>'
+    html += '<div style="font-size:.7rem;color:rgba(255,255,255,.4)">Bet: <span style="color:'+col+';font-weight:700">'+r.bet.toFixed(2)+' '+sym+'</span></div></div>'
+    html += '<div style="text-align:right"><div style="font-size:.65rem;color:'+(rem<30?'#FF4444':'rgba(255,255,255,.3)')+'">⏱ '+m+':'+(s<10?'0':'')+s+'</div>'
+    html += '<button data-rid="'+r.id+'" onclick="pvpJoinFromBtn(this)" style="margin-top:4px;padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(180deg,#F953C6,#B91D73);color:#fff;font-family:Outfit,sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">Join</button>'
+    html += '</div></div>'
+  })
+  cont.innerHTML = html
+}
+
+// ── GAME ──
+function pvpGenerateCard() {
+  const card = []
+  const ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]]
+  ranges.forEach((r,col) => {
+    const pool = []; for(let i=r[0];i<=r[1];i++) pool.push(i)
+    const picked = []
+    while(picked.length<5){ const i=Math.floor(Math.random()*pool.length); picked.push(pool.splice(i,1)[0]) }
+    for(let row=0;row<5;row++) card.push({num:picked[row],col,row,marked:false})
+  })
+  card[12].num='FREE'; card[12].marked=true
+  return card
+}
+
+function pvpStartGame(oppName) {
+  pvpGameActive=true
+  pvpYourCard=pvpGenerateCard(); pvpOppCard=pvpGenerateCard()
+  pvpYourLines=0; pvpOppLines=0
+  const sym=pvpCur==='usdt'?'USDT':'TON'
+
+  document.getElementById('pvp-lobby').style.display   = 'none'
+  document.getElementById('pvp-waiting').style.display = 'none'
+  document.getElementById('pvp-create').style.display  = 'none'
+  document.getElementById('pvp-game').style.display    = 'block'
+  document.getElementById('pvp-result').style.display  = 'none'
+  document.getElementById('pvp-opp-name').textContent  = oppName
+  document.getElementById('pvp-pot').textContent       = (pvpBet*2).toFixed(2)+' '+sym
+  document.getElementById('pvp-your-lines').textContent= '0 lines'
+  document.getElementById('pvp-opp-lines').textContent = '0 lines'
+  document.getElementById('pvp-draw-num').textContent  = '—'
+  document.getElementById('pvp-drawn-nums').innerHTML  = ''
+
+  pvpRenderCard('pvp-your-card',pvpYourCard,'your')
+  pvpRenderCard('pvp-opp-card',pvpOppCard,'opp')
+
+  // Build shuffled draw pool
+  const pool=[]; for(let i=1;i<=75;i++) pool.push(i)
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  let drawIdx=0
+
+  function drawNext() {
+    if(!pvpGameActive||drawIdx>=pool.length) return
+    const num=pool[drawIdx++]
+    document.getElementById('pvp-draw-num').textContent=num
+    const chip=document.createElement('div')
+    chip.textContent=num
+    chip.style.cssText='background:rgba(255,255,255,.1);border-radius:6px;padding:2px 6px;font-size:.7rem;font-weight:700;color:#fff'
+    document.getElementById('pvp-drawn-nums').appendChild(chip)
+
+    // Mark your card
+    pvpYourCard.forEach(cell=>{if(cell.num===num)cell.marked=true})
+    pvpRenderCard('pvp-your-card',pvpYourCard,'your')
+
+    // Bot marks with delay
+    setTimeout(()=>{
+      if(!pvpGameActive) return
+      if(Math.random()<0.82) { pvpOppCard.forEach(cell=>{if(cell.num===num)cell.marked=true}); pvpRenderCard('pvp-opp-card',pvpOppCard,'opp') }
+      const yl=pvpCountLines(pvpYourCard), ol=pvpCountLines(pvpOppCard)
+      document.getElementById('pvp-your-lines').textContent=yl+(yl===1?' line':' lines')
+      document.getElementById('pvp-opp-lines').textContent=ol+(ol===1?' line':' lines')
+      if(yl>=1&&yl>pvpYourLines){pvpYourLines=yl;pvpGameActive=false;pvpEndGame(true,oppName);return}
+      if(ol>=1&&ol>pvpOppLines){pvpOppLines=ol;pvpGameActive=false;pvpEndGame(false,oppName);return}
+      pvpYourLines=yl; pvpOppLines=ol
+    }, 300+Math.random()*1200)
+    pvpDrawTimer=setTimeout(drawNext,2500)
+  }
+  pvpDrawTimer=setTimeout(drawNext,1500)
+}
+
+function pvpRenderCard(elId,card,type) {
+  const el=document.getElementById(elId); if(!el) return
+  const cols=['B','I','N','G','O']
+  const col=type==='your'?'#3AFF8A':'#F953C6'
+  const mk =type==='your'?'rgba(52,255,138,.85)':'rgba(249,83,198,.85)'
+  let html=cols.map(h=>'<div style="text-align:center;font-size:.55rem;font-weight:800;color:'+col+';padding:1px 0">'+h+'</div>').join('')
+  for(let row=0;row<5;row++) for(let c2=0;c2<5;c2++) {
+    const cell=card[c2*5+row], isCenter=row===2&&c2===2
+    html+='<div style="aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;'+(cell.marked?'background:'+mk+';color:#000;border:1.5px solid '+col:'background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.07)')+'">'+( (isCenter&&cell.num==='FREE')?'⭐':cell.num )+'</div>'
+  }
+  el.innerHTML=html
+}
+
+function pvpCountLines(card) {
+  let lines=0
+  for(let row=0;row<5;row++){let ok=true;for(let c2=0;c2<5;c2++){if(!card[c2*5+row].marked){ok=false;break}};if(ok)lines++}
+  for(let c2=0;c2<5;c2++){let ok=true;for(let row=0;row<5;row++){if(!card[c2*5+row].marked){ok=false;break}};if(ok)lines++}
+  let d1=true,d2=true;for(let i=0;i<5;i++){if(!card[i*5+i].marked)d1=false;if(!card[i*5+(4-i)].marked)d2=false}
+  if(d1)lines++;if(d2)lines++
+  return lines
+}
+
+function pvpEndGame(won,oppName) {
+  if(pvpDrawTimer){clearTimeout(pvpDrawTimer);pvpDrawTimer=null}
+  const sym=pvpCur==='usdt'?'USDT':'TON'
+  const win=+(pvpBet*2*0.9).toFixed(2)
+  document.getElementById('pvp-result').style.display='flex'
+  if(won){
+    pvpStats.wins++; pvpStats.earned=+(pvpStats.earned+win-pvpBet).toFixed(2)
+    document.getElementById('pvp-result-icon').textContent='🏆'
+    document.getElementById('pvp-result-title').textContent='You Win!'
+    document.getElementById('pvp-result-sub').textContent='+'+(win-pvpBet).toFixed(2)+' '+sym+' profit'
+    addXP(win,pvpCur)
+  } else {
+    pvpStats.losses++
+    document.getElementById('pvp-result-icon').textContent='💀'
+    document.getElementById('pvp-result-title').textContent=oppName+' wins!'
+    document.getElementById('pvp-result-sub').textContent='-'+pvpBet.toFixed(2)+' '+sym
+  }
+}
+
+function pvpPlayAgain() { pvpGameActive=false; pvpShowLobby() }
+
 </script>
 
 
