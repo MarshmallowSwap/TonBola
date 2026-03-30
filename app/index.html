@@ -1995,6 +1995,8 @@ window.addEventListener('error', function(e){
   if(el && !el.innerHTML.trim()) el.innerHTML = '<div style="color:orange;padding:16px;font-size:11px">Error: '+e.message+'</div>'
 })
 const SQUAD_REGISTRY = []
+const PRESETS_SQUAD = ['🛡️','⚔️','🐺','🦁','🐯','🦅','🐉','🔥','💀','🏰','🌙','⚡','🎯','🏹','🗡️','🧊','🌊','🌋','🦊','👹']
+const PRESETS_USER = ['😊','😎','🦊','🐺','🦁','🐯','🦅','🐉','⚔️','🛡️','💎','🎱','🔥','⭐','👑','🏆','🎯','🧙','🤺','🦸']
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
 
@@ -4477,8 +4479,8 @@ function joinRoom(){
 // setTimeout(()=>{ restoreGameState() }, 300)
 
 // ── AVATAR SYSTEM ──
-const PRESETS_USER = ['😊','😎','🦊','🐺','🦁','🐯','🦅','🐉','⚔️','🛡️','💎','🎱','🔥','⭐','👑','🏆','🎯','🧙','🤺','🦸']
-const PRESETS_SQUAD = ['🛡️','⚔️','🐺','🦁','🐯','🦅','🐉','🔥','💀','🏰','🌙','⚡','🎯','🏹','🗡️','🧊','🌊','🌋','🦊','👹']
+
+
 
 let avatarTarget = 'user' // 'user' or 'squad'
 let selectedPreset = user.avatar || '😊'
@@ -4743,29 +4745,38 @@ function createSquad() {
 
 function _doCreateSquad(name) {
   const desc = document.getElementById('squad-desc')?.value.trim()
-  mySquad = {
-    name, desc, icon: squadAvatar,
-    members: 1, rank: null, weekScore: 0,
-    memberList:[{name:user.name, avatar:user.avatar||'😊'}]
+
+  const doCreate = () => {
+    mySquad = {
+      name, desc, icon: squadAvatar,
+      members: 1, rank: null, weekScore: 0,
+      memberList:[{name:user.name, avatar:user.avatar||'😊'}]
+    }
+    addXP(1.5, 'usdt')
+    const pname = document.getElementById('p-squad-name')
+    const psub = document.getElementById('p-squad-sub')
+    const picon = document.getElementById('p-squad-icon')
+    if(pname) pname.textContent = name
+    if(psub) psub.textContent = '1 member · Captain'
+    if(picon) picon.textContent = squadAvatar
+    const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
+    const feeStr = squadFee === 'ton' ? '0.5 $TON' : '1.50 $USDT'
+    if(tg?.showPopup) {
+      tg.showPopup({title:'⚔️ Squad Created!',
+        message:'"'+name+'" is ready!\n\nShare code: '+code+'\n\n'+feeStr+' added to squad prize pool.',
+        buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); setTimeout(renderSquad,50) })
+    } else {
+      go('s-squad'); setTimeout(renderSquad,50)
+    }
   }
-  const pname = document.getElementById('p-squad-name')
-  const psub = document.getElementById('p-squad-sub')
-  const picon = document.getElementById('p-squad-icon')
-  if(pname) pname.textContent = name
-  if(psub) psub.textContent = '1 member · Captain'
-  if(picon) picon.textContent = squadAvatar
-  const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
-  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '1.50 $USDT'
-  if(tg?.showPopup) {
-    tg.showPopup({title:'⚔ Squad Created!',
-      message:'"'+name+'" is ready!\n\nShare this code:\n🔑 '+code+'\n\n'+feeStr+' added to squad prize pool.',
-      buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); renderSquad() })
+
+  if (squadFee === 'ton') {
+    sendTonPayment(0.5, 'TonBola:squad:create:ton', doCreate, () => {})
   } else {
-    go('s-squad'); renderSquad()
+    sendUsdtPayment(1.5, 'TonBola:squad:create:usdt', doCreate, () => {})
   }
 }
 
-// Squad registry — in production this comes from Supabase
 
 function joinSquad() {
   const input = document.getElementById('squad-join-code')
