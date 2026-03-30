@@ -779,7 +779,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">0</span> warriors</div>
-        <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 5 $USDT</div></div>
+        <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 3.50 $USDT</div></div>
       </div>
     </div>
   </div>
@@ -830,7 +830,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:1.4rem">⚔️</div>
         <div style="flex:1">
           <div style="font-size:.92rem;font-weight:800;color:#fff">Warrior Pass</div>
-          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">5 $USDT or 3 $TON / month</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">3.50 $USDT or 3 $TON / month</div>
         </div>
         <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
           border-radius:50px;padding:4px 12px;font-size:.68rem;font-weight:800;color:#fff">UPGRADE</div>
@@ -1427,7 +1427,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1.5rem">⚔️</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:.95rem;font-weight:800;color:#fff">Warrior Pass</div>
-        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">5 $USDT or 3 $TON / month · All games</div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">3.50 $USDT or 3 $TON / month · All games</div>
       </div>
       <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
         border-radius:50px;padding:5px 14px;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0">UPGRADE</div>
@@ -1874,13 +1874,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"
       id="wp-options">
-      <div id="wp-stars" onclick="selectWPCur('stars')"
+      <div id="wp-usdt" onclick="selectWPCur('usdt')"
         style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
           background:rgba(255,184,0,.12);border:2px solid #FFB800;transition:all .15s">
         <div style="font-size:1.4rem;font-weight:700;color:var(--yellow);
-          font-family:'Outfit',sans-serif">600,000</div>
+          font-family:'Outfit',sans-serif">3.50</div>
         <div style="font-size:.78rem;font-weight:700;color:var(--yellow);margin-top:2px">💵 $USDT</div>
-        <div style="font-size:.62rem;color:rgba(255,217,61,.5);margin-top:3px">equiv. a 3 $TON</div>
+        <div style="font-size:.62rem;color:rgba(255,217,61,.5);margin-top:3px">per month</div>
       </div>
       <div id="wp-ton" onclick="selectWPCur('ton')"
         style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
@@ -1895,7 +1895,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Subscribe button -->
     <button id="wp-btn" class="btn btn-gold" onclick="subscribeWarriorPass()"
       style="padding:14px;font-size:1rem;width:100%">
-      ⚔️ Activate — 5 $USDT
+      ⚔️ Activate — 3.50 $USDT
     </button>
     <div style="font-family:'Outfit',sans-serif;font-size:.65rem;color:#4A3318;
       text-align:center;margin-top:8px">
@@ -2576,16 +2576,16 @@ function showLevelUp(lv) {
   if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
 }
 
-let wpCur = 'stars'
+let wpCur = 'usdt'
 function selectWPCur(cur) {
   wpCur = cur
   const stars = document.getElementById('wp-stars')
   const ton   = document.getElementById('wp-ton')
   const btn   = document.getElementById('wp-btn')
-  if(cur === 'stars') {
+  if(cur === 'usdt') {
     stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#A78BFA'
     ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
-    btn.textContent = '⚔️ Activate — 5 $USDT'
+    btn.textContent = '⚔️ Activate — 3.50 $USDT'
   } else {
     ton.style.background   = 'rgba(0,152,234,.12)'; ton.style.borderColor   = '#0098EA'
     stars.style.background = 'rgba(0,0,0,.2)';      stars.style.borderColor = 'rgba(255,255,255,.1)'
@@ -2597,8 +2597,8 @@ function showWarriorPass(isRenewal) {
   ov.classList.remove('show')
   void ov.offsetWidth
   ov.classList.add('show')
-  wpCur = 'stars'
-  selectWPCur('stars')
+  wpCur = 'usdt'
+  selectWPCur('usdt')
   // Show renewal banner if pass expired
   let rb = document.getElementById('wp-renewal-banner')
   if(!rb) {
@@ -2634,7 +2634,7 @@ function closeWarriorPass() {
   setTimeout(()=>{ ov.classList.remove('show'); ov.style.opacity=''; ov.style.transition='' }, 220)
 }
 function subscribeWarriorPass() {
-  const feeStr = wpCur === 'usdt' ? '5 $USDT' : '3 $TON'
+  const feeStr = wpCur === 'usdt' ? '3.50 $USDT' : '3 $TON'
   const icon   = wpCur === 'usdt' ? '💵' : '💎'
   if(tg?.showPopup) {
     tg.showPopup({
@@ -4259,7 +4259,7 @@ function selectCur(el, cur){
 }
 
 const CR_OPTS = {
-  usdt: [{v:0.25,l:'0.25 $USDT'},{v:0.5,l:'0.5 $USDT'},{v:1,l:'1 $USDT'},{v:2,l:'1.50 $USDT'},{v:5,l:'5 $USDT'}],
+  usdt: [{v:0.25,l:'0.25 $USDT'},{v:0.5,l:'0.5 $USDT'},{v:1,l:'1 $USDT'},{v:2,l:'1.50 $USDT'},{v:5,l:'3.50 $USDT'}],
   ton:   [{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}],
   free:  []
 }
