@@ -10,6 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="preload" as="image" href="assets/wheel-bg.png">
 <link rel="preload" as="image" href="assets/wheel-disc.png">
 <link rel="preload" as="image" href="assets/wheel-ring.png">
@@ -2152,6 +2153,12 @@ let pvpOppLines = 0
 let pvpStats = { wins:0, losses:0, earned:0 }
 let pvpCurrentCode = ''
 let pvpChallenges = {}
+const SUPA_URL = 'https://lajeiwuumqbzcmdgsczq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhamVpd3V1bXFiemNtZGdzY3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ4NTgzNiwiZXhwIjoyMDkwMDYxODM2fQ.bmUUgJfpoOyj8QR9NfH_7Fyzg360VkuH-ReZsz-fRyk'
+let supa = null
+let dbUserId = null  // telegram_id confirmed in DB
+let saveProgressTimer = null
+
 let pvpRooms = []
 let pvpSocket = null
 let pvpConnected = false
@@ -2264,6 +2271,7 @@ function addXP(amount, cur) {
   user.tbola = (user.tbola||0) + gained
   if (getCurrentLevel() > prevLv) showLevelUp(getCurrentLevel())
   updateXpUI()
+  scheduleSave()
 }
 function showLevelUp(lv) {
   const ms = getMilestoneName()
@@ -2339,11 +2347,127 @@ function setRoomCardsEnabled(enabled){
   if(nbh) nbh.querySelector('.ni').textContent = enabled ? '⚔' : '🎱'
 }
 
+
+// ══════════════════════════════════════
+//  SUPABASE INTEGRATION
+// ══════════════════════════════════════
+
+function initSupabase() {
+  try {
+    supa = supabase.createClient(SUPA_URL, SUPA_KEY)
+    console.log('Supabase client ready')
+  } catch(e) {
+    console.warn('Supabase init failed:', e)
+  }
+}
+
+async function sbUpsertUser() {
+  if (!supa || !user.telegramId) return
+  try {
+    const { data, error } = await supa.rpc('upsert_user', {
+      p_telegram_id: user.telegramId,
+      p_username:    user.username || '',
+      p_first_name:  user.name || ''
+    })
+    if (error) { console.warn('upsert_user error:', error); return }
+    if (!data) return
+    dbUserId = data.telegram_id
+
+    // Restore progress from DB (only if DB has higher XP)
+    if (data.xp > user.xp) {
+      user.xp      = data.xp
+      user.level   = data.level
+      user.tbola   = data.tbola_balance
+    }
+    // Restore Warrior Pass
+    if (data.warrior_pass_expiry) {
+      const expiry = new Date(data.warrior_pass_expiry)
+      if (expiry > new Date()) {
+        user.warriorPass  = true
+        user.wpExpiry     = expiry.getTime()
+      }
+    }
+    // Restore stats
+    if (data.total_games)  user.games = data.total_games
+    if (data.total_wins)   user.wins  = data.total_wins
+    if (data.streak_days)  user.streak = data.streak_days
+
+    console.log('User loaded from DB:', data.telegram_id, 'XP:', data.xp, 'Lv:', data.level)
+    initHub()  // Refresh UI with DB data
+  } catch(e) {
+    console.warn('sbUpsertUser error:', e)
+  }
+}
+
+async function sbSaveProgress() {
+  if (!supa || !dbUserId) return
+  try {
+    await supa.rpc('save_user_progress', {
+      p_telegram_id: dbUserId,
+      p_xp:          user.xp || 0,
+      p_level:       getCurrentLevel(),
+      p_tbola:       user.tbola || 0
+    })
+  } catch(e) {
+    console.warn('sbSaveProgress error:', e)
+  }
+}
+
+function scheduleSave() {
+  if (saveProgressTimer) clearTimeout(saveProgressTimer)
+  saveProgressTimer = setTimeout(sbSaveProgress, 3000)  // debounce 3s
+}
+
+async function sbLoadJackpots() {
+  if (!supa) return
+  try {
+    const { data, error } = await supa.from('jackpot_pools').select('*')
+    if (error || !data) return
+    data.forEach(row => {
+      const v = parseFloat(row.balance) || 0
+      if (row.id === 'wheel_ton')    { wheelJackpot     = v }
+      if (row.id === 'wheel_usdt')   { wheelJackpotUsdt = v }
+      if (row.id === 'scratch_usdt') { scratchJpUsdt    = v }
+      if (row.id === 'scratch_ton')  { scratchJpTon     = v }
+    })
+    updateScratchJackpot()
+    initHub()
+    console.log('Jackpots loaded from DB')
+  } catch(e) {
+    console.warn('sbLoadJackpots error:', e)
+  }
+}
+
+async function sbUpdateJackpot(poolId, delta) {
+  if (!supa) return
+  try {
+    await supa.rpc('update_jackpot', { p_id: poolId, p_delta: delta })
+  } catch(e) {
+    console.warn('sbUpdateJackpot error:', e)
+  }
+}
+
+async function sbActivateWarriorPass() {
+  if (!supa || !dbUserId) return
+  try {
+    const { data, error } = await supa.rpc('activate_warrior_pass', {
+      p_telegram_id: dbUserId,
+      p_days: 30
+    })
+    if (error) console.warn('activate_warrior_pass error:', error)
+    else console.log('Warrior Pass activated in DB until:', data)
+  } catch(e) {
+    console.warn('sbActivateWarriorPass error:', e)
+  }
+}
+
 function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
   setTimeout(renderSquad, 50)
+  // Load from Supabase
+  setTimeout(() => { sbUpsertUser(); sbLoadJackpots() }, 500)
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
@@ -2846,6 +2970,7 @@ function subscribeWarriorPass() {
     user.warriorPass = true
     user.wpExpiry = Date.now() + 30*24*60*60*1000
     addXP(wpCur === 'usdt' ? 3.5 : 0, 'usdt')
+    sbActivateWarriorPass()
     closeWarriorPass()
     updateWheelAutoSpinBtn()
     setTimeout(() => {
@@ -4014,8 +4139,10 @@ function handleWheelResult(segIdx) {
   // Update jackpot
   if(wheelCur === 'ton') {
     wheelJackpot += price * 0.15
+    sbUpdateJackpot('wheel_ton', price * 0.15)
   } else {
     wheelJackpotUsdt += price * 0.15
+    sbUpdateJackpot('wheel_usdt', price * 0.15)
   }
   const jel = document.getElementById('w-jackpot-amt')
   if(jel) jel.textContent = wheelJackpot.toFixed(2)+' TON'
