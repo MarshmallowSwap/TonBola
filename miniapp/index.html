@@ -1974,6 +1974,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </nav>
 
 <script>
+const SQUAD_REGISTRY = []
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
 
@@ -4695,7 +4696,6 @@ function _doCreateSquad(name) {
 }
 
 // Squad registry — in production this comes from Supabase
-const SQUAD_REGISTRY = []
 
 function joinSquad() {
   const input = document.getElementById('squad-join-code')
