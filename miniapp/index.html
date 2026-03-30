@@ -684,7 +684,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </head>
 <body>
 
-<!-- HOME -->
+
+  <!-- TESTNET BANNER -->
+  <div id="testnet-banner" style="display:none;background:rgba(251,191,36,.15);border-bottom:1px solid rgba(251,191,36,.3);padding:6px 12px;text-align:center;font-size:.65rem;font-weight:700;color:#FCD34D">
+    ⚠️ TESTNET MODE — Token e pagamenti non hanno valore reale
+    <a href="#" onclick="claimFaucet()" style="color:#FFD700;margin-left:10px;text-decoration:underline">🚰 Claim 1000 tUSDT gratis</a>
+  </div>
+
+  <!-- HOME -->
 <div class="screen" id="sh">
   <div class="stone-header">
     <div class="topbar">
@@ -2765,6 +2772,41 @@ async function sbUpdateLeaderboard(wins, xpEarned, gamesPlayed, paidTon) {
   } catch(e) { console.warn('sbUpdateLeaderboard error:', e) }
 }
 
+
+// ── TESTNET FUNCTIONS ──
+async function initTestnet() {
+  if (!IS_TESTNET) return
+  const banner = document.getElementById('testnet-banner')
+  if (banner) banner.style.display = 'block'
+  console.log('[TESTNET] Running in testnet mode')
+}
+
+async function claimFaucet() {
+  if (!IS_TESTNET) return
+  if (!tcWallet) {
+    alert('Connetti il wallet prima di usare il faucet')
+    return
+  }
+  if (TESTNET_USDT_MASTER === 'PLACEHOLDER_USDT') {
+    alert('Deploy MockUSDT su testnet prima!\n\nSeguire la guida: TESTNET_GUIDE.md')
+    return
+  }
+  // Invia 0.1 TON al contratto MockUSDT → riceve 1000 tUSDT
+  await sendTonPayment(0.1, 'faucet', () => {
+    showToast('🚰 1000 tUSDT in arrivo nel tuo wallet! (30-60 secondi)')
+  }, () => {
+    showToast('❌ Faucet fallito — riprova')
+  })
+}
+
+function showToast(msg, duration=3000) {
+  const el = document.createElement('div')
+  el.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(30,20,60,.95);border:1px solid rgba(139,92,246,.4);color:#fff;padding:10px 20px;border-radius:50px;font-size:.8rem;font-weight:700;z-index:9999;white-space:nowrap;backdrop-filter:blur(10px)'
+  el.textContent = msg
+  document.body.appendChild(el)
+  setTimeout(() => el.remove(), duration)
+}
+
 function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
@@ -3383,8 +3425,35 @@ function handleTxError(err) {
 // ══════════════════════════════════════════
 // TONCONNECT 2.0
 // ══════════════════════════════════════════
-const MANIFEST_URL = 'https://ton-bola.vercel.app/tonconnect-manifest.json'
-const PLATFORM_WALLET = 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_'
+// MANIFEST_URL defined in testnet config above
+
+// ══════════════════════════════════════
+//  TESTNET CONFIG
+//  Cambia IS_TESTNET = false per mainnet
+// ══════════════════════════════════════
+const IS_TESTNET = true
+
+// Indirizzi testnet (aggiornare dopo deploy)
+const TESTNET_USDT_MASTER   = 'PLACEHOLDER_USDT'   // → aggiornare dopo deploy MockUSDT
+const TESTNET_VAULT_ADDRESS = 'PLACEHOLDER_VAULT'  // → aggiornare dopo deploy TonBolaVault
+const TESTNET_TBOLA_MASTER  = 'PLACEHOLDER_TBOLA'  // → aggiornare dopo deploy TbolaJetton
+
+// Indirizzi mainnet (usati quando IS_TESTNET = false)
+const MAINNET_USDT_MASTER   = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
+const MAINNET_VAULT_ADDRESS = 'EQBA-MKFbXPpy7OkRzLqQ2dgahfVXFr70tmIRqJkH97iu3nw'
+const MAINNET_TBOLA_MASTER  = ''  // da deployare mainnet
+
+// Switch automatico
+const USDT_JETTON_MASTER_ADDR = IS_TESTNET ? TESTNET_USDT_MASTER : MAINNET_USDT_MASTER
+const VAULT_ADDRESS           = IS_TESTNET ? TESTNET_VAULT_ADDRESS : MAINNET_VAULT_ADDRESS
+const TBOLA_JETTON_ADDR       = IS_TESTNET ? TESTNET_TBOLA_MASTER : MAINNET_TBOLA_MASTER
+
+// TON Connect manifest
+const MANIFEST_URL = IS_TESTNET
+  ? 'https://ton-bola.vercel.app/tonconnect-manifest-testnet.json'
+  : 'https://ton-bola.vercel.app/tonconnect-manifest.json'
+
+const PLATFORM_WALLET = IS_TESTNET ? VAULT_ADDRESS : 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_'
 const TON_DECIMALS = 1000000000
 
 let tc = null
@@ -3779,7 +3848,7 @@ function finalizeScratch() {
 
 // ── Jetton Transfer ──
 const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
-const USDT_JETTON_MASTER = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
+const USDT_JETTON_MASTER = USDT_JETTON_MASTER_ADDR
 const USDT_DECIMALS = 6 // USDT has 6 decimals on TON
 const NOT_DECIMALS = 100000000000 // 9 decimali
 
