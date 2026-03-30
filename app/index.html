@@ -2635,25 +2635,30 @@ function closeWarriorPass() {
 }
 function subscribeWarriorPass() {
   const feeStr = wpCur === 'usdt' ? '3.50 $USDT' : '3 $TON'
-  const icon   = wpCur === 'usdt' ? '💵' : '💎'
-  if(tg?.showPopup) {
-    tg.showPopup({
-      title:'⚔️ Warrior Pass',
-      message:`Activate Warrior Pass for ${feeStr}?\n\nNo automatic renewal. You\'ll receive a reminder when it expires to renew manually.`,
-      buttons:[{id:'pay',type:'default',text:`Pay ${feeStr} ✓`},{type:'cancel'}]
-    }, (id) => {
-      if(id==='pay') {
-        user.warriorPass = true
-        user.wpExpiry = Date.now() + 30*24*60*60*1000 // 30 days
-        closeWarriorPass()
-        updateWheelAutoSpinBtn()
-        setTimeout(()=>{ if(tg?.showPopup) tg.showPopup({
-          title:'⚔️ Warrior Pass Active!',
-          message:'Welcome, Warrior!\n\nYour benefits are active for 30 days.\n\n🃏 +2 free cards/day\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin unlocked!\n\n⏰ You\'ll get a reminder when it expires.',
-          buttons:[{type:'ok'}]
-        }) }, 300)
-      }
-    })
+
+  const onSuccess = () => {
+    user.warriorPass = true
+    user.wpExpiry = Date.now() + 30*24*60*60*1000
+    addXP(wpCur === 'usdt' ? 3.5 : 0, 'usdt')
+    closeWarriorPass()
+    updateWheelAutoSpinBtn()
+    setTimeout(() => {
+      if(tg?.showPopup) tg.showPopup({
+        title:'⚔️ Warrior Pass Active!',
+        message:'Welcome, Warrior!\n\nYour benefits are active for 30 days.\n\n🃏 +2 free scratches/week\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin unlocked!',
+        buttons:[{type:'ok'}]
+      })
+    }, 300)
+  }
+
+  const onFail = () => {
+    if(tg?.showPopup) tg.showPopup({title:'Payment failed',message:'Transaction cancelled or failed. Please try again.',buttons:[{type:'ok'}]})
+  }
+
+  if (wpCur === 'usdt') {
+    sendUsdtPayment(3.5, 'TonBola:warrior-pass:usdt', onSuccess, onFail)
+  } else {
+    sendTonPayment(3, 'TonBola:warrior-pass:ton', onSuccess, onFail)
   }
 }
 
