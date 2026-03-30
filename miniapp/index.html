@@ -1640,7 +1640,23 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1rem;font-weight:700;color:#fff">👥 Squads</div>
     </div>
   </div>
-  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px"></div>
+  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px">
+  <div style="text-align:center;padding:30px 16px 16px">
+    <div style="font-size:3.5rem;margin-bottom:12px">&#x1F6E1;</div>
+    <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">You have no squad</div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6">Create your squad or join an existing one.</div>
+  </div>
+  <button onclick="openCreateSquad()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#FFD700,#CC9900);color:#000;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:4px">
+    &#x2694;&#xFE0F; Create a Squad
+  </button>
+  <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px">
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(139,92,246,.7);margin-bottom:10px">&#x1F511; Join with code</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 12px;color:#fff;font-size:.9rem;outline:none;text-transform:uppercase">
+      <button onclick="joinSquad()" style="padding:9px 16px;border-radius:10px;border:none;background:rgba(139,92,246,.3);color:#A78BFA;font-weight:700;cursor:pointer">Join</button>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- CREATE SQUAD SCREEN -->
@@ -1974,6 +1990,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </nav>
 
 <script>
+window.addEventListener('error', function(e){
+  var el = document.getElementById('squad-content')
+  if(el && !el.innerHTML.trim()) el.innerHTML = '<div style="color:orange;padding:16px;font-size:11px">Error: '+e.message+'</div>'
+})
 const SQUAD_REGISTRY = []
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
@@ -2903,6 +2923,17 @@ function openScratch() {
 }
 
 function selectScratchCard(tier) {
+  // Level gate
+  const ul = getMilestoneUnlocks()
+  const scratchGateMap = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
+  const gateKey = scratchGateMap[tier]
+  if (gateKey && !ul[gateKey]) {
+    const lvMap = { scratchBronze:1, scratchSilver:1, scratchGold:10 }
+    const lv = lvMap[gateKey] || 10
+    const ms = XP_MILESTONES[lv]
+    showLevelGatePopup(SCRATCH_TIERS[tier]?.name+' Scratch', getCurrentLevel(), lv, ms?.name||'', ['Gold Scratch cards','Wheel TON','TON Room bingo'])
+    return
+  }
   scratchSelected = tier
   showScratchTable(tier)
   const t = SCRATCH_TIERS[tier]
