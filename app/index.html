@@ -1968,16 +1968,11 @@ if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg
 
 // Level icon — badge shown next to avatar
 function getLevelIcon(lv){
-  if(lv>=75) return{icon:'🎱',color:'#FFD700',label:'Grand Master'}
-  if(lv>=51) return{icon:'💎',color:'#8B2FFF',label:'Legend'}
-  if(lv>=50) return{icon:'🃏',color:'#3D9EFF',label:'Free Card'}
-  if(lv>=31) return{icon:'🏅',color:'#2ECC71',label:'Master'}
-  if(lv>=30) return{icon:'⚡',color:'#0090CC',label:'Double XP'}
-  if(lv>=20) return{icon:'👑',color:'#CC2200',label:'VIP'}
-  if(lv>=16) return{icon:'🔥',color:'#CC5500',label:'Expert'}
-  if(lv>=10) return{icon:'⭐',color:'#CC8800',label:'Gold'}
-  if(lv>=6)  return{icon:'⚔️',color:'#4080CC',label:'Player'}
-  return      {icon:'🏕️',color:'#3A7A24',label:'Rookie'}
+  // Use XP_MILESTONES system
+  const keys = Object.keys(XP_MILESTONES).map(Number).sort((a,b)=>b-a)
+  const key = keys.find(k => k <= lv) || 1
+  const ms = XP_MILESTONES[key]
+  return { icon: ms.icon, color: ms.color, label: ms.name }
 }
 
 let isGameActive = false
@@ -2146,12 +2141,12 @@ function initHome(){
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
   document.getElementById('h-tbola').textContent=formatTbola(user.tbola)
   document.getElementById('bc-tbola').textContent=formatTbola(user.tbola)
-  document.getElementById('bc-lv').textContent=user.level
+  document.getElementById('bc-lv').textContent=getCurrentLevel()
   document.getElementById('bc-streak').textContent=user.streak+'d'
   document.getElementById('bc-games').textContent=user.games
   document.getElementById('bc-wins').textContent=user.wins
   // Level badge
-  const lvInfo = getLevelIcon(user.level)
+  const lvInfo = getLevelIcon(getCurrentLevel())
   const hbadge = document.getElementById('h-lv-badge')
   if(hbadge){hbadge.textContent=lvInfo.icon;hbadge.style.background=lvInfo.color+'33';hbadge.style.borderColor=lvInfo.color+'88'}
   // warrior counts loaded from backend via loadRoomStats()
@@ -2508,15 +2503,12 @@ function spawnConf(){
 
 // ── LEVEL UP SYSTEM ──
 const LEVEL_THRESHOLDS = [
-  {lv:6,  icon:'⚔️', title:'Player',      unlock:'Referral program activated!',      color:'#4080CC', bg:'#00102A', tbola:75},
-  {lv:10, icon:'⭐', title:'Gold Cards',   unlock:'+5% win rate on every game',       color:'#CC8800', bg:'#2A1800', tbola:100},
-  {lv:16, icon:'🔥', title:'Expert',       unlock:'Monthly leaderboard prizes',        color:'#CC5500', bg:'#280800', tbola:125},
-  {lv:20, icon:'👑', title:'VIP Access',   unlock:'VIP $TON Room unlocked!',            color:'#CC2200', bg:'#280400', tbola:150},
-  {lv:30, icon:'⚡', title:'Double XP',    unlock:'2x XP every weekend',               color:'#0090CC', bg:'#001828', tbola:200},
-  {lv:31, icon:'🏅', title:'Master',       unlock:'Priority squad matching',           color:'#2ECC71', bg:'#002210', tbola:200},
-  {lv:50, icon:'🃏', title:'Free Card',    unlock:'1 free card every day forever!',   color:'#2288FF', bg:'#001228', tbola:250},
-  {lv:51, icon:'💎', title:'Legend',       unlock:'Season badge + exclusive frame',    color:'#8B2FFF', bg:'#180028', tbola:300},
-  {lv:75, icon:'🎱', title:'Grand Master', unlock:'Legend avatar in all lobbies!',    color:'#FFD700', bg:'#221A00', tbola:500},
+  {lv:5,  icon:'\u2694\uFE0F', title:'Player',   unlock:'USDT Room + Silver Scratch + Wheel USDT', color:'#0060A0', bg:'#00102A', tbola:100},
+  {lv:10, icon:'\u{1F6E1}\uFE0F', title:'Warrior',  unlock:'TON Room + PvP Battle + Gold Scratch',   color:'#0F6E56', bg:'#001A10', tbola:200},
+  {lv:15, icon:'\u{1F525}', title:'Expert',   unlock:'VIP Room + 5% prize bonus',           color:'#854F0B', bg:'#1A0800', tbola:300},
+  {lv:20, icon:'\u{1F3C6}', title:'Champion', unlock:'Jackpot +5% share + 3 free scratches', color:'#D85A30', bg:'#1A0500', tbola:400},
+  {lv:25, icon:'\u{1F48E}', title:'Master',   unlock:'Auto-spin + Jackpot +8% share',       color:'#534AB7', bg:'#0A0020', tbola:500},
+  {lv:30, icon:'\u{1F451}', title:'Legend',   unlock:'+20% all prizes + exclusive badge',   color:'#A32D2D', bg:'#1A0000', tbola:1000},
 ]
 const CONF_COLS=['#fff','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
 
@@ -3778,13 +3770,9 @@ function checkLevelUp(oldXp, newXp, level) {
 }
 
 function awardXp(amount) {
-  const oldLv = user.level
-  user.xp += amount
-  while(user.xp >= 100) {
-    user.xp -= 100
-    user.level++
-    checkLevelUp(0, user.xp, user.level)
-  }
+  // Legacy: use new XP system (amount in old XP units, convert to USDT-equivalent)
+  // 1 old XP = 0.002 USDT equivalent → addXP(0.002 * amount, 'usdt')
+  addXP(amount * 0.002, 'usdt')
 }
 
 function showLineBanner(prize) {
@@ -3860,7 +3848,7 @@ function renderProfile(){
   const pu=document.getElementById('p-usr');if(pu)pu.textContent=user.username?'@'+user.username:''
   document.getElementById('p-lv').textContent='Level '+user.level
   document.getElementById('p-tbola').textContent=formatTbola(user.tbola)+' $TBOLA'
-  const lvInfo = getLevelIcon(user.level)
+  const lvInfo = getLevelIcon(getCurrentLevel())
   const pbadge = document.getElementById('p-lv-badge')
   if(pbadge){pbadge.textContent=lvInfo.icon;pbadge.style.background=lvInfo.color+'44';pbadge.style.borderColor=lvInfo.color}
   document.getElementById('p-str').textContent=user.streak
