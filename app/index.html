@@ -928,7 +928,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- PvP Battle — Coming Soon -->
+    <!-- PvP Battle — Lv 3 required -->
     <div style="margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
@@ -2043,6 +2043,135 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 // Always clear stale game on fresh load — user must explicitly resume
 sessionStorage.removeItem('tbgame')
 
+
+// ── XP & LEVEL SYSTEM ──
+const XP_LEVELS = [
+  { lv:1, name:'Rookie',  xp:0,      icon:'🏕️', color:'#3A7A24',
+    unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false,
+              wheelUsdt:false, wheelTon:false,
+              scratchBronze:true, scratchSilver:false, scratchGold:false,
+              pvp:false, autoSpin:false,
+              tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
+  },
+  { lv:2, name:'Player',  xp:500,    icon:'⚔️', color:'#0060A0',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false,
+              wheelUsdt:true, wheelTon:false,
+              scratchBronze:true, scratchSilver:true, scratchGold:false,
+              pvp:false, autoSpin:false,
+              tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
+  },
+  { lv:3, name:'Warrior', xp:2000,   icon:'🛡️', color:'#0F6E56',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:false,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:false,
+              tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 }
+  },
+  { lv:4, name:'Expert',  xp:10000,  icon:'🔥', color:'#854F0B',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:false,
+              tbola_bonus:0.15, prize_bonus:0.05, free_scratches_week:2, jackpot_share:0 }
+  },
+  { lv:5, name:'Master',  xp:50000,  icon:'💎', color:'#534AB7',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:true,
+              tbola_bonus:0.20, prize_bonus:0.10, free_scratches_week:3, jackpot_share:0.05 }
+  },
+  { lv:6, name:'Legend',  xp:200000, icon:'👑', color:'#A32D2D',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:true,
+              tbola_bonus:0.25, prize_bonus:0.20, free_scratches_week:5, jackpot_share:0.10 }
+  },
+]
+
+// XP per currency unit spent
+const XP_PER_USDT = 100  // 1 USDT = 100 XP
+const XP_PER_TON  = 500  // 1 TON  = 500 XP (fixed rate)
+
+function getXpForAmount(amount, cur) {
+  return Math.floor(cur === 'ton' ? amount * XP_PER_TON : amount * XP_PER_USDT)
+}
+
+function getCurrentLevel() {
+  const xp = user.xp || 0
+  let level = XP_LEVELS[0]
+  for (const l of XP_LEVELS) { if (xp >= l.xp) level = l }
+  return level
+}
+
+function getNextLevel() {
+  const cur = getCurrentLevel()
+  return XP_LEVELS.find(l => l.lv === cur.lv + 1) || null
+}
+
+function getUserUnlocks() {
+  return getCurrentLevel().unlocks
+}
+
+function addXP(amount, cur) {
+  const xpGained = getXpForAmount(amount, cur)
+  const prevLevel = getCurrentLevel()
+  user.xp = (user.xp || 0) + xpGained
+  user.tbola = (user.tbola || 0) + xpGained  // $TBOLA mirrors XP gain
+  const newLevel = getCurrentLevel()
+  if (newLevel.lv > prevLevel.lv) {
+    // Level up!
+    showLevelUp(newLevel)
+  }
+  // Update UI
+  updateXpUI()
+  return xpGained
+}
+
+function showLevelUp(level) {
+  if (tg?.showPopup) {
+    tg.showPopup({
+      title: '🎉 Level Up!',
+      message: `You reached ${level.icon} ${level.name}!
+
+New unlocks available — check your profile.`,
+      buttons: [{ type: 'ok', text: "Let's go!" }]
+    })
+  }
+  // Trigger level up animation
+  const ov = document.getElementById('lvup-ov')
+  if (ov) {
+    document.getElementById('lvup-lv-new')?.setAttribute('data-lv', level.lv)
+    ov.classList.add('show')
+    setTimeout(() => ov.classList.remove('show'), 3000)
+  }
+}
+
+function updateXpUI() {
+  const xp  = user.xp || 0
+  const cur = getCurrentLevel()
+  const nxt = getNextLevel()
+  // Profile XP bar
+  const xpBar  = document.getElementById('p-xp-bar')
+  const xpText = document.getElementById('p-xp-text')
+  const lvEl   = document.getElementById('bc-lv')
+  if (lvEl) lvEl.textContent = cur.lv
+  if (xpText) xpText.textContent = nxt ? xp.toLocaleString()+' / '+nxt.xp.toLocaleString()+' XP' : xp.toLocaleString()+' XP (MAX)'
+  if (xpBar && nxt) {
+    const pct = Math.min(((xp - cur.xp) / (nxt.xp - cur.xp)) * 100, 100)
+    xpBar.style.width = pct + '%'
+  }
+  // Header badge
+  const hbadge = document.getElementById('h-lv-badge')
+  if (hbadge) { hbadge.textContent = cur.icon; hbadge.style.background = cur.color+'33'; hbadge.style.borderColor = cur.color+'88' }
+}
+
+function applyPrizeBonus(amount) {
+  const bonus = getUserUnlocks().prize_bonus || 0
+  return +(amount * (1 + bonus)).toFixed(4)
+}
+
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
   stars:{name:'$USDT Room',cur:'usdt',price:0.25,tbola:50,icon:'💵'},
@@ -2100,7 +2229,21 @@ function initHome(){
 }
 
 function openLobby(r){
-  console.log('openLobby called:', r, 'isGameActive:', isGameActive, 'pointerEvents:', document.querySelector('.rc')?.style?.pointerEvents)
+  console.log('openLobby called:', r, 'isGameActive:', isGameActive)
+  // Level gate
+  const ul = getUserUnlocks()
+  const gates = { free:'freeRoom', stars:'usdtRoom', ton:'tonRoom', vip:'vipRoom' }
+  const gateKey = gates[r]
+  if (gateKey && !ul[gateKey]) {
+    const needed = XP_LEVELS.find(l=>l.unlocks[gateKey])
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 Locked',
+      message:(ROOMS[r]?.name||r)+' unlocks at Level '+(needed?.lv||'?')+' — '+(needed?.name||'')+'.\n\nKeep playing to earn XP!',
+      buttons:[{type:'ok'}]
+    })
+    else alert('Reach Level '+(needed?.lv||'?')+' to unlock this room!')
+    return
+  }
   // Block if game in progress
   if(isGameActive){
     if(tg?.showPopup) tg.showPopup({
@@ -2719,7 +2862,7 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
     if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
     if (onFail) onFail(e)
   }
-  const success = () => { if (onPaid) onPaid() }
+  const success = () => { addXP(total, currency); if (onPaid) onPaid() }
 
   if (currency === 'usdt') {
     const total = +((wheelPricePerSpin.usdt || 0.25) * spins).toFixed(2)
@@ -2838,6 +2981,22 @@ function updateScratchJackpot() {
   if (tonBar)  tonBar.style.width  = Math.min(scratchJpTon/1*100,100)+'%'
 }
 
+
+function openPvpGated() {
+  const ul = getUserUnlocks()
+  if (!ul.pvp) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 PvP Battle — Level 3 Required',
+      message:'PvP Battle unlocks at Level 3 — Warrior (2,000 XP).
+
+Play bingo, spin the wheel, and scratch cards to earn XP!',
+      buttons:[{type:'ok', text:'Got it'}]
+    })
+    return
+  }
+  go('s-pvp'); setNav('nb-h')
+}
+
 function openScratch() {
   go('s-scratch'); setNav('nb-h')
   scratchSelected = null
@@ -2861,6 +3020,18 @@ function openScratch() {
 }
 
 function selectScratchCard(tier) {
+  const ul = getUserUnlocks()
+  const scratchGates = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
+  const key = scratchGates[tier]
+  if (key && !ul[key]) {
+    const needed = XP_LEVELS.find(l=>l.unlocks[key])
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 Locked',
+      message:`${SCRATCH_TIERS[tier]?.name} card unlocks at Level ${needed?.lv} — ${needed?.name}.`,
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
   scratchSelected = tier
   showScratchTable(tier)
   updateScratchBuyBtn()
@@ -2895,10 +3066,11 @@ async function buyScratchCard() {
   if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; btn.textContent='⏳ Processing...' }
 
   const onSuccess = () => {
+    addXP(effectivePrice, t.cur)
     if(hasFree) scratchFreeCards--
     if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Purchased!' }
     // Check if user has Warrior Pass for auto-scratch
-    const hasWP = user.hasWarriorPass || false
+    const hasWP = (user.hasWarriorPass || false) && getUserUnlocks().autoSpin
     if(count===1) {
       revealScratchCard(t, hasWP)
     } else {
@@ -3107,8 +3279,10 @@ function checkScratchResult(cellData, tier) {
     scratchFreeCards=(scratchFreeCards||0)+1
     newBtn.textContent='🎟️ Use Free Card!'
   } else if(totalPrize>0) {
+    const bonusedPrize = applyPrizeBonus(totalPrize)
+    const bonusNote = bonusedPrize > totalPrize ? ' (+'+((getUserUnlocks().prize_bonus||0)*100).toFixed(0)+'% level bonus)' : ''
     const detail=winLines.map(w=>w.sym+(w.prize?'→+'+w.prize.toFixed(2):'')).join(' ')
-    msg.innerHTML='🎉 Won <b>'+totalPrize.toFixed(2)+' '+sym+'</b>!<br><span style="font-size:.7rem;opacity:.6">'+detail+'</span>'
+    msg.innerHTML='🎉 Won <b>'+bonusedPrize.toFixed(2)+' '+sym+'</b>!'+bonusNote+'<br><span style="font-size:.7rem;opacity:.6"><br><span style="font-size:.7rem;opacity:.6">'+detail+'</span>"
     msg.style.color='#34D399'
     user.tbola=(user.tbola||0)+25
   } else {
@@ -4046,7 +4220,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- PvP Battle — Coming Soon -->
+    <!-- PvP Battle — Lv 3 required -->
     <div style="margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
@@ -5161,6 +5335,135 @@ setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.nam
 // Always clear stale game on fresh load — user must explicitly resume
 sessionStorage.removeItem('tbgame')
 
+
+// ── XP & LEVEL SYSTEM ──
+const XP_LEVELS = [
+  { lv:1, name:'Rookie',  xp:0,      icon:'🏕️', color:'#3A7A24',
+    unlocks:{ freeRoom:true, usdtRoom:false, tonRoom:false, vipRoom:false,
+              wheelUsdt:false, wheelTon:false,
+              scratchBronze:true, scratchSilver:false, scratchGold:false,
+              pvp:false, autoSpin:false,
+              tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
+  },
+  { lv:2, name:'Player',  xp:500,    icon:'⚔️', color:'#0060A0',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:false, vipRoom:false,
+              wheelUsdt:true, wheelTon:false,
+              scratchBronze:true, scratchSilver:true, scratchGold:false,
+              pvp:false, autoSpin:false,
+              tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 }
+  },
+  { lv:3, name:'Warrior', xp:2000,   icon:'🛡️', color:'#0F6E56',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:false,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:false,
+              tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 }
+  },
+  { lv:4, name:'Expert',  xp:10000,  icon:'🔥', color:'#854F0B',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:false,
+              tbola_bonus:0.15, prize_bonus:0.05, free_scratches_week:2, jackpot_share:0 }
+  },
+  { lv:5, name:'Master',  xp:50000,  icon:'💎', color:'#534AB7',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:true,
+              tbola_bonus:0.20, prize_bonus:0.10, free_scratches_week:3, jackpot_share:0.05 }
+  },
+  { lv:6, name:'Legend',  xp:200000, icon:'👑', color:'#A32D2D',
+    unlocks:{ freeRoom:true, usdtRoom:true, tonRoom:true, vipRoom:true,
+              wheelUsdt:true, wheelTon:true,
+              scratchBronze:true, scratchSilver:true, scratchGold:true,
+              pvp:true, autoSpin:true,
+              tbola_bonus:0.25, prize_bonus:0.20, free_scratches_week:5, jackpot_share:0.10 }
+  },
+]
+
+// XP per currency unit spent
+const XP_PER_USDT = 100  // 1 USDT = 100 XP
+const XP_PER_TON  = 500  // 1 TON  = 500 XP (fixed rate)
+
+function getXpForAmount(amount, cur) {
+  return Math.floor(cur === 'ton' ? amount * XP_PER_TON : amount * XP_PER_USDT)
+}
+
+function getCurrentLevel() {
+  const xp = user.xp || 0
+  let level = XP_LEVELS[0]
+  for (const l of XP_LEVELS) { if (xp >= l.xp) level = l }
+  return level
+}
+
+function getNextLevel() {
+  const cur = getCurrentLevel()
+  return XP_LEVELS.find(l => l.lv === cur.lv + 1) || null
+}
+
+function getUserUnlocks() {
+  return getCurrentLevel().unlocks
+}
+
+function addXP(amount, cur) {
+  const xpGained = getXpForAmount(amount, cur)
+  const prevLevel = getCurrentLevel()
+  user.xp = (user.xp || 0) + xpGained
+  user.tbola = (user.tbola || 0) + xpGained  // $TBOLA mirrors XP gain
+  const newLevel = getCurrentLevel()
+  if (newLevel.lv > prevLevel.lv) {
+    // Level up!
+    showLevelUp(newLevel)
+  }
+  // Update UI
+  updateXpUI()
+  return xpGained
+}
+
+function showLevelUp(level) {
+  if (tg?.showPopup) {
+    tg.showPopup({
+      title: '🎉 Level Up!',
+      message: `You reached ${level.icon} ${level.name}!
+
+New unlocks available — check your profile.`,
+      buttons: [{ type: 'ok', text: "Let's go!" }]
+    })
+  }
+  // Trigger level up animation
+  const ov = document.getElementById('lvup-ov')
+  if (ov) {
+    document.getElementById('lvup-lv-new')?.setAttribute('data-lv', level.lv)
+    ov.classList.add('show')
+    setTimeout(() => ov.classList.remove('show'), 3000)
+  }
+}
+
+function updateXpUI() {
+  const xp  = user.xp || 0
+  const cur = getCurrentLevel()
+  const nxt = getNextLevel()
+  // Profile XP bar
+  const xpBar  = document.getElementById('p-xp-bar')
+  const xpText = document.getElementById('p-xp-text')
+  const lvEl   = document.getElementById('bc-lv')
+  if (lvEl) lvEl.textContent = cur.lv
+  if (xpText) xpText.textContent = nxt ? xp.toLocaleString()+' / '+nxt.xp.toLocaleString()+' XP' : xp.toLocaleString()+' XP (MAX)'
+  if (xpBar && nxt) {
+    const pct = Math.min(((xp - cur.xp) / (nxt.xp - cur.xp)) * 100, 100)
+    xpBar.style.width = pct + '%'
+  }
+  // Header badge
+  const hbadge = document.getElementById('h-lv-badge')
+  if (hbadge) { hbadge.textContent = cur.icon; hbadge.style.background = cur.color+'33'; hbadge.style.borderColor = cur.color+'88' }
+}
+
+function applyPrizeBonus(amount) {
+  const bonus = getUserUnlocks().prize_bonus || 0
+  return +(amount * (1 + bonus)).toFixed(4)
+}
+
 const ROOMS={
   free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
   stars:{name:'$USDT Room',cur:'usdt',price:0.25,tbola:50,icon:'💵'},
@@ -5218,7 +5521,21 @@ function initHome(){
 }
 
 function openLobby(r){
-  console.log('openLobby called:', r, 'isGameActive:', isGameActive, 'pointerEvents:', document.querySelector('.rc')?.style?.pointerEvents)
+  console.log('openLobby called:', r, 'isGameActive:', isGameActive)
+  // Level gate
+  const ul = getUserUnlocks()
+  const gates = { free:'freeRoom', stars:'usdtRoom', ton:'tonRoom', vip:'vipRoom' }
+  const gateKey = gates[r]
+  if (gateKey && !ul[gateKey]) {
+    const needed = XP_LEVELS.find(l=>l.unlocks[gateKey])
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 Locked',
+      message:(ROOMS[r]?.name||r)+' unlocks at Level '+(needed?.lv||'?')+' — '+(needed?.name||'')+'.\n\nKeep playing to earn XP!',
+      buttons:[{type:'ok'}]
+    })
+    else alert('Reach Level '+(needed?.lv||'?')+' to unlock this room!')
+    return
+  }
   // Block if game in progress
   if(isGameActive){
     if(tg?.showPopup) tg.showPopup({
@@ -5837,7 +6154,7 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
     if (tg?.showPopup) tg.showPopup({title:'❌ Payment Failed',message:'Transaction cancelled. Try again.',buttons:[{type:'ok'}]})
     if (onFail) onFail(e)
   }
-  const success = () => { if (onPaid) onPaid() }
+  const success = () => { addXP(total, currency); if (onPaid) onPaid() }
 
   if (currency === 'usdt') {
     const total = +((wheelPricePerSpin.usdt || 0.25) * spins).toFixed(2)
@@ -5929,6 +6246,22 @@ function updateScratchJackpot() {
   if (tonBar)  tonBar.style.width  = Math.min(scratchJpTon/1*100,100)+'%'
 }
 
+
+function openPvpGated() {
+  const ul = getUserUnlocks()
+  if (!ul.pvp) {
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 PvP Battle — Level 3 Required',
+      message:'PvP Battle unlocks at Level 3 — Warrior (2,000 XP).
+
+Play bingo, spin the wheel, and scratch cards to earn XP!',
+      buttons:[{type:'ok', text:'Got it'}]
+    })
+    return
+  }
+  go('s-pvp'); setNav('nb-h')
+}
+
 function openScratch() {
   go('s-scratch'); setNav('nb-h')
   scratchSelected = null
@@ -5952,6 +6285,18 @@ function openScratch() {
 }
 
 function selectScratchCard(tier) {
+  const ul = getUserUnlocks()
+  const scratchGates = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
+  const key = scratchGates[tier]
+  if (key && !ul[key]) {
+    const needed = XP_LEVELS.find(l=>l.unlocks[key])
+    if(tg?.showPopup) tg.showPopup({
+      title:'🔒 Locked',
+      message:`${SCRATCH_TIERS[tier]?.name} card unlocks at Level ${needed?.lv} — ${needed?.name}.`,
+      buttons:[{type:'ok'}]
+    })
+    return
+  }
   scratchSelected = tier
   showScratchTable(tier)
   updateScratchBuyBtn()
