@@ -2787,7 +2787,7 @@ async function claimFaucet() {
     alert('Connetti il wallet prima di usare il faucet')
     return
   }
-  if (TESTNET_USDT_MASTER === 'PLACEHOLDER_USDT') {
+  if (TESTNET_USDT_MASTER === '0QCfks9Ila5ZRRMUw5Y75-PVpiXbiQ1QwZNRYE_Aohq_d7hH') {
     alert('Deploy MockUSDT su testnet prima!\n\nSeguire la guida: TESTNET_GUIDE.md')
     return
   }
@@ -3434,9 +3434,9 @@ function handleTxError(err) {
 const IS_TESTNET = true
 
 // Indirizzi testnet (aggiornare dopo deploy)
-const TESTNET_USDT_MASTER   = 'PLACEHOLDER_USDT'   // → aggiornare dopo deploy MockUSDT
-const TESTNET_VAULT_ADDRESS = 'PLACEHOLDER_VAULT'  // → aggiornare dopo deploy TonBolaVault
-const TESTNET_TBOLA_MASTER  = 'PLACEHOLDER_TBOLA'  // → aggiornare dopo deploy TbolaJetton
+const TESTNET_USDT_MASTER   = '0QCfks9Ila5ZRRMUw5Y75-PVpiXbiQ1QwZNRYE_Aohq_d7hH'   // → aggiornare dopo deploy MockUSDT
+const TESTNET_VAULT_ADDRESS = '0QC182ifq-Om3dRKNhrw0blR5GhSHOAenxRxhFj2bBbCQAVZ'  // → aggiornare dopo deploy TonBolaVault
+const TESTNET_TBOLA_MASTER  = '0QCfYsHnxGSYKTADwI8syPTBX0EVOFv9if_lkuMLD5tcd9Cj'  // → aggiornare dopo deploy TbolaJetton
 
 // Indirizzi mainnet (usati quando IS_TESTNET = false)
 const MAINNET_USDT_MASTER   = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
