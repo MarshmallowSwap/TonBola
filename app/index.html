@@ -3862,16 +3862,12 @@ function renderProfile(){
   document.getElementById('p-ref').textContent='t.me/TonBolaBot_bot?start=ref_'+user.id
 
   const levels=[
-    {lv:1, icon:'🏕️',label:'Rookie',    unlocks:'Free & USDT rooms access',color:'#3A7A24'},
-    {lv:6, icon:'⚔', label:'Player',    unlocks:'Referral program activated',color:'#4080CC'},
-    {lv:10,icon:'⭐',label:'Gold Cards', unlocks:'+5% win probability forever',color:'#CC8800'},
-    {lv:16,icon:'🔥',label:'Expert',     unlocks:'Monthly leaderboard prizes',color:'#CC5500'},
-    {lv:20,icon:'👑',label:'VIP Access', unlocks:'VIP $TON Room — legendary pools',color:'#CC2200'},
-    {lv:30,icon:'⚡',label:'Double XP',  unlocks:'2× XP every weekend',color:'#0090CC'},
-    {lv:31,icon:'🏅',label:'Master',     unlocks:'Priority squad matching',color:'#3AAA3A'},
-    {lv:50,icon:'🃏',label:'Free Card',  unlocks:'1 free card every day forever',color:'#00BCD4'},
-    {lv:51,icon:'💎',label:'Legend',     unlocks:'Season badge + exclusive frame',color:'#8B2FFF'},
-    {lv:75,icon:'🎱',label:'Grand Master',unlocks:'Legend avatar in all lobbies',color:'#CC8800'},
+    {lv:5,  icon:'\u2694\uFE0F', label:'Player',   unlocks:'USDT rooms + Silver Scratch unlocked',  color:'#0060A0'},
+    {lv:10, icon:'\u{1F6E1}\uFE0F', label:'Warrior',  unlocks:'TON rooms + PvP Battle unlocked',       color:'#0F6E56'},
+    {lv:15, icon:'\u{1F525}', label:'Expert',   unlocks:'VIP Room + 5% prize bonus',            color:'#854F0B'},
+    {lv:20, icon:'\u{1F3C6}', label:'Champion', unlocks:'Jackpot share + 3 free scratches/week', color:'#D85A30'},
+    {lv:25, icon:'\u{1F48E}', label:'Master',   unlocks:'Auto-spin + Jackpot +8% share',         color:'#534AB7'},
+    {lv:30, icon:'\u{1F451}', label:'Legend',   unlocks:'+20% all prizes + exclusive badge',     color:'#A32D2D'},
   ]
   document.getElementById('p-unlocks').innerHTML=levels.map(u=>{
     const done=user.level>=u.lv
