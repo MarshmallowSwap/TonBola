@@ -9,6 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TonBola</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
 <link rel="preload" as="image" href="assets/wheel-bg.png">
 <link rel="preload" as="image" href="assets/wheel-disc.png">
 <link rel="preload" as="image" href="assets/wheel-ring.png">
@@ -2152,6 +2153,10 @@ let pvpStats = { wins:0, losses:0, earned:0 }
 let pvpCurrentCode = ''
 let pvpChallenges = {}
 let pvpRooms = []
+let pvpSocket = null
+let pvpConnected = false
+const PVP_SERVER = 'https://api.fundshot.app'
+const PVP_PATH = '/tonbola-pvp/socket.io'
 let pvpMyRoom = null
 let pvpCountdownTimer = null
 let pvpSelectedBet = 1
@@ -5078,10 +5083,168 @@ const PVP_PRESETS_TON  = [1, 2, 5]
 function openPvp() {
   pvpShowLobby()
   go('s-pvp'); setNav('nb-h')
+  pvpConnect()
+}
+
+function pvpConnect() {
+  if (pvpSocket && pvpConnected) {
+    pvpSocket.emit('player:register', { name: user.name })
+    return
+  }
+  try {
+    pvpSocket = io(PVP_SERVER, {
+      path: PVP_PATH,
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionDelay: 2000
+    })
+
+    pvpSocket.on('connect', () => {
+      pvpConnected = true
+      console.log('PvP socket connected')
+      pvpSocket.emit('player:register', { name: user.name })
+    })
+
+    pvpSocket.on('disconnect', () => {
+      pvpConnected = false
+    })
+
+    pvpSocket.on('player:registered', ({ id }) => {
+      console.log('PvP registered:', id)
+    })
+
+    // Room list from server
+    pvpSocket.on('rooms:list', (rooms) => {
+      pvpRooms = rooms.map(r => ({ ...r, ts: r.createdAt }))
+      pvpRenderRooms()
+    })
+
+    pvpSocket.on('rooms:new', (room) => {
+      // Don't show your own room in the list
+      if (!pvpMyRoom || pvpMyRoom.id !== room.id) {
+        pvpRooms.push({ ...room, ts: room.createdAt })
+        pvpRenderRooms()
+      }
+    })
+
+    pvpSocket.on('rooms:remove', ({ roomId }) => {
+      pvpRooms = pvpRooms.filter(r => r.id !== roomId)
+      pvpRenderRooms()
+    })
+
+    pvpSocket.on('room:created', ({ roomId, code }) => {
+      pvpCurrentCode = code
+      pvpMyRoom = { id: roomId, code, bet: pvpBet, cur: pvpCur }
+      pvpShowWaiting()
+      document.getElementById('pvp-room-code').textContent = code
+
+      // Countdown 3 min
+      let secs = 180
+      if (pvpCountdownTimer) clearInterval(pvpCountdownTimer)
+      pvpCountdownTimer = setInterval(() => {
+        secs--
+        const m = Math.floor(secs/60), s = secs%60
+        const el = document.getElementById('pvp-countdown')
+        if(el){ el.textContent = m+':'+(s<10?'0':'')+s; el.style.color = secs<30?'#FF4444':'#F953C6' }
+        if(secs <= 0) { clearInterval(pvpCountdownTimer); pvpCountdownTimer = null }
+      }, 1000)
+    })
+
+    pvpSocket.on('room:joined', ({ roomId, bet, cur }) => {
+      pvpBet = bet; pvpCur = cur
+    })
+
+    pvpSocket.on('room:expired', ({ bet, cur }) => {
+      if(pvpCountdownTimer){ clearInterval(pvpCountdownTimer); pvpCountdownTimer=null }
+      pvpMyRoom = null
+      pvpShowLobby()
+      if(tg?.showPopup) tg.showPopup({
+        title:'⏱️ Room Expired',
+        message:'No opponent joined.\n\n'+bet.toFixed(2)+' '+(cur==='usdt'?'USDT':'TON')+' refunded.',
+        buttons:[{type:'ok'}]
+      })
+    })
+
+    pvpSocket.on('room:error', ({ msg }) => {
+      alert(msg)
+    })
+
+    pvpSocket.on('room:cancelled', () => {
+      pvpMyRoom = null
+      pvpShowLobby()
+    })
+
+    pvpSocket.on('game:start', ({ card, opponent, bet, cur }) => {
+      if(pvpCountdownTimer){ clearInterval(pvpCountdownTimer); pvpCountdownTimer=null }
+      pvpBet = bet; pvpCur = cur
+      pvpYourCard = card
+      pvpYourLines = 0; pvpOppLines = 0
+      pvpGameActive = true
+
+      const sym = cur==='usdt'?'USDT':'TON'
+      document.getElementById('pvp-lobby').style.display   = 'none'
+      document.getElementById('pvp-waiting').style.display = 'none'
+      document.getElementById('pvp-create').style.display  = 'none'
+      document.getElementById('pvp-game').style.display    = 'block'
+      document.getElementById('pvp-result').style.display  = 'none'
+      document.getElementById('pvp-opp-name').textContent  = opponent
+      document.getElementById('pvp-pot').textContent       = (bet*2).toFixed(2)+' '+sym
+      document.getElementById('pvp-your-lines').textContent= '0 lines'
+      document.getElementById('pvp-opp-lines').textContent = '0 lines'
+      document.getElementById('pvp-draw-num').textContent  = '—'
+      document.getElementById('pvp-drawn-nums').innerHTML  = ''
+      pvpRenderCard('pvp-your-card', pvpYourCard, 'your')
+    })
+
+    pvpSocket.on('game:draw', ({ num, players }) => {
+      document.getElementById('pvp-draw-num').textContent = num
+      const chip = document.createElement('div')
+      chip.textContent = num
+      chip.style.cssText = 'background:rgba(255,255,255,.1);border-radius:6px;padding:2px 6px;font-size:.7rem;font-weight:700;color:#fff'
+      document.getElementById('pvp-drawn-nums').appendChild(chip)
+
+      // Update cards from server state
+      players.forEach(p => {
+        const isMine = p.id === pvpSocket.id
+        const cardId = isMine ? 'pvp-your-card' : 'pvp-opp-card'
+        const type   = isMine ? 'your' : 'opp'
+        if (isMine) pvpYourCard = p.card
+        else pvpOppCard = p.card
+        pvpRenderCard(cardId, p.card, type)
+        const linesEl = document.getElementById(isMine ? 'pvp-your-lines' : 'pvp-opp-lines')
+        if(linesEl) linesEl.textContent = p.lines+(p.lines===1?' line':' lines')
+      })
+    })
+
+    pvpSocket.on('game:end', ({ winnerId, winnerName, loserName, winAmt, bet, cur }) => {
+      pvpGameActive = false
+      const sym = cur==='usdt'?'USDT':'TON'
+      const won = winnerId === pvpSocket.id
+      document.getElementById('pvp-result').style.display='flex'
+      if(won){
+        pvpStats.wins++
+        pvpStats.earned = +(pvpStats.earned+winAmt-bet).toFixed(2)
+        document.getElementById('pvp-result-icon').textContent='🏆'
+        document.getElementById('pvp-result-title').textContent='You Win!'
+        document.getElementById('pvp-result-sub').textContent='+'+(winAmt-bet).toFixed(2)+' '+sym+' profit'
+        addXP(winAmt, cur)
+      } else {
+        pvpStats.losses++
+        document.getElementById('pvp-result-icon').textContent='💀'
+        document.getElementById('pvp-result-title').textContent=winnerName+' wins!'
+        document.getElementById('pvp-result-sub').textContent='-'+bet.toFixed(2)+' '+sym
+      }
+    })
+
+  } catch(e) {
+    console.warn('PvP socket error:', e)
+    // Fallback: use bot mode
+  }
 }
 
 function leavePvp() {
   pvpCancelRoom()
+  if(pvpSocket){ pvpSocket.disconnect(); pvpSocket=null; pvpConnected=false }
   pvpGameActive = false
   if(pvpDrawTimer)  { clearTimeout(pvpDrawTimer);  pvpDrawTimer  = null }
   if(pvpMatchTimer) { clearTimeout(pvpMatchTimer); pvpMatchTimer = null }
@@ -5164,41 +5327,29 @@ function pvpCreateRoom() {
   if(pvpBet < 1) { alert('Minimum 1 '+sym); return }
 
   const onSuccess = () => {
-    const code = Math.random().toString(36).substring(2,8).toUpperCase()
-    pvpCurrentCode = code
-    pvpMyRoom = { code, bet:pvpBet, cur:pvpCur, ts:Date.now(), owner:user.name }
-
-    // Add to room list
-    pvpRooms.push({ ...pvpMyRoom, id: code })
-
-    // Show waiting screen
-    pvpShowWaiting()
-    document.getElementById('pvp-room-code').textContent = code
-
-    // Start countdown 3 minutes
-    let secs = 180
-    pvpCountdownTimer = setInterval(() => {
-      secs--
-      const m = Math.floor(secs/60), s = secs%60
-      const el = document.getElementById('pvp-countdown')
-      if(el) el.textContent = m+':'+(s<10?'0':'')+s
-      if(el) el.style.color = secs < 30 ? '#FF4444' : '#F953C6'
-
-      if(secs <= 0) {
-        clearInterval(pvpCountdownTimer)
-        pvpCountdownTimer = null
-        pvpAutoRefund()
-      }
-    }, 1000)
-
-    // Simulate opponent joining after 5-25 seconds (random)
-    const joinDelay = 5000 + Math.random() * 20000
-    pvpMatchTimer = setTimeout(() => {
-      if(pvpMyRoom) {
-        const botName = PVP_BOT_NAMES[Math.floor(Math.random()*PVP_BOT_NAMES.length)]
-        pvpOpponentJoins(botName)
-      }
-    }, joinDelay)
+    if (pvpConnected && pvpSocket) {
+      // Real WebSocket mode
+      pvpSocket.emit('room:create', { bet: pvpBet, cur: pvpCur, name: user.name })
+    } else {
+      // Fallback bot mode
+      const code = Math.random().toString(36).substring(2,8).toUpperCase()
+      pvpCurrentCode = code
+      pvpMyRoom = { code, bet:pvpBet, cur:pvpCur, ts:Date.now(), owner:user.name, id:code }
+      pvpRooms.push({ ...pvpMyRoom })
+      pvpShowWaiting()
+      document.getElementById('pvp-room-code').textContent = code
+      let secs = 180
+      pvpCountdownTimer = setInterval(() => {
+        secs--
+        const m=Math.floor(secs/60),s=secs%60
+        const el=document.getElementById('pvp-countdown')
+        if(el){el.textContent=m+':'+(s<10?'0':'')+s;el.style.color=secs<30?'#FF4444':'#F953C6'}
+        if(secs<=0){clearInterval(pvpCountdownTimer);pvpCountdownTimer=null;pvpAutoRefund()}
+      }, 1000)
+      pvpMatchTimer = setTimeout(() => {
+        if(pvpMyRoom){pvpOpponentJoins(PVP_BOT_NAMES[Math.floor(Math.random()*PVP_BOT_NAMES.length)])}
+      }, 5000+Math.random()*20000)
+    }
   }
   const onFail = () => {}
   if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail)
@@ -5212,9 +5363,12 @@ function pvpJoinRoom(roomId) {
   const sym = pvpCur==='usdt'?'USDT':'TON'
 
   const onSuccess = () => {
-    // Remove room from list
     pvpRooms = pvpRooms.filter(r=>r.id!==roomId)
-    pvpOpponentJoins(room.owner)
+    if (pvpConnected && pvpSocket) {
+      pvpSocket.emit('room:join', { roomId, name: user.name })
+    } else {
+      pvpOpponentJoins(room.owner)
+    }
   }
   const onFail = () => {}
   if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail)
@@ -5230,6 +5384,7 @@ function pvpCancelRoom() {
   if(pvpCountdownTimer){ clearInterval(pvpCountdownTimer); pvpCountdownTimer=null }
   if(pvpMatchTimer){ clearTimeout(pvpMatchTimer); pvpMatchTimer=null }
   if(pvpMyRoom) {
+    if(pvpConnected && pvpSocket) pvpSocket.emit('room:cancel', { roomId: pvpMyRoom.id })
     pvpRooms = pvpRooms.filter(r=>r.id!==pvpMyRoom.id)
     pvpMyRoom = null
   }
