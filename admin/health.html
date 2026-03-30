@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TonBola — Admin Health Check</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: 'Courier New', monospace; background: #0A0A0F; color: #E0E0E0; padding: 20px; min-height: 100vh }
+  h1 { color: #8B5CF6; font-size: 1.3rem; margin-bottom: 4px }
+  .sub { color: rgba(255,255,255,.3); font-size: .75rem; margin-bottom: 24px }
+  .section { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 16px; margin-bottom: 14px }
+  .section-title { font-size: .65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(139,92,246,.6); margin-bottom: 12px }
+  .row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.04) }
+  .row:last-child { border-bottom: none }
+  .label { flex: 1; font-size: .8rem; color: rgba(255,255,255,.6) }
+  .value { font-size: .8rem; color: #fff; text-align: right }
+  .badge { font-size: .65rem; font-weight: 700; padding: 2px 10px; border-radius: 50px; white-space: nowrap }
+  .ok   { background: rgba(52,211,153,.15); color: #34D399; border: 1px solid rgba(52,211,153,.3) }
+  .err  { background: rgba(239,68,68,.15);  color: #F87171; border: 1px solid rgba(239,68,68,.3) }
+  .warn { background: rgba(251,191,36,.15); color: #FCD34D; border: 1px solid rgba(251,191,36,.3) }
+  .load { background: rgba(139,92,246,.15); color: #A78BFA; border: 1px solid rgba(139,92,246,.3) }
+  .btn { background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.4); color: #A78BFA; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: .8rem; font-weight: 700; margin-top: 10px }
+  .jp-val { font-size: 1rem; font-weight: 700; color: #FFD700 }
+  table { width: 100%; border-collapse: collapse; font-size: .75rem }
+  th { text-align: left; color: rgba(255,255,255,.3); font-weight: 600; padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,.06) }
+  td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,.04); color: rgba(255,255,255,.8) }
+  tr:last-child td { border-bottom: none }
+  #last-check { font-size: .65rem; color: rgba(255,255,255,.25); margin-bottom: 16px }
+</style>
+</head>
+<body>
+<h1>⚔️ TonBola Admin</h1>
+<div class="sub">Health Check Dashboard — auto-refresh ogni 30s</div>
+<div id="last-check">Last check: —</div>
+
+<div class="section">
+  <div class="section-title">🔌 Services</div>
+  <div class="row"><div class="label">Supabase DB</div><div id="s-supa" class="badge load">checking...</div></div>
+  <div class="row"><div class="label">PvP WebSocket Server</div><div id="s-pvp" class="badge load">checking...</div></div>
+  <div class="row"><div class="label">TON API</div><div id="s-tonapi" class="badge load">checking...</div></div>
+  <div class="row"><div class="label">Frontend (Vercel)</div><div id="s-vercel" class="badge load">checking...</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">🎰 Jackpot Pools</div>
+  <div class="row"><div class="label">🎡 Wheel TON</div><div id="jp-wheel-ton" class="jp-val">—</div></div>
+  <div class="row"><div class="label">🎡 Wheel USDT</div><div id="jp-wheel-usdt" class="jp-val">—</div></div>
+  <div class="row"><div class="label">🎟️ Scratch USDT</div><div id="jp-scratch-usdt" class="jp-val">—</div></div>
+  <div class="row"><div class="label">🎟️ Scratch TON</div><div id="jp-scratch-ton" class="jp-val">—</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">👥 Users</div>
+  <div class="row"><div class="label">Total registrati</div><div id="u-total" class="value">—</div></div>
+  <div class="row"><div class="label">Attivi oggi</div><div id="u-today" class="value">—</div></div>
+  <div class="row"><div class="label">Warrior Pass attivi</div><div id="u-wp" class="value">—</div></div>
+  <div class="row"><div class="label">Con squad</div><div id="u-squad" class="value">—</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">⚔️ PvP Server</div>
+  <div class="row"><div class="label">Stanze aperte</div><div id="pvp-rooms" class="value">—</div></div>
+  <div class="row"><div class="label">Giocatori connessi</div><div id="pvp-players" class="value">—</div></div>
+  <div class="row"><div class="label">Ultimo risposta</div><div id="pvp-ts" class="value">—</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">📋 Ultimi utenti</div>
+  <table>
+    <thead><tr><th>Nome</th><th>Lv</th><th>XP</th><th>$TBOLA</th><th>WP</th><th>Iscritto</th></tr></thead>
+    <tbody id="users-table"><tr><td colspan="6" style="color:rgba(255,255,255,.3)">Caricamento...</td></tr></tbody>
+  </table>
+</div>
+
+<button class="btn" onclick="runChecks()">🔄 Refresh</button>
+
+<script>
+const SUPA_URL = 'https://lajeiwuumqbzcmdgsczq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhamVpd3V1bXFiemNtZGdzY3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ4NTgzNiwiZXhwIjoyMDkwMDYxODM2fQ.bmUUgJfpoOyj8QR9NfH_7Fyzg360VkuH-ReZsz-fRyk'
+const PVP_URL  = 'https://api.fundshot.app/tonbola-pvp/health'
+
+const H = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+
+function badge(id, cls, txt) { const el=document.getElementById(id); el.className='badge '+cls; el.textContent=txt }
+function val(id, txt) { const el=document.getElementById(id); if(el) el.textContent=txt }
+
+async function sbGet(path, extra={}) {
+  const res = await fetch(SUPA_URL+path, { headers:{...H,...extra} })
+  return { json: await res.json(), count: res.headers.get('content-range')?.split('/')[1] }
+}
+
+async function checkSupabase() {
+  try {
+    const { json } = await sbGet('/rest/v1/jackpot_pools')
+    if (!Array.isArray(json)) throw new Error(json.message || 'error')
+    badge('s-supa','ok','✓ Connected')
+    const map = { wheel_ton:'jp-wheel-ton', wheel_usdt:'jp-wheel-usdt', scratch_usdt:'jp-scratch-usdt', scratch_ton:'jp-scratch-ton' }
+    json.forEach(r => {
+      const sym = r.id.includes('usdt') ? ' USDT' : ' TON'
+      if(map[r.id]) val(map[r.id], parseFloat(r.balance).toFixed(4)+sym)
+    })
+  } catch(e) { badge('s-supa','err','✗ '+e.message) }
+}
+
+async function checkUsers() {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const now   = new Date().toISOString()
+    const [total, active, wp, squad] = await Promise.all([
+      fetch(SUPA_URL+'/rest/v1/users?select=count',{headers:{...H,Prefer:'count=exact'}}),
+      fetch(SUPA_URL+'/rest/v1/users?last_login_date=eq.'+today+'&select=count',{headers:{...H,Prefer:'count=exact'}}),
+      fetch(SUPA_URL+'/rest/v1/users?warrior_pass_expiry=gt.'+now+'&select=count',{headers:{...H,Prefer:'count=exact'}}),
+      fetch(SUPA_URL+'/rest/v1/users?squad_id=not.is.null&select=count',{headers:{...H,Prefer:'count=exact'}})
+    ])
+    const cr = r => r.headers.get('content-range')?.split('/')[1] || '0'
+    val('u-total', cr(total))
+    val('u-today', cr(active))
+    val('u-wp',    cr(wp))
+    val('u-squad', cr(squad))
+
+    const { json: users } = await sbGet('/rest/v1/users?select=first_name,username,level,xp,tbola_balance,warrior_pass_expiry,created_at&order=created_at.desc&limit=10')
+    const tbody = document.getElementById('users-table')
+    if (Array.isArray(users) && users.length) {
+      tbody.innerHTML = users.map(u => {
+        const wp = u.warrior_pass_expiry && new Date(u.warrior_pass_expiry) > new Date()
+        return '<tr><td>'+(u.first_name||u.username||'—')+'</td><td>'+u.level+'</td><td>'+(u.xp||0).toLocaleString()+'</td><td>'+(u.tbola_balance||0).toLocaleString()+'</td><td>'+(wp?'<span style="color:#A78BFA">⚔️</span>':'—')+'</td><td>'+new Date(u.created_at).toLocaleDateString('it-IT')+'</td></tr>'
+      }).join('')
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" style="color:rgba(255,255,255,.3)">Nessun utente</td></tr>'
+    }
+  } catch(e) { console.warn('checkUsers', e) }
+}
+
+async function checkPvp() {
+  try {
+    const res  = await fetch(PVP_URL)
+    const data = await res.json()
+    if (data.status==='ok') {
+      badge('s-pvp','ok','✓ Running')
+      val('pvp-rooms',   data.rooms+' aperte')
+      val('pvp-players', data.players+' connessi')
+      val('pvp-ts',      new Date(data.ts).toLocaleTimeString('it-IT'))
+    } else throw new Error('bad status')
+  } catch(e) {
+    badge('s-pvp','err','✗ Offline')
+    val('pvp-rooms','—'); val('pvp-players','—'); val('pvp-ts','—')
+  }
+}
+
+async function checkTonApi() {
+  try {
+    const res = await fetch('https://tonapi.io/v2/status')
+    badge('s-tonapi', res.ok ? 'ok' : 'warn', res.ok ? '✓ Online' : '⚠ '+res.status)
+  } catch(e) { badge('s-tonapi','warn','⚠ CORS') }
+}
+
+async function checkVercel() {
+  try {
+    const res = await fetch('https://ton-bola.vercel.app/app/index.html',{method:'HEAD'})
+    badge('s-vercel', res.ok?'ok':'err', res.ok?'✓ Live':'✗ '+res.status)
+  } catch(e) { badge('s-vercel','warn','⚠ CORS (ok)') }
+}
+
+async function runChecks() {
+  document.getElementById('last-check').textContent = 'Last check: '+new Date().toLocaleTimeString('it-IT')
+  ;['s-supa','s-pvp','s-tonapi','s-vercel'].forEach(id=>badge(id,'load','checking...'))
+  await Promise.all([checkSupabase(), checkPvp(), checkTonApi(), checkVercel(), checkUsers()])
+}
+
+runChecks()
+setInterval(runChecks, 30000)
+</script>
+</body>
+</html>
