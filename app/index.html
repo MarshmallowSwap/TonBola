@@ -1119,8 +1119,25 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:#34D399" id="sc-tbola-bal">0 $TBOLA</div>
   </div>
 
+  <!-- Jackpot banner — same style as wheel -->
+  <div style="margin:10px 12px 0;background:linear-gradient(135deg,#002A1A,#003D26);border:1.5px solid rgba(52,211,153,.3);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+    <div style="font-size:1.4rem">🎰</div>
+    <div>
+      <div style="font-size:.5rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase;margin-bottom:4px">Jackpot Pools</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="sc-jp-usdt" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#34D399">0.00 USDT</div>
+        <div style="color:rgba(52,211,153,.3);font-size:.9rem">·</div>
+        <div id="sc-jp-ton" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#34D399">0.00 TON</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin:4px 12px 8px;height:3px;background:rgba(52,211,153,.06);border-radius:2px;overflow:hidden">
+    <div id="sc-jp-usdt-bar" style="height:100%;background:linear-gradient(90deg,#059669,#34D399);width:0%;transition:width .8s;border-radius:2px"></div>
+  </div>
+  <div style="display:none" id="sc-jp-ton-bar"></div>
+
   <!-- Card tier selector -->
-  <div style="padding:12px 12px 6px;font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase">Choose your card</div>
+  <div style="padding:4px 12px 6px;font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase">Choose your card</div>
   <div style="display:flex;flex-direction:column;gap:8px;padding:0 12px 12px">
 
     <!-- Bronze 0.10 USDT -->
@@ -3090,12 +3107,10 @@ let scratchTotal    = 0
 function updateScratchJackpot() {
   const usdtEl  = document.getElementById('sc-jp-usdt')
   const tonEl   = document.getElementById('sc-jp-ton')
-  const usdtBar = document.getElementById('sc-jp-usdt-bar')
-  const tonBar  = document.getElementById('sc-jp-ton-bar')
-  if(usdtEl)  usdtEl.textContent  = scratchJpUsdt.toFixed(2)+' USDT'
-  if(tonEl)   tonEl.textContent   = scratchJpTon.toFixed(2)+' TON'
-  if(usdtBar) usdtBar.style.width = Math.min(scratchJpUsdt/5*100,100)+'%'
-  if(tonBar)  tonBar.style.width  = Math.min(scratchJpTon/1*100,100)+'%'
+  const bar     = document.getElementById('sc-jp-usdt-bar')
+  if(usdtEl) usdtEl.textContent = scratchJpUsdt.toFixed(2)+' USDT'
+  if(tonEl)  tonEl.textContent  = scratchJpTon.toFixed(2)+' TON'
+  if(bar)    bar.style.width    = Math.min(scratchJpUsdt/5*100,100)+'%'
   const hubJp    = document.getElementById('hub-sc-jackpot')
   const hubJpTon = document.getElementById('hub-sc-jp-ton')
   if(hubJp)    hubJp.textContent    = scratchJpUsdt.toFixed(2)+' USDT'
