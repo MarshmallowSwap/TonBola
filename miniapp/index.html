@@ -1206,6 +1206,22 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </table>
   </div>
 
+  <!-- Multi-card selector -->
+  <div style="padding:0 12px 6px">
+    <div style="font-size:.55rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase;margin-bottom:6px">How many cards?</div>
+    <div style="display:flex;gap:6px" id="sc-count-btns">
+      <button onclick="setScratchCount(1,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(52,211,153,.5);background:rgba(52,211,153,.12);color:#34D399;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">1x</button>
+      <button onclick="setScratchCount(3,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">3x</button>
+      <button onclick="setScratchCount(5,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;position:relative">5x<span style="position:absolute;top:-6px;right:-2px;font-size:.45rem;background:#3AFF8A;color:#000;padding:1px 4px;border-radius:4px;font-weight:800">-5%</span></button>
+      <button onclick="setScratchCount(10,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;position:relative">10x<span style="position:absolute;top:-6px;right:-2px;font-size:.45rem;background:#FFD700;color:#000;padding:1px 4px;border-radius:4px;font-weight:800">-10%</span></button>
+    </div>
+  </div>
+
+  <!-- Auto-scratch info for WP -->
+  <div id="sc-wp-info" style="display:none;margin:4px 12px 6px;padding:8px 12px;border-radius:10px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);font-size:.68rem;color:rgba(167,139,250,.8)">
+    ⚡ Warrior Pass — Auto-scratch enabled
+  </div>
+
   <!-- Buy button -->
   <div style="padding:0 12px 14px">
     <button id="sc-buy-btn" onclick="buyScratchCard()"
@@ -2720,28 +2736,33 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
 
 const SCRATCH_PRIZES = {
   usdt_low: [
-    {match:'Row 💎💎💎', sym:'💎', prize:'3.00 USDT', odds:'~1 in 108'},
-    {match:'Row ⭐⭐⭐', sym:'⭐', prize:'1.00 USDT', odds:'~1 in 108'},
-    {match:'Row 7️⃣7️⃣7️⃣', sym:'7️⃣', prize:'0.50 USDT', odds:'~1 in 108'},
-    {match:'Row any×3', sym:'any', prize:'0.30 USDT', odds:'~1 in 20'},
-    {match:'No row match', sym:'—', prize:'—', odds:'~91.7%'},
+    {match:'Row 💎×4', prize:'10.00 USDT', odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row ⭐×4', prize:'4.00 USDT',  odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 7️⃣×4', prize:'2.50 USDT',  odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 👑×4', prize:'Free Card',   odds:'1 in 243', prob:'0.4115%'},
+    {match:'Any row×4', prize:'0.40 USDT', odds:'1 in 49',  prob:'2.0576%'},
+    {match:'≥5x 🎰',   prize:'USDT Jackpot',odds:'1 in 146',prob:'0.6838%'},
+    {match:'No win',    prize:'—',           odds:'~96.4%',   prob:'96.4%'},
   ],
   usdt_mid: [
-    {match:'Row 💎💎💎💎', sym:'💎', prize:'20.00 USDT', odds:'~1 in 648'},
-    {match:'Row ⭐⭐⭐⭐', sym:'⭐', prize:'5.00 USDT',  odds:'~1 in 648'},
-    {match:'Row 7️⃣×4',   sym:'7️⃣', prize:'2.00 USDT',  odds:'~1 in 648'},
-    {match:'Row any×4',   sym:'any', prize:'1.00 USDT',  odds:'~1 in 71'},
-    {match:'No row match', sym:'—',  prize:'—',           odds:'~98.6%'},
+    {match:'Row 💎×4', prize:'30.00 USDT', odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row ⭐×4', prize:'10.00 USDT', odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 7️⃣×4', prize:'6.00 USDT',  odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 👑×4', prize:'Warrior Pass',odds:'1 in 243', prob:'0.4115%'},
+    {match:'Any row×4', prize:'2.00 USDT', odds:'1 in 49',  prob:'2.0576%'},
+    {match:'≥5x 🎰',   prize:'USDT Jackpot',odds:'1 in 146',prob:'0.6838%'},
+    {match:'No win',    prize:'—',           odds:'~96.4%',   prob:'96.4%'},
   ],
   ton: [
-    {match:'Row 💎💎💎💎', sym:'💎', prize:'4.00 TON',  odds:'~1 in 648'},
-    {match:'Row ⭐⭐⭐⭐', sym:'⭐', prize:'1.50 TON',  odds:'~1 in 648'},
-    {match:'Row 7️⃣×4',   sym:'7️⃣', prize:'0.80 TON',  odds:'~1 in 648'},
-    {match:'Row any×4',   sym:'any', prize:'0.40 TON',  odds:'~1 in 71'},
-    {match:'No row match', sym:'—',  prize:'—',           odds:'~98.6%'},
+    {match:'Row 💎×4', prize:'15.00 TON',  odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row ⭐×4', prize:'5.00 TON',   odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 7️⃣×4', prize:'2.50 TON',   odds:'1 in 243', prob:'0.4115%'},
+    {match:'Row 👑×4', prize:'Warrior Pass',odds:'1 in 243', prob:'0.4115%'},
+    {match:'Any row×4', prize:'1.00 TON',  odds:'1 in 49',  prob:'2.0576%'},
+    {match:'≥5x 🎰',   prize:'TON Jackpot',odds:'1 in 146', prob:'0.6838%'},
+    {match:'No win',    prize:'—',           odds:'~96.4%',   prob:'96.4%'},
   ]
 }
-
 function showScratchTable(tier) {
   const rows = SCRATCH_PRIZES[tier]
   if(!rows) return
@@ -2771,25 +2792,37 @@ function showScratchTable(tier) {
 }
 
 const SCRATCH_TIERS = {
-  usdt_low: { name:'Bronze', price:0.10, cur:'usdt', rows:3, cols:3,
-    symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'],
-    rowPrizes:{'💎':3.00,'⭐':1.00,'7️⃣':0.50,'any':0.30},
-    jackpotPct:0.20
+  // 3×4=12 celle, 9 simboli | P(riga sym)=0.4115% | P(any riga)=2.058% | P(≥5x🎰)=0.684%
+  usdt_low: {
+    name:'Bronze', price:0.15, cur:'usdt', rows:3, cols:4,
+    symbols:['💎','⭐','7️⃣','🍒','🔔','🍋','🃏','👑','🎰'],
+    rowPrizes:{'💎':10.00,'⭐':4.00,'7️⃣':2.50,'👑':0.15,'any':0.40},
+    wpRow:false, freeCardRow:true,
+    jackpotMin:5, jackpotK:5,
+    jackpotPct:0.20, housePct:0.2883, rtp:71.17
   },
-  usdt_mid: { name:'Silver', price:0.50, cur:'usdt', rows:3, cols:4,
-    symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'],
-    rowPrizes:{'💎':20.00,'⭐':5.00,'7️⃣':2.00,'any':1.00},
-    jackpotPct:0.20
+  usdt_mid: {
+    name:'Silver', price:0.50, cur:'usdt', rows:3, cols:4,
+    symbols:['💎','⭐','7️⃣','🍒','🔔','🍋','🃏','👑','🎰'],
+    rowPrizes:{'💎':30.00,'⭐':10.00,'7️⃣':6.00,'👑':5.00,'any':2.00},
+    wpRow:true, freeCardRow:false,
+    jackpotMin:5, jackpotK:5,
+    jackpotPct:0.20, housePct:0.2979, rtp:70.21
   },
-  ton: { name:'Gold', price:0.20, cur:'ton', rows:3, cols:4,
-    symbols:['💎','⭐','7️⃣','🍒','🔔','🔱'],
-    rowPrizes:{'💎':4.00,'⭐':1.50,'7️⃣':0.80,'any':0.40},
-    jackpotPct:0.20
+  ton: {
+    name:'Gold', price:0.25, cur:'ton', rows:3, cols:4,
+    symbols:['💎','⭐','7️⃣','🍒','🔔','🍋','🃏','👑','🎰'],
+    rowPrizes:{'💎':15.00,'⭐':5.00,'7️⃣':2.50,'👑':3.00,'any':1.00},
+    wpRow:true, freeCardRow:false,
+    jackpotMin:2, jackpotK:5,
+    jackpotPct:0.20, housePct:0.2979, rtp:70.21
   }
 }
 let scratchJpUsdt = 0
 let scratchJpTon = 0
+let scratchFreeCards = 0
 let scratchSelected = null
+let scratchCardCount = 1
 let scratchRevealed = 0
 let scratchTotal    = 0
 
@@ -2830,6 +2863,7 @@ function openScratch() {
 function selectScratchCard(tier) {
   scratchSelected = tier
   showScratchTable(tier)
+  updateScratchBuyBtn()
   const t = SCRATCH_TIERS[tier]
   // Update UI
   Object.keys(SCRATCH_TIERS).forEach(k => {
@@ -2851,169 +2885,236 @@ function selectScratchCard(tier) {
 async function buyScratchCard() {
   if(!scratchSelected) return
   const t = SCRATCH_TIERS[scratchSelected]
+  const count = scratchCardCount || 1
+  const totalPrice = +(t.price * count).toFixed(4)
+  const hasFree = scratchFreeCards > 0
+  const effectivePrice = hasFree ? +(totalPrice - t.price).toFixed(4) : totalPrice
+  const sym = t.cur==='usdt'?'USDT':'TON'
   const btn = document.getElementById('sc-buy-btn')
+
   if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; btn.textContent='⏳ Processing...' }
 
-  const comment = 'TonBola:scratch:'+scratchSelected
-
   const onSuccess = () => {
-    if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Card purchased!' }
-    revealScratchCard(t)
+    if(hasFree) scratchFreeCards--
+    if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Purchased!' }
+    // Check if user has Warrior Pass for auto-scratch
+    const hasWP = user.hasWarriorPass || false
+    if(count===1) {
+      revealScratchCard(t, hasWP)
+    } else {
+      // Multi-card: show first card, queue rest
+      scratchQueue = count - 1
+      revealScratchCard(t, hasWP)
+    }
   }
+
   const onFail = () => {
     if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto' }
     selectScratchCard(scratchSelected)
+    updateScratchBuyBtn()
   }
 
-  if(t.cur === 'usdt') await sendUsdtPayment(t.price, comment, onSuccess, onFail)
-  else await sendTonPayment(t.price, comment, onSuccess, onFail)
+  if(effectivePrice <= 0) { onSuccess(); return }
+  if(t.cur==='usdt') await sendUsdtPayment(effectivePrice, 'TonBola:scratch:'+scratchSelected+':'+count, onSuccess, onFail)
+  else await sendTonPayment(effectivePrice, 'TonBola:scratch:'+scratchSelected+':'+count, onSuccess, onFail)
 }
 
-let scCanvas = null, scCtx = null, scIsScratching = false
-let scCells = [], scTier = null, scScratchedPx = 0, scTotalPx = 0
+function setScratchCount(n, btn) {
+  scratchCardCount = n
+  document.querySelectorAll('.sc-cnt-btn').forEach(b=>{
+    b.style.borderColor='rgba(255,255,255,.1)'
+    b.style.background='transparent'
+    b.style.color='rgba(255,255,255,.4)'
+  })
+  btn.style.borderColor='rgba(52,211,153,.5)'
+  btn.style.background='rgba(52,211,153,.12)'
+  btn.style.color='#34D399'
+  updateScratchBuyBtn()
+}
 
-function revealScratchCard(tier) {
+function updateScratchBuyBtn() {
+  if(!scratchSelected) return
+  const t = SCRATCH_TIERS[scratchSelected]
+  const count = scratchCardCount || 1
+  const total = +(t.price * count).toFixed(4)
+  const sym = t.cur==='usdt'?'USDT':'TON'
+  const hasFree = scratchFreeCards > 0
+  const effective = hasFree ? +(total - t.price).toFixed(4) : total
+  const disc = count>=5 ? ' (-10%)' : count>=3 ? ' (-5%)' : ''
+  const freeNote = hasFree ? ' (1 free applied)' : ''
+  const btn = document.getElementById('sc-buy-btn')
+  if(!btn) return
+  btn.style.opacity='1'; btn.style.pointerEvents='auto'
+  btn.textContent = '🎟️ Buy '+count+'x & Scratch — '+effective.toFixed(2)+' '+sym+disc+freeNote
+}
+
+function revealScratchCard(tier, autoScratch) {
   scratchRevealed = 0
   const grid = document.getElementById('sc-grid')
   const area = document.getElementById('sc-game-area')
   grid.innerHTML = ''
   area.style.display = 'block'
-  document.getElementById('sc-result-msg').textContent = '👆 Tap cells to scratch!'
+  document.getElementById('sc-result-msg').textContent = autoScratch ? '⚡ Auto-scratching...' : '👆 Tap to scratch!'
   document.getElementById('sc-new-btn').style.display = 'none'
 
-  const { rows, cols, symbols, rowPrizes } = tier
+  const { rows, cols, symbols, rowPrizes, jackpotK } = tier
   const totalCells = rows * cols
 
-  // Generate grid: each row independently random
+  // ── Generate grid ──
+  // Each cell: uniform random from symbols
+  // Jackpot: place exactly jackpotK 🎰 with P≈0.68%
+  const syms = symbols.filter(s=>s!=='🎰') // 8 non-jackpot
   const cellData = []
-  for (let r = 0; r < rows; r++) {
-    // 8% chance (Bronze) or 2% chance (Silver/Gold) of a winning row
-    const winChance = cols === 3 ? 0.083 : 0.014
-    const isWinRow = Math.random() < winChance
-    if (isWinRow) {
-      const sym = symbols[Math.floor(Math.random() * symbols.length)]
-      for (let c = 0; c < cols; c++) cellData.push({ sym, row: r })
-    } else {
-      // Ensure no accidental match (shuffle-like)
-      const rowSyms = []
-      let tries = 0
-      do {
-        rowSyms.length = 0
-        for (let c = 0; c < cols; c++) rowSyms.push(symbols[Math.floor(Math.random() * symbols.length)])
-        tries++
-      } while (tries < 10 && new Set(rowSyms).size < Math.max(2, Math.min(cols-1, rowSyms.length)))
-      for (const s of rowSyms) cellData.push({ sym: s, row: r })
+
+  // First: fill all cells with non-jackpot symbols
+  for (let i=0; i<totalCells; i++) cellData.push(syms[Math.floor(Math.random()*syms.length)])
+
+  // Row wins: for each row, with P=1/81 make it a winning row
+  for (let r=0; r<rows; r++) {
+    if (Math.random() < 1/81) {
+      // Pick which symbol (uniform among 8 row-prize symbols)
+      const winSym = syms[Math.floor(Math.random()*syms.length)]
+      for (let c2=0; c2<cols; c2++) cellData[r*cols+c2] = winSym
     }
   }
 
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`
+  // Jackpot scatter: place exactly jackpotK 🎰 with P≈0.684%
+  // Use Bernoulli trial per cell: P(🎰 in cell) = 1/9
+  // Then check at end
+  const jpPositions = []
+  cellData.forEach((_,i)=>{ if(Math.random()<1/9) jpPositions.push(i) })
+  jpPositions.forEach(i=>{ cellData[i]='🎰' })
 
-  // Build visual grid with row dividers
-  cellData.forEach((cell, i) => {
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`
+
+  // Build cells
+  const cells = []
+  cellData.forEach((sym, i) => {
     const el = document.createElement('div')
     el.style.cssText = `
       aspect-ratio:1;border-radius:10px;
-      background:linear-gradient(135deg,#1A2A1A,#0D1A0D);
-      border:2px solid rgba(52,211,153,.15);
+      background:rgba(20,30,20,.8);
+      border:1.5px solid rgba(52,211,153,.15);
       display:flex;align-items:center;justify-content:center;
-      font-size:1.6rem;cursor:pointer;position:relative;overflow:hidden;
-      transition:transform .15s;
-      ${i % cols === 0 && i > 0 ? 'margin-top:2px' : ''}
+      font-size:1.5rem;cursor:pointer;position:relative;overflow:hidden;
+      transition:transform .12s,border-color .2s,background .2s;
     `
-    const overlay = document.createElement('div')
-    overlay.style.cssText = `
-      position:absolute;inset:0;border-radius:8px;
-      background:linear-gradient(135deg,#2D6A4F,#1B4332);
+    const ov = document.createElement('div')
+    ov.style.cssText = `position:absolute;inset:0;border-radius:8px;
+      background:linear-gradient(135deg,#2D5A3A,#1B3A25);
       display:flex;align-items:center;justify-content:center;
-      font-size:1.2rem;color:rgba(255,255,255,.7);
-      transition:opacity .25s;
-    `
-    overlay.textContent = '?'
+      font-size:1.1rem;color:rgba(255,255,255,.5);
+      transition:opacity .2s;`
+    ov.textContent='?'
     const symEl = document.createElement('div')
-    symEl.textContent = cell.sym
-    symEl.style.cssText = 'position:absolute;opacity:0;transition:opacity .25s;font-size:1.6rem'
-    el.appendChild(overlay)
+    symEl.textContent = sym
+    symEl.style.cssText='position:absolute;opacity:0;transition:opacity .2s;font-size:1.5rem'
+    el.appendChild(ov)
     el.appendChild(symEl)
-    el.addEventListener('click', () => {
-      if (overlay.style.opacity === '0') return
-      overlay.style.opacity = '0'
-      symEl.style.opacity = '1'
-      el.style.transform = 'scale(1.06)'
-      setTimeout(() => el.style.transform = 'scale(1)', 130)
+
+    const revealCell = () => {
+      if(ov.style.opacity==='0') return
+      ov.style.opacity='0'
+      symEl.style.opacity='1'
+      el.style.transform='scale(1.08)'
+      setTimeout(()=>el.style.transform='scale(1)',120)
       scratchRevealed++
 
-      // Check if the whole row of this cell is revealed
-      const rowStart = cell.row * cols
-      const rowCells = [...grid.children].slice(rowStart, rowStart + cols)
-      const rowRevealed = rowCells.every(rc => rc.querySelector('div').style.opacity === '0')
+      // Highlight jackpot symbol
+      if(sym==='🎰') { el.style.borderColor='#FFD700'; el.style.background='rgba(255,215,0,.12)' }
 
-      if (rowRevealed) {
-        // Check if row is a win
-        const rowSyms = [...grid.children].slice(rowStart, rowStart + cols)
-          .map(rc => rc.querySelector('div:last-child').textContent)
-        const allSame = rowSyms.every(s => s === rowSyms[0])
-        if (allSame) {
-          rowCells.forEach(rc => {
-            rc.style.border = '2px solid #FFD700'
-            rc.style.background = 'rgba(255,215,0,.15)'
-          })
+      // Check if row fully revealed
+      const row = Math.floor(i/cols)
+      const rowEls = cells.slice(row*cols, row*cols+cols)
+      const rowFullyRevealed = rowEls.every(rc=>rc.querySelector('div').style.opacity==='0')
+      if(rowFullyRevealed) {
+        const rowSyms = rowEls.map(rc=>rc.querySelector('div:last-child').textContent)
+        const allSame = rowSyms.every(s=>s===rowSyms[0]) && rowSyms[0]!=='🎰'
+        if(allSame) {
+          rowEls.forEach(rc=>{rc.style.borderColor='#FFD700';rc.style.background='rgba(255,215,0,.12)'})
         }
       }
 
-      if (scratchRevealed === totalCells) checkScratchResult(cellData, tier, rows, cols)
-    })
+      if(scratchRevealed===totalCells) checkScratchResult(cellData, tier)
+    }
+
+    el.addEventListener('click', revealCell)
+    el._reveal = revealCell
     grid.appendChild(el)
+    cells.push(el)
   })
+
+  // Auto-scratch for Warrior Pass
+  if(autoScratch) {
+    let delay = 80
+    cells.forEach((el,i) => setTimeout(()=>el._reveal(), i*delay))
+  }
 }
 
-function checkScratchResult(cellData, tier, rows, cols) {
+function checkScratchResult(cellData, tier) {
+  const { rows, cols, rowPrizes, cur, price, wpRow, freeCardRow, jackpotMin, jackpotK } = tier
+  const sym = cur==='usdt'?'USDT':'TON'
   const msg = document.getElementById('sc-result-msg')
   const newBtn = document.getElementById('sc-new-btn')
-  const { rowPrizes, cur, price } = tier
-  const sym = cur === 'usdt' ? 'USDT' : 'TON'
+  newBtn.style.display='block'
 
-  let totalPrize = 0
-  let winLines = []
+  // ── Check jackpot scatter ──
+  const jpCount = cellData.filter(s=>s==='🎰').length
+  const jpPool = cur==='usdt' ? scratchJpUsdt : scratchJpTon
+  if(jpCount >= jackpotK && jpPool >= jackpotMin) {
+    msg.innerHTML='🎰 <b>JACKPOT!</b> You won <b>'+jpPool.toFixed(2)+' '+sym+'</b>!'
+    msg.style.color='#FFD700'
+    if(cur==='usdt') scratchJpUsdt=0; else scratchJpTon=0
+    updateScratchJackpot()
+    user.tbola=(user.tbola||0)+500
+    return
+  }
 
-  for (let r = 0; r < rows; r++) {
-    const rowCells = cellData.slice(r * cols, r * cols + cols)
-    const allSame = rowCells.every(c => c.sym === rowCells[0].sym)
-    if (allSame) {
-      const rowSym = rowCells[0].sym
-      const prize = rowPrizes[rowSym] || rowPrizes['any'] || 0
+  // ── Check row wins ──
+  let totalPrize=0, winLines=[]
+  let wonWP=false, wonFreeCard=false
+
+  for(let r=0; r<rows; r++) {
+    const rowCells = cellData.slice(r*cols, r*cols+cols)
+    const first = rowCells[0]
+    if(first==='🎰') continue // jackpot symbol doesn't count as row win
+    const allSame = rowCells.every(s=>s===first)
+    if(!allSame) continue
+
+    if(first==='👑') {
+      if(wpRow) { wonWP=true; winLines.push({sym:'👑',label:'Warrior Pass'}) }
+      else if(freeCardRow) { wonFreeCard=true; winLines.push({sym:'👑',label:'Free Card'}) }
+    } else {
+      // Check if specific prize or "any"
+      const prize = rowPrizes[first] !== undefined ? rowPrizes[first] : rowPrizes['any']
       totalPrize += prize
-      winLines.push({ sym: rowSym, prize })
+      winLines.push({sym:first, prize, label:prize.toFixed(2)+' '+sym})
     }
   }
 
-  // 1% jackpot check (only if pool above min threshold)
-  const isJackpot = Math.random() < 0.01
-  const jpPool = cur === 'usdt' ? scratchJpUsdt : scratchJpTon
-  const jpMin = cur === 'usdt' ? 5 : 1
-  const jackpotWon = isJackpot && jpPool >= jpMin
-
-  newBtn.style.display = 'block'
-
-  if (jackpotWon) {
-    msg.textContent = '🎰 JACKPOT! You won ' + jpPool.toFixed(2) + ' ' + sym + '!'
-    msg.style.color = '#FFD700'
-    if (cur === 'usdt') scratchJpUsdt = 0
-    else scratchJpTon = 0
-    updateScratchJackpot()
-  } else if (totalPrize > 0) {
-    const detail = winLines.map(w => w.sym + ' → +' + w.prize.toFixed(2)).join(' | ')
-    msg.innerHTML = '🎉 You won <b>' + totalPrize.toFixed(2) + ' ' + sym + '</b>!<br><span style="font-size:.7rem;opacity:.7">' + detail + '</span>'
-    msg.style.color = '#34D399'
-    user.tbola = (user.tbola || 0) + 25
-  } else {
-    msg.textContent = '😔 No matching rows — try again!'
-    msg.style.color = 'rgba(255,255,255,.4)'
-  }
-
   // Add jackpot contribution
-  if (cur === 'usdt') scratchJpUsdt = +(scratchJpUsdt + price * 0.20).toFixed(4)
-  else scratchJpTon = +(scratchJpTon + price * 0.20).toFixed(4)
+  if(cur==='usdt') scratchJpUsdt=+(scratchJpUsdt+price*0.20).toFixed(4)
+  else scratchJpTon=+(scratchJpTon+price*0.20).toFixed(4)
   updateScratchJackpot()
+
+  if(wonWP) {
+    msg.innerHTML='⚔️ <b>Warrior Pass!</b> 1 month free — check your profile!'
+    msg.style.color='#A78BFA'
+    user.tbola=(user.tbola||0)+100
+  } else if(wonFreeCard) {
+    msg.innerHTML='🎟️ <b>Free Card!</b> Your next scratch is on us!'
+    msg.style.color='#34D399'
+    scratchFreeCards=(scratchFreeCards||0)+1
+    newBtn.textContent='🎟️ Use Free Card!'
+  } else if(totalPrize>0) {
+    const detail=winLines.map(w=>w.sym+(w.prize?'→+'+w.prize.toFixed(2):'')).join(' ')
+    msg.innerHTML='🎉 Won <b>'+totalPrize.toFixed(2)+' '+sym+'</b>!<br><span style="font-size:.7rem;opacity:.6">'+detail+'</span>'
+    msg.style.color='#34D399'
+    user.tbola=(user.tbola||0)+25
+  } else {
+    msg.textContent='😔 No match — try again!'
+    msg.style.color='rgba(255,255,255,.4)'
+  }
 }
 DOCTYPE html>
 <html lang="en">
@@ -4221,6 +4322,22 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </thead>
       <tbody id="sc-prize-tbody"></tbody>
     </table>
+  </div>
+
+  <!-- Multi-card selector -->
+  <div style="padding:0 12px 6px">
+    <div style="font-size:.55rem;font-weight:700;letter-spacing:1.5px;color:rgba(52,211,153,.5);text-transform:uppercase;margin-bottom:6px">How many cards?</div>
+    <div style="display:flex;gap:6px" id="sc-count-btns">
+      <button onclick="setScratchCount(1,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(52,211,153,.5);background:rgba(52,211,153,.12);color:#34D399;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">1x</button>
+      <button onclick="setScratchCount(3,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">3x</button>
+      <button onclick="setScratchCount(5,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;position:relative">5x<span style="position:absolute;top:-6px;right:-2px;font-size:.45rem;background:#3AFF8A;color:#000;padding:1px 4px;border-radius:4px;font-weight:800">-5%</span></button>
+      <button onclick="setScratchCount(10,this)" class="sc-cnt-btn" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;position:relative">10x<span style="position:absolute;top:-6px;right:-2px;font-size:.45rem;background:#FFD700;color:#000;padding:1px 4px;border-radius:4px;font-weight:800">-10%</span></button>
+    </div>
+  </div>
+
+  <!-- Auto-scratch info for WP -->
+  <div id="sc-wp-info" style="display:none;margin:4px 12px 6px;padding:8px 12px;border-radius:10px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);font-size:.68rem;color:rgba(167,139,250,.8)">
+    ⚡ Warrior Pass — Auto-scratch enabled
   </div>
 
   <!-- Buy button -->
@@ -5794,7 +5911,9 @@ const SCRATCH_TIERS = {
 }
 let scratchJpUsdt = 0
 let scratchJpTon = 0
+let scratchFreeCards = 0
 let scratchSelected = null
+let scratchCardCount = 1
 let scratchRevealed = 0
 let scratchTotal    = 0
 
@@ -5835,6 +5954,7 @@ function openScratch() {
 function selectScratchCard(tier) {
   scratchSelected = tier
   showScratchTable(tier)
+  updateScratchBuyBtn()
   const t = SCRATCH_TIERS[tier]
   // Update UI
   Object.keys(SCRATCH_TIERS).forEach(k => {
