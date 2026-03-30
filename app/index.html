@@ -1640,7 +1640,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1rem;font-weight:700;color:#fff">👥 Squads</div>
     </div>
   </div>
-  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px"></div>
+  <div id="squad-content" style="padding:12px 10px;display:flex;flex-direction:column;gap:10px">
+  <!-- populated by renderSquad() -->
+  <div id="squad-placeholder" style="text-align:center;padding:40px 16px;color:rgba(255,255,255,.4);font-size:.9rem">
+    Loading squads...
+  </div>
+</div>
 </div>
 
 <!-- CREATE SQUAD SCREEN -->
@@ -4506,109 +4511,87 @@ function confirmAvatar() {
 // ── SQUAD SYSTEM ──
 let mySquad = null // null = no squad
 
+function openCreateSquad(){ go('s-create-squad') }
+
 function renderSquad() {
   const cont = document.getElementById('squad-content')
-  if(!cont) return
+  if (!cont) return
 
-  if(!mySquad) {
-    // ── NO SQUAD ──
-    cont.innerHTML = `
-      <div style="text-align:center;padding:20px 16px 12px">
-        <div style="font-size:3.5rem;margin-bottom:10px">🛡️</div>
-        <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">You have no squad</div>
-        <div style="font-size:.82rem;color:var(--muted);line-height:1.6;max-width:260px;margin:0 auto">
-          Create your own squad or send a join request to an existing one.
-        </div>
-      </div>
+  const V = (x) => String(x||'')  // safe string conversion
+  const BTN = (txt, fn, extra) => '<button onclick="'+fn+'" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#FFD700,#CC9900);color:#000;font-family:Outfit,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;'+V(extra)+'">'+txt+'</button>'
 
-      <!-- CREATE -->
-      <button class="btn btn-gold" onclick="go('s-create-squad')" style="padding:14px;font-size:1rem">
-        ⚔ Create a Squad — 0.5 $TON or 2 $USDT
-      </button>
+  if (!mySquad) {
+    let out = ''
+    out += '<div style="text-align:center;padding:30px 16px 16px">'
+    out += '<div style="font-size:3.5rem;margin-bottom:12px">🛡️</div>'
+    out += '<div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">You have no squad</div>'
+    out += '<div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6">Create your squad or join an existing one.</div>'
+    out += '</div>'
 
-      <!-- JOIN WITH CODE -->
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:16px">
-        <div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--violet3);margin-bottom:10px">
-          🔑 JOIN WITH CODE
-        </div>
-        <div style="display:flex;gap:8px">
-          <input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code"
-            style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 12px;color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;text-transform:uppercase">
-          <button class="btn btn-stone btn-sm" onclick="joinSquad()" style="flex-shrink:0;padding:9px 14px">Join</button>
-        </div>
-      </div>
+    out += BTN('⚔️ Create a Squad', 'openCreateSquad()', 'margin-bottom:4px')
 
-      <!-- BROWSE SQUADS -->
-      <div class="sec" style="padding:4px 0">Open Squads</div>
-      ${renderSquadList()}
-    `
+    out += '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px">'
+    out += '<div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(139,92,246,.7);margin-bottom:10px">🔑 Join with code</div>'
+    out += '<div style="display:flex;gap:8px">'
+    out += '<input type="text" id="squad-join-code" maxlength="8" placeholder="Enter squad code" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 12px;color:#fff;font-size:.9rem;outline:none;text-transform:uppercase">'
+    out += '<button onclick="joinSquad()" style="padding:9px 16px;border-radius:10px;border:none;background:rgba(139,92,246,.3);color:#A78BFA;font-weight:700;cursor:pointer">Join</button>'
+    out += '</div></div>'
+
+    out += '<div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:8px 4px 4px">Open Squads</div>'
+    out += renderSquadList()
+
+    cont.innerHTML = out
+
   } else {
-    // ── HAS SQUAD ──
-    cont.innerHTML = `
-      <!-- MY SQUAD CARD -->
-      <div class="wood-panel" style="padding:16px;text-align:center">
-        <div class="nail-bl"></div><div class="nail-br"></div>
-        <div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;
-          background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(109,40,217,.1));border:1px solid rgba(139,92,246,.25);border:1px solid var(--border);
-          display:flex;align-items:center;justify-content:center;font-size:2rem">${mySquad.icon}</div>
-        <div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:2px">${mySquad.name}</div>
-        <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">${mySquad.desc||'No description'}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-          <div style="text-align:center">
-            <div style="font-size:1.1rem;font-weight:700;color:var(--yellow)">${mySquad.members}</div>
-            <div style="font-size:.65rem;color:var(--muted)">Members</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:1.1rem;font-weight:700;color:#3AFF8A">${(mySquad.weekScore||0).toLocaleString()}</div>
-            <div style="font-size:.65rem;color:var(--muted)">Week Score</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:1.1rem;font-weight:700;color:var(--yellow)">#${mySquad.rank||'?'}</div>
-            <div style="font-size:.65rem;color:var(--muted)">Rank</div>
-          </div>
-        </div>
-        <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;
-          display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;cursor:pointer"
-          onclick="const c='${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')}';navigator.clipboard?.writeText(c);if(tg?.showPopup)tg.showPopup({title:'Copied!',message:'Code '+c+' copied to clipboard.',buttons:[{type:'ok'}]})">
-          <span style="font-size:.75rem;color:var(--muted)">Squad code · tap to copy</span>
-          <span style="font-size:.85rem;font-weight:700;color:var(--yellow);letter-spacing:2px">
-            ${mySquad.code||mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')} 📋
-          </span>
-        </div>
-      </div>
+    const code = mySquad.code || mySquad.name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
 
-      <!-- MEMBERS -->
-      <div class="stone-panel" style="padding:14px">
-        <div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-          color:var(--muted);margin-bottom:10px">Members · ${mySquad.members}/20</div>
-        ${(mySquad.memberList||[]).map((m,i)=>`
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;
-            border-bottom:1px solid rgba(255,255,255,.05)">
-            <div style="width:32px;height:32px;border-radius:50%;
-              background:linear-gradient(145deg,#6B4423,#3A2810);
-              border:2px solid #4A3318;display:flex;align-items:center;
-              justify-content:center;font-size:.95rem;flex-shrink:0">${m.avatar||'😊'}</div>
-            <div style="flex:1;font-size:.85rem;font-weight:600;color:#fff">${m.name}</div>
-            ${i===0?'<div style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:var(--yellow);border:1px solid rgba(255,184,0,.3)">Captain</div>':''}
-          </div>`).join('')}
-      </div>
+    let out = ''
+    out += '<div style="background:linear-gradient(135deg,#2A1A08,#1A0F04);border:1px solid rgba(255,184,0,.2);border-radius:16px;padding:16px;text-align:center">'
+    out += '<div style="width:64px;height:64px;border-radius:14px;margin:0 auto 10px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.25);display:flex;align-items:center;justify-content:center;font-size:2rem">'+V(mySquad.icon)+'</div>'
+    out += '<div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:2px">'+V(mySquad.name)+'</div>'
+    out += '<div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">'+V(mySquad.desc||'No description')+'</div>'
+    out += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">'
+    out += '<div><div style="font-size:1.1rem;font-weight:700;color:#FFD700">'+V(mySquad.members)+'</div><div style="font-size:.65rem;color:rgba(255,255,255,.4)">Members</div></div>'
+    out += '<div><div style="font-size:1.1rem;font-weight:700;color:#3AFF8A">'+(mySquad.weekScore||0).toLocaleString()+'</div><div style="font-size:.65rem;color:rgba(255,255,255,.4)">Score</div></div>'
+    out += '<div><div style="font-size:1.1rem;font-weight:700;color:#FFD700">#'+V(mySquad.rank||'?')+'</div><div style="font-size:.65rem;color:rgba(255,255,255,.4)">Rank</div></div>'
+    out += '</div>'
+    out += '<div id="squad-code-div" style="background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">'
+    out += '<span style="font-size:.75rem;color:rgba(255,255,255,.5)">Squad code · tap to copy</span>'
+    out += '<span style="font-size:.85rem;font-weight:700;color:#FFD700;letter-spacing:2px">'+code+' 📋</span>'
+    out += '</div></div>'
 
-      <!-- LEAVE -->
-      <button class="btn btn-stone" onclick="leaveSquad()" style="padding:12px;font-size:.85rem">
-        🚪 Leave Squad
-      </button>`
+    const memberList = mySquad.memberList || []
+    out += '<div style="background:linear-gradient(135deg,#1A1A2E,#16213E);border:1px solid rgba(139,92,246,.2);border-radius:16px;padding:14px">'
+    out += '<div style="font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px">Members · '+mySquad.members+'/20</div>'
+    memberList.forEach(function(m, i) {
+      out += '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+      out += '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(145deg,#6B4423,#3A2810);border:2px solid #4A3318;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0">'+(m.avatar||'😊')+'</div>'
+      out += '<div style="flex:1;font-size:.85rem;font-weight:600;color:#fff">'+V(m.name)+'</div>'
+      if (i===0) out += '<div style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,184,0,.15);color:#FFD700;border:1px solid rgba(255,184,0,.3)">Captain</div>'
+      out += '</div>'
+    })
+    out += '</div>'
+    out += '<button onclick="leaveSquad()" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-size:.85rem;cursor:pointer">🚪 Leave Squad</button>'
+
+    cont.innerHTML = out
+
+    const cd = cont.querySelector('#squad-code-div')
+    if (cd) cd.onclick = function() {
+      navigator.clipboard && navigator.clipboard.writeText(code)
+      if (tg && tg.showPopup) tg.showPopup({title:'Copied!', message:'Code '+code+' copied.', buttons:[{type:'ok'}]})
+    }
   }
 
-  // Update profile widget
+  // Update profile squad widget
   const pname = document.getElementById('p-squad-name')
   const psub  = document.getElementById('p-squad-sub')
   const picon = document.getElementById('p-squad-icon')
   const pval  = document.getElementById('p-squad-value')
   const prnk  = document.getElementById('p-squad-rank')
-  if(mySquad) {
-    if(pname) pname.textContent = mySquad.name
+  if (mySquad) {
+    if(pname) pname.textContent = V(mySquad.name)
     if(psub)  psub.textContent  = mySquad.members+' members'
-    if(picon) picon.textContent = mySquad.icon
+    if(picon) picon.textContent = V(mySquad.icon)
     if(pval)  pval.textContent  = (mySquad.weekScore||0).toLocaleString()+' pts'
     if(prnk)  prnk.textContent  = mySquad.rank ? '#'+mySquad.rank+' this week' : 'unranked'
   } else {
@@ -4619,6 +4602,7 @@ function renderSquad() {
     if(prnk)  prnk.textContent  = ''
   }
 }
+
 
 function renderSquadList() {
   const medals = ['🥇','🥈','🥉']
