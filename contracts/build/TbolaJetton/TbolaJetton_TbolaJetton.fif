@@ -1,0 +1,1074 @@
+// automatically generated from `@stdlib/std/stdlib.fc` `/home/claude/tonbola-contract/build/TbolaJetton/TbolaJetton_TbolaJetton.fc` 
+PROGRAM{
+  DECLPROC __tact_store_address_opt
+  DECLPROC __tact_context_get_sender
+  DECLPROC $TransferNotification$_store
+  DECLPROC $TransferNotification$_store_cell
+  DECLPROC $Excesses$_store
+  DECLPROC $Excesses$_store_cell
+  DECLPROC $TakeWalletAddress$_store
+  DECLPROC $TakeWalletAddress$_store_cell
+  DECLPROC $TbolaJetton$_store
+  DECLPROC $TbolaJetton$_load
+  DECLPROC $TbolaWallet$init$_store
+  DECLPROC $TbolaJetton$init$_load
+  DECLPROC $TbolaJetton$_contract_init
+  DECLPROC $TbolaJetton$_contract_load
+  DECLPROC $TbolaJetton$_contract_store
+  DECLPROC $Cell$_fun_asSlice
+  DECLPROC $global_newAddress
+  DECLPROC $global_contractAddressExt
+  DECLPROC $global_contractAddress
+  DECLPROC $TbolaWallet$_init_child
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body_code_data
+  DECLPROC $TransferNotification$_constructor_query_id_amount_sender_forward_payload
+  DECLPROC $TbolaJetton$_fun_mintInternal
+  DECLPROC $TbolaJetton$_fun_get_jetton_data
+  DECLPROC $TbolaJetton$_fun_total_supply
+  DECLPROC $TbolaJetton$_fun_mintable
+  DECLPROC $TbolaJetton$_fun_owner
+  DECLPROC $TbolaJetton$_fun_minted_airdrop
+  DECLPROC $TbolaJetton$_fun_minted_presale
+  DECLPROC $TbolaJetton$_fun_minted_team
+  DECLPROC $TbolaJetton$_fun_circulating_supply
+  DECLPROC $TbolaJetton$_fun_get_wallet_address
+  DECLPROC $TbolaJetton$_fun_vesting_claimable
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $Excesses$_constructor_query_id
+  DECLPROC $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address
+  106029 DECLMETHOD %get_jetton_data
+  130834 DECLMETHOD %total_supply
+  106520 DECLMETHOD %mintable
+  83229 DECLMETHOD %owner
+  86458 DECLMETHOD %minted_airdrop
+  74614 DECLMETHOD %minted_presale
+  65989 DECLMETHOD %minted_team
+  111697 DECLMETHOD %circulating_supply
+  103289 DECLMETHOD %get_wallet_address
+  91561 DECLMETHOD %vesting_claimable
+  DECLPROC recv_internal
+  65535 DECLMETHOD __tact_selector_hack
+  DECLGLOBVAR __tact_context
+  DECLGLOBVAR __tact_context_sender
+  DECLGLOBVAR __tact_child_contract_codes
+  DECLGLOBVAR __tact_randomized
+  __tact_store_address_opt PROCINLINE:<{
+    DUP
+    ISNULL
+    IF:<{
+      DROP
+      b{00} STSLICECONST
+    }>ELSE<{
+      SWAP
+      STSLICE
+    }>
+  }>
+  __tact_context_get_sender PROCINLINE:<{
+    __tact_context_sender GETGLOB
+  }>
+  $TransferNotification$_store PROCINLINE:<{
+    395134233 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    SWAP
+    STVARUINT16
+    STSLICE
+    STSLICE
+  }>
+  $TransferNotification$_store_cell PROCINLINE:<{
+    4 -ROLL
+    $TransferNotification$_store INLINECALLDICT
+    ENDC
+  }>
+  $Excesses$_store PROCINLINE:<{
+    3576854235 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $Excesses$_store_cell PROCINLINE:<{
+    SWAP
+    $Excesses$_store INLINECALLDICT
+    ENDC
+  }>
+  $TakeWalletAddress$_store PROCINLINE:<{
+    3513996288 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s1 s2 XCHG
+    64 STU
+    STSLICE
+    SWAP
+    __tact_store_address_opt INLINECALLDICT
+  }>
+  $TakeWalletAddress$_store_cell PROCINLINE:<{
+    3 -ROLL
+    $TakeWalletAddress$_store INLINECALLDICT
+    ENDC
+  }>
+  $TbolaJetton$_store PROCINLINE:<{
+    s1 16 s() XCHG
+    s0 s15 XCHG
+    STVARUINT16
+    s1 s13 XCHG
+    1 STI
+    s1 s11 XCHG
+    STSLICE
+    s0 s9 XCHG2
+    STVARUINT16
+    s0 s7 XCHG2
+    STVARUINT16
+    s0 s5 XCHG2
+    STVARUINT16
+    s0 s3 XCHG2
+    STVARUINT16
+    SWAP
+    STVARUINT16
+    NEWC
+    ROT
+    STVARUINT16
+    s1 s2 XCHG
+    STSLICE
+    s1 s2 XCHG
+    STSLICE
+    s1 s2 XCHG
+    STSLICE
+    s0 s2 XCHG
+    NEWC
+    STSLICE
+    s1 s3 XCHG
+    STSLICE
+    s1 s4 XCHG
+    32 STU
+    ROT
+    STVARUINT16
+    s1 s2 XCHG
+    STBREFR
+    STBREFR
+  }>
+  $TbolaJetton$_load PROCINLINE:<{
+    LDVARUINT16
+    1 LDI
+    LDMSGADDR
+    LDVARUINT16
+    LDVARUINT16
+    LDVARUINT16
+    LDVARUINT16
+    LDVARUINT16
+    LDREF
+    SWAP
+    CTOS
+    LDVARUINT16
+    LDMSGADDR
+    LDMSGADDR
+    LDMSGADDR
+    LDREF
+    DROP
+    CTOS
+    LDMSGADDR
+    LDMSGADDR
+    32 LDU
+    LDVARUINT16
+    DROP
+    s8 16 s() XCHG
+    s8 s15 XCHG
+    s8 s14 XCHG
+    s8 s13 XCHG
+    s8 s12 XCHG
+    s8 s11 XCHG
+    s8 s10 XCHG
+    s8 s9 XCHG
+  }>
+  $TbolaWallet$init$_store PROCINLINE:<{
+    s0 s2 XCHG
+    STSLICE
+    STSLICE
+  }>
+  $TbolaJetton$init$_load PROCINLINE:<{
+    LDMSGADDR
+    LDMSGADDR
+    LDMSGADDR
+    LDREF
+    SWAP
+    CTOS
+    LDMSGADDR
+    LDMSGADDR
+    LDMSGADDR
+    DROP
+    s3 s6 XCHG
+    s3 s5 XCHG
+    s3 s4 XCHG
+  }>
+  $TbolaJetton$_contract_init PROCINLINE:<{
+    0 PUSHINT
+    TRUE
+    s1 s1 s1 PUSH3
+    s0 s0 s0 PUSH3
+    s0 s0 PUSH2
+    s9 s15 XCHG
+    s8 s14 XCHG
+    s9 s13 XCHG
+    s7 s12 XCHG
+    s6 s11 XCHG
+    s5 s10 XCHG
+    s4 s9 XCHG
+    s3 s8 XCHG
+    6 2 REVERSE
+    s2 s4 XCHG
+  }>
+  $TbolaJetton$_contract_load PROCINLINE:<{
+    c4 PUSH
+    CTOS
+    1 LDI
+    SWAP
+    IF:<{
+      $TbolaJetton$_load INLINECALLDICT
+      16 s() POP
+      15 ROLL
+    }>ELSE<{
+      $TbolaJetton$init$_load INLINECALLDICT
+      s0 s6 XCHG
+      ENDS
+      5 ROLL
+      $TbolaJetton$_contract_init INLINECALLDICT
+    }>
+  }>
+  $TbolaJetton$_contract_store PROCINLINE:<{
+    NEWC
+    TRUE
+    SWAP
+    1 STI
+    s0 16 s() XCHG
+    15 -ROLL
+    $TbolaJetton$_store INLINECALLDICT
+    ENDC
+    c4 POP
+  }>
+  $Cell$_fun_asSlice PROCINLINE:<{
+        CTOS
+  }>
+  $global_newAddress PROCINLINE:<{
+        NEWC
+    4 PUSHINT
+    SWAP
+    3 STU
+    s1 s2 XCHG
+    8 STI
+    256 STU
+        ENDC
+    $Cell$_fun_asSlice INLINECALLDICT
+  }>
+  $global_contractAddressExt PROCINLINE:<{
+        s0 PUSH HASHCU // `data` hash
+        s2 PUSH HASHCU // `code` hash
+        SWAP2
+        CDEPTH         // `data` depth
+        SWAP
+        CDEPTH         // `code` depth
+        131380 INT     // (2 << 16) | (1 << 8) | 0x34
+        // Group 2: Composition of the Builder
+        NEWC
+        24 STU  // store refs_descriptor | bits_descriptor | data
+        16 STU  // store depth_descriptor for `code`
+        16 STU  // store depth_descriptor for `data`
+        256 STU // store `code` hash
+        256 STU // store `data` hash
+        // Group 3: SHA256 hash of the resulting Builder
+        ONE HASHEXT_SHA256
+    $global_newAddress INLINECALLDICT
+  }>
+  $global_contractAddress PROCINLINE:<{
+    0 PUSHINT
+    -ROT
+    $global_contractAddressExt INLINECALLDICT
+  }>
+  $TbolaWallet$_init_child PROCREF:<{
+        B{b5ee9c7201021601000387000228ff008e88f4a413f4bcf2c80bed5320e303ed43d90102020271030403c83001d072d721d200d200fa4021103450666f04f86102f862ed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e204925f04e002d70d1ff2e0822182100f8a7ea5bae302218210178d4519bae302018210595f07bcbae3025f04f2c0820d0e0f02012005060147bcb6076a268690000cd7d007d207d202a903609cd7d207d202c816880b82cf16d9e3618c0c0147b951fed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e2db3c6c3180702012008090002200147b4a3bda89a1a4000335f401f481f480aa40d82735f481f480b205a202e0b3c5b678d86300a0147b7605da89a1a4000335f401f481f480aa40d82735f481f480b205a202e0b3c5b678d86300b00022100108b677616c6c6574800022202de31d33ffa00fa40fa40f40431fa008200c241f84229c705917f95f8422ac705e2f2f48200d5575375bef2f45164a15138db3c5c705920f90022f9005ad76501d76582020134c8cb17cb0fcb0fcbffcbff71f90400c87401cb0212ca07cbffc9d0038208989680a0727f54499052ccc81410015a31d33f31fa00fa4030815b6cf84210344565db3c15c70515f2f401a059c87f01ca0055205afa0212cecec9ed541301f2d33ffa00fa40308138c6f84226c705f2f48200d5575342bef2f45131a17080405414367f07c8553082107bdd97de5005cb1f13cb3f01fa02cecec926044313505510246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb00021503fc55308210178d45195005cb1f13cb3f01fa02cecec910461510491037507210465522c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb008d08600000000000000000000000000000000000000000000000000000000000000000045210c705b3e30f02111215009c7080427004c8018210d53276db58cb1fcb3fc91034413010246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb0000025b016021db3c705920f90022f9005ad76501d76582020134c8cb17cb0fcb0fcbffcbff71f90400c87401cb0212ca07cbffc9d0140018f82ac87001ca005a02cecec90020c87f01ca0055205afa0212cecec9ed54} B>boc PUSHREF
+    NEWC
+    FALSE
+    SWAP
+    1 STI
+    2SWAP
+    $TbolaWallet$init$_store INLINECALLDICT
+    ENDC
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body_code_data PROCINLINE:<{
+    s4 s6 XCHG
+    3 3 BLKSWAP
+  }>
+  $TransferNotification$_constructor_query_id_amount_sender_forward_payload PROCINLINE:<{
+  }>
+  $TbolaJetton$_fun_mintInternal PROCREF:<{
+        MYADDR
+    s1 s2 XCHG
+    $TbolaWallet$_init_child INLINECALLDICT
+    2DUP
+    $global_contractAddress INLINECALLDICT
+    s0 19 s() XCHG
+    s3 PUSH
+    ADD
+    20000000 PUSHINT
+    2 PUSHINT
+    TRUE
+    0 PUSHINT
+        MYADDR
+        b{} PUSHSLICE
+    s2 s3 XCHG
+    s2 s9 XCHG
+    $TransferNotification$_constructor_query_id_amount_sender_forward_payload INLINECALLDICT
+    NEWC
+    $TransferNotification$_store_cell INLINECALLDICT
+    s6 22 s() XCHG
+    s5 s4 s0 XCHG3
+    s3 22 s() XCHG
+    -ROT
+    $SendParameters$_constructor_to_value_mode_bounce_body_code_data INLINECALLDICT
+        NEWC
+        b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+        1 STI               // store `bounce`
+        b{000} STSLICECONST // store bounced = false and src = addr_none
+        STSLICE             // store `to`
+        SWAP
+        STGRAMS             // store `value`
+        105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+        STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+        // → Stack state
+        // s0: Builder
+        // s1: `data`
+        // s2: `code`
+        // s3: `body`
+        // s4: `mode`
+        // Group 2: Placing the Builder after code and data, then checking those for nullability
+        s2 XCHG0
+        DUP2
+        ISNULL
+        SWAP
+        ISNULL
+        AND
+        // → Stack state
+        // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+        // s1: `code`
+        // s2: `data`
+        // s3: Builder
+        // s4: `body`
+        // s5: `mode`
+        // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+        <{
+            DROP2 // drop `data` and `code`, since either of those is null
+            b{0} STSLICECONST
+        }> PUSHCONT
+        // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+        <{
+            // _ split_depth:(Maybe (## 5))
+            //   special:(Maybe TickTock)
+            //   code:(Maybe ^Cell)
+            //   data:(Maybe ^Cell)
+            //   library:(Maybe ^Cell)
+            // = StateInit;
+            ROT                // place message Builder on top
+            b{10} STSLICECONST // store Maybe = true, Either = false
+            // Start composing inlined StateInit
+            b{00} STSLICECONST // store split_depth and special first
+            STDICT             // store code
+            STDICT             // store data
+            b{0} STSLICECONST  // store library
+        }> PUSHCONT
+        // Group 3: IFELSE that does the branching shown above
+        IFELSE
+        // → Stack state
+        // s0: Builder
+        // s1: null or StateInit
+        // s2: `body`
+        // s3: `mode`
+        // Group 4: Finalizing the message
+        STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+        ENDC
+        // → Stack state
+        // s0: Cell
+        // s1: `mode`
+        // Group 5: Sending the message, with `mode` on top
+        SWAP
+        SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+  }>
+  $TbolaJetton$_fun_get_jetton_data PROCREF:<{
+        B{b5ee9c7241010101001400002454424f4c413a313030303030303030303a393cb5e8ad} B>boc <s PUSHSLICE
+  }>
+  $TbolaJetton$_fun_total_supply PROCREF:<{
+    s15 PUSH
+  }>
+  $TbolaJetton$_fun_mintable PROCREF:<{
+    s14 PUSH
+  }>
+  $TbolaJetton$_fun_owner PROCREF:<{
+    s13 PUSH
+  }>
+  $TbolaJetton$_fun_minted_airdrop PROCREF:<{
+    s12 PUSH
+  }>
+  $TbolaJetton$_fun_minted_presale PROCREF:<{
+    s11 PUSH
+  }>
+  $TbolaJetton$_fun_minted_team PROCREF:<{
+    s9 PUSH
+  }>
+  $TbolaJetton$_fun_circulating_supply PROCREF:<{
+    s12 s11 PUSH2
+    ADD
+    s11 PUSH
+    ADD
+    s9 PUSH
+    ADD
+    s8 PUSH
+    ADD
+    s10 PUSH
+    ADD
+  }>
+  $TbolaJetton$_fun_get_wallet_address PROCREF:<{
+        MYADDR
+    $TbolaWallet$_init_child INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
+  }>
+  $TbolaJetton$_fun_vesting_claimable PROCREF:<{
+    OVER
+    IFNOTJMP:<{
+      0 PUSHINT
+    }>
+        NOW
+    s2 PUSH
+    SUB
+    DUP
+    15552000 PUSHINT
+    LESS
+    IFJMP:<{
+      DROP
+      0 PUSHINT
+    }>
+    63072000 PUSHINT
+    150000000000000000 PUSHINT
+    s0 s2 PUXC
+    MUL
+    SWAP
+    DIV
+    SWAP
+        MIN
+    OVER
+    SUB
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body PROCINLINE:<{
+    s2 s4 XCHG
+    PUSHNULL
+    s4 s3 XCHG2
+    PUSHNULL
+    s0 s3 XCHG
+  }>
+  $Excesses$_constructor_query_id PROCINLINE:<{
+  }>
+  $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address PROCINLINE:<{
+  }>
+  %get_jetton_data PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_get_jetton_data INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %total_supply PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_total_supply INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %mintable PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_mintable INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %owner PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_owner INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %minted_airdrop PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_minted_airdrop INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %minted_presale PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_minted_presale INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %minted_team PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_minted_team INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %circulating_supply PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_circulating_supply INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %get_wallet_address PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    s15 16 s() XCHG
+    15 ROLL
+    $TbolaJetton$_fun_get_wallet_address INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  %vesting_claimable PROC:<{
+    $TbolaJetton$_contract_load INLINECALLDICT
+    $TbolaJetton$_fun_vesting_claimable INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+  }>
+  recv_internal PROC:<{
+    c2 SAVE
+    SAMEALTSAVE
+    SWAP
+    CTOS
+    2 PUSHINT
+    SDSKIPFIRST
+    1 LDI
+    1 LDI
+    LDMSGADDR
+    OVER
+    s3 s4 XCHG
+    s6 s6 XCHG2
+    4 TUPLE
+    __tact_context SETGLOB
+    s0 s2 XCHG
+    __tact_context_sender SETGLOB
+    $TbolaJetton$_contract_load INLINECALLDICT
+    s0 17 s() XCHG
+    IFJMP:<{
+      15 BLKDROP
+      2DROP
+    }>
+    s15 PUSH
+    SBITS
+    31 GTINT
+    IF:<{
+      s0 s15 XCHG
+      32 LDU
+      OVER
+      1680571655 PUSHINT
+      EQUAL
+      IFJMP:<{
+        NIP
+        64 LDU
+        NIP
+        LDVARUINT16
+        LDMSGADDR
+        DROP
+        57579 PUSHINT
+        __tact_context_get_sender INLINECALLDICT
+        s15 PUSH
+        SDEQ
+        THROWANYIFNOT
+        56760 PUSHINT
+        s15 PUSH
+        THROWANYIFNOT
+        400000000000000000 PUSHINT
+        56249 PUSHINT
+        s14 s3 PUSH2
+        ADD
+        ROT
+        LEQ
+        THROWANYIFNOT
+        s15 16 s() XCHG
+        s14 s15 XCHG
+        s13 s14 XCHG
+        s12 s13 XCHG
+        s11 s12 XCHG
+        s10 s11 XCHG
+        s9 s10 XCHG
+        s8 s9 XCHG
+        s7 s8 XCHG
+        s6 s7 XCHG
+        s5 s6 XCHG
+        s4 s5 XCHG
+        s3 s4 XCHG
+        s2 s3 XCHG
+        s1 17 s() XCHG
+        17 s() PUSH
+        $TbolaJetton$_fun_mintInternal INLINECALLDICT
+        s0 16 s() XCHG
+        s1 s12 XCHG
+        ADD
+        s14 s15 XCHG
+        s13 s14 XCHG
+        s0 s12 XCHG
+        s0 s13 XCHG
+        s10 s11 XCHG
+        s9 s10 XCHG
+        s8 s9 XCHG
+        s7 s8 XCHG
+        s6 s7 XCHG
+        s5 s6 XCHG
+        s4 s5 XCHG
+        s3 s4 XCHG
+        s1 s3 s0 XCHG3
+        $TbolaJetton$_contract_store INLINECALLDICT
+        RETALT
+      }>
+      OVER
+      2078119902 PUSHINT
+      EQUAL
+      IFJMP:<{
+        NIP
+        64 LDU
+        LDVARUINT16
+        LDMSGADDR
+        LDMSGADDR
+        DROP
+            MYADDR
+        s1 s2 XCHG
+        $TbolaWallet$_init_child INLINECALLDICT
+        36088 PUSHINT
+        __tact_context_get_sender INLINECALLDICT
+        2SWAP
+        $global_contractAddress INLINECALLDICT
+        SDEQ
+        THROWANYIFNOT
+        s0 16 s() XCHG
+        SWAP
+        SUB
+            B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+        16 s() PUSH
+        SWAP
+        SDEQ
+        NOT
+        IF:<{
+          0 PUSHINT
+          66 PUSHINT
+          FALSE
+          s0 s4 XCHG
+          $Excesses$_constructor_query_id INLINECALLDICT
+          NEWC
+          $Excesses$_store_cell INLINECALLDICT
+          s4 18 s() XCHG
+          s1 s3 s0 XCHG3
+          s1 18 s() XCHG
+          $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+              NEWC
+              b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+              1 STI               // store `bounce`
+              b{000} STSLICECONST // store bounced = false and src = addr_none
+              STSLICE             // store `to`
+              SWAP
+              STGRAMS             // store `value`
+              105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+              STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+              // → Stack state
+              // s0: Builder
+              // s1: `data`
+              // s2: `code`
+              // s3: `body`
+              // s4: `mode`
+              // Group 2: Placing the Builder after code and data, then checking those for nullability
+              s2 XCHG0
+              DUP2
+              ISNULL
+              SWAP
+              ISNULL
+              AND
+              // → Stack state
+              // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+              // s1: `code`
+              // s2: `data`
+              // s3: Builder
+              // s4: `body`
+              // s5: `mode`
+              // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+              <{
+                  DROP2 // drop `data` and `code`, since either of those is null
+                  b{0} STSLICECONST
+              }> PUSHCONT
+              // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+              <{
+                  // _ split_depth:(Maybe (## 5))
+                  //   special:(Maybe TickTock)
+                  //   code:(Maybe ^Cell)
+                  //   data:(Maybe ^Cell)
+                  //   library:(Maybe ^Cell)
+                  // = StateInit;
+                  ROT                // place message Builder on top
+                  b{10} STSLICECONST // store Maybe = true, Either = false
+                  // Start composing inlined StateInit
+                  b{00} STSLICECONST // store split_depth and special first
+                  STDICT             // store code
+                  STDICT             // store data
+                  b{0} STSLICECONST  // store library
+              }> PUSHCONT
+              // Group 3: IFELSE that does the branching shown above
+              IFELSE
+              // → Stack state
+              // s0: Builder
+              // s1: null or StateInit
+              // s2: `body`
+              // s3: `mode`
+              // Group 4: Finalizing the message
+              STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+              ENDC
+              // → Stack state
+              // s0: Cell
+              // s1: `mode`
+              // Group 5: Sending the message, with `mode` on top
+              SWAP
+              SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+        }>ELSE<{
+          s15 POP
+          DROP
+        }>
+        s13 s15 XCHG
+        2 13 BLKSWAP
+        $TbolaJetton$_contract_store INLINECALLDICT
+        RETALT
+      }>
+      SWAP
+      745978227 PUSHINT
+      EQUAL
+      IFJMP:<{
+        64 LDU
+        LDMSGADDR
+        1 LDI
+        DROP
+            MYADDR
+        s2 s(-1) PUXC
+        $TbolaWallet$_init_child INLINECALLDICT
+        $global_contractAddress INLINECALLDICT
+        __tact_context_get_sender INLINECALLDICT
+        0 PUSHINT
+        64 PUSHINT
+        FALSE
+        s0 s5 XCHG
+        IF:<{
+        }>ELSE<{
+          PUSHNULL
+          s6 POP
+        }>
+        s6 s3 s5 XCHG3
+        $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address INLINECALLDICT
+        NEWC
+        $TakeWalletAddress$_store_cell INLINECALLDICT
+        s3 s3 s0 XCHG3
+        $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+            NEWC
+            b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+            1 STI               // store `bounce`
+            b{000} STSLICECONST // store bounced = false and src = addr_none
+            STSLICE             // store `to`
+            SWAP
+            STGRAMS             // store `value`
+            105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+            STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+            // → Stack state
+            // s0: Builder
+            // s1: `data`
+            // s2: `code`
+            // s3: `body`
+            // s4: `mode`
+            // Group 2: Placing the Builder after code and data, then checking those for nullability
+            s2 XCHG0
+            DUP2
+            ISNULL
+            SWAP
+            ISNULL
+            AND
+            // → Stack state
+            // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+            // s1: `code`
+            // s2: `data`
+            // s3: Builder
+            // s4: `body`
+            // s5: `mode`
+            // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+            <{
+                DROP2 // drop `data` and `code`, since either of those is null
+                b{0} STSLICECONST
+            }> PUSHCONT
+            // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+            <{
+                // _ split_depth:(Maybe (## 5))
+                //   special:(Maybe TickTock)
+                //   code:(Maybe ^Cell)
+                //   data:(Maybe ^Cell)
+                //   library:(Maybe ^Cell)
+                // = StateInit;
+                ROT                // place message Builder on top
+                b{10} STSLICECONST // store Maybe = true, Either = false
+                // Start composing inlined StateInit
+                b{00} STSLICECONST // store split_depth and special first
+                STDICT             // store code
+                STDICT             // store data
+                b{0} STSLICECONST  // store library
+            }> PUSHCONT
+            // Group 3: IFELSE that does the branching shown above
+            IFELSE
+            // → Stack state
+            // s0: Builder
+            // s1: null or StateInit
+            // s2: `body`
+            // s3: `mode`
+            // Group 4: Finalizing the message
+            STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+            ENDC
+            // → Stack state
+            // s0: Cell
+            // s1: `mode`
+            // Group 5: Sending the message, with `mode` on top
+            SWAP
+            SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+        s13 s15 XCHG
+        2 13 BLKSWAP
+        $TbolaJetton$_contract_store INLINECALLDICT
+        RETALT
+      }>
+      s0 s15 XCHG
+    }>
+    s0 s15 XCHG
+    HASHSU
+    DUP
+    301785912584466125980507383704500550151511162187590011481939633140731549208 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      35499 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s13 PUSH
+      SDEQ
+      THROWANYIFNOT
+      9050 PUSHINT
+      s10 PUSH
+      0 EQINT
+      THROWANYIFNOT
+      200000000000000000 PUSHINT
+      150000000000000000 PUSHINT
+      50000000000000000 PUSHINT
+      DUP
+      s15 17 s() XCHG
+      5 13 REVERSE
+      s12 16 s() XCHG
+      s11 17 s() XCHG
+      s10 16 s() XCHG
+      s9 17 s() XCHG
+      s8 16 s() XCHG
+      s7 17 s() XCHG
+      16 s() PUSH
+      s0 s7 XCHG
+      s6 18 s() XCHG
+      s0 s5 XCHG
+      s4 18 s() XCHG
+      s0 s3 XCHG
+      s2 19 s() XCHG
+      s1 20 s() XCHG
+      s0 17 s() XCHG
+      18 s() PUSH
+      $TbolaJetton$_fun_mintInternal INLINECALLDICT
+      s5 PUSH
+      17 s() PUSH
+      $TbolaJetton$_fun_mintInternal INLINECALLDICT
+      s3 PUSH
+      19 s() PUSH
+      $TbolaJetton$_fun_mintInternal INLINECALLDICT
+      s2 PUSH
+      20 s() PUSH
+      $TbolaJetton$_fun_mintInternal INLINECALLDICT
+      NIP
+      s6 POP
+      s6 POP
+      s7 POP
+      s7 POP
+          NOW
+      s11 s15 XCHG
+      s10 s14 XCHG
+      s9 s13 XCHG
+      5 8 REVERSE
+      s8 s10 XCHG
+      s5 s9 XCHG
+      s5 s7 XCHG
+      s6 s0 s5 XCHG3
+      s4 s1 s4 XCHG3
+      s0 s3 XCHG
+      $TbolaJetton$_contract_store INLINECALLDICT
+    }>
+    DUP
+    58277803117736469264773859917394017367408379065366593583623055242845301105734 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      56184 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s4 PUSH
+      SDEQ
+      THROWANYIFNOT
+      51916 PUSHINT
+      s15 PUSH
+      0 GTINT
+      THROWANYIFNOT
+          NOW
+      s15 PUSH
+      SUB
+      15552000 PUSHINT
+      OVER
+      63072000 PUSHINT
+      s0 s2 XCHG
+      GEQ
+      1630 THROWIFNOT
+      150000000000000000 PUSHINT
+      s0 s2 PUXC
+      MUL
+      SWAP
+      DIV
+      SWAP
+          MIN
+      16 s() PUSH
+      SUB
+      44799 PUSHINT
+      OVER
+      0 GTINT
+      THROWANYIFNOT
+      s14 s15 XCHG
+      s13 s14 XCHG
+      s12 s13 XCHG
+      s11 s12 XCHG
+      s10 s11 XCHG
+      s9 s10 XCHG
+      s8 s9 XCHG
+      s3 PUSH
+      s8 s9 XCHG
+      s7 s8 XCHG
+      s6 s7 XCHG
+      s0 s5 XCHG
+      s0 s6 XCHG
+      s3 s4 XCHG
+      s0 s1 s3 XCHG3
+      s1 17 s() XCHG
+      17 s() PUSH
+      $TbolaJetton$_fun_mintInternal INLINECALLDICT
+      s0 s9 XCHG
+      16 s() PUSH
+      ADD
+      s0 16 s() XCHG
+      s1 s9 XCHG
+      ADD
+      s14 s15 XCHG
+      s13 s14 XCHG
+      s12 s13 XCHG
+      s11 s12 XCHG
+      s10 s11 XCHG
+      s9 s10 XCHG
+      s7 s8 XCHG
+      s6 s7 XCHG
+      s5 s6 XCHG
+      s4 s5 XCHG
+      s3 s4 XCHG
+      s1 s3 s0 XCHG3
+      $TbolaJetton$_contract_store INLINECALLDICT
+    }>
+    s13 POP
+    s0 s12 XCHG
+    115675562712691463686254129426213736650109836523052146291640140356432532641362 PUSHINT
+    EQUAL
+    IFJMP:<{
+      35499 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s12 PUSH
+      SDEQ
+      THROWANYIFNOT
+      s12 s14 XCHG
+      FALSE
+      s0 s14 XCHG
+      s11 s13 XCHG
+      s10 s12 XCHG
+      s9 s11 XCHG
+      s8 s10 XCHG
+      s7 s9 XCHG
+      s6 s8 XCHG
+      s5 s7 XCHG
+      s4 s6 XCHG
+      s3 s5 XCHG
+      s4 s0 s3 XCHG3
+      $TbolaJetton$_contract_store INLINECALLDICT
+    }>
+    15 BLKDROP
+    130 THROW
+  }>
+  __tact_selector_hack PROC:<{
+    @atend @ 1 {
+            execute current@ context@ current!
+            {
+                // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+                // We want to extract recv_internal/recv_external from the dict and select needed function
+                // not by jumping to the needed function by it's index, but by using usual IF statements.
+                }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+                <{ // Start of the new code builder
+                    SETCP0
+                    // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                    swap
+                    // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                    <s ref@
+                    // Extract the recv_internal from the dict
+                    dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                    swap
+                    // Delete the recv_internal from the dict
+                    0 swap @procdictkeylen idict- drop
+                    // Delete the recv_external from the dict (it's okay if it's not there)
+                    -1 swap @procdictkeylen idict- drop
+                    // Delete the __tact_selector_hack from the dict
+                    65535 swap @procdictkeylen idict- drop
+                    // Bring the code builder from the bottom of the stack
+                    // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                    depth 1- roll
+                    // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                    swap
+                    // Check if the dict is empty
+                    dup null?
+                    // Store a copy of this flag in the bottom of the stack
+                    dup depth 1- -roll
+                    {
+                        // If the dict is empty, just drop it (it will be null if it's empty)
+                        drop
+                    }
+                    {
+                        // If the dict is not empty, prepare continuation to be stored in c3
+                        <{
+                            // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                            swap @procdictkeylen DICTPUSHCONST
+                            // Jump to the needed function by it's index
+                            DICTIGETJMPZ
+                            // If such key is not found, throw 11 along with the key as an argument
+                            11 THROWARG
+                        }> PUSHCONT
+                        // Store the continuation in c3
+                        c3 POP
+                    } cond
+                    // Function id is on top of the (runtime) stack
+                    DUP IFNOTJMP:<{
+                        // place recv_internal here
+                        DROP swap @addop
+                    }>
+                    // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                    depth 1- roll
+                    {
+                        // If the dict is empty, throw 11
+                        11 THROWARG
+                    }
+                    {
+                        // If the dict is not empty, jump to continuation from c3
+                        c3 PUSH JMPX
+                    } cond
+                }> b>
+            } : }END>c
+            current@ context! current!
+        } does @atend !
+  }>
+}END>c

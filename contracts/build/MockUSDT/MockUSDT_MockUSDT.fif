@@ -1,0 +1,833 @@
+// automatically generated from `@stdlib/std/stdlib.fc` `/home/claude/tonbola-contract/build/MockUSDT/MockUSDT_MockUSDT.fc` 
+PROGRAM{
+  DECLPROC __tact_store_address_opt
+  DECLPROC __tact_context_get
+  DECLPROC __tact_context_get_sender
+  DECLPROC $JettonTransferNotification$_store
+  DECLPROC $JettonTransferNotification$_store_cell
+  DECLPROC $JettonExcesses$_store
+  DECLPROC $JettonExcesses$_store_cell
+  DECLPROC $JettonTakeWalletAddress$_store
+  DECLPROC $JettonTakeWalletAddress$_store_cell
+  DECLPROC $MockUSDT$_store
+  DECLPROC $MockUSDT$_load
+  DECLPROC $Context$_get_value
+  DECLPROC $MockUSDTWallet$init$_store
+  DECLPROC $MockUSDT$init$_load
+  DECLPROC $MockUSDT$_contract_init
+  DECLPROC $MockUSDT$_contract_load
+  DECLPROC $MockUSDT$_contract_store
+  DECLPROC $Cell$_fun_asSlice
+  DECLPROC $global_newAddress
+  DECLPROC $global_contractAddressExt
+  DECLPROC $global_contractAddress
+  DECLPROC $MockUSDTWallet$_init_child
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body_code_data
+  DECLPROC $JettonTransferNotification$_constructor_query_id_amount_sender_forward_payload
+  DECLPROC $MockUSDT$_fun_mintTo
+  DECLPROC $MockUSDT$_fun_total_supply
+  DECLPROC $MockUSDT$_fun_decimals
+  DECLPROC $MockUSDT$_fun_faucet_amount
+  DECLPROC $MockUSDT$_fun_faucet_claims
+  DECLPROC $MockUSDT$_fun_owner
+  DECLPROC $MockUSDT$_fun_get_wallet_address
+  DECLPROC $MockUSDT$_fun_get_jetton_data
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $JettonExcesses$_constructor_query_id
+  DECLPROC $JettonTakeWalletAddress$_constructor_query_id_wallet_address_owner_address
+  130834 DECLMETHOD %total_supply
+  107660 DECLMETHOD %decimals
+  88600 DECLMETHOD %faucet_amount
+  117477 DECLMETHOD %faucet_claims
+  83229 DECLMETHOD %owner
+  103289 DECLMETHOD %get_wallet_address
+  106029 DECLMETHOD %get_jetton_data
+  DECLPROC recv_internal
+  65535 DECLMETHOD __tact_selector_hack
+  DECLGLOBVAR __tact_context
+  DECLGLOBVAR __tact_context_sender
+  DECLGLOBVAR __tact_child_contract_codes
+  DECLGLOBVAR __tact_randomized
+  __tact_store_address_opt PROCINLINE:<{
+    DUP
+    ISNULL
+    IF:<{
+      DROP
+      b{00} STSLICECONST
+    }>ELSE<{
+      SWAP
+      STSLICE
+    }>
+  }>
+  __tact_context_get PROCINLINE:<{
+    __tact_context GETGLOB
+    4 UNTUPLE
+  }>
+  __tact_context_get_sender PROCINLINE:<{
+    __tact_context_sender GETGLOB
+  }>
+  $JettonTransferNotification$_store PROCINLINE:<{
+    395134233 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    SWAP
+    STVARUINT16
+    STSLICE
+    STSLICE
+  }>
+  $JettonTransferNotification$_store_cell PROCINLINE:<{
+    4 -ROLL
+    $JettonTransferNotification$_store INLINECALLDICT
+    ENDC
+  }>
+  $JettonExcesses$_store PROCINLINE:<{
+    3576854235 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $JettonExcesses$_store_cell PROCINLINE:<{
+    SWAP
+    $JettonExcesses$_store INLINECALLDICT
+    ENDC
+  }>
+  $JettonTakeWalletAddress$_store PROCINLINE:<{
+    3513996288 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s1 s2 XCHG
+    64 STU
+    STSLICE
+    SWAP
+    __tact_store_address_opt INLINECALLDICT
+  }>
+  $JettonTakeWalletAddress$_store_cell PROCINLINE:<{
+    3 -ROLL
+    $JettonTakeWalletAddress$_store INLINECALLDICT
+    ENDC
+  }>
+  $MockUSDT$_store PROCINLINE:<{
+    2SWAP
+    STVARUINT16
+    s1 s2 XCHG
+    STSLICE
+    64 STU
+  }>
+  $MockUSDT$_load PROCINLINE:<{
+    LDVARUINT16
+    LDMSGADDR
+    64 LDU
+    3 -ROLL
+  }>
+  $Context$_get_value PROCINLINE:<{
+    s1 s3 XCHG
+    3 BLKDROP
+  }>
+  $MockUSDTWallet$init$_store PROCINLINE:<{
+    s0 s2 XCHG
+    STSLICE
+    STSLICE
+  }>
+  $MockUSDT$init$_load PROCINLINE:<{
+    LDMSGADDR
+    SWAP
+  }>
+  $MockUSDT$_contract_init PROCINLINE:<{
+    0 PUSHINT
+    TUCK
+  }>
+  $MockUSDT$_contract_load PROCINLINE:<{
+    c4 PUSH
+    CTOS
+    1 LDI
+    SWAP
+    IF:<{
+      $MockUSDT$_load INLINECALLDICT
+      1 3 BLKDROP2
+    }>ELSE<{
+      $MockUSDT$init$_load INLINECALLDICT
+      SWAP
+      ENDS
+      $MockUSDT$_contract_init INLINECALLDICT
+    }>
+  }>
+  $MockUSDT$_contract_store PROCINLINE:<{
+    NEWC
+    TRUE
+    SWAP
+    1 STI
+    3 -ROLL
+    $MockUSDT$_store INLINECALLDICT
+    ENDC
+    c4 POP
+  }>
+  $Cell$_fun_asSlice PROCINLINE:<{
+        CTOS
+  }>
+  $global_newAddress PROCINLINE:<{
+        NEWC
+    4 PUSHINT
+    SWAP
+    3 STU
+    s1 s2 XCHG
+    8 STI
+    256 STU
+        ENDC
+    $Cell$_fun_asSlice INLINECALLDICT
+  }>
+  $global_contractAddressExt PROCINLINE:<{
+        s0 PUSH HASHCU // `data` hash
+        s2 PUSH HASHCU // `code` hash
+        SWAP2
+        CDEPTH         // `data` depth
+        SWAP
+        CDEPTH         // `code` depth
+        131380 INT     // (2 << 16) | (1 << 8) | 0x34
+        // Group 2: Composition of the Builder
+        NEWC
+        24 STU  // store refs_descriptor | bits_descriptor | data
+        16 STU  // store depth_descriptor for `code`
+        16 STU  // store depth_descriptor for `data`
+        256 STU // store `code` hash
+        256 STU // store `data` hash
+        // Group 3: SHA256 hash of the resulting Builder
+        ONE HASHEXT_SHA256
+    $global_newAddress INLINECALLDICT
+  }>
+  $global_contractAddress PROCINLINE:<{
+    0 PUSHINT
+    -ROT
+    $global_contractAddressExt INLINECALLDICT
+  }>
+  $MockUSDTWallet$_init_child PROCREF:<{
+        B{b5ee9c720102120100030a000228ff008e88f4a413f4bcf2c80bed5320e303ed43d90102020271030403f63001d072d721d200d200fa4021103450666f04f86102f862ed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e204925f04e002d70d1ff2e0822182100f8a7ea5bae302218210178d4519ba8e1931d33f31fa0030a002c87f01ca0055205afa0212cecec9ed54e0018210595f07bcbae3025f040a0b0c02012005060147bcb6076a268690000cd7d007d207d202a903609cd7d207d202c816880b82cf16d9e3618c090147b951fed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e2db3c6c318070147b851ded44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e2db3c6c3180800022000022100022202de31d33ffa00fa40fa40f40431fa008200c241f84229c705917f95f8422ac705e2f2f48200d5575375bef2f45164a15138db3c5c705920f90022f9005ad76501d76582020134c8cb17cb0fcb0fcbffcbff71f90400c87401cb0212ca07cbffc9d0038208989680a0727f54499052ccc80d0e01f2d33ffa00fa40308138c6f84226c705f2f48200d5575342bef2f45131a17080405414367f07c8553082107bdd97de5005cb1f13cb3f01fa02cecec926044313505510246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb0002110006f2c0820018f82ac87001ca005a02cecec903fc55308210178d45195005cb1f13cb3f01fa02cecec910461510491037507210465522c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb008d08600000000000000000000000000000000000000000000000000000000000000000045210c705b3e30f020f1011009c7080427004c8018210d53276db58cb1fcb3fc91034413010246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb0000025b0020c87f01ca0055205afa0212cecec9ed54} B>boc PUSHREF
+    NEWC
+    FALSE
+    SWAP
+    1 STI
+    2SWAP
+    $MockUSDTWallet$init$_store INLINECALLDICT
+    ENDC
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body_code_data PROCINLINE:<{
+    s4 s6 XCHG
+    3 3 BLKSWAP
+  }>
+  $JettonTransferNotification$_constructor_query_id_amount_sender_forward_payload PROCINLINE:<{
+  }>
+  $MockUSDT$_fun_mintTo PROCREF:<{
+    12241 PUSHINT
+    s5 s1 PUSH2
+    ADD
+    1000000000000000 PUSHINT
+    LEQ
+    THROWANYIFNOT
+        MYADDR
+    s1 s2 XCHG
+    $MockUSDTWallet$_init_child INLINECALLDICT
+    s5 s2 XCPU
+    ADD
+    s1 s5 PUSH2
+    $global_contractAddress INLINECALLDICT
+    20000000 PUSHINT
+    2 PUSHINT
+    TRUE
+    0 PUSHINT
+        MYADDR
+        b{} PUSHSLICE
+    s2 s3 XCHG
+    s2 s9 XCHG
+    $JettonTransferNotification$_constructor_query_id_amount_sender_forward_payload INLINECALLDICT
+    NEWC
+    $JettonTransferNotification$_store_cell INLINECALLDICT
+    s3 s6 XCHG
+    s0 s5 s5 XCHG3
+    s0 s4 XCHG
+    s0 s9 XCHG
+    $SendParameters$_constructor_to_value_mode_bounce_body_code_data INLINECALLDICT
+        NEWC
+        b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+        1 STI               // store `bounce`
+        b{000} STSLICECONST // store bounced = false and src = addr_none
+        STSLICE             // store `to`
+        SWAP
+        STGRAMS             // store `value`
+        105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+        STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+        // → Stack state
+        // s0: Builder
+        // s1: `data`
+        // s2: `code`
+        // s3: `body`
+        // s4: `mode`
+        // Group 2: Placing the Builder after code and data, then checking those for nullability
+        s2 XCHG0
+        DUP2
+        ISNULL
+        SWAP
+        ISNULL
+        AND
+        // → Stack state
+        // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+        // s1: `code`
+        // s2: `data`
+        // s3: Builder
+        // s4: `body`
+        // s5: `mode`
+        // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+        <{
+            DROP2 // drop `data` and `code`, since either of those is null
+            b{0} STSLICECONST
+        }> PUSHCONT
+        // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+        <{
+            // _ split_depth:(Maybe (## 5))
+            //   special:(Maybe TickTock)
+            //   code:(Maybe ^Cell)
+            //   data:(Maybe ^Cell)
+            //   library:(Maybe ^Cell)
+            // = StateInit;
+            ROT                // place message Builder on top
+            b{10} STSLICECONST // store Maybe = true, Either = false
+            // Start composing inlined StateInit
+            b{00} STSLICECONST // store split_depth and special first
+            STDICT             // store code
+            STDICT             // store data
+            b{0} STSLICECONST  // store library
+        }> PUSHCONT
+        // Group 3: IFELSE that does the branching shown above
+        IFELSE
+        // → Stack state
+        // s0: Builder
+        // s1: null or StateInit
+        // s2: `body`
+        // s3: `mode`
+        // Group 4: Finalizing the message
+        STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+        ENDC
+        // → Stack state
+        // s0: Cell
+        // s1: `mode`
+        // Group 5: Sending the message, with `mode` on top
+        SWAP
+        SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+  }>
+  $MockUSDT$_fun_total_supply PROCREF:<{
+    s2 PUSH
+  }>
+  $MockUSDT$_fun_decimals PROCREF:<{
+    6 PUSHINT
+  }>
+  $MockUSDT$_fun_faucet_amount PROCREF:<{
+    1000000000 PUSHINT
+  }>
+  $MockUSDT$_fun_faucet_claims PROCREF:<{
+    DUP
+  }>
+  $MockUSDT$_fun_owner PROCREF:<{
+    OVER
+  }>
+  $MockUSDT$_fun_get_wallet_address PROCREF:<{
+        MYADDR
+    $MockUSDTWallet$_init_child INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
+  }>
+  $MockUSDT$_fun_get_jetton_data PROCREF:<{
+        B{b5ee9c7241010101001100001e74555344543a363a746573746e657494937392} B>boc <s PUSHSLICE
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body PROCINLINE:<{
+    s2 s4 XCHG
+    PUSHNULL
+    s4 s3 XCHG2
+    PUSHNULL
+    s0 s3 XCHG
+  }>
+  $JettonExcesses$_constructor_query_id PROCINLINE:<{
+  }>
+  $JettonTakeWalletAddress$_constructor_query_id_wallet_address_owner_address PROCINLINE:<{
+  }>
+  %total_supply PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_total_supply INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %decimals PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_decimals INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %faucet_amount PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_faucet_amount INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %faucet_claims PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_faucet_claims INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %owner PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_owner INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %get_wallet_address PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    3 ROLL
+    $MockUSDT$_fun_get_wallet_address INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  %get_jetton_data PROC:<{
+    $MockUSDT$_contract_load INLINECALLDICT
+    $MockUSDT$_fun_get_jetton_data INLINECALLDICT
+    3 1 BLKDROP2
+  }>
+  recv_internal PROC:<{
+    SWAP
+    CTOS
+    2 PUSHINT
+    SDSKIPFIRST
+    1 LDI
+    1 LDI
+    LDMSGADDR
+    OVER
+    s3 s4 XCHG
+    s6 s6 XCHG2
+    4 TUPLE
+    __tact_context SETGLOB
+    s0 s2 XCHG
+    __tact_context_sender SETGLOB
+    $MockUSDT$_contract_load INLINECALLDICT
+    s0 s4 XCHG
+    IFJMP:<{
+      4 BLKDROP
+    }>
+    0 PUSHINT
+    s3 PUSH
+    SBITS
+    DUP
+    31 GTINT
+    IF:<{
+      NIP
+      s0 s3 XCHG
+      32 LDU
+      s0 s4 XCHG
+    }>
+    OVER
+    16407783 PUSHINT
+    EQUAL
+    IFJMP:<{
+      2DROP
+      s2 POP
+      23880 PUSHINT
+      __tact_context_get INLINECALLDICT
+      $Context$_get_value INLINECALLDICT
+      50000000 PUSHINT
+      GEQ
+      THROWANYIFNOT
+      __tact_context_get_sender INLINECALLDICT
+      s2 s3 s3 XC2PU
+      1000000000 PUSHINT
+      $MockUSDT$_fun_mintTo INLINECALLDICT
+      INC
+      0 PUSHINT
+      66 PUSHINT
+      FALSE
+          B{b5ee9c7241010101000f00001a000000006661756365745f6f6bdc6a7292} B>boc PUSHREF
+      s4 s7 XCHG
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+          NEWC
+          b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+          1 STI               // store `bounce`
+          b{000} STSLICECONST // store bounced = false and src = addr_none
+          STSLICE             // store `to`
+          SWAP
+          STGRAMS             // store `value`
+          105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+          STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+          // → Stack state
+          // s0: Builder
+          // s1: `data`
+          // s2: `code`
+          // s3: `body`
+          // s4: `mode`
+          // Group 2: Placing the Builder after code and data, then checking those for nullability
+          s2 XCHG0
+          DUP2
+          ISNULL
+          SWAP
+          ISNULL
+          AND
+          // → Stack state
+          // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+          // s1: `code`
+          // s2: `data`
+          // s3: Builder
+          // s4: `body`
+          // s5: `mode`
+          // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+          <{
+              DROP2 // drop `data` and `code`, since either of those is null
+              b{0} STSLICECONST
+          }> PUSHCONT
+          // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+          <{
+              // _ split_depth:(Maybe (## 5))
+              //   special:(Maybe TickTock)
+              //   code:(Maybe ^Cell)
+              //   data:(Maybe ^Cell)
+              //   library:(Maybe ^Cell)
+              // = StateInit;
+              ROT                // place message Builder on top
+              b{10} STSLICECONST // store Maybe = true, Either = false
+              // Start composing inlined StateInit
+              b{00} STSLICECONST // store split_depth and special first
+              STDICT             // store code
+              STDICT             // store data
+              b{0} STSLICECONST  // store library
+          }> PUSHCONT
+          // Group 3: IFELSE that does the branching shown above
+          IFELSE
+          // → Stack state
+          // s0: Builder
+          // s1: null or StateInit
+          // s2: `body`
+          // s3: `mode`
+          // Group 4: Finalizing the message
+          STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+          ENDC
+          // → Stack state
+          // s0: Cell
+          // s1: `mode`
+          // Group 5: Sending the message, with `mode` on top
+          SWAP
+          SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+      ROT
+      $MockUSDT$_contract_store INLINECALLDICT
+    }>
+    OVER
+    709841 PUSHINT
+    EQUAL
+    IFJMP:<{
+      2DROP
+      s0 s2 XCHG
+      64 LDU
+      NIP
+      LDMSGADDR
+      LDVARUINT16
+      DROP
+      35499 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s5 PUSH
+      SDEQ
+      THROWANYIFNOT
+      s2 s4 XCHG
+      $MockUSDT$_fun_mintTo INLINECALLDICT
+      $MockUSDT$_contract_store INLINECALLDICT
+    }>
+    OVER
+    2078119902 PUSHINT
+    EQUAL
+    IFJMP:<{
+      2DROP
+      s0 s2 XCHG
+      64 LDU
+      LDVARUINT16
+      LDMSGADDR
+      LDMSGADDR
+      DROP
+          MYADDR
+      s1 s2 XCHG
+      $MockUSDTWallet$_init_child INLINECALLDICT
+      36088 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      2SWAP
+      $global_contractAddress INLINECALLDICT
+      SDEQ
+      THROWANYIFNOT
+      s3 s3 XCHG2
+      SUB
+          B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+      s3 s(-1) PUXC
+      SDEQ
+      NOT
+      IF:<{
+        0 PUSHINT
+        66 PUSHINT
+        FALSE
+        s0 s4 XCHG
+        $JettonExcesses$_constructor_query_id INLINECALLDICT
+        NEWC
+        $JettonExcesses$_store_cell INLINECALLDICT
+        s4 s5 XCHG
+        s1 s3 s0 XCHG3
+        s1 s5 XCHG
+        $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+            NEWC
+            b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+            1 STI               // store `bounce`
+            b{000} STSLICECONST // store bounced = false and src = addr_none
+            STSLICE             // store `to`
+            SWAP
+            STGRAMS             // store `value`
+            105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+            STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+            // → Stack state
+            // s0: Builder
+            // s1: `data`
+            // s2: `code`
+            // s3: `body`
+            // s4: `mode`
+            // Group 2: Placing the Builder after code and data, then checking those for nullability
+            s2 XCHG0
+            DUP2
+            ISNULL
+            SWAP
+            ISNULL
+            AND
+            // → Stack state
+            // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+            // s1: `code`
+            // s2: `data`
+            // s3: Builder
+            // s4: `body`
+            // s5: `mode`
+            // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+            <{
+                DROP2 // drop `data` and `code`, since either of those is null
+                b{0} STSLICECONST
+            }> PUSHCONT
+            // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+            <{
+                // _ split_depth:(Maybe (## 5))
+                //   special:(Maybe TickTock)
+                //   code:(Maybe ^Cell)
+                //   data:(Maybe ^Cell)
+                //   library:(Maybe ^Cell)
+                // = StateInit;
+                ROT                // place message Builder on top
+                b{10} STSLICECONST // store Maybe = true, Either = false
+                // Start composing inlined StateInit
+                b{00} STSLICECONST // store split_depth and special first
+                STDICT             // store code
+                STDICT             // store data
+                b{0} STSLICECONST  // store library
+            }> PUSHCONT
+            // Group 3: IFELSE that does the branching shown above
+            IFELSE
+            // → Stack state
+            // s0: Builder
+            // s1: null or StateInit
+            // s2: `body`
+            // s3: `mode`
+            // Group 4: Finalizing the message
+            STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+            ENDC
+            // → Stack state
+            // s0: Cell
+            // s1: `mode`
+            // Group 5: Sending the message, with `mode` on top
+            SWAP
+            SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+      }>ELSE<{
+        2 1 BLKDROP2
+      }>
+      s0 s2 XCHG
+      $MockUSDT$_contract_store INLINECALLDICT
+    }>
+    OVER
+    745978227 PUSHINT
+    EQUAL
+    IFJMP:<{
+      2DROP
+      s0 s2 XCHG
+      64 LDU
+      LDMSGADDR
+      1 LDI
+      DROP
+          MYADDR
+      s2 s(-1) PUXC
+      $MockUSDTWallet$_init_child INLINECALLDICT
+      __tact_context_get_sender INLINECALLDICT
+      0 PUSHINT
+      64 PUSHINT
+      s0 s4 XCHG
+      FALSE
+      s0 s4 XCHG
+      $global_contractAddress INLINECALLDICT
+      s0 s5 XCHG
+      IF:<{
+      }>ELSE<{
+        PUSHNULL
+        s6 POP
+      }>
+      s6 s4 s5 XCHG3
+      $JettonTakeWalletAddress$_constructor_query_id_wallet_address_owner_address INLINECALLDICT
+      NEWC
+      $JettonTakeWalletAddress$_store_cell INLINECALLDICT
+      s1 s4 s0 XCHG3
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+          NEWC
+          b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+          1 STI               // store `bounce`
+          b{000} STSLICECONST // store bounced = false and src = addr_none
+          STSLICE             // store `to`
+          SWAP
+          STGRAMS             // store `value`
+          105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+          STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+          // → Stack state
+          // s0: Builder
+          // s1: `data`
+          // s2: `code`
+          // s3: `body`
+          // s4: `mode`
+          // Group 2: Placing the Builder after code and data, then checking those for nullability
+          s2 XCHG0
+          DUP2
+          ISNULL
+          SWAP
+          ISNULL
+          AND
+          // → Stack state
+          // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+          // s1: `code`
+          // s2: `data`
+          // s3: Builder
+          // s4: `body`
+          // s5: `mode`
+          // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+          <{
+              DROP2 // drop `data` and `code`, since either of those is null
+              b{0} STSLICECONST
+          }> PUSHCONT
+          // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+          <{
+              // _ split_depth:(Maybe (## 5))
+              //   special:(Maybe TickTock)
+              //   code:(Maybe ^Cell)
+              //   data:(Maybe ^Cell)
+              //   library:(Maybe ^Cell)
+              // = StateInit;
+              ROT                // place message Builder on top
+              b{10} STSLICECONST // store Maybe = true, Either = false
+              // Start composing inlined StateInit
+              b{00} STSLICECONST // store split_depth and special first
+              STDICT             // store code
+              STDICT             // store data
+              b{0} STSLICECONST  // store library
+          }> PUSHCONT
+          // Group 3: IFELSE that does the branching shown above
+          IFELSE
+          // → Stack state
+          // s0: Builder
+          // s1: null or StateInit
+          // s2: `body`
+          // s3: `mode`
+          // Group 4: Finalizing the message
+          STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+          ENDC
+          // → Stack state
+          // s0: Cell
+          // s1: `mode`
+          // Group 5: Sending the message, with `mode` on top
+          SWAP
+          SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+      s0 s2 XCHG
+      $MockUSDT$_contract_store INLINECALLDICT
+    }>
+    s4 POP
+    0 EQINT
+    s0 s3 XCHG
+    33 LESSINT
+    s1 s3 XCHG
+    AND
+    IFJMP:<{
+      11246 PUSHINT
+      __tact_context_get INLINECALLDICT
+      $Context$_get_value INLINECALLDICT
+      50000000 PUSHINT
+      GEQ
+      THROWANYIFNOT
+      __tact_context_get_sender INLINECALLDICT
+      s1 s3 XCHG
+      1000000000 PUSHINT
+      $MockUSDT$_fun_mintTo INLINECALLDICT
+      INC
+      $MockUSDT$_contract_store INLINECALLDICT
+    }>
+    3 BLKDROP
+    130 THROW
+  }>
+  __tact_selector_hack PROC:<{
+    @atend @ 1 {
+            execute current@ context@ current!
+            {
+                // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+                // We want to extract recv_internal/recv_external from the dict and select needed function
+                // not by jumping to the needed function by it's index, but by using usual IF statements.
+                }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+                <{ // Start of the new code builder
+                    SETCP0
+                    // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                    swap
+                    // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                    <s ref@
+                    // Extract the recv_internal from the dict
+                    dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                    swap
+                    // Delete the recv_internal from the dict
+                    0 swap @procdictkeylen idict- drop
+                    // Delete the recv_external from the dict (it's okay if it's not there)
+                    -1 swap @procdictkeylen idict- drop
+                    // Delete the __tact_selector_hack from the dict
+                    65535 swap @procdictkeylen idict- drop
+                    // Bring the code builder from the bottom of the stack
+                    // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                    depth 1- roll
+                    // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                    swap
+                    // Check if the dict is empty
+                    dup null?
+                    // Store a copy of this flag in the bottom of the stack
+                    dup depth 1- -roll
+                    {
+                        // If the dict is empty, just drop it (it will be null if it's empty)
+                        drop
+                    }
+                    {
+                        // If the dict is not empty, prepare continuation to be stored in c3
+                        <{
+                            // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                            swap @procdictkeylen DICTPUSHCONST
+                            // Jump to the needed function by it's index
+                            DICTIGETJMPZ
+                            // If such key is not found, throw 11 along with the key as an argument
+                            11 THROWARG
+                        }> PUSHCONT
+                        // Store the continuation in c3
+                        c3 POP
+                    } cond
+                    // Function id is on top of the (runtime) stack
+                    DUP IFNOTJMP:<{
+                        // place recv_internal here
+                        DROP swap @addop
+                    }>
+                    // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                    depth 1- roll
+                    {
+                        // If the dict is empty, throw 11
+                        11 THROWARG
+                    }
+                    {
+                        // If the dict is not empty, jump to continuation from c3
+                        c3 PUSH JMPX
+                    } cond
+                }> b>
+            } : }END>c
+            current@ context! current!
+        } does @atend !
+  }>
+}END>c

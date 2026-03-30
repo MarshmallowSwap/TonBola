@@ -1,0 +1,866 @@
+#pragma version =0.4.6;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+;; TbolaJetton_TbolaJetton.headers.fc
+;;
+;; Header files for TbolaJetton
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_store_address_opt
+builder __tact_store_address_opt(builder b, slice address) inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; $TransferNotification$_store
+builder $TransferNotification$_store(builder build_0, (int, int, slice, slice) v) inline;
+
+;; $TransferNotification$_store_cell
+cell $TransferNotification$_store_cell((int, int, slice, slice) v, builder b) inline;
+
+;; $Excesses$_store
+builder $Excesses$_store(builder build_0, (int) v) inline;
+
+;; $Excesses$_store_cell
+cell $Excesses$_store_cell((int) v, builder b) inline;
+
+;; $TakeWalletAddress$_store
+builder $TakeWalletAddress$_store(builder build_0, (int, slice, slice) v) inline;
+
+;; $TakeWalletAddress$_store_cell
+cell $TakeWalletAddress$_store_cell((int, slice, slice) v, builder b) inline;
+
+;; $TbolaJetton$_store
+builder $TbolaJetton$_store(builder build_0, (int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) v) inline;
+
+;; $TbolaJetton$_load
+(slice, ((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int))) $TbolaJetton$_load(slice sc_0) inline;
+
+;; $TbolaWallet$init$_store
+builder $TbolaWallet$init$_store(builder build_0, (slice, slice) v) inline;
+
+;; $TbolaJetton$init$_load
+(slice, ((slice, slice, slice, slice, slice, slice))) $TbolaJetton$init$_load(slice sc_0) inline;
+
+;; $TbolaJetton$_contract_init
+(int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $TbolaJetton$_contract_init(slice $owner, slice $presale_wallet, slice $liquidity_wallet, slice $team_wallet, slice $marketing_wallet, slice $reserve_wallet) impure inline;
+
+;; $TbolaJetton$_contract_load
+(int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $TbolaJetton$_contract_load() impure inline;
+
+;; $TbolaJetton$_contract_store
+() $TbolaJetton$_contract_store((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) v) impure inline;
+
+;; $Cell$_fun_asSlice
+slice $Cell$_fun_asSlice(cell $self) impure inline;
+
+;; $global_newAddress
+slice $global_newAddress(int $chain, int $hash) impure inline;
+
+;; $global_contractAddressExt
+slice $global_contractAddressExt(int $chain, cell $code, cell $data) impure inline;
+
+;; $global_contractAddress
+slice $global_contractAddress((cell, cell) $s) impure inline;
+
+;; $TbolaWallet$_init_child
+(cell, cell) $TbolaWallet$_init_child(slice $owner, slice $jetton_master) inline_ref;
+
+;; $SendParameters$_constructor_to_value_mode_bounce_body_code_data
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice $to, int $value, int $mode, int $bounce, cell $body, cell $code, cell $data) inline;
+
+;; $TransferNotification$_constructor_query_id_amount_sender_forward_payload
+((int, int, slice, slice)) $TransferNotification$_constructor_query_id_amount_sender_forward_payload(int $query_id, int $amount, slice $sender, slice $forward_payload) inline;
+
+;; $TbolaJetton$_fun_mintInternal
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), ()) $TbolaJetton$_fun_mintInternal((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self, slice $to, int $amount) impure inline_ref;
+
+;; $TbolaJetton$_fun_get_jetton_data
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_get_jetton_data((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_total_supply
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_total_supply((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_mintable
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_mintable((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_owner
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_owner((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_minted_airdrop
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_airdrop((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_minted_presale
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_presale((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_minted_team
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_team((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_circulating_supply
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_circulating_supply((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $TbolaJetton$_fun_get_wallet_address
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_get_wallet_address((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self, slice $owner) impure inline_ref;
+
+;; $TbolaJetton$_fun_vesting_claimable
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_vesting_claimable((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref;
+
+;; $SendParameters$_constructor_to_value_mode_bounce_body
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline;
+
+;; $Excesses$_constructor_query_id
+((int)) $Excesses$_constructor_query_id(int $query_id) inline;
+
+;; $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address
+((int, slice, slice)) $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address(int $query_id, slice $wallet_address, slice $owner_address) inline;
+
+
+;; TbolaJetton_TbolaJetton.stdlib.fc
+global (int, slice, int, slice) __tact_context;
+global slice __tact_context_sender;
+global cell __tact_child_contract_codes;
+global int __tact_randomized;
+
+builder __tact_store_addr_none(builder b) asm "b{00} STSLICECONST";
+
+builder __tact_store_address_opt(builder b, slice address) inline {
+    if (null?(address)) {
+        return __tact_store_addr_none(b);
+    } else {
+        return b.store_slice(address);
+    }
+}
+
+slice __tact_context_get_sender() inline {
+    return __tact_context_sender;
+}
+
+builder $global_beginCell() impure asm """
+    NEWC
+""";
+
+slice $global_emptySlice() impure asm """
+    b{} PUSHSLICE
+""";
+
+int $global_min(int $x, int $y) impure asm """
+    MIN
+""";
+
+int $global_contractHash(cell $code, cell $data) impure asm """
+    s0 PUSH HASHCU // `data` hash
+    s2 PUSH HASHCU // `code` hash
+    SWAP2
+    CDEPTH         // `data` depth
+    SWAP
+    CDEPTH         // `code` depth
+    131380 INT     // (2 << 16) | (1 << 8) | 0x34
+
+    // Group 2: Composition of the Builder
+    NEWC
+    24 STU  // store refs_descriptor | bits_descriptor | data
+    16 STU  // store depth_descriptor for `code`
+    16 STU  // store depth_descriptor for `data`
+    256 STU // store `code` hash
+    256 STU // store `data` hash
+
+    // Group 3: SHA256 hash of the resulting Builder
+    ONE HASHEXT_SHA256
+""";
+
+slice $Slice$_fun_asAddressUnsafe(slice $self) impure asm "NOP";
+
+slice $Cell$_fun_beginParse(cell $self) impure asm """
+    CTOS
+""";
+
+slice $Cell$_fun_asSlice(cell $self) impure inline {
+    var ($self) = $self;
+    return $Cell$_fun_beginParse($self);
+}
+
+cell $Builder$_fun_endCell(builder $self) impure asm """
+    ENDC
+""";
+
+slice $global_newAddress(int $chain, int $hash) impure inline {
+    return $Slice$_fun_asAddressUnsafe($Cell$_fun_asSlice($Builder$_fun_endCell(store_uint(store_int(store_uint($global_beginCell(), 4, 3), $chain, 8), $hash, 256))));
+}
+
+slice $global_contractAddressExt(int $chain, cell $code, cell $data) impure inline {
+    int $hash = $global_contractHash($code, $data);
+    return $global_newAddress($chain, $hash);
+}
+
+slice $global_contractAddress((cell, cell) $s) impure inline {
+    var (($s'code, $s'data)) = $s;
+    return $global_contractAddressExt(0, $s'code, $s'data);
+}
+
+slice $global_myAddress() impure asm """
+    MYADDR
+""";
+
+() $global_send((int, cell, cell, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+    STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+    // → Stack state
+    // s0: Builder
+    // s1: `data`
+    // s2: `code`
+    // s3: `body`
+    // s4: `mode`
+
+    // Group 2: Placing the Builder after code and data, then checking those for nullability
+    s2 XCHG0
+    DUP2
+    ISNULL
+    SWAP
+    ISNULL
+    AND
+    // → Stack state
+    // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+    // s1: `code`
+    // s2: `data`
+    // s3: Builder
+    // s4: `body`
+    // s5: `mode`
+
+    // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+    <{
+        DROP2 // drop `data` and `code`, since either of those is null
+        b{0} STSLICECONST
+    }> PUSHCONT
+
+    // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+    <{
+        // _ split_depth:(Maybe (## 5))
+        //   special:(Maybe TickTock)
+        //   code:(Maybe ^Cell)
+        //   data:(Maybe ^Cell)
+        //   library:(Maybe ^Cell)
+        // = StateInit;
+        ROT                // place message Builder on top
+        b{10} STSLICECONST // store Maybe = true, Either = false
+        // Start composing inlined StateInit
+        b{00} STSLICECONST // store split_depth and special first
+        STDICT             // store code
+        STDICT             // store data
+        b{0} STSLICECONST  // store library
+    }> PUSHCONT
+
+    // Group 3: IFELSE that does the branching shown above
+    IFELSE
+    // → Stack state
+    // s0: Builder
+    // s1: null or StateInit
+    // s2: `body`
+    // s3: `mode`
+
+    // Group 4: Finalizing the message
+    STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+    ENDC
+    // → Stack state
+    // s0: Cell
+    // s1: `mode`
+
+    // Group 5: Sending the message, with `mode` on top
+    SWAP
+    SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+""";
+
+int $global_now() impure asm """
+    NOW
+""";
+
+;; TbolaJetton_TbolaJetton.constants.fc
+;; String "TBOLA:1000000000:9"
+slice __gen_slice_string_79d0f36f842bc20b19d779b55209fda43e4c72298779f225aadb67765f3ce4c6() asm """
+    B{b5ee9c7241010101001400002454424f4c413a313030303030303030303a393cb5e8ad} B>boc <s PUSHSLICE
+""";
+
+;; EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c
+slice __gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c() asm """
+    B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+""";
+
+;; TbolaJetton_TbolaJetton.storage.fc
+;;
+;; Type: SendParameters
+;; TLB: _ mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell value:int257 to:address bounce:bool = SendParameters
+;;
+
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice $to, int $value, int $mode, int $bounce, cell $body, cell $code, cell $data) inline {
+    return ($mode, $body, $code, $data, $value, $to, $bounce);
+}
+
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline {
+    return ($mode, $body, null(), null(), $value, $to, $bounce);
+}
+
+;;
+;; Type: TransferNotification
+;; Header: 0x178d4519
+;; TLB: transfer_notification#178d4519 query_id:uint64 amount:coins sender:address forward_payload:remainder<slice> = TransferNotification
+;;
+
+builder $TransferNotification$_store(builder build_0, (int, int, slice, slice) v) inline {
+    var (v'query_id, v'amount, v'sender, v'forward_payload) = v;
+    build_0 = store_uint(build_0, 395134233, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    build_0 = build_0.store_varuint16(v'amount);
+    build_0 = build_0.store_slice(v'sender);
+    build_0 = build_0.store_slice(v'forward_payload);
+    return build_0;
+}
+
+cell $TransferNotification$_store_cell((int, int, slice, slice) v, builder b) inline {
+    return $TransferNotification$_store(b, v).end_cell();
+}
+
+((int, int, slice, slice)) $TransferNotification$_constructor_query_id_amount_sender_forward_payload(int $query_id, int $amount, slice $sender, slice $forward_payload) inline {
+    return ($query_id, $amount, $sender, $forward_payload);
+}
+
+;;
+;; Type: Excesses
+;; Header: 0xd53276db
+;; TLB: excesses#d53276db query_id:uint64 = Excesses
+;;
+
+builder $Excesses$_store(builder build_0, (int) v) inline {
+    var (v'query_id) = v;
+    build_0 = store_uint(build_0, 3576854235, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    return build_0;
+}
+
+cell $Excesses$_store_cell((int) v, builder b) inline {
+    return $Excesses$_store(b, v).end_cell();
+}
+
+((int)) $Excesses$_constructor_query_id(int $query_id) inline {
+    return ($query_id);
+}
+
+;;
+;; Type: TakeWalletAddress
+;; Header: 0xd1735400
+;; TLB: take_wallet_address#d1735400 query_id:uint64 wallet_address:address owner_address:address = TakeWalletAddress
+;;
+
+builder $TakeWalletAddress$_store(builder build_0, (int, slice, slice) v) inline {
+    var (v'query_id, v'wallet_address, v'owner_address) = v;
+    build_0 = store_uint(build_0, 3513996288, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    build_0 = build_0.store_slice(v'wallet_address);
+    build_0 = __tact_store_address_opt(build_0, v'owner_address);
+    return build_0;
+}
+
+cell $TakeWalletAddress$_store_cell((int, slice, slice) v, builder b) inline {
+    return $TakeWalletAddress$_store(b, v).end_cell();
+}
+
+((int, slice, slice)) $TakeWalletAddress$_constructor_query_id_wallet_address_owner_address(int $query_id, slice $wallet_address, slice $owner_address) inline {
+    return ($query_id, $wallet_address, $owner_address);
+}
+
+;;
+;; Type: TbolaWallet
+;; TLB: _ balance:coins owner:address jetton_master:address = TbolaWallet
+;;
+
+builder $TbolaWallet$init$_store(builder build_0, (slice, slice) v) inline {
+    var (v'owner, v'jetton_master) = v;
+    build_0 = build_0.store_slice(v'owner);
+    build_0 = build_0.store_slice(v'jetton_master);
+    return build_0;
+}
+
+cell $TbolaWallet$_child_get_code() impure asm """
+    B{b5ee9c7201021601000387000228ff008e88f4a413f4bcf2c80bed5320e303ed43d90102020271030403c83001d072d721d200d200fa4021103450666f04f86102f862ed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e204925f04e002d70d1ff2e0822182100f8a7ea5bae302218210178d4519bae302018210595f07bcbae3025f04f2c0820d0e0f02012005060147bcb6076a268690000cd7d007d207d202a903609cd7d207d202c816880b82cf16d9e3618c0c0147b951fed44d0d200019afa00fa40fa4055206c139afa40fa405902d1017059e2db3c6c3180702012008090002200147b4a3bda89a1a4000335f401f481f480aa40d82735f481f480b205a202e0b3c5b678d86300a0147b7605da89a1a4000335f401f481f480aa40d82735f481f480b205a202e0b3c5b678d86300b00022100108b677616c6c6574800022202de31d33ffa00fa40fa40f40431fa008200c241f84229c705917f95f8422ac705e2f2f48200d5575375bef2f45164a15138db3c5c705920f90022f9005ad76501d76582020134c8cb17cb0fcb0fcbffcbff71f90400c87401cb0212ca07cbffc9d0038208989680a0727f54499052ccc81410015a31d33f31fa00fa4030815b6cf84210344565db3c15c70515f2f401a059c87f01ca0055205afa0212cecec9ed541301f2d33ffa00fa40308138c6f84226c705f2f48200d5575342bef2f45131a17080405414367f07c8553082107bdd97de5005cb1f13cb3f01fa02cecec926044313505510246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb00021503fc55308210178d45195005cb1f13cb3f01fa02cecec910461510491037507210465522c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb008d08600000000000000000000000000000000000000000000000000000000000000000045210c705b3e30f02111215009c7080427004c8018210d53276db58cb1fcb3fc91034413010246d50436d03c8cf8580ca00cf8440ce01fa028069cf40025c6e016eb0935bcf819d58cf8680cf8480f400f400cf81e2f400c901fb0000025b016021db3c705920f90022f9005ad76501d76582020134c8cb17cb0fcb0fcbffcbff71f90400c87401cb0212ca07cbffc9d0140018f82ac87001ca005a02cecec90020c87f01ca0055205afa0212cecec9ed54} B>boc PUSHREF
+""";
+
+(cell, cell) $TbolaWallet$_init_child(slice $owner, slice $jetton_master) inline_ref {
+    ;; Build init code cell
+
+    ;; Contract Code: TbolaWallet
+    cell init_code = $TbolaWallet$_child_get_code();
+
+
+    builder b = begin_cell();
+    b = b.store_int(false, 1);
+    b = $TbolaWallet$init$_store(b, ($owner, $jetton_master));
+    return (init_code, b.end_cell());
+}
+
+;;
+;; Type: TbolaJetton
+;; TLB: _ total_supply:coins mintable:bool owner:address minted_airdrop:coins minted_presale:coins minted_liquidity:coins minted_team:coins minted_marketing:coins minted_reserve:coins presale_wallet:address liquidity_wallet:address team_wallet:address marketing_wallet:address reserve_wallet:address team_vesting_start:uint32 team_vesting_claimed:coins = TbolaJetton
+;;
+
+builder $TbolaJetton$_store(builder build_0, (int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) v) inline {
+    var (v'total_supply, v'mintable, v'owner, v'minted_airdrop, v'minted_presale, v'minted_liquidity, v'minted_team, v'minted_marketing, v'minted_reserve, v'presale_wallet, v'liquidity_wallet, v'team_wallet, v'marketing_wallet, v'reserve_wallet, v'team_vesting_start, v'team_vesting_claimed) = v;
+    build_0 = build_0.store_varuint16(v'total_supply);
+    build_0 = build_0.store_int(v'mintable, 1);
+    build_0 = build_0.store_slice(v'owner);
+    build_0 = build_0.store_varuint16(v'minted_airdrop);
+    build_0 = build_0.store_varuint16(v'minted_presale);
+    build_0 = build_0.store_varuint16(v'minted_liquidity);
+    build_0 = build_0.store_varuint16(v'minted_team);
+    build_0 = build_0.store_varuint16(v'minted_marketing);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_varuint16(v'minted_reserve);
+    build_1 = build_1.store_slice(v'presale_wallet);
+    build_1 = build_1.store_slice(v'liquidity_wallet);
+    build_1 = build_1.store_slice(v'team_wallet);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_slice(v'marketing_wallet);
+    build_2 = build_2.store_slice(v'reserve_wallet);
+    build_2 = build_2.store_uint(v'team_vesting_start, 32);
+    build_2 = build_2.store_varuint16(v'team_vesting_claimed);
+    build_1 = store_builder_ref(build_1, build_2);
+    build_0 = store_builder_ref(build_0, build_1);
+    return build_0;
+}
+
+(slice, ((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int))) $TbolaJetton$_load(slice sc_0) inline {
+    var v'total_supply = sc_0~load_varuint16();
+    var v'mintable = sc_0~load_int(1);
+    var v'owner = sc_0~load_msg_addr();
+    var v'minted_airdrop = sc_0~load_varuint16();
+    var v'minted_presale = sc_0~load_varuint16();
+    var v'minted_liquidity = sc_0~load_varuint16();
+    var v'minted_team = sc_0~load_varuint16();
+    var v'minted_marketing = sc_0~load_varuint16();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'minted_reserve = sc_1~load_varuint16();
+    var v'presale_wallet = sc_1~load_msg_addr();
+    var v'liquidity_wallet = sc_1~load_msg_addr();
+    var v'team_wallet = sc_1~load_msg_addr();
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'marketing_wallet = sc_2~load_msg_addr();
+    var v'reserve_wallet = sc_2~load_msg_addr();
+    var v'team_vesting_start = sc_2~load_uint(32);
+    var v'team_vesting_claimed = sc_2~load_varuint16();
+    return (sc_0, (v'total_supply, v'mintable, v'owner, v'minted_airdrop, v'minted_presale, v'minted_liquidity, v'minted_team, v'minted_marketing, v'minted_reserve, v'presale_wallet, v'liquidity_wallet, v'team_wallet, v'marketing_wallet, v'reserve_wallet, v'team_vesting_start, v'team_vesting_claimed));
+}
+
+(slice, ((slice, slice, slice, slice, slice, slice))) $TbolaJetton$init$_load(slice sc_0) inline {
+    var v'owner = sc_0~load_msg_addr();
+    var v'presale_wallet = sc_0~load_msg_addr();
+    var v'liquidity_wallet = sc_0~load_msg_addr();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'team_wallet = sc_1~load_msg_addr();
+    var v'marketing_wallet = sc_1~load_msg_addr();
+    var v'reserve_wallet = sc_1~load_msg_addr();
+    return (sc_0, (v'owner, v'presale_wallet, v'liquidity_wallet, v'team_wallet, v'marketing_wallet, v'reserve_wallet));
+}
+
+(int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $TbolaJetton$_contract_load() impure inline {
+    slice $sc = get_data().begin_parse();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$TbolaJetton$_load();
+    }
+    else {
+        (slice $owner, slice $presale_wallet, slice $liquidity_wallet, slice $team_wallet, slice $marketing_wallet, slice $reserve_wallet) = $sc~$TbolaJetton$init$_load();
+        $sc.end_parse();
+        return $TbolaJetton$_contract_init($owner, $presale_wallet, $liquidity_wallet, $team_wallet, $marketing_wallet, $reserve_wallet);
+    }
+}
+
+() $TbolaJetton$_contract_store((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_int(true, 1);
+    b = $TbolaJetton$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Contract TbolaJetton functions
+;;
+
+(int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $TbolaJetton$_contract_init(slice $owner, slice $presale_wallet, slice $liquidity_wallet, slice $team_wallet, slice $marketing_wallet, slice $reserve_wallet) impure inline {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = (null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null(), null());
+    $self'total_supply = 0;
+    $self'mintable = true;
+    $self'owner = $owner;
+    $self'presale_wallet = $presale_wallet;
+    $self'liquidity_wallet = $liquidity_wallet;
+    $self'team_wallet = $team_wallet;
+    $self'marketing_wallet = $marketing_wallet;
+    $self'reserve_wallet = $reserve_wallet;
+    $self'minted_airdrop = 0;
+    $self'minted_presale = 0;
+    $self'minted_liquidity = 0;
+    $self'minted_team = 0;
+    $self'minted_marketing = 0;
+    $self'minted_reserve = 0;
+    $self'team_vesting_start = 0;
+    $self'team_vesting_claimed = 0;
+    return ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), ()) $TbolaJetton$_fun_mintInternal((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self, slice $to, int $amount) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var ($wallet_init'code, $wallet_init'data) = $TbolaWallet$_init_child($to, $global_myAddress());
+    slice $wallet_addr = $global_contractAddress(($wallet_init'code, $wallet_init'data));
+    $self'total_supply = ($self'total_supply + $amount);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($wallet_addr, 20000000, 2, true, $TransferNotification$_store_cell($TransferNotification$_constructor_query_id_amount_sender_forward_payload(0, $amount, $global_myAddress(), $global_emptySlice()), begin_cell()), $wallet_init'code, $wallet_init'data));
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), ());
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_get_jetton_data((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_30 = __gen_slice_string_79d0f36f842bc20b19d779b55209fda43e4c72298779f225aadb67765f3ce4c6();
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_30);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_total_supply((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_31 = $self'total_supply;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_31);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_mintable((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_32 = $self'mintable;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_32);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_owner((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_33 = $self'owner;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_33);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_airdrop((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_34 = $self'minted_airdrop;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_34);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_presale((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_35 = $self'minted_presale;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_35);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_minted_team((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_36 = $self'minted_team;
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_36);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_circulating_supply((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_37 = ((((($self'minted_airdrop + $self'minted_presale) + $self'minted_liquidity) + $self'minted_marketing) + $self'minted_reserve) + $self'minted_team);
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_37);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), slice) $TbolaJetton$_fun_get_wallet_address((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self, slice $owner) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    var $fresh$ret_38 = $global_contractAddress($TbolaWallet$_init_child($owner, $global_myAddress()));
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_38);
+}
+
+((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int), int) $TbolaJetton$_fun_vesting_claimable((int, int, slice, int, int, int, int, int, int, slice, slice, slice, slice, slice, int, int) $self) impure inline_ref {
+    var (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)) = $self;
+    ifnot ($self'team_vesting_start) {
+        var $fresh$ret_39 = 0;
+        return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_39);
+    }
+    int $elapsed = ($global_now() - $self'team_vesting_start);
+    int $cliff = 15552000;
+    if (($elapsed < $cliff)) {
+        var $fresh$ret_40 = 0;
+        return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_40);
+    }
+    int $duration = 63072000;
+    int $total_team = 150000000000000000;
+    int $vested = $global_min((($total_team * $elapsed) / $duration), $total_team);
+    var $fresh$ret_41 = ($vested - $self'team_vesting_claimed);
+    return (($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed), $fresh$ret_41);
+}
+
+;;
+;; Get methods of a Contract TbolaJetton
+;;
+
+_ %get_jetton_data() method_id(106029) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_get_jetton_data();
+    return res;
+}
+
+_ %total_supply() method_id(130834) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_total_supply();
+    return res;
+}
+
+_ %mintable() method_id(106520) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_mintable();
+    return res;
+}
+
+_ %owner() method_id(83229) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_owner();
+    return res;
+}
+
+_ %minted_airdrop() method_id(86458) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_minted_airdrop();
+    return res;
+}
+
+_ %minted_presale() method_id(74614) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_minted_presale();
+    return res;
+}
+
+_ %minted_team() method_id(65989) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_minted_team();
+    return res;
+}
+
+_ %circulating_supply() method_id(111697) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_circulating_supply();
+    return res;
+}
+
+_ %get_wallet_address(slice $owner) method_id(103289) {
+    slice $owner = $owner;
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_get_wallet_address($owner);
+    return res;
+}
+
+_ %vesting_claimable() method_id(91561) {
+    var self = $TbolaJetton$_contract_load();
+    var res = self~$TbolaJetton$_fun_vesting_claimable();
+    return res;
+}
+
+;;
+;; Routing of a Contract TbolaJetton
+;;
+
+;; message opcode reader utility: only binary receivers
+;; Returns 32 bit message opcode, otherwise throws the "Invalid incoming message" exit code
+(slice, int) ~load_opcode_internal(slice s) asm( -> 1 0) "32 LDUQ 130 THROWIFNOT";
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    cs~skip_bits(2);
+    var msg_bounceable = cs~load_int(1);
+    var msg_bounced = cs~load_int(1);
+    slice msg_sender_addr = cs~load_msg_addr();
+    __tact_context = (msg_bounceable, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed) = $TbolaJetton$_contract_load();
+    
+    ;; Handle bounced messages
+    if (msg_bounced) { return (); }
+    int op = 0;
+    int in_msg_length = slice_bits(in_msg);
+    if (in_msg_length >= 32) {
+        op = in_msg~load_uint(32);
+        ;; Receive Mint message
+        if (op == 0x642b7d07) {
+            var $msg'query_id = in_msg~load_uint(64);
+            var $msg'amount = in_msg~load_varuint16();
+            var $msg'receiver = in_msg~load_msg_addr();
+            throw_unless(57579, ( equal_slices_bits(__tact_context_get_sender(), $self'owner) ));
+            throw_unless(56760, $self'mintable);
+            int $max_airdrop = 400000000000000000;
+            throw_unless(56249, (($self'minted_airdrop + $msg'amount) <= $max_airdrop));
+            ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($msg'receiver, $msg'amount);
+            $self'minted_airdrop = ($self'minted_airdrop + $msg'amount);
+            $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+            return ();
+        }
+        
+        ;; Receive BurnNotification message
+        if (op == 0x7bdd97de) {
+            var $msg'query_id = in_msg~load_uint(64);
+            var $msg'amount = in_msg~load_varuint16();
+            var $msg'sender = in_msg~load_msg_addr();
+            var $msg'response_destination = in_msg~load_msg_addr();
+            var ($wallet_init'code, $wallet_init'data) = $TbolaWallet$_init_child($msg'sender, $global_myAddress());
+            throw_unless(36088, ( equal_slices_bits(__tact_context_get_sender(), $global_contractAddress(($wallet_init'code, $wallet_init'data))) ));
+            $self'total_supply = ($self'total_supply - $msg'amount);
+            if (( ~ equal_slices_bits($msg'response_destination, __gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c()) )) {
+                $global_send($SendParameters$_constructor_to_value_mode_bounce_body($msg'response_destination, 0, 66, false, $Excesses$_store_cell($Excesses$_constructor_query_id($msg'query_id), begin_cell())));
+            }
+            $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+            return ();
+        }
+        
+        ;; Receive ProvideWalletAddress message
+        if (op == 0x2c76b973) {
+            var $msg'query_id = in_msg~load_uint(64);
+            var $msg'owner_address = in_msg~load_msg_addr();
+            var $msg'include_address = in_msg~load_int(1);
+            var ($wallet_init'code, $wallet_init'data) = $TbolaWallet$_init_child($msg'owner_address, $global_myAddress());
+            slice $wallet_addr = $global_contractAddress(($wallet_init'code, $wallet_init'data));
+            $global_send($SendParameters$_constructor_to_value_mode_bounce_body(__tact_context_get_sender(), 0, 64, false, $TakeWalletAddress$_store_cell($TakeWalletAddress$_constructor_query_id_wallet_address_owner_address($msg'query_id, $wallet_addr, ($msg'include_address ? $msg'owner_address : null())), begin_cell())));
+            $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+            return ();
+        }
+        
+    }
+    ;; Empty Receiver and Text Receivers
+    var text_op = slice_hash(in_msg);
+    ;; Receive "distribute_initial" message
+    if (text_op == 0x00aace05a1a967f815c33e97d56dc68d7a4ab0ceb5881532619c37340e411618) {
+        throw_unless(35499, ( equal_slices_bits(__tact_context_get_sender(), $self'owner) ));
+        throw_unless(9050, ($self'minted_presale == 0));
+        int $presale_amt = 200000000000000000;
+        int $liquidity_amt = 150000000000000000;
+        int $marketing_amt = 50000000000000000;
+        int $reserve_amt = 50000000000000000;
+        ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($self'presale_wallet, $presale_amt);
+        ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($self'liquidity_wallet, $liquidity_amt);
+        ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($self'marketing_wallet, $marketing_amt);
+        ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($self'reserve_wallet, $reserve_amt);
+        $self'minted_presale = $presale_amt;
+        $self'minted_liquidity = $liquidity_amt;
+        $self'minted_marketing = $marketing_amt;
+        $self'minted_reserve = $reserve_amt;
+        $self'team_vesting_start = $global_now();
+        $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+        return ();
+    }
+    ;; Receive "claim_team_vesting" message
+    if (text_op == 0x80d81151ba84ac79dc10ef52a5592c8c32f590bff2b428ef2d19c0b37649e446) {
+        throw_unless(56184, ( equal_slices_bits(__tact_context_get_sender(), $self'team_wallet) ));
+        throw_unless(51916, ($self'team_vesting_start > 0));
+        int $elapsed = ($global_now() - $self'team_vesting_start);
+        int $cliff = 15552000;
+        int $duration = 63072000;
+        throw_unless(1630, ($elapsed >= $cliff));
+        int $total_team = 150000000000000000;
+        int $vested = $global_min((($total_team * $elapsed) / $duration), $total_team);
+        int $claimable = ($vested - $self'team_vesting_claimed);
+        throw_unless(44799, ($claimable > 0));
+        ($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed)~$TbolaJetton$_fun_mintInternal($self'team_wallet, $claimable);
+        $self'minted_team = ($self'minted_team + $claimable);
+        $self'team_vesting_claimed = ($self'team_vesting_claimed + $claimable);
+        $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+        return ();
+    }
+    ;; Receive "disable_minting" message
+    if (text_op == 0xffbe0c5efb3f772f857f4608e880b68adfa183b28bdb05bffae72f6ac2ec9652) {
+        throw_unless(35499, ( equal_slices_bits(__tact_context_get_sender(), $self'owner) ));
+        $self'mintable = false;
+        $TbolaJetton$_contract_store(($self'total_supply, $self'mintable, $self'owner, $self'minted_airdrop, $self'minted_presale, $self'minted_liquidity, $self'minted_team, $self'minted_marketing, $self'minted_reserve, $self'presale_wallet, $self'liquidity_wallet, $self'team_wallet, $self'marketing_wallet, $self'reserve_wallet, $self'team_vesting_start, $self'team_vesting_claimed));
+        return ();
+    }
+    ;; Throw if not handled
+    throw(130);
+}
+
+
+() __tact_selector_hack_asm() impure asm """
+@atend @ 1 {
+        execute current@ context@ current!
+        {
+            // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+            // We want to extract recv_internal/recv_external from the dict and select needed function
+            // not by jumping to the needed function by it's index, but by using usual IF statements.
+
+            }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+
+            <{ // Start of the new code builder
+                SETCP0
+                // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                swap
+                // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                <s ref@
+
+                // Extract the recv_internal from the dict
+                dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                swap
+
+                // Delete the recv_internal from the dict
+                0 swap @procdictkeylen idict- drop
+                // Delete the recv_external from the dict (it's okay if it's not there)
+                -1 swap @procdictkeylen idict- drop
+                // Delete the __tact_selector_hack from the dict
+                65535 swap @procdictkeylen idict- drop
+
+                // Bring the code builder from the bottom of the stack
+                // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                depth 1- roll
+                // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                swap
+
+                // Check if the dict is empty
+                dup null?
+                // Store a copy of this flag in the bottom of the stack
+                dup depth 1- -roll
+                {
+                    // If the dict is empty, just drop it (it will be null if it's empty)
+                    drop
+                }
+                {
+                    // If the dict is not empty, prepare continuation to be stored in c3
+                    <{
+                        // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                        swap @procdictkeylen DICTPUSHCONST
+                        // Jump to the needed function by it's index
+                        DICTIGETJMPZ
+                        // If such key is not found, throw 11 along with the key as an argument
+                        11 THROWARG
+                    }> PUSHCONT
+                    // Store the continuation in c3
+                    c3 POP
+                } cond
+
+                // Function id is on top of the (runtime) stack
+                DUP IFNOTJMP:<{
+                    // place recv_internal here
+                    DROP swap @addop
+                }>
+
+                // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                depth 1- roll
+                {
+                    // If the dict is empty, throw 11
+                    11 THROWARG
+                }
+                {
+                    // If the dict is not empty, jump to continuation from c3
+                    c3 PUSH JMPX
+                } cond
+            }> b>
+        } : }END>c
+        current@ context! current!
+    } does @atend !
+""";
+
+() __tact_selector_hack() method_id(65535) {
+    return __tact_selector_hack_asm();
+}

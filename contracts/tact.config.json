@@ -1,0 +1,22 @@
+{
+  "projects": [
+    {
+      "name": "TonBolaVault",
+      "path": "contracts/TonBolaVault.tact",
+      "output": "build/TonBolaVault",
+      "options": { "debug": false }
+    },
+    {
+      "name": "TbolaJetton",
+      "path": "contracts/tbola/TbolaJetton.tact",
+      "output": "build/TbolaJetton",
+      "options": { "debug": false }
+    },
+    {
+      "name": "MockUSDT",
+      "path": "contracts/mockusdt/MockUSDT.tact",
+      "output": "build/MockUSDT",
+      "options": { "debug": false }
+    }
+  ]
+}
