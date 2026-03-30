@@ -125,10 +125,20 @@ td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.04) }
 <div class="section" style="margin-bottom:14px">
   <div class="section-title">💼 Wallet Balances (TON API)</div>
   <div id="wallet-rows">
+    
     <div class="row">
-      <div class="row-label">🟢 Dev Wallet <span class="addr" style="display:block">UQAjEYy...g6TT</span></div>
-      <div class="row-val" id="w-dev">checking...</div>
+      <div class="row-label">🟡 Token Fund (8%)<span class="addr" style="display:block">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf</span></div>
+      <div class="row-val" id="w-token">checking...</div>
     </div>
+    <div class="row">
+      <div class="row-label">🔵 Leaderboard (3%)<span class="addr" style="display:block">UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB</span></div>
+      <div class="row-val" id="w-lb">checking...</div>
+    </div>
+    <div class="row">
+      <div class="row-label">⚙️ Platform (2%)<span class="addr" style="display:block">UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_</span></div>
+      <div class="row-val" id="w-platform">checking...</div>
+    </div>
+    
     <div class="row">
       <div class="row-label">🟡 Token Fund <span class="addr" style="display:block">da deployare</span></div>
       <div class="row-val" id="w-token">—</div>
@@ -248,6 +258,28 @@ function nano(n) {
 function usdt(n) {
   if (!n && n !== 0) return '—'
   return parseFloat(n).toFixed(4) + ' USDT'
+}
+
+
+const WALLETS = {
+  dev:         'UQAjEYySoQTi15oQCNCdCoIT45WLV9FKKl_oi5VK2wZtg6TT',
+  token_fund:  'UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf',
+  leaderboard: 'UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB',
+  platform:    'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_',
+}
+
+async function checkWallets() {
+  const map = { dev:'w-dev', token_fund:'w-token', leaderboard:'w-lb', platform:'w-platform' }
+  for (const [key, addr] of Object.entries(WALLETS)) {
+    try {
+      const r = await fetch('https://tonapi.io/v2/accounts/' + addr)
+      const d = await r.json()
+      const bal = (parseInt(d.balance||0) / 1e9).toFixed(4)
+      document.getElementById(map[key]).textContent = bal + ' TON'
+    } catch(e) {
+      document.getElementById(map[key]).textContent = '—'
+    }
+  }
 }
 
 async function checkContract() {
@@ -390,6 +422,7 @@ async function runAll() {
   document.getElementById('last-refresh').textContent = 'Last refresh: ' + new Date().toLocaleTimeString('it-IT')
   await Promise.all([
     checkContract(),
+    checkWallets(),
     checkJackpots(),
     checkLeaderboard(),
     checkRecentWins(),
