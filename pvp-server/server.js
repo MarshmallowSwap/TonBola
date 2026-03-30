@@ -268,6 +268,7 @@ io.on('connection', (socket) => {
 
 // ── Health endpoint ──
 app.get('/tonbola-pvp/health', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*')
   res.json({ status: 'ok', rooms: rooms.size, players: players.size, ts: Date.now() })
 })
 
