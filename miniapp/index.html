@@ -942,7 +942,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- PvP Battle — Coming Soon -->
+    <!-- PvP Battle -->
     <div onclick="openPvpGated()" style="cursor:pointer;margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
@@ -952,14 +952,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="flex:1">
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">PvP Battle</div>
-        <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
-          Live 1v1 bingo · Challenge real players
+        <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px">
+          1v1 Bingo · Bet &amp; win real crypto
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
-          <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
-            color:var(--yellow);font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
-            🔜 COMING SOON
-          </span>
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+          <span style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);
+            color:#fff;font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;letter-spacing:.5px">● LIVE</span>
+          <span style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);
+            color:rgba(255,255,255,.9);font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px">🔒 Lv 10</span>
         </div>
       </div>
     </div>
@@ -2273,7 +2273,10 @@ function updateXpUI() {
 }
 function applyPrizeBonus(amount){return+(amount*(1+(getMilestoneUnlocks().prize_bonus||0))).toFixed(4)}
 function openPvpGated(){
-  // TEMP: pvp unlocked for testing
+  if(!getMilestoneUnlocks().pvp){
+    showLevelGatePopup('PvP Battle',getCurrentLevel(),10,'Warrior',['TON Room','Gold Scratch','Wheel TON'])
+    return
+  }
   openPvp()
 }
 
