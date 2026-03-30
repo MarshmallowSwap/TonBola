@@ -1,6 +1,4 @@
 #!/bin/bash
-# TonBola — Deploy testnet completo
-# Esegui su VPS: bash setup.sh
 set -e
 DIR="/root/tbola"
 mkdir -p $DIR/build $DIR/contracts/mockusdt $DIR/contracts/vault $DIR/contracts/tbola
@@ -8,12 +6,9 @@ cd $DIR
 
 echo '{"name":"tbola","version":"1.0.0","dependencies":{"@ton/core":"^0.56.0","@ton/crypto":"^3.3.0","@ton/ton":"^15.0.0","@tact-lang/compiler":"^1.6.0","typescript":"^5.4.0","ts-node":"^10.9.2"}}' > package.json
 echo '{"compilerOptions":{"target":"ES2020","module":"commonjs","esModuleInterop":true,"strict":false,"skipLibCheck":true}}' > tsconfig.json
-
-echo "📦 npm install..."
 npm install --legacy-peer-deps 2>&1 | tail -3
 
 echo '{"mnemonic":["minor","pulp","dawn","eye","pair","vicious","museum","bacon","peasant","enable","danger","slight","retreat","twice","double","stick","tray","stairs","rug","machine","chunk","sunset","organ","spoon"]}' > build/wallet.json
-echo "✅ wallet salvato (2 TON testnet)"
 
 cat > contracts/mockusdt/MockUSDT.tact << 'TACT'
 message(0xf8a7ea5) JettonTransfer { query_id: Int as uint64; amount: Int as coins; destination: Address; response_destination: Address; custom_payload: Cell?; forward_ton_amount: Int as coins; forward_payload: Slice as remaining; }
@@ -47,7 +42,7 @@ contract MockUSDT {
     const FAUCET_AMOUNT: Int = 1000000000;
     init(owner: Address) { self.total_supply=0; self.owner=owner; self.faucet_claims=0; }
     receive() {
-        require(context().value>=ton("0.05"),"Send 0.05 TON min");
+        require(context().value>=ton("0.05"),"Min 0.05 TON");
         self.mintTo(sender(),self.FAUCET_AMOUNT);
         self.faucet_claims=self.faucet_claims+1;
         send(SendParameters{to:sender(),value:0,mode:SendRemainingValue|SendIgnoreErrors,bounce:false,body:"faucet_ok".asComment()});
@@ -163,72 +158,176 @@ cat > tact.config.json << 'EOF'
 ]}
 EOF
 
-echo "🔨 Compiling..."
-./node_modules/.bin/tact --config tact.config.json
+echo "🔨 Compiling..." && ./node_modules/.bin/tact --config tact.config.json
 echo "✅ Done:" && for f in build/*/*.code.boc; do echo "  $(basename $f): $(wc -c < $f) bytes"; done
 
+# --- DEPLOY SCRIPT con fix BOC escaping ---
 cat > deploy.ts << 'TSEOF'
 import{Address,Cell,contractAddress,fromNano,internal,SendMode,toNano,WalletContractV4,beginCell}from"@ton/ton";
 import{KeyPair,mnemonicToPrivateKey}from"@ton/crypto";
-import{execSync}from"child_process";
+import{execSync,spawnSync}from"child_process";
 import*as fs from"fs";
-function curl(u:string):any{try{return JSON.parse(execSync(`curl -sf --max-time 12 "${u}"`,{encoding:"utf-8"}));}catch{return{};}}
-function sendBoc(boc:string):any{try{const o=execSync(`curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' -d '{"boc":"${boc}"}' "https://testnet.toncenter.com/api/v2/sendBoc"`,{encoding:"utf-8"});return JSON.parse(o);}catch(e:any){return{error:e.stderr?.toString().slice(0,80)};}}
-function getSeqno(a:string):number{const d=curl(`https://testnet.toncenter.com/api/v2/runGetMethod?address=${encodeURIComponent(a)}&method=seqno&stack=%5B%5D`);try{return parseInt(d.result?.stack?.[0]?.[1]??"0x0",16);}catch{return 0;}}
-async function getInfo(a:string){const d=curl(`https://testnet.tonapi.io/v2/accounts/${a}`);return{status:d.status??"unknown",balance:BigInt(d.balance??0)};}
+
+function curl(u:string):any{
+  try{return JSON.parse(execSync(`curl -sf --max-time 12 "${u}"`,{encoding:"utf-8"}));}
+  catch{return{};}
+}
+
+// Fix: scrive il BOC su file temporaneo per evitare problemi di escaping
+function sendBoc(boc:string):any{
+  try{
+    fs.writeFileSync("/tmp/boc_payload.json",JSON.stringify({boc}));
+    const o=execSync(
+      `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' -d @/tmp/boc_payload.json "https://testnet.toncenter.com/api/v2/sendBoc"`,
+      {encoding:"utf-8"}
+    );
+    return JSON.parse(o);
+  }catch(e:any){
+    // Try alternative endpoint
+    try{
+      const o2=execSync(
+        `curl -sf --max-time 15 -X POST -H 'Content-Type: application/json' -d @/tmp/boc_payload.json "https://testnet.tonhubapi.com/jsonRPC"`,
+        {encoding:"utf-8"}
+      );
+      return JSON.parse(o2);
+    }catch{return{error:"both endpoints failed"};}
+  }
+}
+
+function getSeqno(a:string):number{
+  const d=curl(`https://testnet.toncenter.com/api/v2/runGetMethod?address=${encodeURIComponent(a)}&method=seqno&stack=%5B%5D`);
+  try{return parseInt(d.result?.stack?.[0]?.[1]??"0x0",16);}catch{return 0;}
+}
+
+async function getInfo(a:string){
+  const d=curl(`https://testnet.tonapi.io/v2/accounts/${a}`);
+  return{status:d.status??"unknown",balance:BigInt(d.balance??0)};
+}
+
 async function sleep(ms:number){return new Promise(r=>setTimeout(r,ms));}
-async function deploy(name:string,pkg:string,data:Cell,kp:KeyPair,w:WalletContractV4,wa:string,seq:number):Promise<string>{
+
+async function deploy(
+  name:string,pkg:string,data:Cell,
+  kp:KeyPair,w:WalletContractV4,seq:number
+):Promise<string>{
   const p=JSON.parse(fs.readFileSync(pkg,"utf-8"));
   const si={code:Cell.fromBase64(p.code),data};
   const ca=contractAddress(0,si);
   const cs=ca.toString({testOnly:true,bounceable:false});
   console.log(`\n📦 ${name}\n   ${cs}`);
-  if((await getInfo(cs)).status==="active"){console.log("   ✅ già deployato!");return cs;}
-  const tx=w.createTransfer({secretKey:kp.secretKey,seqno:seq,sendMode:SendMode.PAY_GAS_SEPARATELY+SendMode.IGNORE_ERRORS,messages:[internal({to:ca,value:toNano("0.15"),init:si,body:"deploy",bounce:false})]});
-  const r=sendBoc(tx.toBoc().toString("base64"));
-  console.log(`   TX: ${r.ok?"✅ inviata":"⚠️ "+JSON.stringify(r).slice(0,80)}`);
+
+  const{status}=await getInfo(cs);
+  if(status==="active"){console.log("   ✅ già deployato!");return cs;}
+
+  // Build signed external message
+  const tx=w.createTransfer({
+    secretKey:kp.secretKey,seqno:seq,
+    sendMode:SendMode.PAY_GAS_SEPARATELY+SendMode.IGNORE_ERRORS,
+    messages:[internal({to:ca,value:toNano("0.15"),init:si,body:"deploy",bounce:false})]
+  });
+
+  const boc=tx.toBoc().toString("base64");
+  console.log(`   BOC size: ${boc.length} chars`);
+
+  const r=sendBoc(boc);
+  if(r.ok||r.result){
+    console.log("   TX: ✅ inviata");
+  }else{
+    console.log(`   TX: ⚠️ ${JSON.stringify(r).slice(0,100)}`);
+    console.log("   Continuo ad aspettare conferma...");
+  }
+
   process.stdout.write("   ⏳ ");
-  for(let i=0;i<30;i++){await sleep(3000);const{status:st,balance:b}=await getInfo(cs);if(st==="active"||st==="frozen"){console.log(` ✅ ${st} (${fromNano(b)} TON)`);return cs;}process.stdout.write("·");}
-  console.log(`\n   ⚠️ https://testnet.tonscan.io/address/${cs}`);return cs;
+  for(let i=0;i<40;i++){
+    await sleep(3000);
+    const{status:st,balance:b}=await getInfo(cs);
+    if(st==="active"||st==="frozen"){
+      console.log(` ✅ ${st} (${fromNano(b)} TON)`);
+      return cs;
+    }
+    process.stdout.write("·");
+    // Retry ogni 15s se ancora uninit
+    if(i>0&&i%5===0){
+      console.log("\n   🔄 Retry TX...");
+      const r2=sendBoc(boc);
+      console.log(`   Retry: ${r2.ok?"ok":JSON.stringify(r2).slice(0,60)}`);
+      process.stdout.write("   ⏳ ");
+    }
+  }
+  console.log(`\n   ⚠️ Timeout. Controlla: https://testnet.tonscan.io/address/${cs}`);
+  return cs;
 }
+
 async function main(){
   console.log("\n🚀 TonBola Deploy Testnet\n");
+
   const wf=JSON.parse(fs.readFileSync("build/wallet.json","utf-8"));
   const kp:KeyPair=await mnemonicToPrivateKey(wf.mnemonic);
   const w=WalletContractV4.create({publicKey:kp.publicKey,workchain:0});
   const wa=w.address.toString({testOnly:true,bounceable:false});
+
   console.log(`Wallet: ${wa}`);
-  const{balance:bal}=await getInfo(wa);
-  console.log(`Balance: ${fromNano(bal)} TON`);
-  if(bal<toNano("0.4")){console.log("❌ Serve 0.4 TON");process.exit(1);}
-  const seq=getSeqno(wa);console.log(`Seqno: ${seq}`);
+  const{balance:bal,status:wst}=await getInfo(wa);
+  console.log(`Balance: ${fromNano(bal)} TON  (${wst})`);
+
+  if(bal<toNano("0.4")){
+    console.log("❌ Serve almeno 0.4 TON testnet");
+    process.exit(1);
+  }
+
+  const seq=getSeqno(wa);
+  console.log(`Seqno: ${seq}`);
   const o=w.address;
+  const ORACLE=BigInt("81596930447221648253673168568189894254664175305553746201413230980358321864729");
+
   const usdt=await deploy("MockUSDT",
     "build/MockUSDT/MockUSDT_MockUSDT.pkg",
     beginCell().storeUint(0,1).storeAddress(o).endCell(),
-    kp,w,wa,seq);
-  await sleep(8000);
-  const ORACLE=BigInt("81596930447221648253673168568189894254664175305553746201413230980358321864729");
+    kp,w,seq);
+  await sleep(10000);
+
   const vault=await deploy("TonBolaVault",
     "build/TonBolaVault/TonBolaVault_TonBolaVault.pkg",
-    beginCell().storeUint(0,1).storeAddress(o).storeAddress(o).storeAddress(o).storeRef(beginCell().storeAddress(o).storeInt(ORACLE,257).endCell()).endCell(),
-    kp,w,wa,seq+1);
-  await sleep(8000);
+    beginCell().storeUint(0,1).storeAddress(o).storeAddress(o).storeAddress(o)
+      .storeRef(beginCell().storeAddress(o).storeInt(ORACLE,257).endCell())
+      .endCell(),
+    kp,w,seq+1);
+  await sleep(10000);
+
   const tbola=await deploy("TbolaJetton",
     "build/TbolaJetton/TbolaJetton_TbolaJetton.pkg",
-    beginCell().storeUint(0,1).storeCoins(0).storeBit(true).storeAddress(o).storeAddress(o).storeAddress(o).storeRef(beginCell().storeAddress(o).storeAddress(o).storeAddress(o).endCell()).storeRef(beginCell().storeCoins(0).storeCoins(0).storeCoins(0).storeCoins(0).storeCoins(0).storeCoins(0).storeUint(0,32).storeCoins(0).endCell()).endCell(),
-    kp,w,wa,seq+2);
+    beginCell().storeUint(0,1).storeCoins(0).storeBit(true)
+      .storeAddress(o).storeAddress(o).storeAddress(o)
+      .storeRef(beginCell().storeAddress(o).storeAddress(o).storeAddress(o).endCell())
+      .storeRef(beginCell().storeCoins(0).storeCoins(0).storeCoins(0)
+        .storeCoins(0).storeCoins(0).storeCoins(0).storeUint(0,32).storeCoins(0).endCell())
+      .endCell(),
+    kp,w,seq+2);
+
   const res={TESTNET_USDT_MASTER:usdt,TESTNET_VAULT_ADDRESS:vault,TESTNET_TBOLA_MASTER:tbola};
   fs.writeFileSync("build/deployed.json",JSON.stringify(res,null,2));
-  console.log(`\n╔══════════════════════════════════╗\n║  ✅ DEPLOY COMPLETATO!           ║\n╚══════════════════════════════════╝\nMockUSDT : ${usdt}\nVault    : ${vault}\nTBOLA    : ${tbola}\n\nhttps://testnet.tonscan.io/address/${usdt}\nhttps://testnet.tonscan.io/address/${vault}\nhttps://testnet.tonscan.io/address/${tbola}`);
+
+  console.log(`
+╔══════════════════════════════════╗
+║  ✅ DEPLOY COMPLETATO!           ║
+╚══════════════════════════════════╝
+MockUSDT : ${usdt}
+Vault    : ${vault}
+TBOLA    : ${tbola}
+
+🔍 https://testnet.tonscan.io/address/${usdt}
+🔍 https://testnet.tonscan.io/address/${vault}
+🔍 https://testnet.tonscan.io/address/${tbola}
+
+Salvato: build/deployed.json
+  `);
 }
 main().catch(e=>{console.error("❌",e.message);process.exit(1);});
 TSEOF
 
 echo ""
 echo "╔══════════════════════════════════════╗"
-echo "║  ✅ Setup OK! Ora esegui:            ║"
-echo "║                                      ║"
+echo "║  ✅ Setup completo! Ora:             ║"
 echo "║  npx ts-node --transpile-only        ║"
 echo "║              deploy.ts               ║"
 echo "╚══════════════════════════════════════╝"
