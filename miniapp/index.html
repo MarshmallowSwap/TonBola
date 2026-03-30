@@ -848,10 +848,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           Live draws every 5 min · $USDT · $TON · VIP
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔓 Free: Lv 1</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">👑 VIP: Lv 15</span>
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
             color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             ● LIVE
@@ -885,9 +881,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
           Spin to win · Jackpot pool · $USDT · $TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">">
           <span style="background:rgba(255,255,255,.25);
             color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:50px">
             ● LIVE
@@ -917,12 +911,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
           Instant win · Scratch &amp; reveal on TON
         </div>
-        <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟢 Bronze: Lv 1</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔵 Silver: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟣 Gold: Lv 10</span>
-        </div>
-        <div style="display:flex;gap:6px;margin-top:4px;align-items:center">
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
           <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
             color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             💵 USDT
@@ -953,9 +942,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           Live 1v1 bingo · Challenge real players
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
-          <span style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:.58rem;font-weight:800;padding:2px 9px;border-radius:50px">🔒 Unlocks at Lv 10 — Warrior</span>
-        </div>
-        <div style="display:none;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px">
           <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
             color:var(--yellow);font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             🔜 COMING SOON
@@ -2154,6 +2141,32 @@ function addXP(amount, cur) {
   return gained
 }
 
+
+function showLevelGatePopup(game, curLv, requiredLv, milestoneName, unlocks) {
+  const xpNeeded = xpForLevel(requiredLv)
+  const xpHave = user.xp || 0
+  const xpMissing = Math.max(0, xpNeeded - xpHave)
+  const usdtNeeded = (xpMissing / XP_PER_USDT).toFixed(1)
+
+  const unlockList = unlocks.join(' · ')
+  const msg = `${game} unlocks at Level ${requiredLv} — ${milestoneName}.
+
+` +
+    `Your level: ${curLv} · Missing: ${xpMissing.toLocaleString()} XP (~${usdtNeeded} USDT)
+
+` +
+    `At Lv ${requiredLv} you also unlock:
+${unlockList}`
+
+  if (tg?.showPopup) tg.showPopup({
+    title: `🔒 Level ${requiredLv} Required`,
+    message: msg,
+    buttons: [{ type:'ok', text:'Got it' }]
+  })
+  else alert(`Level ${requiredLv} required for ${game}.
+You need ${xpMissing.toLocaleString()} more XP.`)
+}
+
 function showLevelUp(lv) {
   const ms = Object.keys(XP_MILESTONES).map(Number).includes(lv)
   const name = getMilestoneName()
@@ -2638,6 +2651,32 @@ const LEVEL_THRESHOLDS = [
 ]
 const CONF_COLS=['#fff','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
 
+
+function showLevelGatePopup(game, curLv, requiredLv, milestoneName, unlocks) {
+  const xpNeeded = xpForLevel(requiredLv)
+  const xpHave = user.xp || 0
+  const xpMissing = Math.max(0, xpNeeded - xpHave)
+  const usdtNeeded = (xpMissing / XP_PER_USDT).toFixed(1)
+
+  const unlockList = unlocks.join(' · ')
+  const msg = `${game} unlocks at Level ${requiredLv} — ${milestoneName}.
+
+` +
+    `Your level: ${curLv} · Missing: ${xpMissing.toLocaleString()} XP (~${usdtNeeded} USDT)
+
+` +
+    `At Lv ${requiredLv} you also unlock:
+${unlockList}`
+
+  if (tg?.showPopup) tg.showPopup({
+    title: `🔒 Level ${requiredLv} Required`,
+    message: msg,
+    buttons: [{ type:'ok', text:'Got it' }]
+  })
+  else alert(`Level ${requiredLv} required for ${game}.
+You need ${xpMissing.toLocaleString()} more XP.`)
+}
+
 function showLevelUp(lv) {
   const t = LEVEL_THRESHOLDS.find(t=>t.lv===lv)
   if(!t) return
@@ -3062,12 +3101,9 @@ function selectScratchCard(tier) {
   const scratchGates = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
   const key = scratchGates[tier]
   if (key && !ul[key]) {
-    const needed = XP_LEVELS.find(l=>l.unlocks[key])
-    if(tg?.showPopup) tg.showPopup({
-      title:'🔒 Locked',
-      message:`${SCRATCH_TIERS[tier]?.name} card unlocks at Level ${needed?.lv} — ${needed?.name}.`,
-      buttons:[{type:'ok'}]
-    })
+    const lv = {'scratchBronze':1,'scratchSilver':5,'scratchGold':10}[key] || 5
+    const ms = XP_MILESTONES[lv]
+    showLevelGatePopup(SCRATCH_TIERS[tier]?.name+' Scratch', getCurrentLevel(), lv, ms?.name||'', ['Access to this scratch tier'])
     return
   }
   scratchSelected = tier
@@ -4178,10 +4214,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           Live draws every 5 min · $USDT · $TON · VIP
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔓 Free: Lv 1</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">👑 VIP: Lv 15</span>
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
             color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             ● LIVE
@@ -4215,9 +4247,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
           Spin to win · Jackpot pool · $USDT · $TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">">
           <span style="background:rgba(255,255,255,.25);
             color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:50px">
             ● LIVE
@@ -4247,12 +4277,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
           Instant win · Scratch &amp; reveal on TON
         </div>
-        <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;align-items:center">
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟢 Bronze: Lv 1</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔵 Silver: Lv 5</span>
-          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟣 Gold: Lv 10</span>
-        </div>
-        <div style="display:flex;gap:6px;margin-top:4px;align-items:center">
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
           <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
             color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             💵 USDT
@@ -5941,6 +5966,32 @@ const LEVEL_THRESHOLDS = [
 ]
 const CONF_COLS=['#fff','#FF4040','#3FE87A','#40B8FF','#C080FF','#FF8040','#FF80C0','#FFFFFF','#7FFFFF']
 
+
+function showLevelGatePopup(game, curLv, requiredLv, milestoneName, unlocks) {
+  const xpNeeded = xpForLevel(requiredLv)
+  const xpHave = user.xp || 0
+  const xpMissing = Math.max(0, xpNeeded - xpHave)
+  const usdtNeeded = (xpMissing / XP_PER_USDT).toFixed(1)
+
+  const unlockList = unlocks.join(' · ')
+  const msg = `${game} unlocks at Level ${requiredLv} — ${milestoneName}.
+
+` +
+    `Your level: ${curLv} · Missing: ${xpMissing.toLocaleString()} XP (~${usdtNeeded} USDT)
+
+` +
+    `At Lv ${requiredLv} you also unlock:
+${unlockList}`
+
+  if (tg?.showPopup) tg.showPopup({
+    title: `🔒 Level ${requiredLv} Required`,
+    message: msg,
+    buttons: [{ type:'ok', text:'Got it' }]
+  })
+  else alert(`Level ${requiredLv} required for ${game}.
+You need ${xpMissing.toLocaleString()} more XP.`)
+}
+
 function showLevelUp(lv) {
   const t = LEVEL_THRESHOLDS.find(t=>t.lv===lv)
   if(!t) return
@@ -6338,12 +6389,9 @@ function selectScratchCard(tier) {
   const scratchGates = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
   const key = scratchGates[tier]
   if (key && !ul[key]) {
-    const needed = XP_LEVELS.find(l=>l.unlocks[key])
-    if(tg?.showPopup) tg.showPopup({
-      title:'🔒 Locked',
-      message:`${SCRATCH_TIERS[tier]?.name} card unlocks at Level ${needed?.lv} — ${needed?.name}.`,
-      buttons:[{type:'ok'}]
-    })
+    const lv = {'scratchBronze':1,'scratchSilver':5,'scratchGold':10}[key] || 5
+    const ms = XP_MILESTONES[lv]
+    showLevelGatePopup(SCRATCH_TIERS[tier]?.name+' Scratch', getCurrentLevel(), lv, ms?.name||'', ['Access to this scratch tier'])
     return
   }
   scratchSelected = tier
