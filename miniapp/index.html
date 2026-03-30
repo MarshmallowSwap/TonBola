@@ -1731,24 +1731,24 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div class="stone-panel" style="padding:14px">
       <div style="font-size:.68rem;font-weight:700;letter-spacing:1px;
         text-transform:uppercase;color:var(--muted);margin-bottom:4px">Creation Fee</div>
-      <div style="font-size:.75rem;color:#4A3318;margin-bottom:12px;line-height:1.5">
-        One-time fee — goes into the weekly squad prize pool.
-      </div>
+      <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.5">One-time fee — goes into the weekly squad prize pool.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="squad-fee-options">
-        <div id="sf-ton" onclick="selectSquadFee('ton')"
+        <button id="sf-ton" onclick="selectSquadFee('ton')"
           style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
-            background:rgba(0,152,234,.15);border:2px solid #0098EA;transition:all .15s">
+            background:rgba(0,152,234,.15);border:2px solid #0098EA;transition:all .15s;
+            font-family:'Outfit',sans-serif;width:100%">
           <div style="font-size:1.6rem;font-weight:700;color:#40B8FF;line-height:1">0.5</div>
           <div style="font-size:.75rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 $TON</div>
           <div style="font-size:.65rem;color:rgba(64,184,255,.5);margin-top:3px">~$1.50</div>
-        </div>
-        <div id="sf-usdt" onclick="selectSquadFee('usdt')"
+        </button>
+        <button id="sf-usdt" onclick="selectSquadFee('usdt')"
           style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
-            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+            background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s;
+            font-family:'Outfit',sans-serif;width:100%">
           <div style="font-size:1.6rem;font-weight:700;color:#26A17B;line-height:1">1.50</div>
           <div style="font-size:.75rem;font-weight:700;color:#26A17B;margin-top:2px">💵 $USDT</div>
           <div style="font-size:.65rem;color:rgba(38,161,123,.5);margin-top:3px">~$1.50</div>
-        </div>
+        </button>
       </div>
     </div>
 
