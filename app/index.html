@@ -979,29 +979,23 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </div>
   </div>
 
-    <!-- Jackpot banner -->
-  <div style="margin:10px 12px 0;background:linear-gradient(135deg,#1A0D00,#2A1500);border:1.5px solid rgba(255,184,0,.35);border-radius:16px;padding:12px 14px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-      <div style="font-size:1.4rem">🎰</div>
-      <div style="flex:1">
-        <div style="font-size:.52rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:4px">Jackpot Pools</div>
-        <div style="display:flex;gap:16px">
-          <div>
-            <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:900;color:#FFD700">0.00 TON</div>
-            <div style="font-size:.5rem;color:rgba(255,184,0,.4)">TON pool</div>
-          </div>
-          <div>
-            <div id="w-jackpot-usdt" style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:900;color:#FFD700">0.00 USDT</div>
-            <div style="font-size:.5rem;color:rgba(255,184,0,.4)">USDT pool</div>
-          </div>
-        </div>
+      <!-- Jackpot banner -->
+  <div style="margin:10px 12px 0;background:linear-gradient(135deg,#1A0D00,#2A1500);border:1.5px solid rgba(255,184,0,.35);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+    <div style="font-size:1.6rem">🎰</div>
+    <div>
+      <div style="font-size:.5rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:4px">Jackpot Pools</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#FFD700">0.00 TON</div>
+        <div style="color:rgba(255,184,0,.3);font-size:.9rem">·</div>
+        <div id="w-jackpot-usdt" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#FFD700">0.00 USDT</div>
       </div>
     </div>
-    <div style="height:4px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden">
-      <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#CC7A00,#FFD700);border-radius:3px;width:0%;transition:width .8s"></div>
-    </div>
+    <div style="flex:1"></div>
     <div style="display:none" id="w-jp-thresh"></div>
     <div style="display:none" id="w-jp-cur"></div>
+  </div>
+  <div style="margin:4px 12px 0;height:3px;background:rgba(255,184,0,.08);border-radius:2px;overflow:hidden">
+    <div id="w-jp-bar" style="height:100%;background:linear-gradient(90deg,#CC7A00,#FFD700);width:0%;transition:width .8s;border-radius:2px"></div>
   </div>
 
 <!-- WHEEL canvas -->
