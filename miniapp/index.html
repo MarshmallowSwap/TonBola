@@ -2284,7 +2284,7 @@ function updateXpUI() {
 }
 function applyPrizeBonus(amount){return+(amount*(1+(getMilestoneUnlocks().prize_bonus||0))).toFixed(4)}
 function openPvpGated(){
-  if(!getMilestoneUnlocks().pvp){showLevelGatePopup('PvP Battle',getCurrentLevel(),10,'Warrior',['TON Room','Gold Scratch','Wheel TON']);return}
+  // TEMP: pvp unlocked for testing
   openPvp()
 }
 
