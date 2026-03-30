@@ -1742,12 +1742,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           <div style="font-size:.75rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 $TON</div>
           <div style="font-size:.65rem;color:rgba(64,184,255,.5);margin-top:3px">~$1.50</div>
         </div>
-        <div id="sf-stars" onclick="selectSquadFee('stars')"
+        <div id="sf-usdt" onclick="selectSquadFee('usdt')"
           style="padding:12px 8px;border-radius:12px;text-align:center;cursor:pointer;
             background:rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.1);transition:all .15s">
-          <div style="font-size:1.6rem;font-weight:700;color:var(--yellow);line-height:1">500</div>
-          <div style="font-size:.75rem;font-weight:700;color:var(--yellow);margin-top:2px">⭐ Stars</div>
-          <div style="font-size:.65rem;color:rgba(255,217,61,.4);margin-top:3px">~$5.00</div>
+          <div style="font-size:1.6rem;font-weight:700;color:#26A17B;line-height:1">1.50</div>
+          <div style="font-size:.75rem;font-weight:700;color:#26A17B;margin-top:2px">💵 $USDT</div>
+          <div style="font-size:.65rem;color:rgba(38,161,123,.5);margin-top:3px">~$1.50</div>
         </div>
       </div>
     </div>
@@ -4285,7 +4285,7 @@ function selectCur(el, cur){
 }
 
 const CR_OPTS = {
-  usdt: [{v:0.25,l:'0.25 $USDT'},{v:0.5,l:'0.5 $USDT'},{v:1,l:'1 $USDT'},{v:2,l:'2 $USDT'},{v:5,l:'5 $USDT'}],
+  usdt: [{v:0.25,l:'0.25 $USDT'},{v:0.5,l:'0.5 $USDT'},{v:1,l:'1 $USDT'},{v:2,l:'1.50 $USDT'},{v:5,l:'5 $USDT'}],
   ton:   [{v:0.05,l:'0.05 TON'},{v:0.1,l:'0.1 TON'},{v:0.5,l:'0.5 TON'},{v:1,l:'1 TON'},{v:10,l:'10 TON'},{v:100,l:'100 TON'}],
   free:  []
 }
@@ -4702,14 +4702,34 @@ function requestJoinSquad(name) {
   }
 }
 
+
+let squadFee = 'ton'
+
+function selectSquadFee(fee) {
+  squadFee = fee
+  const tonBtn  = document.getElementById('sf-ton')
+  const usdtBtn = document.getElementById('sf-usdt')
+  if (!tonBtn || !usdtBtn) return
+  if (fee === 'ton') {
+    tonBtn.style.borderColor  = '#0098EA'
+    tonBtn.style.background   = 'rgba(0,152,234,.15)'
+    usdtBtn.style.borderColor = 'rgba(255,255,255,.1)'
+    usdtBtn.style.background  = 'rgba(0,0,0,.2)'
+  } else {
+    usdtBtn.style.borderColor = '#26A17B'
+    usdtBtn.style.background  = 'rgba(38,161,123,.15)'
+    tonBtn.style.borderColor  = 'rgba(255,255,255,.1)'
+    tonBtn.style.background   = 'rgba(0,0,0,.2)'
+  }
+}
 function createSquad() {
   const name = document.getElementById('squad-name')?.value.trim()
   if(!name) {
     if(tg?.showPopup) tg.showPopup({title:'Missing name',message:'Please enter a squad name.',buttons:[{type:'ok'}]})
     return
   }
-  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '2 $USDT'
-  const feeIcon = squadFee === 'ton' ? '💎' : '⭐'
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '1.50 $USDT'
+  const feeIcon = squadFee === 'ton' ? '💎' : '💵'
   if(tg?.showPopup) {
     tg.showPopup({
       title: feeIcon+' Confirm Payment',
@@ -4735,7 +4755,7 @@ function _doCreateSquad(name) {
   if(psub) psub.textContent = '1 member · Captain'
   if(picon) picon.textContent = squadAvatar
   const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
-  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '2 $USDT'
+  const feeStr = squadFee === 'ton' ? '0.5 $TON' : '1.50 $USDT'
   if(tg?.showPopup) {
     tg.showPopup({title:'⚔ Squad Created!',
       message:'"'+name+'" is ready!\n\nShare this code:\n🔑 '+code+'\n\n'+feeStr+' added to squad prize pool.',
