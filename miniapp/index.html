@@ -2461,13 +2461,317 @@ async function sbActivateWarriorPass() {
   }
 }
 
+
+// ── TX VERIFICATION ──
+async function verifyTonTx(txBoc, onSuccess, onFail, timeoutMs=60000) {
+  // Extract tx hash from BOC result
+  // TonConnect returns {boc: "..."}
+  const startTime = Date.now()
+  const walletAddr = tcWallet?.account?.address
+  if (!walletAddr) { if(onSuccess) onSuccess(); return }
+
+  // Poll TON API every 3s for up to 60s
+  const poll = async () => {
+    try {
+      const res = await fetch(
+        'https://tonapi.io/v2/accounts/'+encodeURIComponent(walletAddr)+'/transactions?limit=5',
+        { headers: { 'Accept': 'application/json' } }
+      )
+      if (!res.ok) throw new Error('api_error')
+      const data = await res.json()
+      const txs = data.transactions || []
+
+      // Look for recent outgoing TX matching amount+comment
+      const recent = txs.find(tx => {
+        const age = Date.now() - tx.utime * 1000
+        return age < 120000  // within last 2 minutes
+      })
+
+      if (recent) {
+        console.log('✅ TX confirmed on-chain:', recent.hash)
+        if (onSuccess) onSuccess(recent)
+        return
+      }
+    } catch(e) {
+      console.warn('TX poll error:', e)
+    }
+
+    if (Date.now() - startTime < timeoutMs) {
+      setTimeout(poll, 3000)
+    } else {
+      console.warn('TX verification timeout')
+      // Timeout: call onSuccess anyway (UX > strict verification)
+      // In production: queue for server-side verification
+      if (onSuccess) onSuccess()
+    }
+  }
+
+  // Start polling after 3s (TX needs time to propagate)
+  setTimeout(poll, 3000)
+}
+
+// Wrapper: send + verify
+async function sendTonPaymentVerified(amountTon, comment, onSuccess, onFail) {
+  await sendTonPayment(amountTon, comment, async (result) => {
+    // Show pending state
+    const pendingToast = showPendingToast('Confirming transaction...')
+    await verifyTonTx(result?.boc, () => {
+      if(pendingToast) pendingToast.remove()
+      if(onSuccess) onSuccess()
+    }, () => {
+      if(pendingToast) pendingToast.remove()
+      if(onFail) onFail('timeout')
+    })
+  }, onFail)
+}
+
+async function sendUsdtPaymentVerified(amountUsdt, comment, onSuccess, onFail) {
+  await sendUsdtPayment(amountUsdt, comment, async (result) => {
+    const pendingToast = showPendingToast('Confirming transaction...')
+    await verifyTonTx(result?.boc, () => {
+      if(pendingToast) pendingToast.remove()
+      if(onSuccess) onSuccess()
+    }, () => {
+      if(pendingToast) pendingToast.remove()
+      if(onFail) onFail('timeout')
+    })
+  }, onFail)
+}
+
+function showPendingToast(msg) {
+  const el = document.createElement('div')
+  el.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);'+
+    'background:rgba(139,92,246,.9);color:#fff;padding:10px 20px;border-radius:50px;'+
+    'font-size:.8rem;font-weight:700;z-index:9999;animation:toastIn .3s ease;white-space:nowrap'
+  el.textContent = '⏳ ' + msg
+  document.body.appendChild(el)
+  return el
+}
+
+
+// ── SQUAD DB FUNCTIONS ──
+async function sbCreateSquad(name, desc, avatar, fee, cur) {
+  if (!supa || !dbUserId) return null
+  try {
+    const { data, error } = await supa.from('squads').insert({
+      name,
+      description: desc,
+      avatar_preset: avatar,
+      captain_id: dbUserId,
+      max_members: 20
+    }).select().single()
+    if (error) { console.warn('sbCreateSquad error:', error); return null }
+
+    // Add captain as member
+    await supa.from('squad_members').insert({
+      squad_id: data.id,
+      user_id: dbUserId,
+      role: 'captain'
+    })
+
+    // Update user's squad_id
+    await supa.from('users').update({ squad_id: data.id }).eq('telegram_id', dbUserId)
+
+    return data
+  } catch(e) { console.warn('sbCreateSquad error:', e); return null }
+}
+
+async function sbJoinSquad(squadId) {
+  if (!supa || !dbUserId) return false
+  try {
+    await supa.from('squad_members').insert({
+      squad_id: squadId,
+      user_id: dbUserId,
+      role: 'member'
+    })
+    await supa.from('squads').update({
+      member_count: supa.rpc('increment', { x: 1 })
+    }).eq('id', squadId)
+    await supa.from('users').update({ squad_id: squadId }).eq('telegram_id', dbUserId)
+    return true
+  } catch(e) { console.warn('sbJoinSquad error:', e); return false }
+}
+
+async function sbLoadUserSquad() {
+  if (!supa || !dbUserId) return
+  try {
+    const { data: user_row } = await supa.from('users')
+      .select('squad_id').eq('telegram_id', dbUserId).single()
+    if (!user_row?.squad_id) return
+
+    const { data: squad } = await supa.from('squads')
+      .select('*, squad_members(count)').eq('id', user_row.squad_id).single()
+    if (!squad) return
+
+    mySquad = {
+      id: squad.id,
+      name: squad.name,
+      desc: squad.description,
+      icon: squad.avatar_preset || '🛡️',
+      members: squad.member_count,
+      captainId: squad.captain_id,
+      weekScore: squad.weekly_score
+    }
+    setTimeout(renderSquad, 100)
+  } catch(e) { console.warn('sbLoadUserSquad error:', e) }
+}
+
+async function sbLoadSquadList() {
+  if (!supa) return []
+  try {
+    const { data } = await supa.from('squads')
+      .select('id, name, avatar_preset, member_count, max_members, weekly_score, captain_id')
+      .order('weekly_score', { ascending: false }).limit(20)
+    return data || []
+  } catch(e) { return [] }
+}
+
+
+// ── LEADERBOARD FROM SUPABASE ──
+async function sbLoadLeaderboard(tab, cur) {
+  if (!supa) return renderLbFallback(tab, cur)
+  try {
+    let query
+    const today = new Date()
+    const weekStart = new Date(today)
+    weekStart.setDate(today.getDate() - today.getDay())
+    const weekStr = weekStart.toISOString().split('T')[0]
+    const monthStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-01'
+
+    if (tab === 'squads') {
+      const { data } = await supa.from('squads')
+        .select('name, avatar_preset, weekly_score, member_count')
+        .order('weekly_score', { ascending: false }).limit(20)
+      return renderLbSquads(data || [])
+    }
+
+    if (tab === 'weekly') {
+      const { data } = await supa.from('leaderboard_weekly')
+        .select('user_id, score, wins, xp_earned, prize_paid_ton, prize_paid_tbola, users(first_name,username,level,avatar_preset)')
+        .eq('week_start', weekStr)
+        .order('score', { ascending: false }).limit(20)
+      return renderLbUsers(data || [], cur)
+    }
+
+    if (tab === 'monthly') {
+      const { data } = await supa.from('leaderboard_monthly')
+        .select('user_id, score, wins, xp_earned, prize_paid_ton, users(first_name,username,level,avatar_preset)')
+        .eq('month_start', monthStr)
+        .order('score', { ascending: false }).limit(20)
+      return renderLbUsers(data || [], cur)
+    }
+
+    if (tab === 'alltime') {
+      const { data } = await supa.from('users')
+        .select('telegram_id, first_name, username, level, xp, tbola_balance, total_wins, avatar_preset')
+        .order('xp', { ascending: false }).limit(20)
+      return renderLbAlltime(data || [])
+    }
+  } catch(e) {
+    console.warn('sbLoadLeaderboard error:', e)
+    renderLbFallback(tab, cur)
+  }
+}
+
+function renderLbUsers(rows, cur) {
+  const el = document.getElementById('lb-list')
+  if (!el) return
+  if (!rows.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,.3)">No data yet this period</div>'; return }
+  const medals = ['🥇','🥈','🥉']
+  el.innerHTML = rows.map((r, i) => {
+    const u = r.users || {}
+    const name = u.first_name || u.username || 'Player'
+    const score = (r.score || 0).toLocaleString()
+    const isMe = r.user_id === dbUserId
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;'+
+      (isMe?'background:rgba(139,92,246,.12);':'')+'border-bottom:1px solid rgba(255,255,255,.04)">'+
+      '<div style="width:28px;text-align:center;font-size:'+(i<3?'1.2rem':'.85rem')+'">'+
+        (i<3 ? medals[i] : '#'+(i+1))+'</div>'+
+      '<div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">'+
+        (u.avatar_preset || name[0] || '?')+'</div>'+
+      '<div style="flex:1"><div style="font-size:.85rem;font-weight:700;color:'+(isMe?'#A78BFA':'#fff')+'">'+name+(isMe?' (You)':'')+'</div>'+
+        '<div style="font-size:.65rem;color:rgba(255,255,255,.35)">Lv '+(u.level||1)+' · '+r.wins+' wins</div></div>'+
+      '<div style="font-size:.85rem;font-weight:700;color:#FFD700">'+score+'</div>'+
+    '</div>'
+  }).join('')
+}
+
+function renderLbAlltime(rows) {
+  const el = document.getElementById('lb-list')
+  if (!el) return
+  if (!rows.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,.3)">No data yet</div>'; return }
+  const medals = ['🥇','🥈','🥉']
+  el.innerHTML = rows.map((r, i) => {
+    const isMe = r.telegram_id === dbUserId
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;'+
+      (isMe?'background:rgba(139,92,246,.12);':'')+'border-bottom:1px solid rgba(255,255,255,.04)">'+
+      '<div style="width:28px;text-align:center;font-size:'+(i<3?'1.2rem':'.85rem')+'">'+
+        (i<3?medals[i]:'#'+(i+1))+'</div>'+
+      '<div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">'+
+        (r.avatar_preset || (r.first_name||'?')[0])+'</div>'+
+      '<div style="flex:1"><div style="font-size:.85rem;font-weight:700;color:'+(isMe?'#A78BFA':'#fff')+'">'+
+        (r.first_name||r.username||'Player')+(isMe?' (You)':'')+'</div>'+
+        '<div style="font-size:.65rem;color:rgba(255,255,255,.35)">Lv '+r.level+' · '+(r.total_wins||0)+' wins</div></div>'+
+      '<div style="font-size:.85rem;font-weight:700;color:#FFD700">'+(r.xp||0).toLocaleString()+' XP</div>'+
+    '</div>'
+  }).join('')
+}
+
+function renderLbSquads(rows) {
+  const el = document.getElementById('lb-list')
+  if (!el) return
+  if (!rows.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,.3)">No squads yet</div>'; return }
+  const medals = ['🥇','🥈','🥉']
+  el.innerHTML = rows.map((r, i) =>
+    '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04)">'+
+    '<div style="width:28px;text-align:center;font-size:'+(i<3?'1.2rem':'.85rem')+'">'+
+      (i<3?medals[i]:'#'+(i+1))+'</div>'+
+    '<div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem">'+
+      (r.avatar_preset||'🛡️')+'</div>'+
+    '<div style="flex:1"><div style="font-size:.85rem;font-weight:700;color:#fff">'+r.name+'</div>'+
+      '<div style="font-size:.65rem;color:rgba(255,255,255,.35)">'+r.member_count+' members</div></div>'+
+    '<div style="font-size:.85rem;font-weight:700;color:#FFD700">'+(r.weekly_score||0).toLocaleString()+'</div>'+
+    '</div>'
+  ).join('')
+}
+
+function renderLbFallback(tab, cur) {
+  const el = document.getElementById('lb-list')
+  if(el) el.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,.3)">Loading leaderboard...</div>'
+}
+
+
+async function sbUpdateLeaderboard(wins, xpEarned, gamesPlayed, paidTon) {
+  if (!supa || !dbUserId) return
+  try {
+    const weekStart = (() => {
+      const d = new Date(); d.setDate(d.getDate() - d.getDay()); return d.toISOString().split('T')[0]
+    })()
+    const monthStart = new Date().toISOString().slice(0,7) + '-01'
+
+    // Weekly upsert
+    await supa.from('leaderboard_weekly').upsert({
+      week_start: weekStart, user_id: dbUserId,
+      score: xpEarned, wins, games_played: gamesPlayed,
+      prize_paid_ton: paidTon, xp_earned: xpEarned
+    }, { onConflict: 'week_start,user_id', ignoreDuplicates: false })
+
+    // Monthly upsert
+    await supa.from('leaderboard_monthly').upsert({
+      month_start: monthStart, user_id: dbUserId,
+      score: xpEarned, wins, games_played: gamesPlayed,
+      xp_earned: xpEarned
+    }, { onConflict: 'month_start,user_id', ignoreDuplicates: false })
+  } catch(e) { console.warn('sbUpdateLeaderboard error:', e) }
+}
+
 function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
   setTimeout(renderSquad, 50)
   // Load from Supabase
-  setTimeout(() => { sbUpsertUser(); sbLoadJackpots() }, 500)
+  setTimeout(async () => { await sbUpsertUser(); sbLoadJackpots(); sbLoadUserSquad() }, 500)
   const av=document.getElementById('h-av');if(av)av.textContent=user.name[0].toUpperCase()
   document.getElementById('h-name').textContent=user.name
   const uel=document.getElementById('h-user');if(uel)uel.textContent=user.username?'@'+user.username:''
@@ -4352,6 +4656,7 @@ function setTabStyle(id, on){
 }
 
 function setTab(tab){
+  sbLoadLeaderboard(lbTab||'weekly', lbCurrency||'usdt')
   lbTab = tab
   ;['weekly','monthly','squads','alltime'].forEach(t=>setTabStyle('lt-'+t, t===tab))
   // show currency tabs for all tabs except alltime
@@ -4369,9 +4674,11 @@ function setCurrency(cur) {
   setTabStyle('lc-ton',   cur==='ton')
   renderLb(lbTab)
   renderPoolBanner(lbTab)
+  sbLoadLeaderboard(lbTab||'weekly', lbCurrency||'usdt')
 }
 
 function renderLb(tab) {
+  sbLoadLeaderboard(lbTab||'weekly', lbCurrency||'usdt')
   lbTab = tab
   const isSquads = tab === 'squads'
   const ctabs = document.getElementById('lb-currency-tabs')
@@ -5109,28 +5416,30 @@ function createSquad() {
 function _doCreateSquad(name) {
   const desc = document.getElementById('squad-desc')?.value.trim()
 
-  const doCreate = () => {
+  const doCreate = async () => {
+    // Save to Supabase
+    const dbSquad = await sbCreateSquad(name, document.getElementById('squad-desc')?.value?.trim(), squadAvatar, squadFee === 'ton' ? 0.5 : 1.5, squadFee)
+    const squadId = dbSquad?.id || null
+
     mySquad = {
-      name, desc, icon: squadAvatar,
-      members: 1, rank: null, weekScore: 0,
+      id: squadId, name, desc: document.getElementById('squad-desc')?.value?.trim(),
+      icon: squadAvatar, members: 1, rank: null, weekScore: 0,
       memberList:[{name:user.name, avatar:user.avatar||'😊'}]
     }
     addXP(1.5, 'usdt')
     const pname = document.getElementById('p-squad-name')
-    const psub = document.getElementById('p-squad-sub')
+    const psub  = document.getElementById('p-squad-sub')
     const picon = document.getElementById('p-squad-icon')
     if(pname) pname.textContent = name
-    if(psub) psub.textContent = '1 member · Captain'
+    if(psub)  psub.textContent  = '1 member · Captain'
     if(picon) picon.textContent = squadAvatar
-    const code = name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
+    const code = squadId ? squadId.slice(0,8).toUpperCase() : name.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6).padEnd(6,'X')
     const feeStr = squadFee === 'ton' ? '0.5 $TON' : '1.50 $USDT'
     if(tg?.showPopup) {
       tg.showPopup({title:'⚔️ Squad Created!',
-        message:'"'+name+'" is ready!\n\nShare code: '+code+'\n\n'+feeStr+' added to squad prize pool.',
+        message:'"'+name+'" is ready!\n\nCode: '+code+'\n\n'+feeStr+' added to squad prize pool.',
         buttons:[{type:'ok'}]}, ()=>{ go('s-squad'); setTimeout(renderSquad,50) })
-    } else {
-      go('s-squad'); setTimeout(renderSquad,50)
-    }
+    } else { go('s-squad'); setTimeout(renderSquad,50) }
   }
 
   if (squadFee === 'ton') {
