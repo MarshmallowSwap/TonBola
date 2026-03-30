@@ -2579,17 +2579,17 @@ function showLevelUp(lv) {
 let wpCur = 'usdt'
 function selectWPCur(cur) {
   wpCur = cur
-  const stars = document.getElementById('wp-stars')
-  const ton   = document.getElementById('wp-ton')
-  const btn   = document.getElementById('wp-btn')
-  if(cur === 'usdt') {
-    stars.style.background = 'rgba(255,184,0,.12)'; stars.style.borderColor = '#A78BFA'
-    ton.style.background   = 'rgba(0,0,0,.2)';      ton.style.borderColor   = 'rgba(255,255,255,.1)'
-    btn.textContent = '⚔️ Activate — 3.50 $USDT'
+  const usdt = document.getElementById('wp-usdt')
+  const ton  = document.getElementById('wp-ton')
+  const btn  = document.getElementById('wp-btn')
+  if (cur === 'usdt') {
+    if(usdt){ usdt.style.background = 'rgba(255,184,0,.12)'; usdt.style.borderColor = '#FFB800' }
+    if(ton){  ton.style.background  = 'rgba(0,0,0,.2)';      ton.style.borderColor  = 'rgba(255,255,255,.1)' }
+    if(btn)   btn.textContent = '⚔️ Activate — 3.50 $USDT'
   } else {
-    ton.style.background   = 'rgba(0,152,234,.12)'; ton.style.borderColor   = '#0098EA'
-    stars.style.background = 'rgba(0,0,0,.2)';      stars.style.borderColor = 'rgba(255,255,255,.1)'
-    btn.textContent = '⚔️ Subscribe — 3 $TON'
+    if(ton){  ton.style.background  = 'rgba(0,152,234,.12)'; ton.style.borderColor  = '#0098EA' }
+    if(usdt){ usdt.style.background = 'rgba(0,0,0,.2)';      usdt.style.borderColor = 'rgba(255,255,255,.1)' }
+    if(btn)   btn.textContent = '⚔️ Subscribe — 3 $TON'
   }
 }
 function showWarriorPass(isRenewal) {
