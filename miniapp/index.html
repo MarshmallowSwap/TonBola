@@ -2134,6 +2134,22 @@ let avatarTarget = 'user'
 let selectedPreset = '😊'
 let squadAvatar = '🛡️'
 let squadFee = 'ton'
+let pvpCur = 'usdt'
+let pvpBet = 1
+let pvpMatchTimer = null
+let pvpDrawTimer = null
+let pvpGameActive = false
+let pvpDrawnNumbers = []
+let pvpYourCard = []
+let pvpOppCard = []
+let pvpYourMarked = []
+let pvpOppMarked = []
+let pvpYourLines = 0
+let pvpOppLines = 0
+let pvpStats = { wins:0, losses:0, earned:0 }
+let pvpCurrentCode = ''
+let pvpChallenges = {} // code → bet info
+const PVP_BOT_NAMES = ['CryptoWolf','TonShark','BingoKing','LuckyAce','TONinja','WhaleHunter']
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
 
@@ -4979,23 +4995,7 @@ function leaveSquad() {
 }
 
 // ── PVP BATTLE ──
-let pvpCur = 'usdt'
-let pvpBet = 1
-let pvpMatchTimer = null
-let pvpDrawTimer = null
-let pvpGameActive = false
-let pvpDrawnNumbers = []
-let pvpYourCard = []
-let pvpOppCard = []
-let pvpYourMarked = []
-let pvpOppMarked = []
-let pvpYourLines = 0
-let pvpOppLines = 0
-let pvpStats = { wins:0, losses:0, earned:0 }
-let pvpCurrentCode = ''
-let pvpChallenges = {} // code → bet info
 
-const PVP_BOT_NAMES = ['CryptoWolf','TonShark','BingoKing','LuckyAce','TONinja','WhaleHunter']
 
 function pvpSetCur(cur) {
   pvpCur = cur
