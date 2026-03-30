@@ -847,7 +847,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
           Live draws every 5 min · $USDT · $TON · VIP
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔓 Free: Lv 1</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">👑 VIP: Lv 15</span>
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
             color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             ● LIVE
@@ -881,7 +885,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
           Spin to win · Jackpot pool · $USDT · $TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>">
           <span style="background:rgba(255,255,255,.25);
             color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:50px">
             ● LIVE
@@ -911,7 +917,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
           Instant win · Scratch &amp; reveal on TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+        <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟢 Bronze: Lv 1</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔵 Silver: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟣 Gold: Lv 10</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;align-items:center">
           <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
             color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             💵 USDT
@@ -928,8 +939,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- PvP Battle — Lv 3 required -->
-    <div style="margin-bottom:10px;position:relative;
+    <!-- PvP Battle — Lv 10 required -->
+    <div onclick="openPvpGated()" style="cursor:pointer;margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
       border-radius:12px;height:110px;display:flex;align-items:center;
@@ -941,7 +952,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
           Live 1v1 bingo · Challenge real players
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+          <span style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:.58rem;font-weight:800;padding:2px 9px;border-radius:50px">🔒 Unlocks at Lv 10 — Warrior</span>
+        </div>
+        <div style="display:none;gap:6px;margin-top:6px">
           <span style="background:rgba(255,184,0,.15);border:1px solid rgba(255,184,0,.3);
             color:var(--yellow);font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             🔜 COMING SOON
@@ -4163,7 +4177,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
           Live draws every 5 min · $USDT · $TON · VIP
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔓 Free: Lv 1</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">👑 VIP: Lv 15</span>
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
             color:#3AFF8A;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             ● LIVE
@@ -4197,7 +4215,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
           Spin to win · Jackpot pool · $USDT · $TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💵 USDT: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">💎 TON: Lv 10</span>">
           <span style="background:rgba(255,255,255,.25);
             color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:50px">
             ● LIVE
@@ -4227,7 +4247,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;font-weight:500">
           Instant win · Scratch &amp; reveal on TON
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+        <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;align-items:center">
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟢 Bronze: Lv 1</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🔵 Silver: Lv 5</span>
+          <span style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">🟣 Gold: Lv 10</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;align-items:center">
           <span style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);
             color:#34D399;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:50px">
             💵 USDT
@@ -4244,7 +4269,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
     </div>
 
-    <!-- PvP Battle — Lv 3 required -->
+    <!-- PvP Battle — Lv 10 required -->
     <div style="margin-bottom:10px;position:relative;
       background:linear-gradient(135deg,#F953C6,#B91D73);
       border:none;
