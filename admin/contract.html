@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TonBola — Contract Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: 'Courier New', monospace; background: #08080E; color: #E0E0E0; min-height: 100vh; padding: 20px }
+h1 { color: #8B5CF6; font-size: 1.2rem; margin-bottom: 4px }
+.sub { color: rgba(255,255,255,.3); font-size: .72rem; margin-bottom: 20px }
+nav { display: flex; gap: 8px; margin-bottom: 20px }
+nav a { font-size: .7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; text-decoration: none; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.5) }
+nav a.active, nav a:hover { background: rgba(139,92,246,.2); color: #A78BFA; border-color: rgba(139,92,246,.4) }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px }
+.grid5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 14px }
+.section { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 16px }
+.section-title { font-size: .6rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(139,92,246,.6); margin-bottom: 12px }
+.metric { text-align: center; padding: 12px 8px }
+.metric-val { font-size: 1.4rem; font-weight: 700; color: #fff }
+.metric-lab { font-size: .6rem; color: rgba(255,255,255,.3); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px }
+.metric-sub { font-size: .65rem; color: rgba(255,255,255,.2); margin-top: 2px }
+.badge { font-size: .6rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap }
+.ok   { background: rgba(52,211,153,.15); color: #34D399; border: 1px solid rgba(52,211,153,.3) }
+.warn { background: rgba(251,191,36,.15); color: #FCD34D; border: 1px solid rgba(251,191,36,.3) }
+.err  { background: rgba(239,68,68,.15);  color: #F87171; border: 1px solid rgba(239,68,68,.3) }
+.load { background: rgba(139,92,246,.15); color: #A78BFA; border: 1px solid rgba(139,92,246,.3) }
+.row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04) }
+.row:last-child { border-bottom: none }
+.row-label { flex: 1; font-size: .75rem; color: rgba(255,255,255,.55) }
+.row-val { font-size: .75rem; font-weight: 700; color: #fff }
+.bar-wrap { flex: 1; height: 6px; background: rgba(0,0,0,.4); border-radius: 3px; overflow: hidden }
+.bar-fill { height: 100%; border-radius: 3px; transition: width .6s }
+table { width: 100%; border-collapse: collapse; font-size: .72rem }
+th { text-align: left; color: rgba(255,255,255,.3); padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,.07); font-weight: 600 }
+td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.04) }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 20px; font-size: .6rem; font-weight: 700 }
+.pill-green { background: rgba(52,211,153,.12); color: #34D399 }
+.pill-yellow{ background: rgba(251,191,36,.12); color: #FCD34D }
+.pill-purple{ background: rgba(139,92,246,.12); color: #A78BFA }
+.pill-red   { background: rgba(239,68,68,.12);  color: #F87171 }
+.btn { background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.4); color: #A78BFA; padding: 7px 18px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: .75rem; font-weight: 700 }
+.btn:hover { background: rgba(139,92,246,.35) }
+.btn-red { background: rgba(239,68,68,.15); border-color: rgba(239,68,68,.3); color: #F87171 }
+.split-ring { width: 140px; height: 140px; position: relative; margin: 0 auto 12px }
+.addr { font-size: .65rem; color: rgba(255,255,255,.3); font-family: monospace; word-break: break-all }
+#last-refresh { font-size: .6rem; color: rgba(255,255,255,.2); margin-bottom: 14px }
+.flash { animation: flashGreen .8s ease }
+@keyframes flashGreen { 0%,100%{} 50%{background:rgba(52,211,153,.1)} }
+</style>
+</head>
+<body>
+<h1>⚔️ TonBola — Contract Admin</h1>
+<div class="sub">Smart Contract Monitor · TonBolaVault</div>
+
+<nav>
+  <a href="health.html">Health</a>
+  <a href="contract.html" class="active">Contract</a>
+</nav>
+
+<div id="last-refresh">Loading...</div>
+
+<!-- CONTRACT STATUS -->
+<div class="grid2">
+  <div class="section">
+    <div class="section-title">📄 Contract</div>
+    <div class="row"><div class="row-label">Address (testnet)</div><div class="row-val" id="c-addr" style="font-size:.6rem;color:rgba(255,255,255,.4)">EQBA-MKFbXPpy7OkRzLqQ2dgahfVXFr70tmIRqJkH97iu3nw</div></div>
+    <div class="row"><div class="row-label">Status</div><div id="c-status" class="badge load">checking...</div></div>
+    <div class="row"><div class="row-label">Balance (TON)</div><div class="row-val" id="c-balance">—</div></div>
+    <div class="row"><div class="row-label">Prize Pool</div><div class="row-val" id="c-prize-pool">—</div></div>
+    <div class="row"><div class="row-label">Jackpot TON</div><div class="row-val" id="c-jackpot" style="color:#FFD700">—</div></div>
+    <div class="row"><div class="row-label">Last Nonce</div><div class="row-val" id="c-nonce">—</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 Statistiche Contratto</div>
+    <div class="row"><div class="row-label">Totale Incassato</div><div class="row-val" id="c-total-in">—</div></div>
+    <div class="row"><div class="row-label">Totale Pagato</div><div class="row-val" id="c-total-paid">—</div></div>
+    <div class="row"><div class="row-label">Net Revenue</div><div class="row-val" id="c-net" style="color:#34D399">—</div></div>
+    <div class="row"><div class="row-label">Partite Registrate</div><div class="row-val" id="c-games">—</div></div>
+    <div class="row"><div class="row-label">Oracle Pubkey</div><div class="addr" style="margin-top:6px">b46639daeba4bfed54e1b1eca0d45e0d1bdfeb737c345b04147a680ee9d20019</div></div>
+  </div>
+</div>
+
+<!-- SPLIT VISUALIZATION -->
+<div class="section" style="margin-bottom:14px">
+  <div class="section-title">💰 Split Automatico — ogni pagamento</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:8px 0">
+    <div style="text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:#34D399">55%</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:4px">Prize Pool</div>
+      <div style="font-size:.55rem;color:rgba(52,211,153,.4);margin-top:2px">nel contratto</div>
+      <div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:55%;background:#34D399"></div></div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:#8B5CF6">32%</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:4px">Dev</div>
+      <div style="font-size:.55rem;color:rgba(139,92,246,.4);margin-top:2px">forward immediato</div>
+      <div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:32%;background:#8B5CF6"></div></div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:#FFD700">8%</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:4px">Token Fund</div>
+      <div style="font-size:.55rem;color:rgba(255,215,0,.4);margin-top:2px">forward immediato</div>
+      <div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:8%;background:#FFD700"></div></div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:#F97316">3%</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:4px">Leaderboard</div>
+      <div style="font-size:.55rem;color:rgba(249,115,22,.4);margin-top:2px">forward immediato</div>
+      <div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:3%;background:#F97316"></div></div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:rgba(255,255,255,.3)">2%</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:4px">Platform</div>
+      <div style="font-size:.55rem;color:rgba(255,255,255,.2);margin-top:2px">forward immediato</div>
+      <div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:2%;background:rgba(255,255,255,.3)"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET BALANCES -->
+<div class="section" style="margin-bottom:14px">
+  <div class="section-title">💼 Wallet Balances (TON API)</div>
+  <div id="wallet-rows">
+    <div class="row">
+      <div class="row-label">🟢 Dev Wallet <span class="addr" style="display:block">UQAjEYy...g6TT</span></div>
+      <div class="row-val" id="w-dev">checking...</div>
+    </div>
+    <div class="row">
+      <div class="row-label">🟡 Token Fund <span class="addr" style="display:block">da deployare</span></div>
+      <div class="row-val" id="w-token">—</div>
+    </div>
+    <div class="row">
+      <div class="row-label">🔵 Leaderboard <span class="addr" style="display:block">da deployare</span></div>
+      <div class="row-val" id="w-lb">—</div>
+    </div>
+    <div class="row">
+      <div class="row-label">⚙️ Platform <span class="addr" style="display:block">UQAr0sQ...zC_</span></div>
+      <div class="row-val" id="w-platform">checking...</div>
+    </div>
+  </div>
+</div>
+
+<!-- RECENT WINS + PENDING PAYMENTS -->
+<div class="grid2">
+  <div class="section">
+    <div class="section-title">🏆 Ultime Vincite (Supabase)</div>
+    <table>
+      <thead><tr><th>Giocatore</th><th>Tipo</th><th>Importo</th><th>Status</th></tr></thead>
+      <tbody id="wins-table"><tr><td colspan="4" style="color:rgba(255,255,255,.2);padding:12px">Caricamento...</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⏳ Pagamenti Pendenti</div>
+    <table>
+      <thead><tr><th>Game</th><th>Vincitore</th><th>TON</th><th>Azione</th></tr></thead>
+      <tbody id="pending-table"><tr><td colspan="4" style="color:rgba(255,255,255,.2);padding:12px">Nessuno</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- JACKPOT POOLS -->
+<div class="section" style="margin-bottom:14px">
+  <div class="section-title">🎰 Jackpot Pools (Supabase)</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+    <div class="metric section" style="padding:14px">
+      <div class="metric-val" id="jp-wheel-ton" style="color:#FFD700">—</div>
+      <div class="metric-lab">Wheel TON</div>
+    </div>
+    <div class="metric section" style="padding:14px">
+      <div class="metric-val" id="jp-wheel-usdt" style="color:#34D399">—</div>
+      <div class="metric-lab">Wheel USDT</div>
+    </div>
+    <div class="metric section" style="padding:14px">
+      <div class="metric-val" id="jp-scratch-usdt" style="color:#34D399">—</div>
+      <div class="metric-lab">Scratch USDT</div>
+    </div>
+    <div class="metric section" style="padding:14px">
+      <div class="metric-val" id="jp-scratch-ton" style="color:#FFD700">—</div>
+      <div class="metric-lab">Scratch TON</div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD FUND -->
+<div class="section" style="margin-bottom:14px">
+  <div class="section-title">🥇 Leaderboard Fund — questa settimana</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div>
+      <div class="row"><div class="row-label">Fondo accumulato</div><div class="row-val" id="lb-fund">—</div></div>
+      <div class="row"><div class="row-label">Periodo</div><div class="row-val" id="lb-period">—</div></div>
+      <div class="row"><div class="row-label">Prossima distribuzione</div><div class="row-val" id="lb-next">—</div></div>
+      <div class="row"><div class="row-label">Distribuzione</div><div class="row-val" style="font-size:.65rem;color:rgba(255,255,255,.4)">1°30% 2°18% 3°12% 4-5°10% 6-10°15% 11-25°10% 26-50°5%</div></div>
+    </div>
+    <div id="lb-top5" style="padding:4px">
+      <div style="font-size:.6rem;color:rgba(255,255,255,.3);margin-bottom:8px">TOP 5 QUESTA SETTIMANA</div>
+    </div>
+  </div>
+  <div style="margin-top:10px">
+    <button class="btn btn-red" onclick="triggerLeaderboardPay()" style="font-size:.7rem">⚡ Esegui Distribuzione Manuale</button>
+    <span style="font-size:.6rem;color:rgba(255,255,255,.25);margin-left:10px">Usa solo se il cron automatico fallisce</span>
+  </div>
+</div>
+
+<!-- DEPLOY STATUS -->
+<div class="section">
+  <div class="section-title">🚀 Deploy Status</div>
+  <div class="row"><div class="row-label">Contratto compilato</div><div class="badge ok">✓ TonBolaVault.tact → .boc</div></div>
+  <div class="row"><div class="row-label">Network</div><div class="badge warn">⚠ Testnet (non deployato)</div></div>
+  <div class="row"><div class="row-label">Oracle keypair</div><div class="badge ok">✓ Generato</div></div>
+  <div class="row"><div class="row-label">Oracle backend</div><div class="badge warn">⚠ Non ancora avviato</div></div>
+  <div class="row">
+    <div class="row-label">Prossimi step</div>
+    <div style="font-size:.65rem;color:rgba(255,255,255,.35);line-height:1.7">
+      1. Deploy testnet via Tonkeeper<br>
+      2. Test con 0.1 TON → verifica split<br>
+      3. Avvia oracle su Hetzner porta 8003<br>
+      4. Switch mainnet + aggiorna PLATFORM_WALLET nel frontend
+    </div>
+  </div>
+  <div style="margin-top:10px">
+    <div class="addr" style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px;line-height:1.8">
+      <b style="color:#A78BFA">Contract Address (testnet):</b><br>
+      EQBA-MKFbXPpy7OkRzLqQ2dgahfVXFr70tmIRqJkH97iu3nw<br><br>
+      <b style="color:#A78BFA">Oracle Pubkey (int):</b><br>
+      81596930447221648253673168568189894254664175305553746201413230980358321864729
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://lajeiwuumqbzcmdgsczq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhamVpd3V1bXFiemNtZGdzY3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ4NTgzNiwiZXhwIjoyMDkwMDYxODM2fQ.bmUUgJfpoOyj8QR9NfH_7Fyzg360VkuH-ReZsz-fRyk'
+const TON_API  = 'https://testnet.tonapi.io/v2'
+const CONTRACT_ADDR = 'EQBA-MKFbXPpy7OkRzLqQ2dgahfVXFr70tmIRqJkH97iu3nw'
+
+const H = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+
+function nano(n) {
+  if (!n && n !== 0) return '—'
+  const v = parseFloat(n) / 1e9
+  return v.toFixed(4) + ' TON'
+}
+function usdt(n) {
+  if (!n && n !== 0) return '—'
+  return parseFloat(n).toFixed(4) + ' USDT'
+}
+
+async function checkContract() {
+  try {
+    const res = await fetch(TON_API + '/accounts/' + CONTRACT_ADDR)
+    if (!res.ok) throw new Error('not found')
+    const d = await res.json()
+    document.getElementById('c-status').className  = 'badge ok'
+    document.getElementById('c-status').textContent = '✓ Active'
+    document.getElementById('c-balance').textContent = nano(d.balance)
+  } catch(e) {
+    document.getElementById('c-status').className  = 'badge warn'
+    document.getElementById('c-status').textContent = '⚠ Not deployed yet'
+    document.getElementById('c-balance').textContent = '—'
+  }
+}
+
+async function checkJackpots() {
+  try {
+    const res = await fetch(SUPA_URL + '/rest/v1/jackpot_pools', { headers: H })
+    const data = await res.json()
+    data.forEach(r => {
+      const map = {
+        wheel_ton:    'jp-wheel-ton',
+        wheel_usdt:   'jp-wheel-usdt',
+        scratch_usdt: 'jp-scratch-usdt',
+        scratch_ton:  'jp-scratch-ton'
+      }
+      if (map[r.id]) {
+        const sym = r.id.includes('usdt') ? ' USDT' : ' TON'
+        const el = document.getElementById(map[r.id])
+        el.textContent = parseFloat(r.balance).toFixed(4) + sym
+        if (parseFloat(r.balance) > 0) el.classList.add('flash')
+      }
+    })
+  } catch(e) { console.warn('jackpot error', e) }
+}
+
+async function checkLeaderboard() {
+  const today = new Date()
+  const dayOfWeek = today.getDay()
+  const weekStart = new Date(today)
+  weekStart.setDate(today.getDate() - dayOfWeek)
+  const weekStr = weekStart.toISOString().split('T')[0]
+  
+  // Next Monday
+  const nextMon = new Date(weekStart)
+  nextMon.setDate(weekStart.getDate() + 7)
+  
+  document.getElementById('lb-period').textContent = weekStr + ' → ' + nextMon.toISOString().split('T')[0]
+  document.getElementById('lb-next').textContent = 'Lunedì ' + nextMon.toLocaleDateString('it-IT')
+
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/leaderboard_weekly?week_start=eq.' + weekStr + 
+      '&select=user_id,score,wins,xp_earned,users(first_name,username)&order=score.desc&limit=5',
+      { headers: H }
+    )
+    const data = await res.json()
+    
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣']
+    const top5el = document.getElementById('lb-top5')
+    if (Array.isArray(data) && data.length) {
+      top5el.innerHTML = data.map((r,i) => {
+        const name = r.users?.first_name || r.users?.username || 'Player'
+        return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">' +
+          '<span>' + medals[i] + '</span>' +
+          '<span style="flex:1;font-size:.72rem">' + name + '</span>' +
+          '<span style="font-size:.7rem;font-weight:700;color:#FFD700">' + (r.score||0).toLocaleString() + '</span>' +
+          '</div>'
+      }).join('')
+    } else {
+      top5el.innerHTML = '<div style="font-size:.65rem;color:rgba(255,255,255,.2)">Nessun dato questa settimana</div>'
+    }
+    
+    // Stima fondo leaderboard (3% di ogni transazione — calcoliamo da prize_funds)
+    document.getElementById('lb-fund').textContent = '~calcolando...'
+  } catch(e) { console.warn('lb error', e) }
+}
+
+async function checkRecentWins() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/games?select=id,status,currency,bingo_winner_id,line_prize_ton,bingo_prize_ton,started_at&order=created_at.desc&limit=10',
+      { headers: H }
+    )
+    const data = await res.json()
+    const tbody = document.getElementById('wins-table')
+    if (Array.isArray(data) && data.length) {
+      tbody.innerHTML = data.map(g => {
+        const prize = parseFloat(g.bingo_prize_ton || g.line_prize_ton || 0).toFixed(4)
+        const statusClass = g.status === 'finished' ? 'pill-green' : g.status === 'playing' ? 'pill-purple' : 'pill-yellow'
+        return '<tr>' +
+          '<td style="color:rgba(255,255,255,.5);font-size:.65rem">' + (g.id||'').slice(0,8) + '...</td>' +
+          '<td><span class="pill ' + statusClass + '">' + (g.status||'?') + '</span></td>' +
+          '<td style="color:#FFD700">' + (prize > 0 ? prize + ' TON' : '—') + '</td>' +
+          '<td><span class="pill pill-green">✓ auto</span></td>' +
+          '</tr>'
+      }).join('')
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:rgba(255,255,255,.2);padding:10px">Nessuna partita</td></tr>'
+    }
+  } catch(e) { console.warn('wins error', e) }
+}
+
+async function checkPending() {
+  // Games finished but winner not yet paid
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/games?status=eq.finished&bingo_winner_id=not.is.null&select=id,bingo_winner_id,bingo_prize_ton&limit=5',
+      { headers: H }
+    )
+    const data = await res.json()
+    const tbody = document.getElementById('pending-table')
+    if (Array.isArray(data) && data.length) {
+      tbody.innerHTML = data.map(g =>
+        '<tr class="flash">' +
+        '<td style="font-size:.65rem;color:rgba(255,255,255,.4)">' + (g.id||'').slice(0,8) + '...</td>' +
+        '<td style="font-size:.65rem">' + (g.bingo_winner_id||'?') + '</td>' +
+        '<td style="color:#FFD700">' + parseFloat(g.bingo_prize_ton||0).toFixed(4) + '</td>' +
+        '<td><button class="btn" style="font-size:.6rem;padding:3px 8px" onclick="triggerPay(\'' + g.id + '\')">Pay</button></td>' +
+        '</tr>'
+      ).join('')
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:rgba(255,255,255,.2);padding:10px">✓ Nessun pagamento pendente</td></tr>'
+    }
+  } catch(e) { }
+}
+
+function triggerPay(gameId) {
+  if (!confirm('Inviare pagamento per game ' + gameId.slice(0,8) + '?')) return
+  alert('Oracle backend non ancora avviato. Avvia il servizio su Hetzner porta 8003.')
+}
+
+function triggerLeaderboardPay() {
+  alert('Funzione disponibile dopo deploy dell\'oracle backend su Hetzner.')
+}
+
+async function runAll() {
+  document.getElementById('last-refresh').textContent = 'Last refresh: ' + new Date().toLocaleTimeString('it-IT')
+  await Promise.all([
+    checkContract(),
+    checkJackpots(),
+    checkLeaderboard(),
+    checkRecentWins(),
+    checkPending()
+  ])
+}
+
+runAll()
+setInterval(runAll, 30000)
+</script>
+</body>
+</html>
