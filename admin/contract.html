@@ -216,6 +216,72 @@ td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.04) }
   </div>
 </div>
 
+
+<!-- TBOLA TOKEN -->
+<div class="section" style="margin-bottom:14px">
+  <div class="section-title">🪙 $TBOLA Token</div>
+  <div class="grid2">
+    <div>
+      <div class="row"><div class="row-label">Symbol</div><div class="row-val" style="color:#FFD700">$TBOLA</div></div>
+      <div class="row"><div class="row-label">Supply totale</div><div class="row-val">1.000.000.000</div></div>
+      <div class="row"><div class="row-label">Decimali</div><div class="row-val">9</div></div>
+      <div class="row"><div class="row-label">Prezzo presale</div><div class="row-val" style="color:#34D399">$0.080 USDT</div></div>
+      <div class="row"><div class="row-label">Hard cap presale</div><div class="row-val">$16.000.000</div></div>
+      <div class="row"><div class="row-label">Network</div><div class="badge warn">⚠ Testnet</div></div>
+      <div class="row"><div class="row-label">Minter address</div><div class="badge warn">⚠ Da deployare</div></div>
+    </div>
+    <div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;color:rgba(255,215,0,.5);text-transform:uppercase;margin-bottom:10px">Distribuzione</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:#34D399" id="bar-airdrop"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">40% Airdrop (giocatori)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:#8B5CF6" id="bar-presale"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">20% Presale</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:#3B82F6" id="bar-liquidity"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">15% Liquidità DEX</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:#F97316" id="bar-team"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">15% Team (vesting 24m)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:#EC4899" id="bar-marketing"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">5% Marketing</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.3)" id="bar-reserve"></div>
+          <span style="font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap">5% Reserve</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Airdrop Progress -->
+  <div style="margin-top:12px;padding:12px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="font-size:.65rem;color:rgba(255,215,0,.7);font-weight:700">AIRDROP PROGRESS (XP Mining)</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.3)" id="tbola-minted-pct">0 / 400.000.000</div>
+    </div>
+    <div style="height:6px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden">
+      <div id="tbola-airdrop-bar" style="height:100%;background:linear-gradient(90deg,#FFD700,#F97316);width:0%;transition:width .6s;border-radius:3px"></div>
+    </div>
+    <div style="font-size:.6rem;color:rgba(255,255,255,.25);margin-top:5px">Rate: 1 USDT = 100 $TBOLA | 1 TON = 500 $TBOLA</div>
+  </div>
+
+  <!-- Vesting team -->
+  <div style="margin-top:10px;padding:10px 12px;background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);border-radius:10px">
+    <div style="font-size:.6rem;font-weight:700;color:rgba(249,115,22,.7);margin-bottom:6px">VESTING TEAM (15%)</div>
+    <div class="row"><div class="row-label">Cliff</div><div class="row-val">6 mesi</div></div>
+    <div class="row"><div class="row-label">Durata</div><div class="row-val">24 mesi lineari</div></div>
+    <div class="row"><div class="row-label">Claimable ora</div><div class="row-val" id="team-claimable">—</div></div>
+  </div>
+</div>
+
 <!-- DEPLOY STATUS -->
 <div class="section">
   <div class="section-title">🚀 Deploy Status</div>
@@ -418,7 +484,30 @@ function triggerLeaderboardPay() {
   alert('Funzione disponibile dopo deploy dell\'oracle backend su Hetzner.')
 }
 
-async function runAll() {
+async function 
+// Init distribution bars
+const BARS = { airdrop:40, presale:20, liquidity:15, team:15, marketing:5, reserve:5 }
+const MAX_BAR = 220 // px max width
+Object.entries(BARS).forEach(([k,v]) => {
+  const el = document.getElementById('bar-'+k)
+  if(el) el.style.width = (v/40 * MAX_BAR) + 'px'
+})
+
+// Fetch airdrop progress from Supabase tbola_balance sum
+async function checkTbolaAirdrop() {
+  try {
+    const res = await fetch(SUPA_URL + '/rest/v1/users?select=tbola_balance', { headers: H })
+    const data = await res.json()
+    if (!Array.isArray(data)) return
+    const total = data.reduce((s,r) => s + (parseInt(r.tbola_balance)||0), 0)
+    const max = 400_000_000
+    const pct = Math.min(total / max * 100, 100)
+    document.getElementById('tbola-minted-pct').textContent = total.toLocaleString() + ' / 400.000.000'
+    document.getElementById('tbola-airdrop-bar').style.width = pct + '%'
+  } catch(e) {}
+}
+
+runAll() {
   document.getElementById('last-refresh').textContent = 'Last refresh: ' + new Date().toLocaleTimeString('it-IT')
   await Promise.all([
     checkContract(),
@@ -428,6 +517,29 @@ async function runAll() {
     checkRecentWins(),
     checkPending()
   ])
+}
+
+
+// Init distribution bars
+const BARS = { airdrop:40, presale:20, liquidity:15, team:15, marketing:5, reserve:5 }
+const MAX_BAR = 220 // px max width
+Object.entries(BARS).forEach(([k,v]) => {
+  const el = document.getElementById('bar-'+k)
+  if(el) el.style.width = (v/40 * MAX_BAR) + 'px'
+})
+
+// Fetch airdrop progress from Supabase tbola_balance sum
+async function checkTbolaAirdrop() {
+  try {
+    const res = await fetch(SUPA_URL + '/rest/v1/users?select=tbola_balance', { headers: H })
+    const data = await res.json()
+    if (!Array.isArray(data)) return
+    const total = data.reduce((s,r) => s + (parseInt(r.tbola_balance)||0), 0)
+    const max = 400_000_000
+    const pct = Math.min(total / max * 100, 100)
+    document.getElementById('tbola-minted-pct').textContent = total.toLocaleString() + ' / 400.000.000'
+    document.getElementById('tbola-airdrop-bar').style.width = pct + '%'
+  } catch(e) {}
 }
 
 runAll()
