@@ -1706,6 +1706,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
             font-family:'Outfit',sans-serif;width:100%;transition:all .15s">
           <div style="font-size:1.5rem;font-weight:800;color:#40B8FF">0.5</div>
           <div style="font-size:.8rem;font-weight:700;color:#40B8FF;margin-top:2px">💎 TON</div>
+          <div id="sf-ton-check" style="font-size:.7rem;color:#40B8FF;margin-top:4px">✓ Selected</div>
         </button>
         <button id="sf-usdt" onclick="selectSquadFee('usdt')"
           style="padding:14px 8px;border-radius:12px;text-align:center;cursor:pointer;
@@ -1713,6 +1714,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
             font-family:'Outfit',sans-serif;width:100%;transition:all .15s">
           <div style="font-size:1.5rem;font-weight:800;color:#26A17B">1.50</div>
           <div style="font-size:.8rem;font-weight:700;color:#26A17B;margin-top:2px">💵 USDT</div>
+          <div id="sf-usdt-check" style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:4px">Select</div>
         </button>
       </div>
     </div>
@@ -4449,33 +4451,44 @@ function joinRoom(){
 
 
 let avatarTarget = 'user' // 'user' or 'squad'
-let selectedPreset = user.avatar || '😊'
+let selectedPreset = '😊'
 let squadAvatar = '🛡️'
 
 function openAvatarPicker(target) {
-  avatarTarget = target
-  const isSquad = target === 'squad'
-  document.getElementById('avatar-screen-title').textContent = isSquad ? 'Squad Image' : 'Choose Avatar'
-  document.getElementById('avatar-back-btn').setAttribute('onclick', isSquad ? "go('s-create-squad')" : "go('sp')")
-  const presets = isSquad ? PRESETS_SQUAD : PRESETS_USER
-  const current = isSquad ? squadAvatar : (user.avatar || '😊')
-  document.getElementById('avatar-preview-big').textContent = current
-  // Render preset grid
-  document.getElementById('preset-grid').innerHTML = presets.map(p => `
-    <div onclick="selectPreset('${p}')"
-      style="aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
-        justify-content:center;font-size:1.6rem;cursor:pointer;
-        background:${p===current?'rgba(255,184,0,.2)':'rgba(0,0,0,.25)'};
-        border:2px solid ${p===current?'#A78BFA':'rgba(255,255,255,.08)'};
-        transition:all .15s">${p}</div>`).join('')
-  go('s-avatar')
+  try {
+    avatarTarget = target || 'user'
+    const isSquad = avatarTarget === 'squad'
+    selectedPreset = isSquad ? squadAvatar : (user.avatar || '😊')
+    const title = document.getElementById('avatar-screen-title')
+    if (title) title.textContent = isSquad ? 'Squad Image' : 'Choose Avatar'
+    const backBtn = document.getElementById('avatar-back-btn')
+    if (backBtn) backBtn.onclick = isSquad ? function(){go('s-create-squad')} : function(){go('sp')}
+    const presets = isSquad ? PRESETS_SQUAD : PRESETS_USER
+    const preview = document.getElementById('avatar-preview-big')
+    if (preview) preview.textContent = selectedPreset
+    const grid = document.getElementById('preset-grid')
+    if (grid) {
+      grid.innerHTML = ''
+      presets.forEach(function(p) {
+        const el = document.createElement('div')
+        el.onclick = function(){ selectPreset(p) }
+        el.style.cssText = 'aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;cursor:pointer;background:'+(p===selectedPreset?'rgba(255,184,0,.2)':'rgba(0,0,0,.25)')+';border:2px solid '+(p===selectedPreset?'#A78BFA':'rgba(255,255,255,.08)')
+        el.textContent = p
+        grid.appendChild(el)
+      })
+    }
+    go('s-avatar')
+  } catch(e) {
+    alert('Avatar error: ' + e.message)
+  }
 }
 
 function selectPreset(p) {
   selectedPreset = p
-  document.getElementById('avatar-preview-big').textContent = p
+  const prev = document.getElementById('avatar-preview-big')
+  if (prev) prev.textContent = p
   document.querySelectorAll('#preset-grid div').forEach(el => {
-    const isSelected = el.textContent === p
+    const isSelected = el.textContent.trim() === p
     el.style.background = isSelected ? 'rgba(255,184,0,.2)' : 'rgba(0,0,0,.25)'
     el.style.borderColor = isSelected ? '#A78BFA' : 'rgba(255,255,255,.08)'
   })
@@ -4675,15 +4688,20 @@ let squadFee = 'ton'
 
 function selectSquadFee(fee) {
   squadFee = fee
-  ;['sf-ton','sf-usdt'].forEach(id => {
+  ;['sf-ton','sf-usdt'].forEach(function(id) {
     const el = document.getElementById(id)
     if (!el) return
     const isSel = (id==='sf-ton' && fee==='ton') || (id==='sf-usdt' && fee==='usdt')
-    const col   = id==='sf-ton' ? '#0098EA' : '#26A17B'
-    const bg    = id==='sf-ton' ? 'rgba(0,152,234,.2)' : 'rgba(38,161,123,.2)'
+    const col = id==='sf-ton' ? '#0098EA' : '#26A17B'
+    const bg  = id==='sf-ton' ? 'rgba(0,152,234,.2)' : 'rgba(38,161,123,.2)'
     el.style.borderColor = isSel ? col : 'rgba(255,255,255,.12)'
     el.style.background  = isSel ? bg  : 'rgba(0,0,0,.2)'
-    el.style.transform   = isSel ? 'scale(1.03)' : 'scale(1)'
+    el.style.transform   = isSel ? 'scale(1.05)' : 'scale(1)'
+    const check = document.getElementById(id+'-check')
+    if (check) {
+      check.textContent = isSel ? '✓ Selected' : 'Select'
+      check.style.color = isSel ? col : 'rgba(255,255,255,.3)'
+    }
   })
 }
 function createSquad() {
@@ -4791,21 +4809,7 @@ function leaveSquad() {
 }
 </script>
 
-<!-- Warrior Pass gate (global, outside any screen) -->
-<div id="w-wp-gate" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
-  <div style="font-size:3.5rem;margin-bottom:10px">⚔️</div>
-  <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;margin-bottom:6px">Warrior Pass Required</div>
-  <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px;max-width:280px;line-height:1.6">Auto-Spin is exclusive to <span style="color:#A78BFA;font-weight:700">Warrior Pass</span> members. The wheel spins automatically until your spins run out.</div>
-  <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:16px;padding:14px 20px;margin-bottom:14px;max-width:280px;width:100%;text-align:left">
-    <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;color:rgba(167,139,250,.5);text-transform:uppercase;margin-bottom:8px">Warrior Pass includes</div>
-    <div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:2">🃏 +2 free cards/day<br>📈 +5% win rate<br>👑 VIP room access<br>💰 2× $TBOLA rewards<br>⚡ <span style="color:#A78BFA;font-weight:700">Auto-Spin on Fortune Wheel</span><br>🏆 +10% jackpot share</div>
-  </div>
-  <div style="font-size:.72rem;color:rgba(167,139,250,.5);margin-bottom:16px">5 $USDT or 3 $TON / month</div>
-  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px">
-    <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()" style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #3B0FA8">⚔️ Get Warrior Pass</button>
-    <button onclick="document.getElementById('w-wp-gate').style.display='none'" style="padding:11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer">← Go back</button>
-  </div>
-</div>
+
 
 </body>
 </html>
