@@ -23,7 +23,7 @@ export async function handleStart(ctx) {
     : `✅ Daily login claimed! 🔥 Streak: ${streak} days (+${streak >= 7 ? 'BONUS' : '5 $TBOLA'})`
 
   const keyboard = new InlineKeyboard()
-    .webApp('🎱  Open TonBola', `https://t.me/TonBolaBot_bot/play`)
+    .webApp('🎱  Open TonBola', `${process.env.MINIAPP_URL || 'https://ton-bola.vercel.app'}/app/index.html`)
 
   await ctx.reply(
     `🎱 *Welcome to TonBola*, ${user.first_name}!\n\n` +
@@ -61,7 +61,7 @@ export async function handleProfile(ctx) {
 // ── /referral ─────────────────────────────────────────────
 export async function handleReferral(ctx) {
   const userId = ctx.from.id
-  const refLink = `https://t.me/TonBola_bot?start=ref_${userId}`
+  const refLink = `https://t.me/TonBolaBot_bot?start=ref_${userId}`
 
   await ctx.reply(
     `🔗 *Your Referral Link*\n\n` +
