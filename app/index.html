@@ -3923,7 +3923,7 @@ function buildJettonTransferBOC(nanoAmount, destAddr, senderAddr, fwdTon, commen
   const totSize = 2 + dataBytes
 
   // BOC: magic + flags + counts + size + root_index + cell
-  const boc = [0xb5,0xee,0x9c,0x72, 0x01, 0x01, 0x01, 0x00, totSize, 0x00, 0x00, d2]
+  const boc = [0xb5,0xee,0x9c,0x72, 0x01, 0x01, 0x01, 0x01, 0x00, totSize, 0x00, 0x00, d2]
   for (let i=0;i<dataBytes;i++) boc.push(buf[i])
 
   return btoa(String.fromCharCode(...boc))
