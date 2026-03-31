@@ -864,7 +864,7 @@ footer{
 <section style="padding:80px 0;background:linear-gradient(180deg,transparent,rgba(139,92,246,.04),transparent)">
   <div class="container">
     <div class="section-label aos" style="text-align:center;margin-bottom:12px">On-Chain Transparency</div>
-    <h2 class="section-title aos" style="text-align:center;margin-bottom:8px">Every TON is Traceable</h2>
+    <h2 class="section-title aos" style="text-align:center;margin-bottom:8px">Every TON &amp; USDT is Traceable</h2>
     <p class="aos" style="text-align:center;color:var(--muted);max-width:520px;margin:0 auto 48px;font-size:15px">All prize distributions happen through public smart contracts. Verify every transaction on TON Explorer.</p>
     <div class="aos" style="max-width:680px;margin:0 auto 40px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:28px 32px">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:20px">Revenue Split Per Entry</div>
@@ -879,24 +879,49 @@ footer{
     <div class="aos" style="max-width:680px;margin:0 auto">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:20px;text-align:center">Public Wallet Addresses &middot; Live Balances</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div><div style="font-size:11px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:3px">🏆 PRIZE POOL VAULT &middot; 55%</div><div style="font-family:monospace;font-size:11px;color:rgba(255,255,255,.3)">Smart Contract &middot; Deploy in progress</div></div>
-          <div style="text-align:right"><div style="font-size:18px;font-weight:800;color:#34D399" id="lp-bal-prize">—</div><div style="font-size:10px;color:var(--muted)">TON</div></div>
+
+        <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:14px;padding:16px 20px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div><div style="font-size:11px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:3px">🏆 PRIZE POOL VAULT &middot; 55%</div><div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25)">Smart Contract &middot; Deploy in progress</div></div>
+            <div style="display:flex;gap:16px;flex-shrink:0">
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#34D399">—</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#34D399">—</div></div>
+            </div>
+          </div>
         </div>
-        <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:3px">🪙 $TBOLA TOKEN FUND &middot; 8%</div><a href="https://tonviewer.com/UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.3);word-break:break-all;text-decoration:none">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf ↗</a></div>
-          <div style="text-align:right;flex-shrink:0"><div style="font-size:18px;font-weight:800;color:#FBBF24" id="lp-bal-token">—</div><div style="font-size:10px;color:var(--muted)">TON</div></div>
+
+        <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:14px;padding:16px 20px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:3px">🪙 $TBOLA TOKEN FUND &middot; 8%</div><a href="https://tonviewer.com/UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf ↗</a></div>
+            <div style="display:flex;gap:16px;flex-shrink:0">
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#FBBF24" id="lp-ton-token">—</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#FBBF24" id="lp-usdt-token">—</div></div>
+            </div>
+          </div>
         </div>
-        <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(34,211,238,.8);font-weight:700;margin-bottom:3px">🥇 LEADERBOARD FUND &middot; 3%</div><a href="https://tonviewer.com/UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.3);word-break:break-all;text-decoration:none">UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB ↗</a></div>
-          <div style="text-align:right;flex-shrink:0"><div style="font-size:18px;font-weight:800;color:#22D3EE" id="lp-bal-lb">—</div><div style="font-size:10px;color:var(--muted)">TON</div></div>
+
+        <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:14px;padding:16px 20px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(34,211,238,.8);font-weight:700;margin-bottom:3px">🥇 LEADERBOARD FUND &middot; 3%</div><a href="https://tonviewer.com/UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB ↗</a></div>
+            <div style="display:flex;gap:16px;flex-shrink:0">
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#22D3EE" id="lp-ton-lb">—</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#22D3EE" id="lp-usdt-lb">—</div></div>
+            </div>
+          </div>
         </div>
-        <div style="background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(244,114,182,.8);font-weight:700;margin-bottom:3px">⚡ PLATFORM WALLET &middot; 2%</div><a href="https://tonviewer.com/UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.3);word-break:break-all;text-decoration:none">UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_ ↗</a></div>
-          <div style="text-align:right;flex-shrink:0"><div style="font-size:18px;font-weight:800;color:#F472B6" id="lp-bal-platform">—</div><div style="font-size:10px;color:var(--muted)">TON</div></div>
+
+        <div style="background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.15);border-radius:14px;padding:16px 20px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(244,114,182,.8);font-weight:700;margin-bottom:3px">⚡ PLATFORM WALLET &middot; 2%</div><a href="https://tonviewer.com/UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_ ↗</a></div>
+            <div style="display:flex;gap:16px;flex-shrink:0">
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#F472B6" id="lp-ton-platform">—</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#F472B6" id="lp-usdt-platform">—</div></div>
+            </div>
+          </div>
         </div>
+
       </div>
-      <p style="text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,.2)">Balances update every 60s &middot; Data from TON API</p>
+      <p style="text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,.2)">Balances update every 60s &middot; TON + USDT &middot; Data from TON API</p>
     </div>
   </div>
 </section>
@@ -994,22 +1019,31 @@ loadWalletBalances();
 setInterval(loadWalletBalances, 60000);
 
 
-// Live wallet balances — landing page
+// Live wallet balances — landing page (TON + USDT)
 (function(){
-  const wallets = {
-    'lp-bal-token':    'UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf',
-    'lp-bal-lb':       'UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB',
-    'lp-bal-platform': 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_',
-  };
-  function load() {
-    Object.entries(wallets).forEach(([id, addr]) => {
-      fetch('https://tonapi.io/v2/accounts/' + addr)
+  const USDT_MASTER = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs';
+  const wallets = [
+    { ton: 'lp-ton-token',    usdt: 'lp-usdt-token',    addr: 'UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf' },
+    { ton: 'lp-ton-lb',       usdt: 'lp-usdt-lb',       addr: 'UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB' },
+    { ton: 'lp-ton-platform',  usdt: 'lp-usdt-platform', addr: 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_' },
+  ];
+  function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+  async function load() {
+    for (const w of wallets) {
+      // TON balance
+      fetch('https://tonapi.io/v2/accounts/' + w.addr)
+        .then(r => r.json())
+        .then(d => set(w.ton, (parseInt(d.balance || 0) / 1e9).toFixed(2)))
+        .catch(() => {});
+      // USDT balance via jetton endpoint
+      fetch('https://tonapi.io/v2/accounts/' + w.addr + '/jettons/' + USDT_MASTER)
         .then(r => r.json())
         .then(d => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = (parseInt(d.balance || 0) / 1e9).toFixed(2);
-        }).catch(() => {});
-    });
+          const bal = d.balance ? (parseInt(d.balance) / 1e6).toFixed(2) : '0.00';
+          set(w.usdt, bal);
+        })
+        .catch(() => set(w.usdt, '0.00'));
+    }
   }
   load();
   setInterval(load, 60000);
