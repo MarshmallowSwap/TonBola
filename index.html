@@ -1,482 +1,241 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TonBola — The TON Gaming Hub</title>
-<meta name="description" content="Bingo, Fortune Wheel and more. Play with $TON and $USDT. Win every 5 minutes.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ─── RESET & BASE ─────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#08080E;
-  --bg2:#0F0F1A;
-  --bg3:#13131F;
-  --border:rgba(255,255,255,.07);
-  --text:rgba(255,255,255,.88);
-  --muted:rgba(255,255,255,.38);
-  --dim:rgba(255,255,255,.16);
-  --violet:#8B5CF6;
-  --violet2:#6D28D9;
-  --violet3:#A78BFA;
-  --cyan:#22D3EE;
-  --orange:#FB923C;
-  --pink:#F472B6;
-  --green:#34D399;
-  --yellow:#FBBF24;
-  --r:16px;
+  --bg:#060612;--bg2:#0C0C1E;--bg3:#12122A;
+  --v:#7C3AED;--v2:#A855F7;--v3:#C084FC;
+  --cyan:#06B6D4;--cyan2:#22D3EE;
+  --orange:#F97316;--orange2:#FB923C;
+  --pink:#EC4899;--pink2:#F472B6;
+  --green:#10B981;--green2:#34D399;
+  --yellow:#EAB308;--yellow2:#FCD34D;
+  --text:#F1F0FF;--muted:rgba(241,240,255,.45);--dim:rgba(241,240,255,.2);
+  --r:18px;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'Outfit',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.syne{font-family:"Syne",sans-serif}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--v);border-radius:2px}
 
-/* ─── SCROLLBAR ─────────────────────────────────── */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px}
+/* NOISE */
+body::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4}
 
-/* ─── BACKGROUND MESH ───────────────────────────── */
-.bg-mesh{
-  position:fixed;inset:0;z-index:-1;
-  background:var(--bg);
-  overflow:hidden;
-}
-.bg-mesh::before{
-  content:'';position:absolute;
-  width:800px;height:800px;
-  top:-200px;left:-200px;
-  background:radial-gradient(circle,rgba(109,40,217,.22) 0%,transparent 65%);
-  animation:drift1 18s ease-in-out infinite alternate;
-}
-.bg-mesh::after{
-  content:'';position:absolute;
-  width:600px;height:600px;
-  bottom:-100px;right:-100px;
-  background:radial-gradient(circle,rgba(34,211,238,.12) 0%,transparent 65%);
-  animation:drift2 22s ease-in-out infinite alternate;
-}
-@keyframes drift1{to{transform:translate(80px,60px)}}
-@keyframes drift2{to{transform:translate(-60px,-40px)}}
+/* ORBS */
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:drift 20s ease-in-out infinite alternate}
+.o1{width:600px;height:600px;background:radial-gradient(#7C3AED,transparent);top:-200px;left:-100px;animation-duration:22s}
+.o2{width:500px;height:500px;background:radial-gradient(#06B6D4,transparent);top:40%;right:-150px;animation-duration:18s;animation-delay:-5s}
+.o3{width:400px;height:400px;background:radial-gradient(#EC4899,transparent);bottom:-100px;left:30%;animation-duration:25s;animation-delay:-10s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.1)}}
 
-/* Subtle grid */
-.bg-grid{
-  position:fixed;inset:0;z-index:-1;
-  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-  background-size:48px 48px;
-}
+/* LAYOUT */
+.container{max-width:1140px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 
-/* ─── NAV ───────────────────────────────────────── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  padding:0 24px;
-  background:rgba(8,8,14,.75);
-  backdrop-filter:blur(20px) saturate(1.5);
-  border-bottom:1px solid var(--border);
-}
-.nav-inner{
-  max-width:1100px;margin:0 auto;
-  height:62px;display:flex;align-items:center;gap:12px;
-}
-.logo{
-  font-size:1.45rem;font-weight:900;letter-spacing:-.5px;
-  text-decoration:none;color:#fff;
-  display:flex;align-items:center;gap:8px;
-}
-.logo-icon{
-  width:32px;height:32px;border-radius:9px;
-  background:linear-gradient(135deg,var(--violet),#4F46E5);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;box-shadow:0 0 14px rgba(139,92,246,.5);
-}
-.nav-links{display:flex;gap:2px;margin-left:auto}
-.nav-link{
-  padding:6px 14px;border-radius:8px;
-  font-size:.82rem;font-weight:600;
-  color:var(--muted);text-decoration:none;transition:color .15s;
-}
-.nav-link:hover{color:#fff}
-.nav-btn{
-  margin-left:10px;padding:9px 22px;border-radius:10px;
-  font-size:.85rem;font-weight:700;
-  background:linear-gradient(135deg,var(--violet),#4F46E5);
-  color:#fff;text-decoration:none;
-  box-shadow:0 0 0 1px rgba(139,92,246,.4),0 4px 16px rgba(109,40,217,.35);
-  transition:all .15s;
-}
-.nav-btn:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(139,92,246,.6),0 8px 24px rgba(109,40,217,.5)}
-@media(max-width:700px){.nav-links{display:none}}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 20px;backdrop-filter:blur(20px);background:rgba(6,6,18,.7);border-bottom:1px solid rgba(124,58,237,.15)}
+.nav-inner{max-width:1140px;margin:0 auto;height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--v),var(--cyan));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 20px rgba(124,58,237,.5)}
+.nav-logo-name{font-family:"Syne",sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{padding:6px 12px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;border-radius:8px;transition:all .2s}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.nav-btn{padding:9px 20px;font-size:13px;font-weight:700;color:#fff;text-decoration:none;background:linear-gradient(135deg,var(--v),var(--v2));border-radius:100px;white-space:nowrap;box-shadow:0 0 20px rgba(124,58,237,.4);transition:all .2s;letter-spacing:.2px}
+.nav-btn:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(124,58,237,.6)}
+@media(max-width:768px){.nav-links{display:none}}
 
-/* ─── HERO ──────────────────────────────────────── */
-.hero{
-  padding:140px 24px 100px;
-  text-align:center;
-  position:relative;
-}
-.hero-tag{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(139,92,246,.1);
-  border:1px solid rgba(139,92,246,.25);
-  border-radius:50px;padding:7px 18px;
-  font-size:.78rem;font-weight:700;color:var(--violet3);
-  margin-bottom:28px;letter-spacing:.3px;
-}
-.live-dot{
-  width:7px;height:7px;border-radius:50%;background:#34D399;
-  box-shadow:0 0 8px #34D399;
-  animation:glow-pulse 1.6s ease-in-out infinite;
-}
-@keyframes glow-pulse{0%,100%{opacity:1;box-shadow:0 0 8px #34D399}50%{opacity:.5;box-shadow:0 0 4px #34D399}}
-.hero h1{
-  font-size:clamp(3rem,8vw,5.5rem);
-  font-weight:900;line-height:1.0;
-  letter-spacing:-2.5px;
-  margin-bottom:22px;
-}
-.hero h1 em{
-  font-style:normal;
-  background:linear-gradient(135deg,#A78BFA 0%,#8B5CF6 35%,#22D3EE 70%,#34D399 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.hero-sub{
-  font-size:1.08rem;font-weight:400;
-  color:var(--muted);max-width:500px;
-  margin:0 auto 40px;line-height:1.65;
-}
-.hero-sub strong{color:rgba(255,255,255,.7);font-weight:600}
-.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:72px}
-.btn-primary{
-  padding:15px 32px;border-radius:12px;font-family:'Outfit',sans-serif;
-  font-size:1rem;font-weight:700;border:none;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-  background:linear-gradient(135deg,#8B5CF6,#4F46E5);color:#fff;
-  box-shadow:0 0 0 1px rgba(139,92,246,.3),0 8px 24px rgba(109,40,217,.4);
-  transition:all .15s;
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(139,92,246,.5),0 12px 32px rgba(109,40,217,.5)}
-.btn-primary:active{transform:translateY(1px)}
-.btn-ghost{
-  padding:15px 28px;border-radius:12px;font-family:'Outfit',sans-serif;
-  font-size:1rem;font-weight:600;border:1.5px solid var(--border);
-  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-  background:transparent;color:rgba(255,255,255,.7);
-  transition:all .15s;
-}
-.btn-ghost:hover{border-color:var(--dim);color:#fff;background:rgba(255,255,255,.04)}
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 20px 60px;position:relative;overflow:hidden;text-align:center}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.06) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000 30%,transparent 100%)}
+.hf{position:absolute;pointer-events:none;user-select:none}
+.hf1{top:15%;left:8%;font-size:40px;animation:float 6s ease-in-out infinite}
+.hf2{top:20%;right:10%;font-size:36px;animation:float 7s ease-in-out infinite;animation-delay:-2s}
+.hf3{bottom:25%;left:12%;font-size:32px;animation:float 8s ease-in-out infinite;animation-delay:-4s}
+.hf4{bottom:30%;right:8%;font-size:44px;animation:float 5s ease-in-out infinite;animation-delay:-1s}
+.hf5{top:50%;left:5%;font-size:28px;animation:float 9s ease-in-out infinite;animation-delay:-3s}
+.hf6{top:45%;right:5%;font-size:30px;animation:float 7.5s ease-in-out infinite;animation-delay:-5s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-18px) rotate(5deg)}}
+.hero-inner{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:100px;font-size:12px;font-weight:700;color:var(--green2);margin-bottom:28px;letter-spacing:.3px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite;display:inline-block;flex-shrink:0}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+.hero h1{font-size:clamp(48px,9vw,88px);font-weight:800;line-height:.96;letter-spacing:-2px;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,var(--v3) 50%,var(--cyan2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(15px,2.5vw,19px);color:var(--muted);line-height:1.6;max-width:520px;margin:0 auto 40px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;border-radius:100px;background:linear-gradient(135deg,var(--v),var(--v2));box-shadow:0 0 30px rgba(124,58,237,.5);transition:all .25s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(124,58,237,.7)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-size:15px;font-weight:700;color:var(--text);text-decoration:none;border-radius:100px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);transition:all .25s}
+.btn-secondary:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;padding:24px 32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;backdrop-filter:blur(10px)}
+.h-stat-v{font-family:"Syne",sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--yellow2),var(--orange2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.h-stat-l{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
 
-/* ─── STATS BAR ─────────────────────────────────── */
-.stats-bar{
-  display:flex;justify-content:center;
-  max-width:660px;margin:0 auto;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:18px;overflow:hidden;
-}
-.stat{flex:1;padding:18px 10px;text-align:center;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat-num{font-size:1.25rem;font-weight:800;color:#fff;letter-spacing:-.5px}
-.stat-lbl{font-size:.62rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-top:3px}
-@media(max-width:500px){.stat-num{font-size:1rem}.stats-bar{border-radius:14px}}
-
-/* ─── SECTION WRAPPER ───────────────────────────── */
-.sec{max-width:1100px;margin:0 auto;padding:96px 24px}
-.sec-label{
-  font-size:.7rem;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;color:var(--violet3);margin-bottom:10px;
-}
-.sec h2{
-  font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;
-  line-height:1.1;letter-spacing:-1px;margin-bottom:14px;
-}
-.sec-sub{
-  font-size:1rem;font-weight:400;color:var(--muted);
-  max-width:480px;line-height:1.65;margin-bottom:52px;
-}
-.center{text-align:center}
-.sec-sub.center{margin-left:auto;margin-right:auto}
-
-/* ─── GAME CARDS ─────────────────────────────────── */
-.games-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-@media(max-width:560px){.games-grid{grid-template-columns:1fr}}
-.game-card{
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:28px 24px;
-  position:relative;overflow:hidden;
-  cursor:pointer;
-  transition:transform .18s,border-color .18s,box-shadow .18s;
-  text-decoration:none;color:inherit;
-  display:flex;flex-direction:column;
-}
-.game-card:hover{
-  transform:translateY(-4px);
-  border-color:var(--card-color,var(--violet));
-  box-shadow:0 16px 48px rgba(0,0,0,.4),0 0 0 1px var(--card-color,var(--violet));
-}
-/* Glow blob per card */
-.game-card::before{
-  content:'';position:absolute;
-  width:180px;height:180px;border-radius:50%;
-  top:-40px;right:-40px;
-  background:radial-gradient(circle,var(--card-color,var(--violet)) 0%,transparent 70%);
-  opacity:.12;transition:opacity .18s;pointer-events:none;
-}
-.game-card:hover::before{opacity:.22}
-.game-card.live::after{
-  content:'LIVE';
-  position:absolute;top:18px;right:18px;
-  font-size:.58rem;font-weight:700;letter-spacing:1.5px;
-  color:#fff;background:rgba(52,211,153,.2);
-  border:1px solid rgba(52,211,153,.4);
-  border-radius:50px;padding:3px 10px;
-}
-.game-card.soon::after{
-  content:'SOON';
-  position:absolute;top:18px;right:18px;
-  font-size:.58rem;font-weight:700;letter-spacing:1.5px;
-  color:var(--muted);background:rgba(255,255,255,.05);
-  border:1px solid var(--border);
-  border-radius:50px;padding:3px 10px;
-}
-.game-icon{
-  width:56px;height:56px;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.7rem;margin-bottom:18px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 0 20px rgba(0,0,0,.3);
-}
-.game-title{font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-.3px}
-.game-desc{font-size:.88rem;font-weight:400;color:var(--muted);line-height:1.55;flex:1;margin-bottom:20px}
-.game-footer{display:flex;align-items:center;justify-content:space-between}
-.game-tokens{display:flex;gap:6px;flex-wrap:wrap}
-.token-chip{
-  font-size:.68rem;font-weight:700;padding:4px 10px;
-  border-radius:50px;background:rgba(255,255,255,.06);
-  border:1px solid var(--border);color:rgba(255,255,255,.6);
-}
-.token-chip.highlight{
-  background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.3);
-  color:var(--violet3);
-}
-.game-arrow{
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.07);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;color:var(--dim);transition:all .15s;
-}
-.game-card:hover .game-arrow{background:var(--card-color,var(--violet));border-color:transparent;color:#fff}
-
-/* ─── HOW TO PLAY ───────────────────────────────── */
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:52px}
-.step{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:20px;padding:28px 22px;
-  transition:border-color .18s;
-}
-.step:hover{border-color:var(--dim)}
-.step-num{
-  width:38px;height:38px;border-radius:11px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.95rem;font-weight:800;color:#fff;
-  margin-bottom:18px;
-}
-.step h3{font-size:.97rem;font-weight:700;color:#fff;margin-bottom:7px}
-.step p{font-size:.85rem;font-weight:400;color:var(--muted);line-height:1.6}
-
-/* ─── WARRIOR PASS ──────────────────────────────── */
-.warrior-wrap{
-  max-width:720px;margin:52px auto 0;
-  background:var(--bg3);border:1px solid rgba(139,92,246,.2);
-  border-radius:26px;padding:36px;position:relative;overflow:hidden;
-}
-.warrior-wrap::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--violet),var(--cyan),var(--orange),transparent);
-}
-.warrior-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px}
-.warrior-title-block h3{font-size:1.3rem;font-weight:800;color:#fff;letter-spacing:-.3px}
-.warrior-title-block p{font-size:.85rem;color:var(--muted);margin-top:4px}
-.warrior-prices{display:flex;gap:10px}
-.price-tag{
-  padding:10px 18px;border-radius:12px;text-align:center;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);
-}
-.price-tag.featured{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3)}
-.price-amount{font-size:1.15rem;font-weight:800;color:#fff}
-.price-label{font-size:.65rem;color:var(--muted);margin-top:2px;font-weight:600}
-.benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:520px){.benefits-grid{grid-template-columns:1fr}.warrior-prices{flex-direction:column}}
-.benefit{
-  display:flex;align-items:flex-start;gap:10px;
-  background:rgba(255,255,255,.03);border-radius:12px;padding:13px;
-}
-.benefit-icon{font-size:1.1rem;margin-top:1px;flex-shrink:0}
-.benefit-text strong{display:block;font-size:.86rem;font-weight:700;color:#fff;margin-bottom:2px}
-.benefit-text span{font-size:.77rem;color:var(--muted)}
-
-/* ─── EARN ──────────────────────────────────────── */
-.earn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:52px}
-@media(max-width:600px){.earn-grid{grid-template-columns:1fr 1fr}}
-.earn-card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:18px;padding:22px 18px;
-  transition:border-color .18s,transform .18s;
-}
-.earn-card:hover{border-color:var(--dim);transform:translateY(-2px)}
-.earn-icon{font-size:1.5rem;margin-bottom:10px}
-.earn-title{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:4px}
-.earn-desc{font-size:.8rem;color:var(--muted);line-height:1.5}
-
-/* ─── TRANSPARENCY ──────────────────────────────── */
-.trans-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:52px}
-@media(max-width:640px){.trans-grid{grid-template-columns:1fr}}
-.trans-card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:20px;padding:24px;
-}
-.trans-card-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.trans-card-name{font-size:1rem;font-weight:700;color:#fff}
-.trans-status{
-  font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  padding:3px 10px;border-radius:50px;margin-left:auto;
-}
-.trans-status.live{color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25)}
-.trans-status.soon{color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border)}
-.trans-row{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 12px;margin-bottom:6px;
-  background:rgba(255,255,255,.03);border-radius:10px;
-}
-.trans-row:last-child{margin-bottom:0}
-.trans-label{font-size:.8rem;color:rgba(255,255,255,.55);flex:1}
-.trans-bar-bg{width:64px;height:4px;background:rgba(255,255,255,.07);border-radius:2px;flex-shrink:0}
-.trans-bar{height:100%;border-radius:2px}
-.trans-pct{font-size:.85rem;font-weight:800;width:32px;text-align:right;flex-shrink:0}
-
-/* ─── TOKEN ─────────────────────────────────────── */
-.token-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-top:52px}
-.tok{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:14px;padding:18px 16px;
-}
-.tok-label{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.tok-val{font-size:1.05rem;font-weight:800;color:#fff}
-.tok-sub{font-size:.72rem;color:var(--muted);margin-top:3px}
-
-/* ─── FAQ ───────────────────────────────────────── */
-.faq-list{max-width:660px;margin:52px auto 0;display:flex;flex-direction:column;gap:8px}
-.faq-item{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;cursor:pointer;
-  transition:border-color .18s;
-}
-.faq-item.open{border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.05)}
-.faq-q{
-  padding:17px 20px;font-size:.9rem;font-weight:700;color:#fff;
-  display:flex;justify-content:space-between;align-items:center;gap:12px;
-  user-select:none;
-}
-.faq-chevron{color:var(--muted);transition:transform .22s;font-style:normal;flex-shrink:0;font-size:.8rem}
-.faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--violet3)}
-.faq-body{display:none;padding:0 20px 17px;font-size:.86rem;color:var(--muted);line-height:1.7}
-.faq-item.open .faq-body{display:block}
-
-/* ─── REFERRAL ──────────────────────────────────── */
-.ref-card{
-  max-width:580px;margin:52px auto 0;
-  background:var(--bg3);border:1px solid rgba(139,92,246,.18);
-  border-radius:22px;padding:32px;text-align:center;
-}
-.ref-desc{font-size:.92rem;color:var(--muted);margin-bottom:24px;line-height:1.6}
-.ref-tiers{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.ref-tier{
-  flex:1;min-width:100px;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:14px;padding:16px 12px;
-}
-.ref-pct{font-size:1.4rem;font-weight:900;color:var(--violet3)}
-.ref-lv{font-size:.72rem;color:var(--muted);margin-top:4px;line-height:1.4}
-
-/* ─── CTA ───────────────────────────────────────── */
-.cta-section{
-  text-align:center;padding:96px 24px;
-  background:linear-gradient(180deg,transparent,rgba(109,40,217,.08),transparent);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-}
-.cta-section h2{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;letter-spacing:-2px;margin-bottom:14px}
-.cta-section p{font-size:1rem;color:var(--muted);margin-bottom:36px;line-height:1.6}
-.cta-glow{
-  display:inline-block;
-  filter:drop-shadow(0 0 40px rgba(139,92,246,.5));
-}
-
-/* ─── FOOTER ────────────────────────────────────── */
-footer{
-  background:var(--bg);border-top:1px solid var(--border);
-  padding:52px 24px 28px;
-}
-.footer-inner{max-width:1100px;margin:0 auto}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px}
-@media(max-width:640px){.footer-top{grid-template-columns:1fr 1fr}}
-.footer-brand{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-.3px}
-.footer-brand-desc{font-size:.85rem;color:var(--muted);line-height:1.6;max-width:220px}
-.footer-col-title{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
-.footer-links{display:flex;flex-direction:column;gap:9px}
-.footer-links a{font-size:.87rem;color:var(--muted);text-decoration:none;transition:color .15s}
-.footer-links a:hover{color:#fff}
-.footer-bottom{
-  border-top:1px solid var(--border);padding-top:24px;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
-}
-.footer-copy{font-size:.78rem;color:var(--dim)}
-.footer-badges{display:flex;gap:8px}
-.footer-badge{
-  font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:50px;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);
-}
-
-/* ─── AOS ───────────────────────────────────────── */
-.aos{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+/* SECTIONS */
+.sec{padding:100px 0}
+.tag{display:inline-block;padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.tag-v{background:rgba(124,58,237,.15);color:var(--v3);border:1px solid rgba(124,58,237,.3)}
+.tag-c{background:rgba(6,182,212,.12);color:var(--cyan2);border:1px solid rgba(6,182,212,.25)}
+.tag-g{background:rgba(16,185,129,.12);color:var(--green2);border:1px solid rgba(16,185,129,.25)}
+.tag-y{background:rgba(234,179,8,.12);color:var(--yellow2);border:1px solid rgba(234,179,8,.25)}
+.tag-p{background:rgba(236,72,153,.12);color:var(--pink2);border:1px solid rgba(236,72,153,.25)}
+.sec-h{font-size:clamp(34px,5vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px}
+.sec-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:48px}
+.center{text-align:center}.center .sec-sub{margin-left:auto;margin-right:auto}
+.aos{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
 .aos.show{opacity:1;transform:none}
 
-/* ─── GRADIENT TEXTS ────────────────────────────── */
-.grad{
-  background:linear-gradient(135deg,#A78BFA,#8B5CF6,#22D3EE);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.grad-orange{
-  background:linear-gradient(135deg,#FB923C,#FBBF24);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:640px){.games-grid{grid-template-columns:1fr}}
+.game-card{position:relative;overflow:hidden;padding:28px;border-radius:24px;background:var(--bg3);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:all .3s;text-decoration:none;color:var(--text);display:block}
+.game-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--gc,#7C3AED) 0%,transparent 60%);opacity:.08;transition:opacity .3s}
+.game-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15)}
+.game-card:hover::before{opacity:.15}
+.game-glow{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:var(--gc,#7C3AED);filter:blur(50px);opacity:.12;transition:opacity .3s}
+.game-card:hover .game-glow{opacity:.22}
+.game-badge{position:absolute;top:16px;right:16px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.5px;background:rgba(16,185,129,.2);color:var(--green2);border:1px solid rgba(16,185,129,.3)}
+.game-icon{font-size:42px;margin-bottom:16px;display:block}
+.game-title{font-family:"Syne",sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px}
+.game-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1)}
+.chip-v{background:rgba(124,58,237,.15);color:var(--v3);border-color:rgba(124,58,237,.3)}
+.chip-c{background:rgba(6,182,212,.12);color:var(--cyan2);border-color:rgba(6,182,212,.25)}
+.chip-g{background:rgba(16,185,129,.12);color:var(--green2);border-color:rgba(16,185,129,.25)}
+.chip-p{background:rgba(236,72,153,.12);color:var(--pink2);border-color:rgba(236,72,153,.25)}
+.chip-y{background:rgba(234,179,8,.12);color:var(--yellow2);border-color:rgba(234,179,8,.25)}
+
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.how-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.how-grid{grid-template-columns:1fr}}
+.how-step{padding:28px 24px;border-radius:20px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden}
+.how-step::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--sc,var(--v))}
+.step-num{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-size:18px;font-weight:800;margin-bottom:16px}
+.how-step h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.how-step p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* XP LEVELS */
+.xp-rates{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.xp-rate{padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.levels-track{max-width:640px;margin:0 auto}
+.lv-row{display:flex;gap:16px;align-items:stretch}
+.lv-line{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0}
+.lv-dot{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-size:15px;font-weight:800;flex-shrink:0}
+.lv-conn{width:2px;flex:1;margin:4px 0;border-radius:2px}
+.lv-body{padding-bottom:28px;flex:1}
+.lv-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.lv-desc{font-size:13px;color:var(--muted)}
+
+/* WARRIOR */
+.warrior-card{max-width:740px;margin:0 auto;background:linear-gradient(135deg,rgba(124,58,237,.15) 0%,rgba(6,182,212,.08) 100%);border:1px solid rgba(124,58,237,.3);border-radius:28px;padding:40px;position:relative;overflow:hidden}
+.warrior-card::before{content:"⚔️";position:absolute;right:32px;top:32px;font-size:64px;opacity:.08}
+.warrior-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:32px}
+.warrior-title{font-family:"Syne",sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.warrior-sub{font-size:13px;color:var(--muted)}
+.warrior-prices{display:flex;gap:12px;flex-wrap:wrap}
+.pp{padding:10px 20px;border-radius:100px;text-align:center;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+.pp.feat{background:linear-gradient(135deg,var(--v),var(--v2));border-color:transparent;box-shadow:0 0 20px rgba(124,58,237,.4)}
+.pp .amt{font-family:"Syne",sans-serif;font-size:20px;font-weight:800}
+.pp .lbl{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px}
+.pp.feat .lbl{color:rgba(255,255,255,.8)}
+.ben-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:640px){.ben-grid{grid-template-columns:1fr}}
+.ben{padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;gap:12px}
+.ben-icon{font-size:22px;flex-shrink:0}
+.ben strong{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
+.ben span{font-size:12px;color:var(--muted)}
+
+/* EARN */
+.earn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:768px){.earn-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.earn-grid{grid-template-columns:1fr}}
+.earn-card{padding:24px;border-radius:20px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);transition:all .25s}
+.earn-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-3px)}
+.earn-icon{font-size:32px;margin-bottom:12px;display:block}
+.earn-title{font-weight:700;font-size:15px;margin-bottom:6px}
+.earn-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* TOKEN */
+.tok-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+@media(max-width:640px){.tok-grid{grid-template-columns:1fr}}
+.tok{padding:24px;border-radius:20px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);text-align:center}
+.tok-val{font-family:"Syne",sans-serif;font-size:24px;font-weight:800;margin:8px 0 4px;background:linear-gradient(135deg,var(--yellow2),var(--orange2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tok-lbl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.tok-sub{font-size:12px;color:var(--v3)}
+.dist{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.dist-row{display:flex;align-items:center;gap:12px}
+.dist-bar{height:8px;border-radius:4px;flex:1;overflow:hidden;background:rgba(0,0,0,.3)}
+.dist-fill{height:100%;border-radius:4px}
+.dist-pct{font-family:"Syne",sans-serif;font-size:13px;font-weight:800;min-width:32px;text-align:right}
+.dist-name{font-size:13px;color:var(--muted);min-width:140px}
+
+/* TRANSPARENCY */
+.split-card{max-width:680px;margin:0 auto 48px;background:var(--bg3);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:32px}
+.split-bar{height:24px;border-radius:100px;overflow:hidden;display:flex;margin-bottom:20px;gap:2px}
+.split-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:rgba(0,0,0,.7);border-radius:4px}
+.split-leg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.split-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.split-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.split-pct{font-weight:800;margin-left:auto;font-family:"Syne",sans-serif}
+.wallets{display:flex;flex-direction:column;gap:10px;max-width:680px;margin:0 auto}
+.wallet-row{padding:18px 22px;border-radius:18px;background:var(--bg3);border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.wallet-name{font-size:12px;font-weight:700;letter-spacing:.3px;margin-bottom:4px}
+.wallet-row a{font-family:monospace;font-size:10px;color:var(--dim);text-decoration:none;word-break:break-all;display:block}
+.wallet-row a:hover{color:var(--muted)}
+.wallet-bals{display:flex;gap:20px;flex-shrink:0}
+.w-bal{text-align:right}
+.w-bal .cur{font-size:10px;color:var(--dim);margin-bottom:2px;font-weight:600;letter-spacing:.3px}
+.w-bal .val{font-family:"Syne",sans-serif;font-size:17px;font-weight:800}
+
+/* REFERRAL */
+.ref-tiers{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:32px 0}
+.ref-tier{padding:24px 28px;border-radius:20px;text-align:center;background:var(--bg3);border:1px solid rgba(255,255,255,.07);min-width:140px}
+.ref-pct{font-family:"Syne",sans-serif;font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--cyan2),var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.ref-lbl{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* FAQ */
+.faq-list{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.faq-item{border-radius:16px;overflow:hidden;background:var(--bg3);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:border-color .2s}
+.faq-item:hover,.faq-item.open{border-color:rgba(124,58,237,.3)}
+.faq-q{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px;gap:12px}
+.faq-chevron{font-size:12px;transition:transform .3s;flex-shrink:0;color:var(--muted);font-style:normal}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 22px;font-size:14px;color:var(--muted);line-height:1.7}
+.faq-item.open .faq-body{max-height:200px;padding-bottom:18px}
+
+/* CTA */
+.cta-wrap{margin:0 20px 80px;padding:80px 40px;border-radius:32px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(6,182,212,.12),rgba(236,72,153,.12));border:1px solid rgba(124,58,237,.25)}
+.cta-wrap::before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='2' fill='%237C3AED' fill-opacity='0.06'/%3E%3C/svg%3E")}
+.cta-wrap h2{font-size:clamp(32px,6vw,56px);margin-bottom:16px;letter-spacing:-1px;position:relative}
+.cta-wrap p{font-size:16px;color:var(--muted);margin-bottom:32px;position:relative}
+.cta-wrap .btn-primary{font-size:16px;padding:16px 36px;position:relative}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:60px 20px 40px}
+.footer-inner{max-width:1140px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.footer-top{grid-template-columns:1fr}}
+.footer-brand{font-family:"Syne",sans-serif;font-size:20px;font-weight:800;margin-bottom:10px}
+.footer-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:260px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:12px;color:var(--dim)}
+.footer-legal{display:flex;gap:16px}
+.footer-legal a{font-size:12px;color:var(--dim);text-decoration:none;transition:color .2s}
+.footer-legal a:hover{color:var(--muted)}
+.footer-badges{display:flex;gap:8px}
+.footer-badge{padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;background:rgba(124,58,237,.1);color:var(--v3);border:1px solid rgba(124,58,237,.2)}
 </style>
 </head>
 <body>
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
 
-<div class="bg-mesh"></div>
-<div class="bg-grid"></div>
-
-<!-- ── NAV ── -->
 <nav>
   <div class="nav-inner">
-    <a href="#" class="logo">
-      <div class="logo-icon">🎯</div>
-      TonBola
-    </a>
+    <a href="#" class="nav-logo"><div class="nav-logo-icon">🎯</div><span class="nav-logo-name">TonBola</span></a>
     <div class="nav-links">
       <a href="#games" class="nav-link">Games</a>
       <a href="#warrior" class="nav-link">Pass</a>
@@ -485,549 +244,305 @@ footer{
       <a href="#transparency" class="nav-link">Transparency</a>
       <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <a href="https://t.me/TonBolaBot_bot/play" class="nav-btn">Play Now ↗</a>
+    <a href="https://t.me/TonBolaBot_bot/play" class="nav-btn" target="_blank">Play Now ↗</a>
   </div>
 </nav>
 
-<!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-tag aos">
-    <span class="live-dot"></span>
-    Live &middot; New game every 5 minutes on TON
-  </div>
-  <h1 class="aos">
-    The Gaming Hub<br>
-    Built on <em>TON</em>
-  </h1>
-  <p class="hero-sub aos">
-    Bingo, Fortune Wheel and more.<br>
-    <strong>Play with $TON or $USDT. Win every 5 minutes.</strong><br>
-    All inside Telegram. No downloads needed.
-  </p>
-  <div class="hero-actions aos">
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-primary">
-      ▶ Open in Telegram
-    </a>
-    <a href="#games" class="btn-ghost">See all games</a>
-  </div>
-  <div class="stats-bar aos">
-    <div class="stat"><div class="stat-num">1,200+</div><div class="stat-lbl">Warriors</div></div>
-    <div class="stat"><div class="stat-num">Every 5m</div><div class="stat-lbl">New Game</div></div>
-    <div class="stat"><div class="stat-num">On-chain</div><div class="stat-lbl">Payouts</div></div>
-    <div class="stat"><div class="stat-num">$TBOLA</div><div class="stat-lbl">Airdrop Soon</div></div>
+  <div class="hero-grid"></div>
+  <span class="hf hf1">🎱</span><span class="hf hf2">🎡</span><span class="hf hf3">🃏</span>
+  <span class="hf hf4">⚔️</span><span class="hf hf5">💎</span><span class="hf hf6">🏆</span>
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="live-dot"></span> 4 Games Live · Draws every 5 minutes · Built on TON</div>
+    <h1>The Gaming<br>Hub on TON</h1>
+    <p class="hero-sub">Bingo, Fortune Wheel, Scratch Cards, PvP Battle — all inside Telegram. Play with TON & USDT. Win instantly, on-chain.</p>
+    <div class="hero-btns">
+      <a href="https://t.me/TonBolaBot_bot/play" class="btn-primary" target="_blank">🚀 Start Playing Free</a>
+      <a href="#games" class="btn-secondary">Explore Games →</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="h-stat-v">4</div><div class="h-stat-l">Games Live</div></div>
+      <div><div class="h-stat-v">5min</div><div class="h-stat-l">Draw Interval</div></div>
+      <div><div class="h-stat-v">55%</div><div class="h-stat-l">To Prize Pool</div></div>
+      <div><div class="h-stat-v">TON</div><div class="h-stat-l">Blockchain</div></div>
+    </div>
   </div>
 </section>
 
-<!-- ── GAMES ── -->
 <div class="sec" id="games">
-  <div class="sec-label aos">Game Hub</div>
-  <h2 class="aos">Pick your game.<br>Win your way.</h2>
-  <p class="sec-sub aos">Every game shares the same wallet, the same $TBOLA rewards, and the same unified leaderboard.</p>
-
-  <div class="games-grid">
-    <!-- Bingo -->
-    <div class="game-card live aos" style="--card-color:#8B5CF6">
-      <div class="game-icon">🎱</div>
-      <div class="game-title">Bingo</div>
-      <div class="game-desc">Live multiplayer bingo with draws every 5 seconds. Get a line or full house — prizes hit your wallet instantly via smart contract.</div>
-      <div class="game-footer">
-        <div class="game-tokens">
-          <span class="token-chip">Free</span>
-          <span class="token-chip highlight">$USDT</span>
-          <span class="token-chip highlight">$TON</span>
-          <span class="token-chip">VIP</span>
-        </div>
-        <div class="game-arrow">→</div>
-      </div>
-    </div>
-
-    <!-- Fortune Wheel -->
-    <div class="game-card live aos" style="--card-color:#FB923C;transition-delay:.06s">
-      <div class="game-icon">🎡</div>
-      <div class="game-title">Fortune Wheel</div>
-      <div class="game-desc">Buy spin bundles, collect your winnings in one transaction. Hit the jackpot — a pool that grows with every spin until someone wins it all.</div>
-      <div class="game-footer">
-        <div class="game-tokens">
-          <span class="token-chip highlight">$USDT</span>
-          <span class="token-chip highlight">$TON</span>
-          <span class="token-chip" style="color:#FBBF24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.06)">🎰 Jackpot</span>
-        </div>
-        <div class="game-arrow">→</div>
-      </div>
-    </div>
-
-    <!-- Scratch Cards -->
-    <div class="game-card live aos" style="--card-color:#34D399;transition-delay:.12s">
-      <div class="game-icon">🃏</div>
-      <div class="game-title">Scratch Cards</div>
-      <div class="game-desc">Instant win scratch cards. Buy, reveal, win — the fastest game in the hub. No waiting, no draws, just instant results.</div>
-      <div class="game-footer">
-        <div class="game-tokens">
-          <span class="token-chip highlight">$USDT</span>
-          <span class="token-chip highlight">$TON</span>
-          <span class="token-chip" style="color:#34D399;border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.06)">⚡ Instant</span>
-        </div>
-        <div class="game-arrow">→</div>
-      </div>
-    </div>
-
-    <!-- PvP -->
-    <div class="game-card live aos" style="--card-color:#F472B6;transition-delay:.18s">
-      <div class="game-icon">⚔️</div>
-      <div class="game-title">PvP Battle</div>
-      <div class="game-desc">1v1 bingo against a real opponent. Challenge friends or get matched with strangers. Winner takes the pot.</div>
-      <div class="game-footer">
-        <div class="game-tokens">
-          <span class="token-chip highlight">$USDT</span>
-          <span class="token-chip highlight">$TON</span>
-          <span class="token-chip" style="color:#F472B6;border-color:rgba(244,114,182,.3);background:rgba(244,114,182,.06)">🥊 1v1</span>
-        </div>
-        <div class="game-arrow">→</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── HOW IT WORKS ── -->
-<div class="sec" id="how">
-  <div class="sec-label aos">How it works</div>
-  <h2 class="aos">Up and running<br>in under a minute.</h2>
-  <p class="sec-sub aos">No registrations, no KYC, no waiting. Open Telegram and start playing.</p>
-  <div class="steps-grid">
-    <div class="step aos">
-      <div class="step-num" style="background:linear-gradient(135deg,#6D28D9,#4F46E5)">1</div>
-      <h3>Open TonBola</h3>
-      <p>Tap the link in Telegram. The mini app opens instantly inside the chat.</p>
-    </div>
-    <div class="step aos" style="transition-delay:.07s">
-      <div class="step-num" style="background:linear-gradient(135deg,#FB923C,#F59E0B)">2</div>
-      <h3>Pick a game &amp; room</h3>
-      <p>Choose Bingo or the Wheel. Pick Free, $USDT, $TON, or VIP — your call.</p>
-    </div>
-    <div class="step aos" style="transition-delay:.14s">
-      <div class="step-num" style="background:linear-gradient(135deg,#059669,#34D399)">3</div>
-      <h3>Pay once, play</h3>
-      <p>One transaction loads your session balance. No fee per round, no surprises.</p>
-    </div>
-    <div class="step aos" style="transition-delay:.21s">
-      <div class="step-num" style="background:linear-gradient(135deg,#DB2777,#F472B6)">4</div>
-      <h3>Collect &amp; withdraw</h3>
-      <p>Winnings accumulate in your session balance. Withdraw anytime in one transaction.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- ── XP LEVELS ── -->
-<div class="sec">
-  <div class="sec-label aos">XP &amp; Levels</div>
-  <h2 class="aos">Play more.<br>Unlock more.</h2>
-  <p class="sec-sub aos">Every TON and USDT you spend earns XP. Level up to unlock new rooms, games, and exclusive benefits.</p>
-
-  <div class="aos" style="max-width:680px;margin:0 auto 40px;position:relative">
-    <!-- XP Rate pills -->
-    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:32px;flex-wrap:wrap">
-      <div style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700">⚡ 1 USDT = <span style="color:#A78BFA">500 XP</span></div>
-      <div style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700">💎 1 TON = <span style="color:#22D3EE">2500 XP</span></div>
-      <div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700">🎖️ Warrior Pass = <span style="color:#FBBF24">2× XP</span></div>
-    </div>
-
-    <!-- Level track -->
-    <div style="display:flex;flex-direction:column;gap:0">
-      <!-- Level 1 -->
-      <div style="display:flex;gap:16px;align-items:stretch">
-        <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6D28D9,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">1</div>
-          <div style="width:2px;flex:1;background:rgba(139,92,246,.2);margin:4px 0"></div>
-        </div>
-        <div style="padding:0 0 24px;flex:1">
-          <div style="font-weight:700;margin-bottom:4px">Level 1 <span style="font-size:12px;color:var(--muted);font-weight:400">· 0 XP</span></div>
-          <div style="font-size:13px;color:rgba(255,255,255,.5)">Free Room + Bronze Scratch Cards unlocked at start</div>
-        </div>
-      </div>
-      <!-- Level 5 -->
-      <div style="display:flex;gap:16px;align-items:stretch">
-        <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0891B2,#22D3EE);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">5</div>
-          <div style="width:2px;flex:1;background:rgba(34,211,238,.2);margin:4px 0"></div>
-        </div>
-        <div style="padding:0 0 24px;flex:1">
-          <div style="font-weight:700;margin-bottom:4px">Level 5 <span style="font-size:12px;color:var(--muted);font-weight:400">· 2,500 XP</span></div>
-          <div style="font-size:13px;color:rgba(255,255,255,.5)">🔓 USDT Bingo Room · Silver Scratch Cards · Fortune Wheel</div>
-        </div>
-      </div>
-      <!-- Level 10 -->
-      <div style="display:flex;gap:16px;align-items:stretch">
-        <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#B45309,#FBBF24);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">10</div>
-          <div style="width:2px;flex:1;background:rgba(251,191,36,.2);margin:4px 0"></div>
-        </div>
-        <div style="padding:0 0 24px;flex:1">
-          <div style="font-weight:700;margin-bottom:4px">Level 10 <span style="font-size:12px;color:var(--muted);font-weight:400">· 5,000 XP</span></div>
-          <div style="font-size:13px;color:rgba(255,255,255,.5)">🔓 TON Bingo Room · Gold Scratch Cards · PvP Battle</div>
-        </div>
-      </div>
-      <!-- Level 15 -->
-      <div style="display:flex;gap:16px;align-items:stretch">
-        <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9D174D,#F472B6);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">15</div>
-          <div style="width:2px;flex:1;background:rgba(244,114,182,.2);margin:4px 0"></div>
-        </div>
-        <div style="padding:0 0 24px;flex:1">
-          <div style="font-weight:700;margin-bottom:4px">Level 15 <span style="font-size:12px;color:var(--muted);font-weight:400">· 7,500 XP</span></div>
-          <div style="font-size:13px;color:rgba(255,255,255,.5)">🔓 VIP Bingo Room · Priority matchmaking · Early access</div>
-        </div>
-      </div>
-      <!-- Level 20+ -->
-      <div style="display:flex;gap:16px;align-items:stretch">
-        <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#34D399);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">20+</div>
-        </div>
-        <div style="padding:0 0 0;flex:1">
-          <div style="font-weight:700;margin-bottom:4px">Level 20+ <span style="font-size:12px;color:var(--muted);font-weight:400">· 10,000+ XP</span></div>
-          <div style="font-size:13px;color:rgba(255,255,255,.5)">⭐ Legend status · Custom avatar frame · $TBOLA multiplier boost</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Milestone gates callout -->
-  <div class="aos" style="max-width:680px;margin:0 auto;background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-    <div style="font-size:28px">🚪</div>
-    <div>
-      <div style="font-weight:700;margin-bottom:3px">Milestone Gates every 5 levels</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.5)">New rooms and game modes unlock automatically as you level up — no manual claims needed. XP never resets.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── WARRIOR PASS ── -->
-<div class="sec center" id="warrior">
-  <div class="sec-label aos">Warrior Pass</div>
-  <h2 class="aos">One pass.<br>Every game. Every edge.</h2>
-  <p class="sec-sub center aos">Benefits apply across all TonBola games — now and every game added in the future.</p>
-  <div class="warrior-wrap aos">
-    <div class="warrior-header">
-      <div class="warrior-title-block">
-        <h3>⚔️ Warrior Pass</h3>
-        <p>Monthly subscription · Cancel anytime</p>
-      </div>
-      <div class="warrior-prices">
-        <div class="price-tag featured">
-          <div class="price-amount">3 USDT</div>
-          <div class="price-label">per month</div>
-        </div>
-        <div class="price-tag">
-          <div class="price-amount">3 $TON</div>
-          <div class="price-label">per month</div>
-        </div>
-      </div>
-    </div>
-    <div class="benefits-grid">
-      <div class="benefit"><span class="benefit-icon">🃏</span><div class="benefit-text"><strong>+2 free plays/day per game</strong><span>Free cards and spins every day</span></div></div>
-      <div class="benefit"><span class="benefit-icon">📈</span><div class="benefit-text"><strong>+5% win rate</strong><span>Better odds across all games</span></div></div>
-      <div class="benefit"><span class="benefit-icon">👑</span><div class="benefit-text"><strong>VIP access guaranteed</strong><span>Priority slot in all VIP rooms</span></div></div>
-      <div class="benefit"><span class="benefit-icon">🎰</span><div class="benefit-text"><strong>Jackpot +10%</strong><span>Extra payout on every jackpot win</span></div></div>
-      <div class="benefit"><span class="benefit-icon">🪙</span><div class="benefit-text"><strong>2× $TBOLA earnings</strong><span>Double tokens all month, all games</span></div></div>
-      <div class="benefit"><span class="benefit-icon">🎖️</span><div class="benefit-text"><strong>Exclusive Warrior badge</strong><span>Visible on leaderboard &amp; profile</span></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ── EARN ── -->
-<div class="sec" id="earn">
-  <div class="sec-label aos">Earn $TBOLA</div>
-  <h2 class="aos">You earn whether<br>you win or not.</h2>
-  <p class="sec-sub aos">$TBOLA is TonBola's native token. 8% of every card goes into the fund. Airdrop incoming.</p>
-  <div class="earn-grid">
-    <div class="earn-card aos"><div class="earn-icon">🎱</div><div class="earn-title">Play Bingo</div><div class="earn-desc">Every card earns $TBOLA. Win or lose.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">🃏</div><div class="earn-title">Scratch Cards</div><div class="earn-desc">Every scratch earns XP and $TBOLA — instant.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">🎡</div><div class="earn-title">Spin the Wheel</div><div class="earn-desc">Hit Lose? You still earn $TBOLA consolation.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">👥</div><div class="earn-title">Invite Friends</div><div class="earn-desc">Earn % of every card your referrals buy. Forever.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">🏆</div><div class="earn-title">Leaderboard</div><div class="earn-desc">Weekly prize pool for the top warriors.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">⚔️</div><div class="earn-title">Warrior Pass</div><div class="earn-desc">2× $TBOLA on all games all month.</div></div>
-    <div class="earn-card aos"><div class="earn-icon">🎁</div><div class="earn-title">Daily Login</div><div class="earn-desc">Claim your daily $TBOLA bonus every day.</div></div>
-  </div>
-</div>
-
-<!-- ── TOKEN ── -->
-<div class="sec" id="token">
-  <div class="sec-label aos">$TBOLA Token</div>
-  <h2 class="aos">Earned by playing.<br>Not bought.</h2>
-  <p class="sec-sub aos">Every card, every spin, every game contributes to the $TBOLA supply. Airdrop distributed to players based on accumulated balance.</p>
-  <div class="token-grid">
-    <div class="tok aos"><div class="tok-label">Ticker</div><div class="tok-val">$TBOLA</div></div>
-    <div class="tok aos"><div class="tok-label">Chain</div><div class="tok-val">TON</div><div class="tok-sub">Mainnet soon</div></div>
-    <div class="tok aos"><div class="tok-label">Supply</div><div class="tok-val">1B</div><div class="tok-sub">Fixed forever</div></div>
-    <div class="tok aos"><div class="tok-label">Per card sold</div><div class="tok-val">8%</div><div class="tok-sub">Goes to fund</div></div>
-    <div class="tok aos"><div class="tok-label">Listed on</div><div class="tok-val">STON.fi</div><div class="tok-sub">Post mainnet</div></div>
-    <div class="tok aos"><div class="tok-label">Distribution</div><div class="tok-val">Players</div><div class="tok-sub">Airdrop incoming</div></div>
-  </div>
-</div>
-
-<!-- ── TRANSPARENCY ── -->
-<div class="sec">
-  <div class="sec-label aos">On-chain Transparency</div>
-  <h2 class="aos">Every coin tracked.<br>Zero hidden fees.</h2>
-  <p class="sec-sub aos">All distributions handled by a public TON smart contract. Verify every payout on TON Explorer.</p>
-  <div class="trans-grid">
-    <div class="trans-card aos">
-      <div class="trans-card-header">
-        <span style="font-size:1.3rem">🎱</span>
-        <div>
-          <div class="trans-card-name">Bingo</div>
-          <div style="font-size:.68rem;color:var(--muted);margin-top:2px">Free · $USDT · $TON · VIP</div>
-        </div>
-        <span class="trans-status live">LIVE</span>
-      </div>
-      <div class="trans-row"><span class="trans-label">🏆 Prize Pool</span><div class="trans-bar-bg"><div class="trans-bar" style="width:55%;background:#34D399"></div></div><span class="trans-pct" style="color:#34D399">55%</span></div>
-      <div class="trans-row"><span class="trans-label">⚙️ Development</span><div class="trans-bar-bg"><div class="trans-bar" style="width:34%;background:#A78BFA"></div></div><span class="trans-pct" style="color:#A78BFA">34%</span></div>
-      <div class="trans-row"><span class="trans-label">🪙 $TBOLA Fund</span><div class="trans-bar-bg"><div class="trans-bar" style="width:8%;background:#FB923C"></div></div><span class="trans-pct" style="color:#FB923C">8%</span></div>
-      <div class="trans-row"><span class="trans-label">🥇 Leaderboard</span><div class="trans-bar-bg"><div class="trans-bar" style="width:3%;background:#F472B6"></div></div><span class="trans-pct" style="color:#F472B6">3%</span></div>
-    </div>
-    <div class="trans-card aos" style="transition-delay:.1s">
-      <div class="trans-card-header">
-        <span style="font-size:1.3rem">🎡</span>
-        <div>
-          <div class="trans-card-name">Fortune Wheel</div>
-          <div style="font-size:.68rem;color:var(--muted);margin-top:2px">$USDT · $TON tiers</div>
-        </div>
-        <span class="trans-status soon">SOON</span>
-      </div>
-      <div class="trans-row"><span class="trans-label">🏆 Prize Pool</span><div class="trans-bar-bg"><div class="trans-bar" style="width:45%;background:#34D399"></div></div><span class="trans-pct" style="color:#34D399">45%</span></div>
-      <div class="trans-row"><span class="trans-label">🎰 Jackpot Pool</span><div class="trans-bar-bg"><div class="trans-bar" style="width:15%;background:#FBBF24"></div></div><span class="trans-pct" style="color:#FBBF24">15%</span></div>
-      <div class="trans-row"><span class="trans-label">⚙️ Development</span><div class="trans-bar-bg"><div class="trans-bar" style="width:30%;background:#A78BFA"></div></div><span class="trans-pct" style="color:#A78BFA">30%</span></div>
-      <div class="trans-row"><span class="trans-label">🪙 $TBOLA Fund</span><div class="trans-bar-bg"><div class="trans-bar" style="width:7%;background:#FB923C"></div></div><span class="trans-pct" style="color:#FB923C">7%</span></div>
-      <div class="trans-row"><span class="trans-label">🥇 Leaderboard</span><div class="trans-bar-bg"><div class="trans-bar" style="width:3%;background:#F472B6"></div></div><span class="trans-pct" style="color:#F472B6">3%</span></div>
-    </div>
-  </div>
-  <p style="text-align:center;margin-top:18px;font-size:.78rem;color:var(--dim)">Each new game publishes its own breakdown here.</p>
-</div>
-
-<!-- ── REFERRAL ── -->
-<div class="sec center">
-  <div class="sec-label aos">Referral Program</div>
-  <h2 class="aos">Invite once.<br>Earn forever.</h2>
-  <div class="ref-card aos">
-    <p class="ref-desc">You earn a percentage of every card your referrals buy — automatically, across every game, forever. No cap, no expiry.</p>
-    <div class="ref-tiers">
-      <div class="ref-tier"><div class="ref-pct">5%</div><div class="ref-lv">Direct referrals<br>Level 1</div></div>
-      <div class="ref-tier"><div class="ref-pct">2%</div><div class="ref-lv">Their referrals<br>Level 2</div></div>
-      <div class="ref-tier"><div class="ref-pct">1%</div><div class="ref-lv">Next level<br>Level 3</div></div>
-    </div>
-    <p style="font-size:.72rem;color:var(--dim);margin-top:18px">Macro influencers (10k+ followers): custom deal available</p>
-  </div>
-</div>
-
-<!-- ── FAQ ── -->
-<div class="sec center" id="faq">
-  <div class="sec-label aos">FAQ</div>
-  <h2 class="aos">Questions answered.</h2>
-  <div class="faq-list" id="faq-list"></div>
-</div>
-
-<!-- ── CTA ── -->
-<div class="cta-section">
-  <h2>Ready to play?<br><span class="grad">Start winning today.</span></h2>
-  <p>Join 1,200+ warriors. New game every 5 minutes, 24/7.</p>
-  <div class="cta-glow">
-    <a href="https://t.me/TonBolaBot_bot/play" class="btn-primary" style="font-size:1.05rem;padding:17px 36px">
-      ▶ Open TonBola on Telegram
-    </a>
-  </div>
-</div>
-
-<!-- ── FOOTER ── -->
-
-<section id="transparency" style="padding:80px 0;background:linear-gradient(180deg,transparent,rgba(139,92,246,.04),transparent)">
   <div class="container">
-    <div class="section-label aos" style="text-align:center;margin-bottom:12px">On-Chain Transparency</div>
-    <h2 class="section-title aos" style="text-align:center;margin-bottom:8px">Every TON &amp; USDT is Traceable</h2>
-    <p class="aos" style="text-align:center;color:var(--muted);max-width:520px;margin:0 auto 48px;font-size:15px">All prize distributions happen through public smart contracts. Verify every transaction on TON Explorer.</p>
-    <div class="aos" style="max-width:680px;margin:0 auto 40px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:28px 32px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:20px">Revenue Split Per Entry</div>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;align-items:center;gap:12px"><span style="width:28px;text-align:right;font-size:13px;font-weight:800;color:#34D399">55%</span><div style="flex:1;height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden"><div style="width:55%;height:100%;background:linear-gradient(90deg,#34D399,#10B981);border-radius:4px"></div></div><span style="font-size:13px;color:var(--muted)">🏆 Prize Pool</span></div>
-        <div style="display:flex;align-items:center;gap:12px"><span style="width:28px;text-align:right;font-size:13px;font-weight:800;color:#8B5CF6">32%</span><div style="flex:1;height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden"><div style="width:32%;height:100%;background:linear-gradient(90deg,#8B5CF6,#6D28D9);border-radius:4px"></div></div><span style="font-size:13px;color:var(--muted)">⚙️ Operations</span></div>
-        <div style="display:flex;align-items:center;gap:12px"><span style="width:28px;text-align:right;font-size:13px;font-weight:800;color:#FBBF24">8%</span><div style="flex:1;height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden"><div style="width:8%;height:100%;background:linear-gradient(90deg,#FBBF24,#F59E0B);border-radius:4px"></div></div><span style="font-size:13px;color:var(--muted)">🪙 $TBOLA Fund</span></div>
-        <div style="display:flex;align-items:center;gap:12px"><span style="width:28px;text-align:right;font-size:13px;font-weight:800;color:#22D3EE">3%</span><div style="flex:1;height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden"><div style="width:3%;height:100%;background:linear-gradient(90deg,#22D3EE,#0891B2);border-radius:4px"></div></div><span style="font-size:13px;color:var(--muted)">🥇 Leaderboard</span></div>
-        <div style="display:flex;align-items:center;gap:12px"><span style="width:28px;text-align:right;font-size:13px;font-weight:800;color:#F472B6">2%</span><div style="flex:1;height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden"><div style="width:2%;height:100%;background:linear-gradient(90deg,#F472B6,#EC4899);border-radius:4px"></div></div><span style="font-size:13px;color:var(--muted)">⚡ Platform</span></div>
+    <div class="center">
+      <span class="tag tag-v aos">Game Hub</span>
+      <h2 class="sec-h aos">Pick your game.<br>Win your way.</h2>
+      <p class="sec-sub center aos">Every game shares the same wallet, the same $TBOLA rewards, and the same on-chain prize pool. All four are live right now.</p>
+    </div>
+    <div class="games-grid">
+      <div class="game-card aos" style="--gc:#7C3AED" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
+        <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
+        <span class="game-icon">🎱</span><div class="game-title">Bingo</div>
+        <div class="game-desc">Live multiplayer bingo with draws every 5 seconds. Get a line or full house — prizes hit your wallet instantly via smart contract.</div>
+        <div class="chips"><span class="chip">Free Room</span><span class="chip chip-c">$USDT</span><span class="chip chip-v">$TON</span><span class="chip chip-y">VIP</span></div>
+      </div>
+      <div class="game-card aos" style="--gc:#F97316;transition-delay:.07s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
+        <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
+        <span class="game-icon">🎡</span><div class="game-title">Fortune Wheel</div>
+        <div class="game-desc">Buy spin bundles, collect winnings in one tx. Hit the jackpot — a pool that grows with every spin until someone wins it all.</div>
+        <div class="chips"><span class="chip chip-c">$USDT</span><span class="chip chip-v">$TON</span><span class="chip chip-y">🎰 Jackpot</span></div>
+      </div>
+      <div class="game-card aos" style="--gc:#10B981;transition-delay:.14s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
+        <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
+        <span class="game-icon">🃏</span><div class="game-title">Scratch Cards</div>
+        <div class="game-desc">Instant win scratch cards in Bronze, Silver and Gold tiers. Buy, reveal, win — the fastest game in the hub. Pure instant.</div>
+        <div class="chips"><span class="chip chip-c">$USDT</span><span class="chip chip-v">$TON</span><span class="chip chip-g">⚡ Instant</span></div>
+      </div>
+      <div class="game-card aos" style="--gc:#EC4899;transition-delay:.21s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
+        <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
+        <span class="game-icon">⚔️</span><div class="game-title">PvP Battle</div>
+        <div class="game-desc">1v1 bingo against a real opponent. Challenge friends or get matched instantly. Winner takes the full pot.</div>
+        <div class="chips"><span class="chip chip-c">$USDT</span><span class="chip chip-v">$TON</span><span class="chip chip-p">🥊 1v1</span></div>
       </div>
     </div>
-    <div class="aos" style="max-width:680px;margin:0 auto">
-      <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:20px;text-align:center">Public Wallet Addresses &middot; Live Balances</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
+  </div>
+</div>
 
-        <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:14px;padding:16px 20px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <div><div style="font-size:11px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:3px">🏆 PRIZE POOL VAULT &middot; 55%</div><div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25)">Smart Contract &middot; Deploy in progress</div></div>
-            <div style="display:flex;gap:16px;flex-shrink:0">
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#34D399">—</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#34D399">—</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:14px;padding:16px 20px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:3px">🪙 $TBOLA TOKEN FUND &middot; 8%</div><a href="https://tonviewer.com/UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf ↗</a></div>
-            <div style="display:flex;gap:16px;flex-shrink:0">
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#FBBF24" id="lp-ton-token">—</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#FBBF24" id="lp-usdt-token">—</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:14px;padding:16px 20px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(34,211,238,.8);font-weight:700;margin-bottom:3px">🥇 LEADERBOARD FUND &middot; 3%</div><a href="https://tonviewer.com/UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB ↗</a></div>
-            <div style="display:flex;gap:16px;flex-shrink:0">
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#22D3EE" id="lp-ton-lb">—</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#22D3EE" id="lp-usdt-lb">—</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.15);border-radius:14px;padding:16px 20px">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <div style="min-width:0;flex:1"><div style="font-size:11px;color:rgba(244,114,182,.8);font-weight:700;margin-bottom:3px">⚡ PLATFORM WALLET &middot; 2%</div><a href="https://tonviewer.com/UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_" target="_blank" style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.25);word-break:break-all;text-decoration:none">UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_ ↗</a></div>
-            <div style="display:flex;gap:16px;flex-shrink:0">
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">TON</div><div style="font-size:16px;font-weight:800;color:#F472B6" id="lp-ton-platform">—</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:2px">USDT</div><div style="font-size:16px;font-weight:800;color:#F472B6" id="lp-usdt-platform">—</div></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <p style="text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,.2)">Balances update every 60s &middot; TON + USDT &middot; Data from TON API</p>
+<div class="sec" style="background:linear-gradient(180deg,transparent,rgba(6,182,212,.04),transparent)" id="how">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-c aos">How it works</span>
+      <h2 class="sec-h aos">Up and running<br>in under a minute.</h2>
+      <p class="sec-sub center aos">No registration, no KYC, no waiting. Open Telegram and start playing.</p>
     </div>
+    <div class="how-grid">
+      <div class="how-step aos" style="--sc:#7C3AED"><div class="step-num" style="background:linear-gradient(135deg,#6D28D9,#7C3AED);box-shadow:0 0 20px rgba(124,58,237,.4)">1</div><h3>Open TonBola</h3><p>Tap the link in Telegram. The mini app opens instantly — no install needed.</p></div>
+      <div class="how-step aos" style="--sc:#F97316;transition-delay:.07s"><div class="step-num" style="background:linear-gradient(135deg,#EA580C,#F97316);box-shadow:0 0 20px rgba(249,115,22,.4)">2</div><h3>Pick a game & room</h3><p>Choose from Bingo, Wheel, Scratch or PvP. Pick Free, USDT, TON or VIP.</p></div>
+      <div class="how-step aos" style="--sc:#10B981;transition-delay:.14s"><div class="step-num" style="background:linear-gradient(135deg,#059669,#10B981);box-shadow:0 0 20px rgba(16,185,129,.4)">3</div><h3>Pay & play</h3><p>One transaction loads your session. No fee per round, no surprises.</p></div>
+      <div class="how-step aos" style="--sc:#EC4899;transition-delay:.21s"><div class="step-num" style="background:linear-gradient(135deg,#DB2777,#EC4899);box-shadow:0 0 20px rgba(236,72,153,.4)">4</div><h3>Win & collect</h3><p>Winnings hit your wallet instantly via smart contract. No manual claim.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-y aos">XP & Levels</span>
+      <h2 class="sec-h aos">Play more.<br>Unlock more.</h2>
+      <p class="sec-sub center aos">Every USDT and TON you spend earns XP. Hit milestone levels to unlock new rooms, modes, and exclusive perks.</p>
+    </div>
+    <div class="xp-rates aos">
+      <span class="xp-rate" style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:var(--v3)">⚡ 1 USDT = <strong style="margin-left:4px">500 XP</strong></span>
+      <span class="xp-rate" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.22);color:var(--cyan2)">💎 1 TON = <strong style="margin-left:4px">2500 XP</strong></span>
+      <span class="xp-rate" style="background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.22);color:var(--yellow2)">🎖️ Warrior Pass = <strong style="margin-left:4px">2× XP</strong></span>
+    </div>
+    <div class="levels-track aos">
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#6D28D9,#7C3AED);box-shadow:0 0 15px rgba(124,58,237,.4)">1</div><div class="lv-conn" style="background:rgba(124,58,237,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 1 <span style="font-size:12px;color:var(--dim);font-weight:400">· 0 XP</span></div><div class="lv-desc">Free Bingo Room + Bronze Scratch Cards available from day one</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#0891B2,#06B6D4);box-shadow:0 0 15px rgba(6,182,212,.4)">5</div><div class="lv-conn" style="background:rgba(6,182,212,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 5 <span style="font-size:12px;color:var(--dim);font-weight:400">· 2,500 XP</span></div><div class="lv-desc">🔓 USDT Bingo Room · Silver Scratch Cards · Fortune Wheel</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#B45309,#D97706);box-shadow:0 0 15px rgba(217,119,6,.4)">10</div><div class="lv-conn" style="background:rgba(217,119,6,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 10 <span style="font-size:12px;color:var(--dim);font-weight:400">· 5,000 XP</span></div><div class="lv-desc">🔓 TON Bingo Room · Gold Scratch Cards · PvP Battle</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#9D174D,#DB2777);box-shadow:0 0 15px rgba(219,39,119,.4)">15</div><div class="lv-conn" style="background:rgba(219,39,119,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 15 <span style="font-size:12px;color:var(--dim);font-weight:400">· 7,500 XP</span></div><div class="lv-desc">🔓 VIP Bingo Room · Priority matchmaking · Early access to new games</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#064E3B,#059669);box-shadow:0 0 15px rgba(5,150,105,.4)">20+</div></div><div class="lv-body"><div class="lv-title">Level 20+ <span style="font-size:12px;color:var(--dim);font-weight:400">· 10,000+ XP</span></div><div class="lv-desc">⭐ Legend status · Custom avatar frame · $TBOLA multiplier boost</div></div></div>
+    </div>
+    <div class="aos" style="max-width:640px;margin:32px auto 0;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);border-radius:16px;padding:18px 24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:24px">🚪</span>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:2px">Milestone Gates every 5 levels</div><div style="font-size:13px;color:var(--muted)">Rooms unlock automatically as you level up. XP never resets — every game counts forever.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="warrior" style="background:linear-gradient(180deg,transparent,rgba(124,58,237,.05),transparent)">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-v aos">Warrior Pass</span>
+      <h2 class="sec-h aos">One pass.<br>Every edge.</h2>
+      <p class="sec-sub center aos">Benefits apply across all TonBola games — now and every game added in the future.</p>
+    </div>
+    <div class="warrior-card aos">
+      <div class="warrior-header">
+        <div><div class="warrior-title">⚔️ Warrior Pass</div><div class="warrior-sub">Monthly subscription · Cancel anytime</div></div>
+        <div class="warrior-prices">
+          <div class="pp feat"><div class="amt">3 USDT</div><div class="lbl">per month</div></div>
+          <div class="pp"><div class="amt">3 $TON</div><div class="lbl">per month</div></div>
+        </div>
+      </div>
+      <div class="ben-grid">
+        <div class="ben"><span class="ben-icon">🃏</span><div><strong>+2 free plays/day</strong><span>Free cards and spins every day</span></div></div>
+        <div class="ben"><span class="ben-icon">⚡</span><div><strong>Auto-scratch</strong><span>Cards scratch themselves instantly</span></div></div>
+        <div class="ben"><span class="ben-icon">📈</span><div><strong>+5% win rate</strong><span>Better odds across all games</span></div></div>
+        <div class="ben"><span class="ben-icon">👑</span><div><strong>VIP access</strong><span>Priority slot in all VIP rooms at Lv15</span></div></div>
+        <div class="ben"><span class="ben-icon">🎰</span><div><strong>Jackpot +10%</strong><span>Bigger contribution on every spin</span></div></div>
+        <div class="ben"><span class="ben-icon">🪙</span><div><strong>2× $TBOLA</strong><span>Double token earnings all month</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="earn">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-g aos">Earn $TBOLA</span>
+      <h2 class="sec-h aos">You earn whether<br>you win or not.</h2>
+      <p class="sec-sub center aos">$TBOLA is TonBola's native token. 8% of every entry funds the pool. Airdrop distributed based on accumulated XP.</p>
+    </div>
+    <div class="earn-grid">
+      <div class="earn-card aos"><span class="earn-icon">🎱</span><div class="earn-title">Play Bingo</div><div class="earn-desc">Every card earns XP and $TBOLA. Win or lose — you always earn.</div></div>
+      <div class="earn-card aos" style="transition-delay:.05s"><span class="earn-icon">🎡</span><div class="earn-title">Spin the Wheel</div><div class="earn-desc">Every spin earns $TBOLA consolation, even when you don't win cash.</div></div>
+      <div class="earn-card aos" style="transition-delay:.1s"><span class="earn-icon">🃏</span><div class="earn-title">Scratch Cards</div><div class="earn-desc">Instant XP on every scratch. Bronze, Silver and Gold all count.</div></div>
+      <div class="earn-card aos" style="transition-delay:.15s"><span class="earn-icon">⚔️</span><div class="earn-title">PvP Battle</div><div class="earn-desc">XP for every PvP match — winner or not. Competition pays.</div></div>
+      <div class="earn-card aos" style="transition-delay:.2s"><span class="earn-icon">👥</span><div class="earn-title">Invite Friends</div><div class="earn-desc">Earn % of every card your referrals buy. Forever, no cap.</div></div>
+      <div class="earn-card aos" style="transition-delay:.25s"><span class="earn-icon">🏆</span><div class="earn-title">Leaderboard</div><div class="earn-desc">Weekly prize pool from the 3% leaderboard fund for top warriors.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="token" style="background:linear-gradient(180deg,transparent,rgba(234,179,8,.03),transparent)">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-y aos">$TBOLA Token</span>
+      <h2 class="sec-h aos">Earned by playing.<br>Not bought.</h2>
+      <p class="sec-sub center aos">Every card, every spin, every game contributes. Airdrop distributed based on accumulated XP.</p>
+    </div>
+    <div class="tok-grid">
+      <div class="tok aos"><div class="tok-lbl">Ticker</div><div class="tok-val">$TBOLA</div></div>
+      <div class="tok aos" style="transition-delay:.06s"><div class="tok-lbl">Supply</div><div class="tok-val">1B</div><div class="tok-sub">1,000,000,000 tokens</div></div>
+      <div class="tok aos" style="transition-delay:.12s"><div class="tok-lbl">Chain</div><div class="tok-val">TON</div><div class="tok-sub">Mainnet deploy soon</div></div>
+    </div>
+    <div class="dist center aos">
+      <p style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:20px">Token Distribution</p>
+      <div class="dist-row"><span class="dist-pct" style="color:#34D399">40%</span><div class="dist-bar"><div class="dist-fill" style="width:40%;background:linear-gradient(90deg,#10B981,#34D399)"></div></div><span class="dist-name">🎮 Airdrop (players)</span></div>
+      <div class="dist-row"><span class="dist-pct" style="color:#A855F7">20%</span><div class="dist-bar"><div class="dist-fill" style="width:20%;background:linear-gradient(90deg,#7C3AED,#A855F7)"></div></div><span class="dist-name">💰 Presale</span></div>
+      <div class="dist-row"><span class="dist-pct" style="color:#06B6D4">15%</span><div class="dist-bar"><div class="dist-fill" style="width:15%;background:linear-gradient(90deg,#0891B2,#06B6D4)"></div></div><span class="dist-name">💧 Liquidity DEX</span></div>
+      <div class="dist-row"><span class="dist-pct" style="color:#F97316">15%</span><div class="dist-bar"><div class="dist-fill" style="width:15%;background:linear-gradient(90deg,#EA580C,#F97316)"></div></div><span class="dist-name">👥 Team (vesting 24m)</span></div>
+      <div class="dist-row"><span class="dist-pct" style="color:#EC4899">5%</span><div class="dist-bar"><div class="dist-fill" style="width:5%;background:linear-gradient(90deg,#DB2777,#EC4899)"></div></div><span class="dist-name">📣 Marketing</span></div>
+      <div class="dist-row"><span class="dist-pct" style="color:var(--dim)">5%</span><div class="dist-bar"><div class="dist-fill" style="width:5%;background:rgba(255,255,255,.15)"></div></div><span class="dist-name">🔒 Reserve</span></div>
+    </div>
+  </div>
+</div>
+
+<section id="transparency" style="padding:100px 0">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-c aos">On-Chain Transparency</span>
+      <h2 class="sec-h aos">Every TON &amp; USDT<br>is traceable.</h2>
+      <p class="sec-sub center aos">All prize distributions happen through public smart contracts. Verify every transaction on TON Explorer in real time.</p>
+    </div>
+    <div class="split-card aos">
+      <p style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:16px">Revenue Split Per Game Entry</p>
+      <div class="split-bar">
+        <div class="split-seg" style="flex:55;background:linear-gradient(90deg,#10B981,#34D399)">55%</div>
+        <div class="split-seg" style="flex:32;background:linear-gradient(90deg,#7C3AED,#A855F7)">32%</div>
+        <div class="split-seg" style="flex:8;background:linear-gradient(90deg,#EAB308,#FCD34D)">8%</div>
+        <div class="split-seg" style="flex:3;background:linear-gradient(90deg,#06B6D4,#22D3EE)">3%</div>
+        <div class="split-seg" style="flex:2;background:linear-gradient(90deg,#EC4899,#F472B6)">2%</div>
+      </div>
+      <div class="split-leg">
+        <div class="split-item"><div class="split-dot" style="background:#34D399"></div>🏆 Prize Pool<span class="split-pct" style="color:#34D399">55%</span></div>
+        <div class="split-item"><div class="split-dot" style="background:#A855F7"></div>⚙️ Operations<span class="split-pct" style="color:#A855F7">32%</span></div>
+        <div class="split-item"><div class="split-dot" style="background:#FCD34D"></div>🪙 $TBOLA Fund<span class="split-pct" style="color:#FCD34D">8%</span></div>
+        <div class="split-item"><div class="split-dot" style="background:#22D3EE"></div>🥇 Leaderboard<span class="split-pct" style="color:#22D3EE">3%</span></div>
+        <div class="split-item"><div class="split-dot" style="background:#F472B6"></div>⚡ Platform<span class="split-pct" style="color:#F472B6">2%</span></div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-bottom:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim)">Public Wallet Addresses · Live Balances</p>
+    <div class="wallets aos">
+      <div class="wallet-row" style="border-left:3px solid #34D399">
+        <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#34D399">🏆 PRIZE POOL VAULT · 55%</div><span style="font-family:monospace;font-size:10px;color:var(--dim)">Smart Contract · Deploy in progress</span></div>
+        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" style="color:#34D399">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" style="color:#34D399">—</div></div></div>
+      </div>
+      <div class="wallet-row" style="border-left:3px solid #FCD34D">
+        <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#FCD34D">🪙 $TBOLA TOKEN FUND · 8%</div><a href="https://tonviewer.com/UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf" target="_blank">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf ↗</a></div>
+        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-ton-token" style="color:#FCD34D">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-usdt-token" style="color:#FCD34D">—</div></div></div>
+      </div>
+      <div class="wallet-row" style="border-left:3px solid #22D3EE">
+        <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#22D3EE">🥇 LEADERBOARD FUND · 3%</div><a href="https://tonviewer.com/UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB" target="_blank">UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB ↗</a></div>
+        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-ton-lb" style="color:#22D3EE">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-usdt-lb" style="color:#22D3EE">—</div></div></div>
+      </div>
+      <div class="wallet-row" style="border-left:3px solid #F472B6">
+        <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#F472B6">⚡ PLATFORM WALLET · 2%</div><a href="https://tonviewer.com/UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_" target="_blank">UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_ ↗</a></div>
+        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-ton-platform" style="color:#F472B6">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-usdt-platform" style="color:#F472B6">—</div></div></div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:16px;font-size:11px;color:var(--dim)">Balances update every 60s · TON + USDT · Data from TON API</p>
   </div>
 </section>
+
+<div class="sec" style="background:linear-gradient(180deg,transparent,rgba(6,182,212,.04),transparent)">
+  <div class="container">
+    <div class="center">
+      <span class="tag tag-c aos">Referral Program</span>
+      <h2 class="sec-h aos">Invite once.<br>Earn forever.</h2>
+      <p class="sec-sub center aos">Earn a percentage of every card your referrals buy — automatically, across every game, forever. No cap, no expiry.</p>
+    </div>
+    <div class="ref-tiers">
+      <div class="ref-tier aos"><div class="ref-pct">5%</div><div class="ref-lbl">Direct referrals<br>Level 1</div></div>
+      <div class="ref-tier aos" style="transition-delay:.08s"><div class="ref-pct">2%</div><div class="ref-lbl">Their referrals<br>Level 2</div></div>
+      <div class="ref-tier aos" style="transition-delay:.16s"><div class="ref-pct">1%</div><div class="ref-lbl">Next level<br>Level 3</div></div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--dim)">Macro influencers (10k+ followers): custom deal · <a href="https://t.me/TonBolaBot_bot" style="color:var(--v3)">Contact us</a></p>
+  </div>
+</div>
+
+<div class="sec" id="faq">
+  <div class="container center">
+    <span class="tag tag-v aos">FAQ</span>
+    <h2 class="sec-h aos">Questions answered.</h2>
+    <div class="faq-list" id="faq-list"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="cta-wrap aos">
+    <h2>Ready to play?<br><span style="background:linear-gradient(135deg,var(--cyan2),var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Start free. Win real.</span></h2>
+    <p>No registration. No KYC. Just open Telegram and go.</p>
+    <a href="https://t.me/TonBolaBot_bot/play" class="btn-primary" target="_blank">🚀 Open in Telegram</a>
+  </div>
+</div>
 
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div>
-        <div class="footer-brand">🎯 TonBola</div>
-        <div class="footer-brand-desc">The gaming hub built on TON. Play bingo, spin the wheel, and earn $TBOLA — all inside Telegram.</div>
-      </div>
-      <div>
-        <div class="footer-col-title">Games</div>
-        <div class="footer-links">
-          <a href="#games">Bingo</a>
-          <a href="#games">Fortune Wheel</a>
-          <a href="#games">Scratch Cards ↗</a>
-          <a href="#games">PvP Battle ↗</a>
-        </div>
-      </div>
-      <div>
-        <div class="footer-col-title">Learn</div>
-        <div class="footer-links">
-          <a href="#how">How to Play</a>
-          <a href="#warrior">Warrior Pass</a>
-          <a href="#token">$TBOLA Token</a>
-          <a href="#earn">Earn Guide</a>
-        </div>
-      </div>
-      <div>
-        <div class="footer-col-title">Community</div>
-        <div class="footer-links">
-          <a href="https://t.me/TonBolaBot_bot/play" target="_blank">Telegram ↗</a>
-          <a href="#">Squads</a>
-          <a href="#">Leaderboard</a>
-          <a href="#faq">FAQ</a>
-        </div>
-      </div>
+      <div><div class="footer-brand">🎯 TonBola</div><div class="footer-desc">The gaming hub built on TON. Bingo, Wheel, Scratch Cards and PvP — all inside Telegram. Earn $TBOLA just by playing.</div></div>
+      <div class="footer-col"><h4>Games</h4><a href="#games">Bingo</a><a href="#games">Fortune Wheel</a><a href="#games">Scratch Cards</a><a href="#games">PvP Battle</a></div>
+      <div class="footer-col"><h4>Learn</h4><a href="#how">How to Play</a><a href="#warrior">Warrior Pass</a><a href="#token">$TBOLA Token</a><a href="#transparency">Transparency</a></div>
+      <div class="footer-col"><h4>Community</h4><a href="https://t.me/TonBolaBot_bot/play" target="_blank">Play Now ↗</a><a href="#faq">FAQ</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a></div>
     </div>
     <div class="footer-bottom">
-      <div style="display:flex;gap:16px;margin-bottom:8px"><a href="/privacy.html" style="color:var(--muted);font-size:12px;text-decoration:none">Privacy Policy</a><a href="/terms.html" style="color:var(--muted);font-size:12px;text-decoration:none">Terms of Service</a></div><div class="footer-copy">© 2025 TonBola · Built on TON · Prizes distributed on-chain</div>
-      <div class="footer-badges">
-        <span class="footer-badge">TON Chain</span>
-        <span class="footer-badge">Verified Contract</span>
-      </div>
+      <div class="footer-copy">© 2025 TonBola · Built on TON · Prizes distributed on-chain</div>
+      <div class="footer-legal"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+      <div class="footer-badges"><span class="footer-badge">TON Chain</span><span class="footer-badge">On-Chain Prizes</span></div>
     </div>
   </div>
 </footer>
 
 <script>
 const faqs=[
-  {q:'Do I need a crypto wallet?',a:'Yes, you need a TON wallet (Tonkeeper, MyTonWallet, or @wallet on Telegram) to play paid rooms. The Free Room and Bronze Scratch Cards are playable without one. Winnings go directly to your connected wallet — instant, no middleman.'},
-  {q:'How are prizes paid out?',a:'Smart contracts detect winners and send payouts automatically. No manual approval, no delays. All transactions are verifiable on TON Explorer.'},
-  {q:'What games are available?',a:'All 4 games are live: Bingo (multiplayer, draws every 5 seconds), Fortune Wheel (spin bundles + jackpot), Scratch Cards (instant win, Bronze/Silver/Gold tiers), and PvP Battle (1v1 bingo). More games coming soon.'},
-  {q:'How does the XP and leveling system work?',a:'Every USDT spent earns 500 XP, every TON earns 2,500 XP. Every 5 levels unlocks new game rooms and features. Warrior Pass holders earn 2× XP. XP never resets.'},
-  {q:'Can I play for free?',a:'Yes. The Free Room gives you 1 bingo card per day at no cost. Bronze Scratch Cards are available without a wallet. Warrior Pass subscribers get additional free plays daily.'},
-  {q:'How often do Bingo games run?',a:'Every 5 minutes, 24/7. You can join up to the moment the draw starts. Scratch Cards and the Fortune Wheel are available anytime — no waiting.'},
-  {q:'What is $TBOLA?',a:'The native TonBola token earned through gameplay. 8% of every entry funds the token pool. It will be listed on STON.fi and airdropped to players based on their accumulated XP balance. You earn $TBOLA whether you win or lose.'},
-  {q:'Are results provably fair?',a:'Yes. All game outcomes are seeded from TON block hashes — verifiable and tamper-proof on-chain. Smart contract code is publicly viewable on TON Explorer.'},
-  {q:'What is the Warrior Pass?',a:'A monthly subscription (3 USDT or 3 TON) unlocking: auto-scratch on cards, 2× $TBOLA on all games, bonus free plays daily, VIP Bingo room access at Level 15, and a Warrior badge on your profile.'},
-  {q:'How do squads work?',a:'Create or join a squad of up to 20 players. Combined XP competes on the weekly leaderboard. Top squads split the 3% leaderboard fund every Monday — paid directly to wallets.'},
-  {q:'Can I see where my money goes?',a:'Yes. Every transaction flows through public smart contracts. All wallet addresses, splits, and prize distributions are visible on TON Explorer in real time.'},
+  {q:"Do I need a crypto wallet?",a:"Yes, you need a TON wallet (Tonkeeper, MyTonWallet, or @wallet on Telegram) to play paid rooms. The Free Room and Bronze Scratch Cards are playable without one. Winnings go directly to your connected wallet — instant, no middleman."},
+  {q:"How are prizes paid out?",a:"Smart contracts detect winners and send payouts automatically. No manual approval, no delays. All transactions are verifiable on TON Explorer."},
+  {q:"What games are available?",a:"All 4 games are live: Bingo (multiplayer, draws every 5 seconds), Fortune Wheel (spin bundles + jackpot), Scratch Cards (instant win, Bronze/Silver/Gold tiers), and PvP Battle (1v1 bingo)."},
+  {q:"How does the XP and leveling system work?",a:"Every USDT spent earns 500 XP, every TON earns 2,500 XP. Every 5 levels unlocks new rooms and features. Warrior Pass holders earn 2× XP. XP never resets."},
+  {q:"Can I play for free?",a:"Yes. The Free Room gives you 1 bingo card per day at no cost. Bronze Scratch Cards are available without a wallet. Warrior Pass subscribers get additional free plays daily."},
+  {q:"How often do Bingo games run?",a:"Every 5 minutes, 24/7. Scratch Cards and Fortune Wheel are available anytime — no waiting required."},
+  {q:"What is $TBOLA?",a:"The native TonBola token earned through gameplay. 8% of every entry funds the token pool. It will be listed on STON.fi and airdropped to players based on accumulated XP."},
+  {q:"Are results provably fair?",a:"Yes. All game outcomes use TON block hashes as randomness — verifiable and tamper-proof on-chain. Smart contract code is publicly viewable."},
+  {q:"What is the Warrior Pass?",a:"A monthly subscription (3 USDT or 3 TON) that gives: auto-scratch, 2× $TBOLA, +2 free plays/day, VIP room access at Level 15, +5% win rate, and Jackpot +10%."},
+  {q:"How do squads work?",a:"Create or join a squad of up to 20 players. Combined XP competes on the weekly leaderboard. Top squads split the 3% leaderboard fund every Monday — paid directly to wallets."},
+  {q:"Can I see where my money goes?",a:"Yes. Every transaction flows through public smart contracts. All wallet addresses, splits and prize distributions are visible on TON Explorer in real time."},
 ]
-document.getElementById('faq-list').innerHTML=faqs.map((f,i)=>`
-  <div class="faq-item" onclick="toggleFaq(${i})">
-    <div class="faq-q">${f.q}<em class="faq-chevron" id="fa-${i}">&#9660;</em></div>
-    <div class="faq-body" id="fb-${i}">${f.a}</div>
-  </div>`).join('')
-function toggleFaq(i){
-  const item=document.getElementById('fb-'+i).parentElement
-  const open=item.classList.contains('open')
-  document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'))
-  if(!open)item.classList.add('open')
-}
-const io=new IntersectionObserver(ee=>{ee.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}})},{threshold:.1})
-document.querySelectorAll('.aos').forEach(el=>io.observe(el))
-
-// Live wallet balances on landing page
-async function loadWalletBalances() {
-  const wallets = {
-    'bal-token':    'UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf',
-    'bal-lb':       'UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB',
-    'bal-platform': 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_',
-  };
-  for (const [id, addr] of Object.entries(wallets)) {
-    try {
-      const r = await fetch('https://tonapi.io/v2/accounts/' + addr);
-      const d = await r.json();
-      const bal = (parseInt(d.balance || 0) / 1e9).toFixed(2);
-      const el = document.getElementById(id);
-      if (el) el.textContent = bal;
-    } catch {}
-  }
-}
-loadWalletBalances();
-setInterval(loadWalletBalances, 60000);
-
-
-// Live wallet balances — landing page (TON + USDT)
-(function(){
-  const USDT_MASTER = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs';
-  const wallets = [
-    { ton: 'lp-ton-token',    usdt: 'lp-usdt-token',    addr: 'UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf' },
-    { ton: 'lp-ton-lb',       usdt: 'lp-usdt-lb',       addr: 'UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB' },
-    { ton: 'lp-ton-platform',  usdt: 'lp-usdt-platform', addr: 'UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_' },
-  ];
-  function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
-  async function load() {
-    for (const w of wallets) {
-      // TON balance
-      fetch('https://tonapi.io/v2/accounts/' + w.addr)
-        .then(r => r.json())
-        .then(d => set(w.ton, (parseInt(d.balance || 0) / 1e9).toFixed(2)))
-        .catch(() => {});
-      // USDT balance via jetton endpoint
-      fetch('https://tonapi.io/v2/accounts/' + w.addr + '/jettons/' + USDT_MASTER)
-        .then(r => r.json())
-        .then(d => {
-          const bal = d.balance ? (parseInt(d.balance) / 1e6).toFixed(2) : '0.00';
-          set(w.usdt, bal);
-        })
-        .catch(() => set(w.usdt, '0.00'));
-    }
-  }
-  load();
-  setInterval(load, 60000);
-})();
-
+document.getElementById("faq-list").innerHTML=faqs.map((f,i)=>`<div class="faq-item" onclick="toggleFaq(${i})"><div class="faq-q">${f.q}<em class="faq-chevron" id="fa-${i}">▼</em></div><div class="faq-body" id="fb-${i}">${f.a}</div></div>`).join("")
+function toggleFaq(i){const it=document.getElementById("fb-"+i).parentElement,op=it.classList.contains("open");document.querySelectorAll(".faq-item").forEach(e=>e.classList.remove("open"));if(!op)it.classList.add("open")}
+const io=new IntersectionObserver(ee=>{ee.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");io.unobserve(e.target)}})},{threshold:.08})
+document.querySelectorAll(".aos").forEach(el=>io.observe(el))
+;(function(){
+  const USDT="EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
+  const W=[
+    {ton:"lp-ton-token",usdt:"lp-usdt-token",addr:"UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf"},
+    {ton:"lp-ton-lb",usdt:"lp-usdt-lb",addr:"UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB"},
+    {ton:"lp-ton-platform",usdt:"lp-usdt-platform",addr:"UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_"},
+  ]
+  function s(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+  function load(){W.forEach(w=>{
+    fetch("https://tonapi.io/v2/accounts/"+w.addr).then(r=>r.json()).then(d=>s(w.ton,(parseInt(d.balance||0)/1e9).toFixed(2))).catch(()=>{})
+    fetch("https://tonapi.io/v2/accounts/"+w.addr+"/jettons/"+USDT).then(r=>r.json()).then(d=>s(w.usdt,d.balance?(parseInt(d.balance)/1e6).toFixed(2):"0.00")).catch(()=>s(w.usdt,"0.00"))
+  })}
+  load();setInterval(load,60000)
+})()
 </script>
 </body>
 </html>
