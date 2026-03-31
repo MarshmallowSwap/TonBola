@@ -444,7 +444,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
     <div class="wallets aos">
       <div class="wallet-row" style="border-left:3px solid #34D399">
         <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#34D399">🏆 PRIZE POOL VAULT · 55%</div><span style="font-family:monospace;font-size:10px;color:var(--dim)">Smart Contract · Deploy in progress</span></div>
-        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" style="color:#34D399">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" style="color:#34D399">—</div></div></div>
+        <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-ton-vault" style="color:#34D399">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-usdt-vault" style="color:#34D399">—</div></div></div>
       </div>
       <div class="wallet-row" style="border-left:3px solid #FCD34D">
         <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#FCD34D">🪙 $TBOLA TOKEN FUND · 8%</div><a href="https://tonviewer.com/UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf" target="_blank">UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf ↗</a></div>
@@ -532,6 +532,7 @@ document.querySelectorAll(".aos").forEach(el=>io.observe(el))
 ;(function(){
   const USDT="EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
   const W=[
+    {ton:'lp-ton-vault',usdt:'lp-usdt-vault',addr:'UQB_Gcot0yD5pPCQ7qn4OvkLjLtU1zSfvuLh1IrVWbl_1HkR'},
     {ton:"lp-ton-token",usdt:"lp-usdt-token",addr:"UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf"},
     {ton:"lp-ton-lb",usdt:"lp-usdt-lb",addr:"UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB"},
     {ton:"lp-ton-platform",usdt:"lp-usdt-platform",addr:"UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_"},
