@@ -2086,7 +2086,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- WIN OVERLAY -->
-<div class="wov" id="wov" style="display:none">
+<div class="wov" id="wov">
   <div id="wov-confetti" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
 
   <!-- Winner banner -->
@@ -3186,7 +3186,7 @@ function showWin(type){
     showBingoBanner('+'+prizeFmt)
     setTimeout(()=>{
       spawnConf()
-      document.getElementById('wov').classList.add('show')
+      const wovEl=document.getElementById('wov');if(wovEl){wovEl.style.display='flex';wovEl.style.flexDirection='column';wovEl.style.alignItems='center';wovEl.style.justifyContent='center'}
       if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
     }, 900)
   } else {
@@ -5985,7 +5985,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </div>
 
 <!-- WIN OVERLAY -->
-<div class="wov" id="wov" style="display:none">
+<div class="wov" id="wov">
   <div id="wov-confetti" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
 
   <!-- Winner banner -->
@@ -7085,7 +7085,7 @@ function showWin(type){
     showBingoBanner('+'+prizeFmt)
     setTimeout(()=>{
       spawnConf()
-      document.getElementById('wov').classList.add('show')
+      const wovEl=document.getElementById('wov');if(wovEl){wovEl.style.display='flex';wovEl.style.flexDirection='column';wovEl.style.alignItems='center';wovEl.style.justifyContent='center'}
       if(tg?.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')
     }, 900)
   } else {
@@ -8535,7 +8535,7 @@ function showMinorLevelUp(lv) {
 }
 
 function closeWin(){
-  document.getElementById('wov').classList.remove('show')
+  const _wov=document.getElementById('wov');if(_wov)_wov.style.display='none'
   document.getElementById('game-bar').style.display='none'
   sessionStorage.removeItem('tbgame')
   isGameActive = false
