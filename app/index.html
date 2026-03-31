@@ -2170,8 +2170,14 @@ let pvpRooms = []
 let pvpSocket = null
 let pvpConnected = false
 const PVP_SERVER = 'https://api.fundshot.app'
+const BACKEND_URL = 'https://api.fundshot.app/tonbola'
+const ORACLE_URL  = 'https://api.fundshot.app/tonbola'
 const PVP_PATH = '/tonbola-pvp/socket.io'
 let pvpMyRoom = null
+let lastWinType = null
+let lastWinAmount = 0
+let lastWinCurrency = null
+let lastGameId = null
 let pvpCountdownTimer = null
 let pvpSelectedBet = 1
 let pvpFilterCur = 'all'
@@ -3168,6 +3174,11 @@ function showWin(type){
       return`<div style="position:absolute;left:${x}%;top:-10px;width:8px;height:8px;background:${c};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${dur}s ${delay}s ease-in forwards;opacity:0"></div>`
     }).join('')
   }
+  // Track win for payout
+  lastWinType = type
+  lastWinAmount = prizeVal
+  lastWinCurrency = ROOMS[curRoom]?.cur || 'free'
+  lastGameId = Date.now()
   user.tbola+=tbolaWon
   user.wins+=(type==='bingo'?1:0)
   user.lines+=(type==='line'?1:0)
@@ -6069,8 +6080,14 @@ let pvpRooms = []
 let pvpSocket = null
 let pvpConnected = false
 const PVP_SERVER = 'https://api.fundshot.app'
+const BACKEND_URL = 'https://api.fundshot.app/tonbola'
+const ORACLE_URL  = 'https://api.fundshot.app/tonbola'
 const PVP_PATH = '/tonbola-pvp/socket.io'
 let pvpMyRoom = null
+let lastWinType = null
+let lastWinAmount = 0
+let lastWinCurrency = null
+let lastGameId = null
 let pvpCountdownTimer = null
 let pvpSelectedBet = 1
 let pvpFilterCur = 'all'
@@ -7067,6 +7084,11 @@ function showWin(type){
       return`<div style="position:absolute;left:${x}%;top:-10px;width:8px;height:8px;background:${c};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${dur}s ${delay}s ease-in forwards;opacity:0"></div>`
     }).join('')
   }
+  // Track win for payout
+  lastWinType = type
+  lastWinAmount = prizeVal
+  lastWinCurrency = ROOMS[curRoom]?.cur || 'free'
+  lastGameId = Date.now()
   user.tbola+=tbolaWon
   user.wins+=(type==='bingo'?1:0)
   user.lines+=(type==='line'?1:0)
@@ -8534,13 +8556,121 @@ function showMinorLevelUp(lv) {
   if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
 }
 
-function closeWin(){
+async function closeWin(){
+  // If player won, request prize payment from oracle
+  if(lastWinType && lastWinAmount > 0 && tcWallet) {
+    await requestPrizePayout()
+  }
   const _wov=document.getElementById('wov');if(_wov)_wov.style.display='none'
   document.getElementById('game-bar').style.display='none'
   sessionStorage.removeItem('tbgame')
   isGameActive = false
+  lastWinType = null
+  lastWinAmount = 0
+  lastWinCurrency = null
   setRoomCardsEnabled(true)
   go('sh');setNav('nb-h')
+}
+
+async function requestPrizePayout() {
+  if(!tcWallet) return
+  const winnerAddr = tcWallet.account.address
+  const amountNano = lastWinCurrency === 'usdt'
+    ? Math.round(lastWinAmount * 1e6)   // USDT 6 decimals
+    : Math.round(lastWinAmount * 1e9)   // TON 9 decimals
+
+  // Show paying indicator
+  const btn = document.querySelector('#wov .btn-gold')
+  if(btn) { btn.textContent = '⏳ Processing...'; btn.disabled = true }
+
+  try {
+    const r = await fetch(ORACLE_URL + '/pay_winner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        game_id:         lastGameId || Date.now(),
+        winner_address:  winnerAddr,
+        amount_nano:     amountNano,
+        currency:        lastWinCurrency || 'ton',
+        game_type:       'bingo'
+      })
+    })
+    if(r.ok) {
+      const data = await r.json()
+      if(data.success && data.signed_payload) {
+        // Oracle signed — now submit to blockchain via vault
+        const payload = JSON.parse(data.signed_payload)
+        await submitPayWinner(payload)
+      }
+    } else {
+      console.warn('Oracle payout failed:', r.status)
+    }
+  } catch(e) {
+    console.warn('Payout request error:', e.message)
+  }
+}
+
+async function submitPayWinner(payload) {
+  // Build PayWinner message to vault
+  // The oracle has signed: winner + amount + game_id + nonce
+  // We send this to the vault contract which verifies and pays
+  try {
+    const sigBytes = new Uint8Array(payload.signature_hex.match(/.{2}/g).map(b=>parseInt(b,16)))
+    const sigB64 = btoa(String.fromCharCode(...sigBytes))
+
+    // Build PayWinner body cell
+    // op=0x50617957 winner(addr) amount(coins) game_id(uint64) nonce(uint64) signature(bits512)
+    const buf = new Uint8Array(200)
+    let bp = 0
+    const wb = (v,n) => { for(let i=n-1;i>=0;i--) { const by=bp>>3,bi=7-(bp&7); if((v>>i)&1) buf[by]|=(1<<bi); bp++ } }
+    const wbig = (v,n) => { for(let i=n-1;i>=0;i--) { const by=bp>>3,bi=7-(bp&7); if(Number((v>>BigInt(i))&1n)) buf[by]|=(1<<bi); bp++ } }
+    const wcoins = v => { if(v===0n){wb(0,4);return} let b=0,t=v; while(t>0n){t>>=8n;b++} wb(b,4);wbig(v,b*8) }
+    const waddr = a => {
+      const parsed = parseTonAddress(a)
+      wb(0b10,2); wb(0,1)
+      const wc = parsed.workchain < 0 ? parsed.workchain+256 : parsed.workchain
+      wb(wc,8)
+      for(const byte of parsed.hash) wb(byte,8)
+    }
+
+    wb(0x50617957, 32)                        // op PayWinner
+    wb(0, 64)                                 // query_id
+    waddr(payload.winner_address)             // winner
+    wcoins(BigInt(payload.amount_nano))       // amount
+    wbig(BigInt(payload.game_id), 64)         // game_id
+    wbig(BigInt(payload.nonce), 64)           // nonce
+    // signature: 512 bits
+    for(const byte of sigBytes) wb(byte, 8)
+
+    const dataBits = bp
+    const dataBytes = Math.ceil(dataBits/8)
+    if(dataBits%8!==0) buf[dataBytes-1]|=(1<<(7-(dataBits&7)))
+    const d2 = Math.floor(dataBits/8)*2+(dataBits%8!==0?1:0)
+    const totSize = 2 + dataBytes
+    const boc = [0xb5,0xee,0x9c,0x72,0x01,0x01,0x01,0x01,0x00,totSize,0x00,0x00,d2]
+    for(let i=0;i<dataBytes;i++) boc.push(buf[i])
+    const bocB64 = btoa(String.fromCharCode(...boc))
+
+    // Send to vault via TonConnect
+    await tc.sendTransaction({
+      validUntil: Math.floor(Date.now()/1000) + 300,
+      messages: [{
+        address: VAULT_ADDRESS,
+        amount: '50000000', // 0.05 TON for gas
+        payload: bocB64
+      }]
+    })
+    console.log('PayWinner TX sent!')
+
+    // Show success toast
+    if(tg?.showPopup) tg.showPopup({
+      title: '✅ Prize Sent!',
+      message: `Your prize of ${lastWinAmount} ${(lastWinCurrency||'ton').toUpperCase()} is on its way!`,
+      buttons: [{type:'ok'}]
+    })
+  } catch(e) {
+    console.warn('submitPayWinner error:', e.message)
+  }
 }
 
 function renderProfile(){
