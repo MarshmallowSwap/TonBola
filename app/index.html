@@ -765,6 +765,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">0</span> warriors</div>
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.50 $USDT / card</div>
       </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,215,0,.6);text-transform:uppercase">🎰 Jackpot</span>
+        </div>
+        <div style="font-size:.78rem;font-weight:800;color:#FCD34D" id="jackpot-stars">5.00 USDT</div>
+      </div>
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
       <div class="ri">
@@ -778,6 +784,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">0</span> warriors</div>
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.2 $TON / card</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
+        <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(34,211,238,.6);text-transform:uppercase">🎰 Jackpot</span>
+        <div style="font-size:.78rem;font-weight:800;color:#22D3EE" id="jackpot-ton">5.00 TON</div>
       </div>
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
@@ -1375,6 +1385,15 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:.68rem;color:var(--muted)">Next in</div>
         <div class="cdring" id="g-cd">5</div>
       </div>
+    </div>
+
+    <!-- JACKPOT LIVE BAR -->
+    <div id="g-jackpot-bar" style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:linear-gradient(90deg,rgba(255,215,0,.08),rgba(255,140,0,.06));border-bottom:1px solid rgba(255,215,0,.15)">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:.65rem;font-weight:700;letter-spacing:.5px;color:rgba(255,215,0,.7);text-transform:uppercase">🎰 Jackpot Live</span>
+        <span style="font-size:.55rem;color:rgba(255,255,255,.3)">(4 angoli + centro)</span>
+      </div>
+      <div style="font-size:.85rem;font-weight:800;color:#FCD34D" id="g-jackpot-amt">5.00</div>
     </div>
 
     <div class="bmach">
@@ -3027,6 +3046,9 @@ function handleBingoMsg(d) {
     }
     bingoRoomId = d.room_id
     bingoJackpot = d.jackpot || 0
+    // update game screen jackpot
+    ;(()=>{ const el=document.getElementById('g-jackpot-amt'); if(el&&d.jackpot){ const cur=ROOMS[curRoom]?.cur; el.textContent=(d.jackpot).toFixed(2)+(cur==='ton'?' TON':' USDT') } })()
+    updateGameJackpot(d.jackpot, d.currency || (ROOMS[curRoom]?.cur))
 
     if(d.status === 'lobby') {
       showLobbyState(d)
@@ -3043,6 +3065,7 @@ function handleBingoMsg(d) {
   }
   else if(d.type === 'game_start') {
     bingoJackpot = d.jackpot || bingoJackpot
+    updateGameJackpot(d.jackpot || bingoJackpot, d.currency || (ROOMS[curRoom]?.cur))
     updatePrizeDisplay(d)
     showPlayingState()
     renderCards()
@@ -4898,6 +4921,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="rp"><span class="live-dot"></span><span id="rp-stars">0</span> warriors</div>
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.50 $USDT / card</div>
       </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,215,0,.6);text-transform:uppercase">🎰 Jackpot</span>
+        </div>
+        <div style="font-size:.78rem;font-weight:800;color:#FCD34D" id="jackpot-stars">5.00 USDT</div>
+      </div>
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
       <div class="ri">
@@ -4911,6 +4940,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">0</span> warriors</div>
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.2 $TON / card</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
+        <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(34,211,238,.6);text-transform:uppercase">🎰 Jackpot</span>
+        <div style="font-size:.78rem;font-weight:800;color:#22D3EE" id="jackpot-ton">5.00 TON</div>
       </div>
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
@@ -10330,3 +10363,27 @@ function pvpPlayAgain() { pvpGameActive=false; pvpShowLobby() }
 </html>
 /* deploy trigger */
 
+// ── JACKPOT LIVE ─────────────────────────────────────────
+async function loadJackpotData() {
+  try {
+    const r = await fetch(API_BASE + '/jackpot/bingo')
+    const d = await r.json()
+    const elS = document.getElementById('jackpot-stars')
+    const elT = document.getElementById('jackpot-ton')
+    const elG = document.getElementById('g-jackpot-amt')
+    const usdt = parseFloat(d.usdt || 5).toFixed(2)
+    const ton  = parseFloat(d.ton  || 5).toFixed(2)
+    if(elS) elS.textContent = usdt + ' USDT'
+    if(elT) elT.textContent = ton  + ' TON'
+    if(elG) {
+      const cur = ROOMS[curRoom]?.cur
+      elG.textContent = (cur === 'ton' ? ton + ' TON' : usdt + ' USDT')
+    }
+    window._jackpotData = d
+  } catch(e) { console.warn('jackpot load error:', e) }
+}
+loadJackpotData()
+setInterval(loadJackpotData, 30000)
+
+</script>
+</body>
