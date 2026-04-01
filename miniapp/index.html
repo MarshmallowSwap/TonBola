@@ -4240,7 +4240,9 @@ function buildJettonTransferBOC(nanoAmount, destAddr, senderAddr, fwdTon, commen
   const bocArr=[0xb5,0xee,0x9c,0x72,0x01,0x01,0x01,0x00,dataBytes+2,0x00,0x00,d2]
   for(let i=0;i<dataBytes;i++) bocArr.push(buf[i])
   return btoa(String.fromCharCode(...bocArr))
-  }ta charset="UTF-8">
+  }
+</script>
+<meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -8510,6 +8512,8 @@ let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
 let wheelJackpotUsdt = 0
+let scratchJpUsdt = 0
+let scratchJpTon  = 0
 let wheelPricePerSpin = {usdt:0.25, 'not':0.25, ton:0.1}
 function hubWheelJpToggle() {
   hubWheelJpCur = hubWheelJpCur === 'ton' ? 'usdt' : 'ton'
