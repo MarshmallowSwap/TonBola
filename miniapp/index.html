@@ -10442,21 +10442,26 @@ async function loadJackpotData() {
   try {
     const r = await fetch(API_BASE + '/jackpot/wallets')
     const d = await r.json()
-    const usdtBingo = parseFloat(d.bingo_usdt?.balance || 0).toFixed(2)
-    const tonBingo  = parseFloat(d.bingo_ton?.balance  || 0).toFixed(2)
-    const usdtWheel = parseFloat(d.wheel_usdt?.balance || 0).toFixed(2)
-    const tonWheel  = parseFloat(d.wheel_ton?.balance  || 0).toFixed(2)
     const s = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v }
-    s('jackpot-stars', usdtBingo+' USDT')
-    s('jackpot-ton',   tonBingo+' TON')
-    s('jackpot-vip',   tonBingo+' TON')
+    // Bingo jackpot
+    s('jackpot-stars', parseFloat(d.bingo?.usdt||0).toFixed(2)+' USDT')
+    s('jackpot-ton',   parseFloat(d.bingo?.ton||0).toFixed(2)+' TON')
+    s('jackpot-vip',   parseFloat(d.bingo?.ton||0).toFixed(2)+' TON')
     const cur = ROOMS[curRoom]?.cur
-    s('g-jackpot-amt', cur==='ton' ? tonBingo+' TON' : usdtBingo+' USDT')
-    s('w-jackpot-amt',   tonWheel+' TON')
-    s('w-jackpot-usdt',  usdtWheel+' USDT')
-    s('hub-jackpot',     tonWheel+' TON')
-    s('hub-jackpot-usdt',usdtWheel+' USDT')
-    window._jackpotData = {usdt:usdtBingo,ton:tonBingo,wheel_usdt:usdtWheel,wheel_ton:tonWheel}
+    s('g-jackpot-amt', cur==='ton'
+      ? parseFloat(d.bingo?.ton||0).toFixed(2)+' TON'
+      : parseFloat(d.bingo?.usdt||0).toFixed(2)+' USDT')
+    // Wheel jackpot
+    s('w-jackpot-amt',    parseFloat(d.wheel?.ton||0).toFixed(2)+' TON')
+    s('w-jackpot-usdt',   parseFloat(d.wheel?.usdt||0).toFixed(2)+' USDT')
+    s('hub-jackpot',      parseFloat(d.wheel?.ton||0).toFixed(2)+' TON')
+    s('hub-jackpot-usdt', parseFloat(d.wheel?.usdt||0).toFixed(2)+' USDT')
+    // Scratch jackpot
+    s('sc-jp-usdt', parseFloat(d.scratch?.usdt||0).toFixed(2)+' USDT')
+    s('sc-jp-ton',  parseFloat(d.scratch?.ton||0).toFixed(2)+' TON')
+    s('hub-sc-jackpot', parseFloat(d.scratch?.usdt||0).toFixed(2)+' USDT')
+    s('hub-sc-jp-ton',  parseFloat(d.scratch?.ton||0).toFixed(2)+' TON')
+    window._jackpotData = d
   } catch(e) {
     try {
       const r2 = await fetch(API_BASE + '/jackpot/bingo')

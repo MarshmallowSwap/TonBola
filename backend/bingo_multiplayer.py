@@ -460,22 +460,19 @@ class BingoRoomManager:
         for ws in dead:
             room.connections.remove(ws)
 
-    JACKPOT_WALLET_ADDRS = {
-        "usdt": "UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr",
-        "ton":  "UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M",
-    }
+    JACKPOT_WALLET_ADDR = "UQCuAzEFSHby4O7u6OTjOFfgUzhYO7fzABhD3qVpu2Cm3ZNW"  # wallet jackpot dedicato bingo (TON + USDT)
 
     async def _add_to_jackpot(self, currency: str, amount: float):
         try:
             current = self._jackpot_cache.get(currency, 0)
             new_val = current + amount
             self._jackpot_cache[currency] = new_val
-            wallet_addr = self.JACKPOT_WALLET_ADDRS.get(currency, "")
+            wallet_addr = "UQCuAzEFSHby4O7u6OTjOFfgUzhYO7fzABhD3qVpu2Cm3ZNW"
             # Persist to Supabase jackpot table with wallet address
             self.sb.table("jackpot_pools").upsert({
                 "currency":     currency,
                 "amount":       new_val,
-                "wallet_addr":  wallet_addr,
+                "wallet_addr":  "UQCuAzEFSHby4O7u6OTjOFfgUzhYO7fzABhD3qVpu2Cm3ZNW",
                 "updated_at":   datetime.now(timezone.utc).isoformat()
             }).execute()
         except Exception as e:

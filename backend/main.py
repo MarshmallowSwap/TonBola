@@ -23,15 +23,15 @@ JACKPOT_THRESHOLD = 100.0
 
 sb: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# ── Jackpot Wallet Addresses ──────────────────────────────
+# ── Jackpot Wallet Addresses (3 wallet — 1 per gioco) ────
+# Ogni wallet gestisce TON + USDT · Mantieni ≥ 0.2 TON per gas
 JACKPOT_WALLETS = {
-    "bingo_usdt":  "UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr",
-    "bingo_ton":   "UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M",
-    "wheel_usdt":  "UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m",
-    "wheel_ton":   "UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6",
-    "scratch_usdt":"UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m",  # shared con wheel per ora
-    "scratch_ton": "UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6",  # shared con wheel per ora
+    "bingo":   "UQCuAzEFSHby4O7u6OTjOFfgUzhYO7fzABhD3qVpu2Cm3ZNW",
+    "wheel":   "UQBsquwpUobW4lX-R1iePFkFbgadAtJxVZZXbJJc94j3r7n7",
+    "scratch": "UQCa6_UdOi9fuI7XuxetbiQ17bHiZ6bKJtmrsLSd3ywiaFOd",
 }
+JACKPOT_TON_GAS_RESERVE = 0.2   # TON minimi da tenere in ogni wallet per gas
+
 
 async def get_jackpot_wallet_balance(wallet_addr: str, currency: str) -> float:
     """Legge saldo reale del wallet jackpot da TON API"""
@@ -666,81 +666,17 @@ async def internal_jackpot_event(req: Request):
 
 @app.get("/jackpot/wallets")
 async def get_jackpot_wallets():
-    """Saldi live dei wallet jackpot dedicati — per la transparency page"""
+    """Saldi live dei 3 wallet jackpot — per la transparency page"""
     results = {}
-    for key, addr in JACKPOT_WALLETS.items():
-        currency = "usdt" if "usdt" in key else "ton"
-        balance = await get_jackpot_wallet_balance(addr, currency)
-        results[key] = {
-            "address": addr,
-            "balance": round(balance, 4),
-            "currency": currency,
-            "tonviewer": f"https://tonviewer.com/{addr}"
+    for game, addr in JACKPOT_WALLETS.items():
+        ton_bal  = await get_jackpot_wallet_balance(addr, "ton")
+        usdt_bal = await get_jackpot_wallet_balance(addr, "usdt")
+        results[game] = {
+            "address":     addr,
+            "ton":         round(ton_bal,  4),
+            "usdt":        round(usdt_bal, 4),
+            "ton_reserve": JACKPOT_TON_GAS_RESERVE,
+            "tonviewer":   f"https://tonviewer.com/{addr}"
         }
     return results
 
-
-# ══════════════════════════════════════════
-# ORACLE — PRIZE PAYOUT
-# ══════════════════════════════════════════
-ORACLE_PRIVATE_KEY_HEX = os.getenv("ORACLE_PRIVATE_KEY_HEX", "")
-VAULT_ADDR = os.getenv("VAULT_ADDRESS", "UQB_Gcot0yD5pPCQ7qn4OvkLjLtU1zSfvuLh1IrVWbl_1HkR")
-_payout_nonce = int(__import__("time").time() * 1000)
-
-class PayoutReq(BaseModel):
-    game_id: int
-    winner_address: str
-    amount_nano: int
-    currency: str = "ton"
-    game_type: str = "bingo"
-
-@app.post("/pay_winner")
-async def pay_winner(req: PayoutReq):
-    global _payout_nonce
-    if not ORACLE_PRIVATE_KEY_HEX:
-        raise HTTPException(500, "Oracle key not configured — set ORACLE_PRIVATE_KEY_HEX env var")
-
-    try:
-        import nacl.signing
-        import base64, re
-
-        _payout_nonce += 1
-        nonce = _payout_nonce
-
-        # Decode TON address to 32-byte hash
-        addr = req.winner_address.strip()
-        # Remove bounceable/non-bounceable prefix (UQ/EQ/kQ/0Q etc) — base64url decode
-        addr_b64 = addr.replace('-','+').replace('_','/')
-        addr_bytes = base64.b64decode(addr_b64 + '==')
-        # TON address: 1 byte flags + 1 byte workchain + 32 bytes hash + 2 bytes CRC
-        addr_hash = addr_bytes[2:34]  # 32-byte hash
-
-        # Build message to sign (mirrors Tact contract checkSignature)
-        import struct
-        msg = (
-            addr_hash +
-            req.amount_nano.to_bytes(8, 'big') +
-            req.game_id.to_bytes(8, 'big') +
-            nonce.to_bytes(8, 'big')
-        )
-        msg_hash = hashlib.sha256(msg).digest()
-
-        # Sign
-        priv = bytes.fromhex(ORACLE_PRIVATE_KEY_HEX)
-        sk = nacl.signing.SigningKey(priv)
-        sig = sk.sign(msg_hash).signature
-
-        payload = {
-            "vault_address": VAULT_ADDR,
-            "winner_address": req.winner_address,
-            "amount_nano": req.amount_nano,
-            "game_id": req.game_id,
-            "nonce": nonce,
-            "signature_hex": sig.hex(),
-            "currency": req.currency,
-        }
-
-        return {"success": True, "signed_payload": json.dumps(payload), "nonce": nonce}
-
-    except Exception as e:
-        raise HTTPException(500, f"Oracle error: {str(e)}")
