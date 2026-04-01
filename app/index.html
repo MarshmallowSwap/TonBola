@@ -544,6 +544,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .utag-d{background:rgba(139,92,246,.2);color:var(--violet3);border:1px solid rgba(139,92,246,.3)}
 .utag-l{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
 
+
+/* ── JACKPOT WIN BANNER ── */
+@keyframes jpSlide{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+@keyframes jpSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes jpTicker{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+#jp-win-banner.show{display:block;animation:jpBannerIn .3s ease forwards}
+@keyframes jpBannerIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
 /* ── LINE BANNER ── */
 .line-banner{position:fixed;top:0;left:0;right:0;z-index:400;
   display:flex;align-items:center;justify-content:center;gap:10px;
@@ -2002,6 +2010,31 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="line-banner-icon">📏</div>
   <div class="line-banner-text">Line Complete!</div>
   <div class="line-banner-prize" id="line-banner-prize">+1.25 USDT</div>
+</div>
+
+
+<!-- JACKPOT WIN BANNER — visibile a tutti -->
+<div id="jp-win-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:998;
+  background:linear-gradient(135deg,#1A0800,#8B4500,#FFD700,#FF8C00,#8B4500,#1A0800);
+  border-bottom:3px solid #FFE566;
+  padding:0;overflow:hidden;pointer-events:none">
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;
+    animation:jpSlide 8s linear infinite">
+    <span style="font-size:1.5rem;animation:jpSpin 1s linear infinite">🎰</span>
+    <div style="text-align:center">
+      <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1rem;color:#FFD700;
+        text-shadow:0 0 20px rgba(255,215,0,.8)">🏆 JACKPOT!</div>
+      <div style="font-size:.75rem;font-weight:700;color:#3D1A00" id="jp-win-text">Someone won the jackpot!</div>
+    </div>
+    <span style="font-size:1.5rem;animation:jpSpin 1s linear infinite reverse">🎰</span>
+  </div>
+  <!-- Scrolling ticker -->
+  <div style="background:rgba(0,0,0,.3);padding:4px 0;overflow:hidden">
+    <div id="jp-ticker" style="white-space:nowrap;font-size:.65rem;font-weight:700;color:#FFB800;
+      display:inline-block;animation:jpTicker 12s linear infinite">
+      &nbsp;&nbsp;&nbsp;🎰 JACKPOT WIN! &nbsp;·&nbsp; Play now for your chance! &nbsp;·&nbsp; TonBola &nbsp;&nbsp;&nbsp;
+    </div>
+  </div>
 </div>
 
 <!-- BINGO BANNER -->
@@ -4704,6 +4737,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .utag-d{background:rgba(139,92,246,.2);color:var(--violet3);border:1px solid rgba(139,92,246,.3)}
 .utag-l{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
 
+
+/* ── JACKPOT WIN BANNER ── */
+@keyframes jpSlide{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+@keyframes jpSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes jpTicker{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+#jp-win-banner.show{display:block;animation:jpBannerIn .3s ease forwards}
+@keyframes jpBannerIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
 /* ── LINE BANNER ── */
 .line-banner{position:fixed;top:0;left:0;right:0;z-index:400;
   display:flex;align-items:center;justify-content:center;gap:10px;
@@ -6153,6 +6194,31 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="line-banner-icon">📏</div>
   <div class="line-banner-text">Line Complete!</div>
   <div class="line-banner-prize" id="line-banner-prize">+1.25 USDT</div>
+</div>
+
+
+<!-- JACKPOT WIN BANNER — visibile a tutti -->
+<div id="jp-win-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:998;
+  background:linear-gradient(135deg,#1A0800,#8B4500,#FFD700,#FF8C00,#8B4500,#1A0800);
+  border-bottom:3px solid #FFE566;
+  padding:0;overflow:hidden;pointer-events:none">
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;
+    animation:jpSlide 8s linear infinite">
+    <span style="font-size:1.5rem;animation:jpSpin 1s linear infinite">🎰</span>
+    <div style="text-align:center">
+      <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1rem;color:#FFD700;
+        text-shadow:0 0 20px rgba(255,215,0,.8)">🏆 JACKPOT!</div>
+      <div style="font-size:.75rem;font-weight:700;color:#3D1A00" id="jp-win-text">Someone won the jackpot!</div>
+    </div>
+    <span style="font-size:1.5rem;animation:jpSpin 1s linear infinite reverse">🎰</span>
+  </div>
+  <!-- Scrolling ticker -->
+  <div style="background:rgba(0,0,0,.3);padding:4px 0;overflow:hidden">
+    <div id="jp-ticker" style="white-space:nowrap;font-size:.65rem;font-weight:700;color:#FFB800;
+      display:inline-block;animation:jpTicker 12s linear infinite">
+      &nbsp;&nbsp;&nbsp;🎰 JACKPOT WIN! &nbsp;·&nbsp; Play now for your chance! &nbsp;·&nbsp; TonBola &nbsp;&nbsp;&nbsp;
+    </div>
+  </div>
 </div>
 
 <!-- BINGO BANNER -->
@@ -10395,5 +10461,61 @@ async function loadJackpotData() {
 loadJackpotData()
 setInterval(loadJackpotData, 30000)
 
+
+// ── GLOBAL WS — notifiche jackpot per tutti ──────────────
+let globalWS = null
+
+function connectGlobalWS() {
+  try {
+    const wsUrl = (typeof WS_BASE !== 'undefined' ? WS_BASE : 'wss://api.fundshot.app/tonbola') + '/ws/global'
+    globalWS = new WebSocket(wsUrl)
+    globalWS.onmessage = (evt) => {
+      try {
+        const d = JSON.parse(evt.data)
+        if(d.type === 'jackpot_win') showGlobalJackpotBanner(d)
+        if(d.type === 'jackpot_update' && d.jackpots) {
+          const usdt = parseFloat(d.jackpots.usdt || 0).toFixed(2)
+          const ton  = parseFloat(d.jackpots.ton  || 0).toFixed(2)
+          const elS = document.getElementById('jackpot-stars')
+          const elT = document.getElementById('jackpot-ton')
+          const elV = document.getElementById('jackpot-vip')
+          if(elS) elS.textContent = usdt + ' USDT'
+          if(elT) elT.textContent = ton  + ' TON'
+          if(elV) elV.textContent = ton  + ' TON'
+        }
+        if(d.type === 'ping') { try{globalWS.send(JSON.stringify({type:'pong'}))}catch{} }
+      } catch(e) {}
+    }
+    globalWS.onclose = () => { globalWS = null; setTimeout(connectGlobalWS, 10000) }
+    globalWS.onerror = () => { try{globalWS.close()}catch{} }
+    setInterval(() => { try{if(globalWS?.readyState===1)globalWS.send(JSON.stringify({type:'ping'}))}catch{} }, 30000)
+  } catch(e) {}
+}
+
+function showGlobalJackpotBanner(d) {
+  const banner = document.getElementById('jp-win-banner')
+  const text   = document.getElementById('jp-win-text')
+  const ticker = document.getElementById('jp-ticker')
+  if(!banner) return
+  const gameLabel = {bingo:'Bingo', wheel:'Fortune Wheel', scratch:'Scratch Cards'}[d.game_type] || d.game_type
+  const amtFmt = parseFloat(d.amount||0).toFixed(2) + ' ' + (d.currency||'TON').toUpperCase()
+  const name = d.winner_name || 'Someone'
+  if(text) text.textContent = name + ' won ' + amtFmt + ' in ' + gameLabel + '!'
+  if(ticker) ticker.textContent = '   \u{1F3B0} JACKPOT! ' + name + ' just won ' + amtFmt + ' in ' + gameLabel + '!   \xB7   Play now for your chance!   \xB7   TonBola   '
+  banner.style.display = 'block'
+  banner.style.transform = 'translateY(-100%)'; banner.style.opacity = '0'
+  requestAnimationFrame(() => {
+    banner.style.transition = 'all .4s cubic-bezier(.34,1.56,.64,1)'
+    banner.style.transform = 'translateY(0)'; banner.style.opacity = '1'
+  })
+  if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+  setTimeout(() => {
+    banner.style.transition = 'opacity .5s, transform .5s'
+    banner.style.opacity = '0'; banner.style.transform = 'translateY(-100%)'
+    setTimeout(() => { banner.style.display='none'; banner.style.transition=''; banner.style.transform=''; banner.style.opacity='' }, 500)
+  }, 8000)
+}
+
+setTimeout(connectGlobalWS, 2000)
 </script>
 </body>

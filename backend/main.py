@@ -247,6 +247,9 @@ def wheel_spin(req: WheelSpinReq, tg: dict = Depends(get_user)):
                 "note": f"Jackpot win: {won:.2f} TON"
             }).execute()
         except: pass
+        # Notifica globale jackpot wheel
+        winner_name = tg.get("first_name", tg.get("username", "Someone"))
+        asyncio.create_task(broadcast_jackpot_win("wheel", sess.get("currency","ton"), won, winner_name))
     elif seg["mult"] == -1:  # PASS = free spin
         sess["spins_remaining"] += 1
         result_type = "free_spin"
@@ -544,6 +547,91 @@ async def get_bingo_jackpot():
         return result
     except:
         return {"usdt": 5.0, "ton": 5.0}
+
+
+# ══════════════════════════════════════════
+# GLOBAL NOTIFICATIONS — jackpot wins visibili a tutti
+# ══════════════════════════════════════════
+global_connections: list = []  # tutte le WS connesse all'app
+
+@app.websocket("/ws/global")
+async def global_ws(ws: WebSocket):
+    """Canale globale per notifiche a tutti i giocatori (jackpot, eventi speciali)"""
+    await ws.accept()
+    global_connections.append(ws)
+    try:
+        # Invia jackpot corrente subito
+        try:
+            r = sb.table("jackpot_pools").select("currency,amount").execute()
+            jackpots = {row["currency"]: row["amount"] for row in (r.data or [])}
+            await ws.send_json({"type": "jackpot_update", "jackpots": jackpots})
+        except: pass
+
+        while True:
+            try:
+                data = await asyncio.wait_for(ws.receive_json(), timeout=60)
+                if data.get("type") == "ping":
+                    await ws.send_json({"type": "pong"})
+            except asyncio.TimeoutError:
+                await ws.send_json({"type": "ping"})
+    except Exception:
+        pass
+    finally:
+        if ws in global_connections:
+            global_connections.remove(ws)
+
+async def broadcast_jackpot_win(game_type: str, currency: str, amount: float, winner_name: str = "Someone"):
+    """Invia notifica jackpot a tutti i giocatori connessi"""
+    msg = {
+        "type":        "jackpot_win",
+        "game_type":   game_type,
+        "currency":    currency,
+        "amount":      round(amount, 4),
+        "winner_name": winner_name,
+        "timestamp":   datetime.now(timezone.utc).isoformat(),
+    }
+    dead = []
+    for ws in list(global_connections):
+        try:
+            await ws.send_json(msg)
+        except:
+            dead.append(ws)
+    for ws in dead:
+        if ws in global_connections:
+            global_connections.remove(ws)
+
+    # Salva in jackpot_events su Supabase per la history
+    try:
+        sb.table("jackpot_events").insert({
+            "game_type":   game_type,
+            "currency":    currency,
+            "amount":      amount,
+            "winner_name": winner_name,
+            "won_at":      datetime.now(timezone.utc).isoformat(),
+        }).execute()
+    except: pass
+
+@app.get("/jackpot/recent_wins")
+async def recent_jackpot_wins():
+    """Ultime vincite jackpot — mostrare nella UI"""
+    try:
+        r = sb.table("jackpot_events").select("*").order("won_at", desc=True).limit(10).execute()
+        return {"wins": r.data or []}
+    except:
+        return {"wins": []}
+
+
+@app.post("/internal/jackpot_event")
+async def internal_jackpot_event(req: Request):
+    """Endpoint interno — chiamato da bingo_multiplayer per broadcast jackpot"""
+    body = await req.json()
+    await broadcast_jackpot_win(
+        body.get("game_type","bingo"),
+        body.get("currency","usdt"),
+        float(body.get("amount",0)),
+        body.get("winner_name","Someone")
+    )
+    return {"ok": True}
 
 
 # ══════════════════════════════════════════
