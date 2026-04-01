@@ -113,7 +113,7 @@ def get_jackpot_pool() -> float:
         r = sb.table("leaderboard_weekly").select("score").eq("week_start", JACKPOT_SENTINEL).single().execute()
         return round(r.data["score"] / 10, 1)
     except:
-        return 67.3
+        return 0.0  # parte da zero
 
 def set_jackpot_pool(value: float):
     try:
@@ -268,7 +268,7 @@ def wheel_spin(req: WheelSpinReq, tg: dict = Depends(get_user)):
 
     if seg["mult"] == -2:  # JACKPOT
         won = pool * 0.8
-        set_jackpot_pool(pool * 0.2)
+        set_jackpot_pool(0.0)  # reset a 0 dopo jackpot win
         result_type = "jackpot"
         try:
             sb.table("tbola_ledger").insert({
