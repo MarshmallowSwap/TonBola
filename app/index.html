@@ -10440,23 +10440,33 @@ function pvpPlayAgain() { pvpGameActive=false; pvpShowLobby() }
 // ── JACKPOT LIVE ─────────────────────────────────────────
 async function loadJackpotData() {
   try {
-    const r = await fetch(API_BASE + '/jackpot/bingo')
+    const r = await fetch(API_BASE + '/jackpot/wallets')
     const d = await r.json()
-    const elS = document.getElementById('jackpot-stars')
-    const elT = document.getElementById('jackpot-ton')
-    const elV = document.getElementById('jackpot-vip')
-    const elG = document.getElementById('g-jackpot-amt')
-    const usdt = parseFloat(d.usdt || 5).toFixed(2)
-    const ton  = parseFloat(d.ton  || 5).toFixed(2)
-    if(elS) elS.textContent = usdt + ' USDT'
-    if(elT) elT.textContent = ton  + ' TON'
-    if(elV) elV.textContent = ton  + ' TON'
-    if(elG) {
-      const cur = ROOMS[curRoom]?.cur
-      elG.textContent = (cur === 'ton' ? ton + ' TON' : usdt + ' USDT')
-    }
-    window._jackpotData = d
-  } catch(e) { console.warn('jackpot load error:', e) }
+    const usdtBingo = parseFloat(d.bingo_usdt?.balance || 0).toFixed(2)
+    const tonBingo  = parseFloat(d.bingo_ton?.balance  || 0).toFixed(2)
+    const usdtWheel = parseFloat(d.wheel_usdt?.balance || 0).toFixed(2)
+    const tonWheel  = parseFloat(d.wheel_ton?.balance  || 0).toFixed(2)
+    const s = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v }
+    s('jackpot-stars', usdtBingo+' USDT')
+    s('jackpot-ton',   tonBingo+' TON')
+    s('jackpot-vip',   tonBingo+' TON')
+    const cur = ROOMS[curRoom]?.cur
+    s('g-jackpot-amt', cur==='ton' ? tonBingo+' TON' : usdtBingo+' USDT')
+    s('w-jackpot-amt',   tonWheel+' TON')
+    s('w-jackpot-usdt',  usdtWheel+' USDT')
+    s('hub-jackpot',     tonWheel+' TON')
+    s('hub-jackpot-usdt',usdtWheel+' USDT')
+    window._jackpotData = {usdt:usdtBingo,ton:tonBingo,wheel_usdt:usdtWheel,wheel_ton:tonWheel}
+  } catch(e) {
+    try {
+      const r2 = await fetch(API_BASE + '/jackpot/bingo')
+      const d2 = await r2.json()
+      const usdt=parseFloat(d2.usdt||0).toFixed(2), ton=parseFloat(d2.ton||0).toFixed(2)
+      const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
+      s('jackpot-stars',usdt+' USDT'); s('jackpot-ton',ton+' TON'); s('jackpot-vip',ton+' TON')
+      const cur=ROOMS[curRoom]?.cur; s('g-jackpot-amt',cur==='ton'?ton+' TON':usdt+' USDT')
+    } catch(e2) {}
+  }
 }
 loadJackpotData()
 setInterval(loadJackpotData, 30000)

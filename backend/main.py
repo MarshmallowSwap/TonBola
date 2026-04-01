@@ -23,6 +23,36 @@ JACKPOT_THRESHOLD = 100.0
 
 sb: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# ── Jackpot Wallet Addresses ──────────────────────────────
+JACKPOT_WALLETS = {
+    "bingo_usdt":  "UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr",
+    "bingo_ton":   "UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M",
+    "wheel_usdt":  "UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m",
+    "wheel_ton":   "UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6",
+    "scratch_usdt":"UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m",  # shared con wheel per ora
+    "scratch_ton": "UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6",  # shared con wheel per ora
+}
+
+async def get_jackpot_wallet_balance(wallet_addr: str, currency: str) -> float:
+    """Legge saldo reale del wallet jackpot da TON API"""
+    try:
+        async with httpx.AsyncClient() as client:
+            if currency == "usdt":
+                USDT_MASTER = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
+                r = await client.get(
+                    f"https://tonapi.io/v2/accounts/{wallet_addr}/jettons/{USDT_MASTER}",
+                    timeout=8
+                )
+                d = r.json()
+                return int(d.get("balance", 0)) / 1e6
+            else:
+                r = await client.get(f"https://tonapi.io/v2/accounts/{wallet_addr}", timeout=8)
+                d = r.json()
+                return int(d.get("balance", 0)) / 1e9
+    except:
+        return 0.0
+
+
 # ── In-memory state ──
 wheel_sessions: dict = {}    # session_id -> session data
 bingo_rooms: dict = {}       # room_type -> room state
@@ -632,6 +662,22 @@ async def internal_jackpot_event(req: Request):
         body.get("winner_name","Someone")
     )
     return {"ok": True}
+
+
+@app.get("/jackpot/wallets")
+async def get_jackpot_wallets():
+    """Saldi live dei wallet jackpot dedicati — per la transparency page"""
+    results = {}
+    for key, addr in JACKPOT_WALLETS.items():
+        currency = "usdt" if "usdt" in key else "ton"
+        balance = await get_jackpot_wallet_balance(addr, currency)
+        results[key] = {
+            "address": addr,
+            "balance": round(balance, 4),
+            "currency": currency,
+            "tonviewer": f"https://tonviewer.com/{addr}"
+        }
+    return results
 
 
 # ══════════════════════════════════════════

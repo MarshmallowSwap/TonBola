@@ -459,6 +459,31 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
         <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-ton-platform" style="color:#F472B6">—</div></div><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-usdt-platform" style="color:#F472B6">—</div></div></div>
       </div>
     </div>
+      <!-- JACKPOT WALLETS -->
+      <div style="margin-top:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;text-align:center">🎰 Jackpot Wallet Addresses · Live Balances</div>
+
+        <div class="wallet-row" style="border-left:3px solid #A855F7">
+          <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#A855F7">🎱 JACKPOT BINGO USDT</div><a href="https://tonviewer.com/UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr" target="_blank">UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr ↗</a></div>
+          <div class="wallet-bals"><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-jp-bingo-usdt" style="color:#A855F7">—</div></div></div>
+        </div>
+
+        <div class="wallet-row" style="border-left:3px solid #A855F7;margin-top:8px">
+          <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#A855F7">🎱 JACKPOT BINGO TON</div><a href="https://tonviewer.com/UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M" target="_blank">UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M ↗</a></div>
+          <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-jp-bingo-ton" style="color:#A855F7">—</div></div></div>
+        </div>
+
+        <div class="wallet-row" style="border-left:3px solid #F97316;margin-top:8px">
+          <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#F97316">🎡 JACKPOT WHEEL USDT</div><a href="https://tonviewer.com/UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m" target="_blank">UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m ↗</a></div>
+          <div class="wallet-bals"><div class="w-bal"><div class="cur">USDT</div><div class="val" id="lp-jp-wheel-usdt" style="color:#F97316">—</div></div></div>
+        </div>
+
+        <div class="wallet-row" style="border-left:3px solid #F97316;margin-top:8px">
+          <div style="flex:1;min-width:0"><div class="wallet-name" style="color:#F97316">🎡 JACKPOT WHEEL TON</div><a href="https://tonviewer.com/UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6" target="_blank">UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6 ↗</a></div>
+          <div class="wallet-bals"><div class="w-bal"><div class="cur">TON</div><div class="val" id="lp-jp-wheel-ton" style="color:#F97316">—</div></div></div>
+        </div>
+      </div>
+
     <p style="text-align:center;margin-top:16px;font-size:11px;color:var(--dim)">Balances update every 60s · TON + USDT · Data from TON API</p>
   </div>
 </section>
@@ -541,6 +566,20 @@ document.querySelectorAll(".aos").forEach(el=>io.observe(el))
   function load(){W.forEach(w=>{
     fetch("https://tonapi.io/v2/accounts/"+w.addr).then(r=>r.json()).then(d=>s(w.ton,(parseInt(d.balance||0)/1e9).toFixed(2))).catch(()=>{})
     fetch("https://tonapi.io/v2/accounts/"+w.addr+"/jettons/"+USDT).then(r=>r.json()).then(d=>s(w.usdt,d.balance?(parseInt(d.balance)/1e6).toFixed(2):"0.00")).catch(()=>s(w.usdt,"0.00"))
+  })
+  // Jackpot wallets
+  const JP=[
+    {id:"lp-jp-bingo-usdt", addr:"UQB-ZJKyeIwOHTOjKbF_OWfk9ZU2tZeUIYseg-QkeM1X0pnr", cur:"usdt"},
+    {id:"lp-jp-bingo-ton",  addr:"UQCfAIlw6sEq0D_Kh9D2boQYaPrmCTIVufe8ZYEtqEBiKD-M", cur:"ton"},
+    {id:"lp-jp-wheel-usdt", addr:"UQBi1oNaY8sJIk0BZv9Fq-1cvsndMhj82MW4Zb7MXWLCrl2m", cur:"usdt"},
+    {id:"lp-jp-wheel-ton",  addr:"UQDwUdn92b8ct0p-65mf5_qj7hz5cs4V9VH_5QeC6FmItgZ6", cur:"ton"},
+  ]
+  JP.forEach(w=>{
+    if(w.cur==="usdt"){
+      fetch("https://tonapi.io/v2/accounts/"+w.addr+"/jettons/"+USDT).then(r=>r.json()).then(d=>s(w.id,d.balance?(parseInt(d.balance)/1e6).toFixed(2):"0.00")).catch(()=>s(w.id,"0.00"))
+    } else {
+      fetch("https://tonapi.io/v2/accounts/"+w.addr).then(r=>r.json()).then(d=>s(w.id,(parseInt(d.balance||0)/1e9).toFixed(2))).catch(()=>{})
+    }
   })}
   load();setInterval(load,60000)
 })()
