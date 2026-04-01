@@ -2276,9 +2276,9 @@ function getTgUser(){return{
   username:tg?.initDataUnsafe?.user?.username||''
 }}
 
-const user={...getTgUser(),tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
+const user={...getTgUser(),telegramId:getTgUser().id,tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
 
-setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
+setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.telegramId=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
 // Always clear stale game on fresh load — user must explicitly resume
 sessionStorage.removeItem('tbgame')
 
@@ -2435,6 +2435,7 @@ function initSupabase() {
 }
 
 async function sbUpsertUser() {
+  if (!user.telegramId && user.id) user.telegramId = user.id
   if (!supa || !user.telegramId) return
   try {
     const { data, error } = await supa.rpc('upsert_user', {
@@ -6492,9 +6493,9 @@ function getTgUser(){return{
   username:tg?.initDataUnsafe?.user?.username||''
 }}
 
-const user={...getTgUser(),tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
+const user={...getTgUser(),telegramId:getTgUser().id,tbola:0,level:1,xp:0,streak:0,games:0,wins:0,lines:0,cards:0,warriorPass:false}
 
-setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
+setTimeout(()=>{const u=getTgUser();if(u.name!=='Warrior'){user.id=u.id;user.telegramId=u.id;user.name=u.name;user.username=u.username;initHome()}},500)
 // Always clear stale game on fresh load — user must explicitly resume
 sessionStorage.removeItem('tbgame')
 
@@ -6651,6 +6652,7 @@ function initSupabase() {
 }
 
 async function sbUpsertUser() {
+  if (!user.telegramId && user.id) user.telegramId = user.id
   if (!supa || !user.telegramId) return
   try {
     const { data, error } = await supa.rpc('upsert_user', {
