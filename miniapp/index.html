@@ -813,7 +813,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.1)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,100,0,.7);text-transform:uppercase">🎰 Jackpot</span>
-        <div style="font-size:.78rem;font-weight:800;color:#FF8060" id="jackpot-vip">5.00 TON</div>
+        <div style="font-size:.78rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)" id="jackpot-vip">5.00 TON</div>
       </div>
     </div>
   </div>
@@ -2423,7 +2423,11 @@ function setRoomCardsEnabled(enabled){
 
 function initSupabase() {
   try {
-    supa = supabase.createClient(SUPA_URL, SUPA_KEY)
+    supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      global: {
+        headers: { Authorization: 'Bearer ' + SUPA_KEY }
+      }
+    })
     console.log('Supabase client ready')
   } catch(e) {
     console.warn('Supabase init failed:', e)
@@ -2447,9 +2451,18 @@ async function sbUpsertUser() {
       user.xp    = data.xp
       user.level = data.level
     }
-    // Always restore tbola_balance from DB (bot may have added tokens)
-    if (data.tbola_balance > user.tbola) {
-      user.tbola = data.tbola_balance
+    // Always restore tbola_balance — query diretta per sicurezza
+    if (data.tbola_balance !== undefined && data.tbola_balance !== null) {
+      if (data.tbola_balance > user.tbola) user.tbola = data.tbola_balance
+    } else {
+      // Fallback: query diretta se RPC non restituisce tbola_balance
+      try {
+        const { data: row } = await supa.from('users')
+          .select('tbola_balance')
+          .eq('telegram_id', user.telegramId)
+          .single()
+        if (row?.tbola_balance > user.tbola) user.tbola = row.tbola_balance
+      } catch(e) {}
     }
     // Restore Warrior Pass
     if (data.warrior_pass_expiry) {
@@ -5025,7 +5038,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.1)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,100,0,.7);text-transform:uppercase">🎰 Jackpot</span>
-        <div style="font-size:.78rem;font-weight:800;color:#FF8060" id="jackpot-vip">5.00 TON</div>
+        <div style="font-size:.78rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)" id="jackpot-vip">5.00 TON</div>
       </div>
     </div>
   </div>
@@ -6626,7 +6639,11 @@ function setRoomCardsEnabled(enabled){
 
 function initSupabase() {
   try {
-    supa = supabase.createClient(SUPA_URL, SUPA_KEY)
+    supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      global: {
+        headers: { Authorization: 'Bearer ' + SUPA_KEY }
+      }
+    })
     console.log('Supabase client ready')
   } catch(e) {
     console.warn('Supabase init failed:', e)
@@ -6650,9 +6667,18 @@ async function sbUpsertUser() {
       user.xp    = data.xp
       user.level = data.level
     }
-    // Always restore tbola_balance from DB (bot may have added tokens)
-    if (data.tbola_balance > user.tbola) {
-      user.tbola = data.tbola_balance
+    // Always restore tbola_balance — query diretta per sicurezza
+    if (data.tbola_balance !== undefined && data.tbola_balance !== null) {
+      if (data.tbola_balance > user.tbola) user.tbola = data.tbola_balance
+    } else {
+      // Fallback: query diretta se RPC non restituisce tbola_balance
+      try {
+        const { data: row } = await supa.from('users')
+          .select('tbola_balance')
+          .eq('telegram_id', user.telegramId)
+          .single()
+        if (row?.tbola_balance > user.tbola) user.tbola = row.tbola_balance
+      } catch(e) {}
     }
     // Restore Warrior Pass
     if (data.warrior_pass_expiry) {
