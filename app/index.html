@@ -2436,13 +2436,18 @@ function initSupabase() {
 
 async function sbUpsertUser() {
   if (!user.telegramId && user.id) user.telegramId = user.id
-  if (!supa || !user.telegramId) return
+  console.log('[TBOLA DEBUG] sbUpsertUser called, telegramId:', user.telegramId, 'supa:', !!supa)
+  if (!supa || !user.telegramId) {
+    console.warn('[TBOLA DEBUG] early return — supa:', !!supa, 'telegramId:', user.telegramId)
+    return
+  }
   try {
     const { data, error } = await supa.rpc('upsert_user', {
       p_telegram_id: user.telegramId,
       p_username:    user.username || '',
       p_first_name:  user.name || ''
     })
+    console.log('[TBOLA DEBUG] RPC response:', JSON.stringify({id:data?.telegram_id, tbola:data?.tbola_balance, xp:data?.xp}))
     if (error) { console.warn('upsert_user error:', error); return }
     if (!data) return
     dbUserId = data.telegram_id
@@ -2453,8 +2458,10 @@ async function sbUpsertUser() {
       user.level = data.level
     }
     // Always restore tbola_balance — query diretta per sicurezza
+    console.log('[TBOLA DEBUG] tbola in DB:', data.tbola_balance, 'user.tbola:', user.tbola)
     if (data.tbola_balance !== undefined && data.tbola_balance !== null) {
       if (data.tbola_balance > user.tbola) user.tbola = data.tbola_balance
+      else console.warn('[TBOLA DEBUG] DB tbola NOT greater than user.tbola, skipping')
     } else {
       // Fallback: query diretta se RPC non restituisce tbola_balance
       try {
@@ -6653,13 +6660,18 @@ function initSupabase() {
 
 async function sbUpsertUser() {
   if (!user.telegramId && user.id) user.telegramId = user.id
-  if (!supa || !user.telegramId) return
+  console.log('[TBOLA DEBUG] sbUpsertUser called, telegramId:', user.telegramId, 'supa:', !!supa)
+  if (!supa || !user.telegramId) {
+    console.warn('[TBOLA DEBUG] early return — supa:', !!supa, 'telegramId:', user.telegramId)
+    return
+  }
   try {
     const { data, error } = await supa.rpc('upsert_user', {
       p_telegram_id: user.telegramId,
       p_username:    user.username || '',
       p_first_name:  user.name || ''
     })
+    console.log('[TBOLA DEBUG] RPC response:', JSON.stringify({id:data?.telegram_id, tbola:data?.tbola_balance, xp:data?.xp}))
     if (error) { console.warn('upsert_user error:', error); return }
     if (!data) return
     dbUserId = data.telegram_id
@@ -6670,8 +6682,10 @@ async function sbUpsertUser() {
       user.level = data.level
     }
     // Always restore tbola_balance — query diretta per sicurezza
+    console.log('[TBOLA DEBUG] tbola in DB:', data.tbola_balance, 'user.tbola:', user.tbola)
     if (data.tbola_balance !== undefined && data.tbola_balance !== null) {
       if (data.tbola_balance > user.tbola) user.tbola = data.tbola_balance
+      else console.warn('[TBOLA DEBUG] DB tbola NOT greater than user.tbola, skipping')
     } else {
       // Fallback: query diretta se RPC non restituisce tbola_balance
       try {
