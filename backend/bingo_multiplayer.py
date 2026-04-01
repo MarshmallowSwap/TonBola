@@ -12,9 +12,9 @@ from datetime import datetime, timezone
 from typing import Optional
 
 # ── Costanti ─────────────────────────────────────────────────
-MIN_PLAYERS    = 5
+MIN_PLAYERS    = 1  # TEST: abbassare a 5 per lancio
 MAX_PLAYERS    = 20
-LOBBY_TIMEOUT  = 300   # 5 minuti
+LOBBY_TIMEOUT  = 30    # TEST: 30s per test rapido (rimettere 300 per lancio)
 DRAW_INTERVAL  = 3     # secondi tra estrazioni
 COUNTDOWN_SECS = 10    # countdown prima del via
 
