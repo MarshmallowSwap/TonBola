@@ -484,11 +484,11 @@ async def bingo_ws(ws: WebSocket, room_type: str):
     # Room config
     ROOM_CONFIG = {
         "free":  {"currency": "free",  "price": 0.0},
-        "stars": {"currency": "usdt",  "price": 0.25},
-        "ton":   {"currency": "ton",   "price": 0.20},
+        "stars": {"currency": "usdt",  "price": 0.50},  # updated
+        "ton":   {"currency": "ton",   "price": 0.25},  # updated
         "vip":   {"currency": "ton",   "price": 1.00},
     }
-    cfg = ROOM_CONFIG.get(room_type, {"currency": "usdt", "price": 0.25})
+    cfg = ROOM_CONFIG.get(room_type, {"currency": "usdt", "price": 0.50})
 
     try:
         init = await ws.receive_json()
@@ -663,6 +663,20 @@ async def internal_jackpot_event(req: Request):
     )
     return {"ok": True}
 
+
+@app.post("/admin/reset_jackpot")
+async def reset_jackpot():
+    """Reset jackpot pool a 0 — per testing"""
+    try:
+        JACKPOT_SENTINEL = "2000-01-01"
+        sb.table("leaderboard_weekly").upsert({
+            "week_start": JACKPOT_SENTINEL,
+            "user_id": "jackpot",
+            "score": 0
+        }).execute()
+        return {"ok": True, "jackpot": 0}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
 
 @app.get("/jackpot/wallets")
 async def get_jackpot_wallets():
