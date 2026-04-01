@@ -2971,64 +2971,280 @@ function startGame(){
     return
   }
   paymentVerified = false
-  go('sg');drawn=[];cards=Array.from({length:nCards},genCard);cd=3;gameOver=false
-  document.getElementById('game-bar').style.display='block'
+  go('sg')
+  drawDots()
+
+  // Connect to multiplayer room via WebSocket
+  connectBingoWS()
+}
+
+// ── MULTIPLAYER WEBSOCKET ──────────────────────────────────
+let bingoWS = null
+let bingoRoomId = null
+let bingoJackpot = 0
+
+function connectBingoWS() {
+  if(bingoWS) { try{bingoWS.close()}catch{} }
+
+  const wsUrl = WS_BASE.replace('https','wss').replace('http','ws') + '/ws/bingo/' + curRoom
+  bingoWS = new WebSocket(wsUrl)
+
+  bingoWS.onopen = () => {
+    bingoWS.send(JSON.stringify({
+      user_id:        user.telegramId || user.id || 'anon',
+      name:           user.name || user.username || 'Player',
+      cards:          nCards,
+      wallet_address: tcWallet?.account?.address || '',
+    }))
+  }
+
+  bingoWS.onmessage = (evt) => {
+    try { handleBingoMsg(JSON.parse(evt.data)) } catch(e) {}
+  }
+
+  bingoWS.onerror = () => {
+    // Fallback to local game
+    startLocalGame()
+  }
+
+  bingoWS.onclose = () => {
+    bingoWS = null
+  }
+
+  // Ping keepalive
+  if(bingoWS._pingTimer) clearInterval(bingoWS._pingTimer)
+  bingoWS._pingTimer = setInterval(() => {
+    if(bingoWS?.readyState === 1) bingoWS.send(JSON.stringify({type:'ping'}))
+  }, 30000)
+}
+
+function handleBingoMsg(d) {
+  if(d.type === 'joined') {
+    // Got our cards from server
+    if(d.cards && d.cards.length > 0) {
+      cards = d.cards
+      drawn = d.drawn || []
+    }
+    bingoRoomId = d.room_id
+    bingoJackpot = d.jackpot || 0
+
+    if(d.status === 'lobby') {
+      showLobbyState(d)
+    } else if(d.status === 'playing') {
+      showPlayingState()
+      renderCards()
+    }
+  }
+  else if(d.type === 'lobby_update' || d.type === 'player_joined') {
+    updateLobbyUI(d)
+  }
+  else if(d.type === 'countdown') {
+    showCountdownState(d)
+  }
+  else if(d.type === 'game_start') {
+    bingoJackpot = d.jackpot || bingoJackpot
+    updatePrizeDisplay(d)
+    showPlayingState()
+    renderCards()
+    renderBalls()
+    if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium')
+  }
+  else if(d.type === 'draw') {
+    drawn = d.drawn || drawn
+    const n = d.number
+    renderBalls()
+    markC(n)
+    // Check jackpot highlight (corners + center)
+    highlightJackpotProgress()
+
+    if(d.line_winner) showLineBanner('+' + formatPrize(d.line_prize))
+    if(d.bingo_winner) {
+      gameOver = true
+      clearInterval(timer)
+      setTimeout(() => {
+        lastWinType = 'bingo'
+        lastWinAmount = d.bingo_prize || 0
+        lastWinCurrency = ROOMS[curRoom]?.cur
+        lastGameId = bingoRoomId
+        showWinFromServer(d)
+      }, 600)
+    }
+    if(d.jackpot_winner) {
+      showJackpotBanner(d.jackpot_prize || bingoJackpot)
+    }
+  }
+  else if(d.type === 'game_over') {
+    if(!gameOver) {
+      gameOver = true
+      clearInterval(timer)
+      document.getElementById('game-bar').style.display='none'
+      sessionStorage.removeItem('tbgame')
+      isGameActive = false
+      // Se non hai vinto, torna all'hub dopo 3s
+      setTimeout(() => {
+        if(!lastWinType) { go('sh'); setNav('nb-h') }
+      }, 3000)
+    }
+  }
+  else if(d.type === 'lobby_cancelled') {
+    if(tg?.showPopup) tg.showPopup({title:'❌ Partita annullata',message:d.message||'Troppo pochi giocatori.',buttons:[{type:'ok'}]})
+    go('sh'); setNav('nb-h')
+  }
+  else if(d.type === 'payout_ready') {
+    // Oracle ha firmato — processa il pagamento
+    if(d.signed_payload) {
+      submitPayWinner(JSON.parse(d.signed_payload))
+    }
+  }
+  else if(d.type === 'ping') {
+    if(bingoWS?.readyState === 1) bingoWS.send(JSON.stringify({type:'pong'}))
+  }
+}
+
+function showLobbyState(d) {
+  // Mostra UI lobby con countdown e numero giocatori
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) {
+    lobbyBar.style.display = 'flex'
+    lobbyBar.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;width:100%;padding:0 12px;justify-content:space-between">
+        <div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700">LOBBY</div>
+          <div id="lobby-players" style="font-size:.85rem;font-weight:800">${d.player_count || 1}/20 giocatori</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">parte tra</div>
+          <div id="lobby-timer" style="font-size:1.1rem;font-weight:800;color:#FBBF24">5:00</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">min</div>
+          <div style="font-size:.85rem;font-weight:700;color:#34D399">5 gioc</div>
+        </div>
+      </div>`
+
+    // Countdown timer
+    let secs = d.seconds_remaining || 300
+    if(timer) clearInterval(timer)
+    timer = setInterval(() => {
+      secs--
+      const el = document.getElementById('lobby-timer')
+      if(el) el.textContent = Math.floor(secs/60)+':'+(secs%60).toString().padStart(2,'0')
+      if(secs <= 0) clearInterval(timer)
+    }, 1000)
+  }
+}
+
+function updateLobbyUI(d) {
+  const el = document.getElementById('lobby-players')
+  if(el) el.textContent = (d.player_count||1) + '/20 giocatori'
+  // Update prize pool display
+  if(d.player_count >= 5) {
+    const el2 = document.getElementById('lobby-timer')
+    if(el2) el2.style.color = '#34D399'
+  }
+}
+
+function showCountdownState(d) {
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) {
+    const el = lobbyBar.querySelector('#lobby-timer')
+    if(el) { el.textContent = d.seconds + 's'; el.style.color = '#FF6B6B' }
+  }
+  // Vibra
+  if(d.seconds <= 3 && tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
+}
+
+function showPlayingState() {
+  gameOver = false
   isGameActive = true
-  setRoomCardsEnabled(false)
-  saveGameState()
-  // Apply room color to ball machine
-  const roomBgMap={
-    free:'linear-gradient(135deg,#065F46,#0D9B6B)',
-    stars:'linear-gradient(135deg,#1D3461,#2D5FB5)',
-    ton:'linear-gradient(135deg,#4C1D95,#7C3AED)',
-    vip:'linear-gradient(135deg,#92400E,#D97706)'
-  }
-  const roomBdMap={
-    free:'rgba(52,211,153,.35)',
-    stars:'rgba(66,134,244,.35)',
-    ton:'rgba(139,92,246,.35)',
-    vip:'rgba(245,158,11,.35)'
-  }
-  const bmach=document.querySelector('.bmach')
-  if(bmach){
-    bmach.style.background=roomBgMap[curRoom]||roomBgMap.ton
-    bmach.style.border='1.5px solid '+(roomBdMap[curRoom]||roomBdMap.ton)
-    bmach.style.boxShadow='0 4px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1)'
-  }
-  // .bml color white
-  const bml=document.querySelector('.bml')
-  if(bml) bml.style.color='rgba(255,255,255,.8)'
-  // prow boxes same color
-  const pbl=document.querySelector('.pbl')
-  const pbb=document.querySelector('.pbb')
-  const bgLight=roomBgMap[curRoom]||roomBgMap.ton
-  const bdLight=roomBdMap[curRoom]||roomBdMap.ton
-  if(pbl){pbl.style.background=bgLight.replace('135deg','-45deg');pbl.style.border='1px solid '+bdLight}
-  if(pbb){pbb.style.background=bgLight.replace('135deg','-45deg');pbb.style.border='1px solid '+bdLight}
-  // prize labels
-  document.querySelectorAll('.pblbl').forEach(el=>el.style.color='rgba(255,255,255,.65)')
-  document.querySelectorAll('.pbv').forEach(el=>el.style.color='#fff')
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
-  const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
-  document.getElementById('g-rm').textContent=c.name
-  document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(pool*0.25)
-  document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(pool*0.75)
-  renderCards()
-  if(timer)clearInterval(timer)
-  const cdEl=document.getElementById('g-cd')
-  const cdEl2=document.getElementById('g-cd2')
-  timer=setInterval(()=>{
-    cd--
-    if(cdEl)cdEl.textContent=cd
-    if(cdEl2)cdEl2.textContent=cd
-    if(cd<=0){cd=3;drawN()}
+  sessionStorage.removeItem('tbgame')
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) lobbyBar.style.display = 'none'
+}
+
+function updatePrizeDisplay(d) {
+  const prizeEl = document.getElementById('room-prize-pool')
+  if(prizeEl) prizeEl.textContent = formatPrize(d.prize_pool) + ' ' + (d.currency||'').toUpperCase()
+}
+
+function highlightJackpotProgress() {
+  // Evidenzia angoli e centro se già estratti (posizioni 0,4,7,10,14)
+  const jackpotPositions = [0, 4, 7, 10, 14]
+  cards.forEach((card, ci) => {
+    jackpotPositions.forEach(pos => {
+      const n = card[pos]
+      if(drawn.includes(n)) {
+        const el = document.getElementById('c'+ci+'-'+n)
+        if(el && !el.classList.contains('mk') && !el.classList.contains('bh')) {
+          el.style.boxShadow = '0 0 8px rgba(255,215,0,.6)'
+          el.style.border = '1px solid rgba(255,215,0,.4)'
+        }
+      }
+    })
+  })
+}
+
+function showWinFromServer(d) {
+  const prizeFmt = d.bingo_prize ?
+    (ROOMS[curRoom]?.cur === 'usdt' ? d.bingo_prize.toFixed(2)+' USDT' :
+     ROOMS[curRoom]?.cur === 'ton'  ? d.bingo_prize.toFixed(2)+' TON' :
+     d.bingo_prize + ' $TBOLA') : '🎱 BINGO!'
+
+  document.getElementById('wb').textContent = '🎱'
+  document.getElementById('wtype').textContent = 'FULL HOUSE'
+  document.getElementById('wt').textContent = 'BINGO!'
+  document.getElementById('wamt').textContent = '+' + prizeFmt
+  document.getElementById('wtbola').textContent = '+250 $TBOLA earned'
+
+  const wname = document.getElementById('w-winner-name')
+  const wroom = document.getElementById('w-winner-room')
+  if(wname) wname.textContent = user.name || '@'+user.username || 'Player'
+  if(wroom) wroom.textContent = (ROOMS[curRoom]?.name||curRoom)
+
+  showBingoBanner('+'+prizeFmt)
+  setTimeout(() => {
+    spawnConf()
+    const wovEl = document.getElementById('wov')
+    if(wovEl) { wovEl.style.display='flex'; wovEl.style.flexDirection='column'; wovEl.style.alignItems='center'; wovEl.style.justifyContent='center' }
+    if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+  }, 900)
+}
+
+function showJackpotBanner(amount) {
+  const fmt = ROOMS[curRoom]?.cur === 'usdt' ? amount.toFixed(2)+' USDT' : amount.toFixed(2)+' TON'
+  if(tg?.showPopup) tg.showPopup({
+    title: '🎰 JACKPOT!',
+    message: 'Qualcuno ha completato 4 angoli + centro! Premio: ' + fmt,
+    buttons: [{type:'ok'}]
+  })
+  if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+
+function formatPrize(val) {
+  if(!val) return '0'
+  return typeof val === 'number' ? val.toFixed(2) : val
+}
+
+// Fallback local game se WS non disponibile
+function startLocalGame() {
+  gameOver = false; isGameActive = true
+  cards = Array.from({length:nCards},()=>genCard())
+  drawn = []
+  renderCards(); renderBalls()
+  if(timer) clearInterval(timer)
+  let cd=3
+  timer = setInterval(()=>{
+    cd--; if(cd<=0){cd=3;drawLocalN()}
   },1000)
 }
 
-function drawN(){
-  const av=Array.from({length:90},(_,i)=>i+1).filter(n=>!drawn.includes(n));if(!av.length)return
-  const n=av[Math.floor(Math.random()*av.length)];drawn.push(n);renderBalls();markC(n);checkW();saveGameState()
+function drawLocalN(){
+  const av=Array.from({length:90},(_,i)=>i+1).filter(n=>!drawn.includes(n))
+  if(!av.length)return
+  const n=av[Math.floor(Math.random()*av.length)]
+  drawn.push(n);renderBalls();markC(n);checkW()
 }
+
 
 function ballColor(n){
   // B=1-15 red, I=16-30 orange, N=31-45 green, G=46-60 teal, O=61-75 blue, 76-90 purple
@@ -8942,7 +9158,8 @@ function renderPoolBanner(tab) {
 // ══════════════════════════════════════════
 // BACKEND API
 // ══════════════════════════════════════════
-const API_BASE = 'http://95.217.10.201:8001'
+const API_BASE = 'https://api.fundshot.app/tonbola'
+const WS_BASE  = 'wss://api.fundshot.app/tonbola'
 
 function getInitData() {
   try { return window.Telegram?.WebApp?.initData || '' } catch { return '' }

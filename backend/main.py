@@ -436,67 +436,115 @@ async def draw_loop(room_id: str, game_id: str):
 
 @app.websocket("/ws/bingo/{room_type}")
 async def bingo_ws(ws: WebSocket, room_type: str):
+    from bingo_multiplayer import BingoRoomManager
+
+    # Init manager (singleton)
+    if not hasattr(app.state, "bingo_manager"):
+        oracle_url = f"http://127.0.0.1:8001"
+        app.state.bingo_manager = BingoRoomManager(sb, oracle_url)
+    mgr: BingoRoomManager = app.state.bingo_manager
+
     await ws.accept()
-    user_id = game_id = None
+    room = None
+    user_id = None
+
+    # Room config
+    ROOM_CONFIG = {
+        "free":  {"currency": "free",  "price": 0.0},
+        "stars": {"currency": "usdt",  "price": 0.25},
+        "ton":   {"currency": "ton",   "price": 0.20},
+        "vip":   {"currency": "ton",   "price": 1.00},
+    }
+    cfg = ROOM_CONFIG.get(room_type, {"currency": "usdt", "price": 0.25})
+
     try:
         init = await ws.receive_json()
-        user_id = str(init.get("user_id", "anon"))
-        name = init.get("name", "Player")
-        cards_n = max(1, min(int(init.get("cards", 1)), 6))
+        user_id     = str(init.get("user_id", f"anon_{id(ws)}"))
+        name        = init.get("name", "Player")
+        cards_n     = max(1, min(int(init.get("cards", 1)), 6))
+        wallet_addr = init.get("wallet_address", "")
 
-        room_connections.setdefault(room_type, []).append(ws)
+        # Tag ws con user_id per notifiche
+        ws._player_id = user_id
 
-        if room_type not in bingo_rooms:
-            bingo_rooms[room_type] = {"status": "waiting", "players": {}, "drawn": [], "line_winner": None}
+        # Get or create lobby
+        room = mgr.get_or_create_lobby(room_type, cfg["currency"], cfg["price"])
 
-        room = bingo_rooms[room_type]
-        cards = [gen_card() for _ in range(cards_n)]
-        room["players"][user_id] = {"name": name, "cards": cards, "has_line": False, "has_bingo": False}
+        # Join room
+        result = await mgr.join_room(room, user_id, name, cards_n, ws)
+        if "error" in result:
+            await ws.send_json({"type": "error", "message": result["error"]})
+            return
 
-        try:
-            ag = sb.table("games").select("id").eq("status", "active").limit(1).execute()
-            if ag.data:
-                game_id = ag.data[0]["id"]
-            else:
-                ng = sb.table("games").insert({"currency": room_type, "status": "waiting"}).execute()
-                game_id = ng.data[0]["id"]
-        except:
-            game_id = f"local-{room_type}"
+        # Store wallet for payouts
+        room.players[user_id]["wallet_address"] = wallet_addr
 
-        await ws.send_json({"type": "joined", "cards": cards, "drawn": room["drawn"],
-                            "player_count": len(room["players"]), "status": room["status"]})
-        await broadcast(room_type, {"type": "player_joined", "player_count": len(room["players"]), "name": name})
+        # Send join confirmation
+        jackpot = await mgr._get_jackpot(cfg["currency"])
+        await ws.send_json({
+            "type":              "joined",
+            "cards":             result["cards"],
+            "drawn":             room.drawn,
+            "player_count":      room.player_count,
+            "status":            room.status,
+            "min_players":       5,
+            "max_players":       20,
+            "prize_pool":        round(room.prize_pool, 4),
+            "jackpot":           round(jackpot, 4),
+            "seconds_remaining": max(0, 300 - int(time.time() - room.created_at)),
+            "room_id":           room.room_id,
+        })
 
-        if len(room["players"]) >= 2 and room["status"] == "waiting":
-            room["status"] = "active"
-            try:
-                sb.table("games").update({"status": "active", "started_at": datetime.now(timezone.utc).isoformat()}).eq("id", game_id).execute()
-            except: pass
-            await broadcast(room_type, {"type": "game_start", "player_count": len(room["players"])})
-            asyncio.create_task(draw_loop(room_type, game_id))
+        # Broadcast new player to others
+        await mgr._broadcast(room, {
+            "type":         "player_joined",
+            "player_count": room.player_count,
+            "name":         name,
+            "min_players":  5,
+        })
 
+        # Keep connection alive
         while True:
             try:
-                data = await asyncio.wait_for(ws.receive_json(), timeout=30)
+                data = await asyncio.wait_for(ws.receive_json(), timeout=60)
                 if data.get("type") == "ping":
                     await ws.send_json({"type": "pong"})
+                elif data.get("type") == "get_state":
+                    jackpot = await mgr._get_jackpot(cfg["currency"])
+                    await ws.send_json({
+                        "type":         "state",
+                        "drawn":        room.drawn,
+                        "player_count": room.player_count,
+                        "status":       room.status,
+                        "prize_pool":   round(room.prize_pool, 4),
+                        "jackpot":      round(jackpot, 4),
+                    })
             except asyncio.TimeoutError:
                 await ws.send_json({"type": "ping"})
 
-    except WebSocketDisconnect:
+    except Exception:
         pass
-    except Exception as e:
-        try: await ws.send_json({"type": "error", "message": str(e)})
-        except: pass
     finally:
-        if room_type in room_connections and ws in room_connections[room_type]:
-            room_connections[room_type].remove(ws)
-        if user_id and room_type in bingo_rooms:
-            bingo_rooms[room_type]["players"].pop(user_id, None)
+        if room and user_id:
+            mgr.leave_room(room, ws, user_id)
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=False)
+
+@app.get("/jackpot/bingo")
+async def get_bingo_jackpot():
+    """Get current bingo jackpot amounts"""
+    try:
+        r = sb.table("jackpot_pools").select("currency,amount").execute()
+        result = {}
+        for row in (r.data or []):
+            result[row["currency"]] = row["amount"]
+        # Defaults se non esistono
+        for cur in ["usdt", "ton"]:
+            if cur not in result:
+                result[cur] = 5.0
+        return result
+    except:
+        return {"usdt": 5.0, "ton": 5.0}
+
 
 # ══════════════════════════════════════════
 # ORACLE — PRIZE PAYOUT
