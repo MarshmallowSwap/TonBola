@@ -215,7 +215,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   letter-spacing:.5px;
   background:rgba(255,255,255,.18)!important;color:#fff!important;
   border:1px solid rgba(255,255,255,.3)!important;
-  position:absolute;top:50%;right:14px;transform:translateY(-50%)}
+  position:absolute;top:10px;right:12px}
 .rc.stars .rbadge{font-size:.65rem;padding:4px 10px;
   background:rgba(30,30,30,.7)!important;border-color:rgba(200,200,200,.4)!important;
   color:#E0E0E0!important}
@@ -802,6 +802,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">0</span> warriors</div>
         <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 3.50 $USDT</div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.1)">
+        <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,100,0,.7);text-transform:uppercase">🎰 Jackpot</span>
+        <div style="font-size:.78rem;font-weight:800;color:#FF8060" id="jackpot-vip">5.00 TON</div>
       </div>
     </div>
   </div>
@@ -4371,7 +4375,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   letter-spacing:.5px;
   background:rgba(255,255,255,.18)!important;color:#fff!important;
   border:1px solid rgba(255,255,255,.3)!important;
-  position:absolute;top:50%;right:14px;transform:translateY(-50%)}
+  position:absolute;top:10px;right:12px}
 .rc.stars .rbadge{font-size:.65rem;padding:4px 10px;
   background:rgba(30,30,30,.7)!important;border-color:rgba(200,200,200,.4)!important;
   color:#E0E0E0!important}
@@ -4958,6 +4962,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-vip">0</span> warriors</div>
         <div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end"><div class="rprz" style="color:#6A1500;font-weight:700">1 $TON / card</div><div style="font-size:.62rem;color:#8B5A00;font-weight:700">or 3.50 $USDT</div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.1)">
+        <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,100,0,.7);text-transform:uppercase">🎰 Jackpot</span>
+        <div style="font-size:.78rem;font-weight:800;color:#FF8060" id="jackpot-vip">5.00 TON</div>
       </div>
     </div>
   </div>
@@ -10370,11 +10378,13 @@ async function loadJackpotData() {
     const d = await r.json()
     const elS = document.getElementById('jackpot-stars')
     const elT = document.getElementById('jackpot-ton')
+    const elV = document.getElementById('jackpot-vip')
     const elG = document.getElementById('g-jackpot-amt')
     const usdt = parseFloat(d.usdt || 5).toFixed(2)
     const ton  = parseFloat(d.ton  || 5).toFixed(2)
     if(elS) elS.textContent = usdt + ' USDT'
     if(elT) elT.textContent = ton  + ' TON'
+    if(elV) elV.textContent = ton  + ' TON'
     if(elG) {
       const cur = ROOMS[curRoom]?.cur
       elG.textContent = (cur === 'ton' ? ton + ' TON' : usdt + ' USDT')

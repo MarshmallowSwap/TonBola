@@ -274,7 +274,8 @@ class BingoRoomManager:
                     break
 
                 room.drawn.append(number)
-                wins = self._check_all_wins(room, number)
+                jackpot_amount = self._jackpot_cache.get(room.currency, 0.0)
+                wins = self._check_all_wins(room, number, jackpot_amount)
 
                 msg = {
                     "type":   "draw",
@@ -303,15 +304,16 @@ class BingoRoomManager:
         except Exception as e:
             print(f"Draw loop error: {e}")
 
-    def _check_all_wins(self, room: BingoRoom, last_number: int) -> dict:
+    def _check_all_wins(self, room: BingoRoom, last_number: int, jackpot_amount: float = 0.0) -> dict:
         """Controlla vincitori su tutte le carte di tutti i giocatori"""
         result = {}
 
         for uid, player in room.players.items():
             for ci, card in enumerate(player["cards"]):
 
-                # Jackpot: 4 angoli + centro
-                if not room.jackpot_winner and not player["has_jackpot"]:
+                # Jackpot: 4 angoli + centro — solo se sopra soglia minima
+                min_jp = self.JACKPOT_MIN.get(room.currency, 10.0)
+                if not room.jackpot_winner and not player["has_jackpot"] and jackpot_amount >= min_jp:
                     if room.is_jackpot_pattern(card):
                         room.jackpot_winner = uid
                         player["has_jackpot"] = True
@@ -473,17 +475,20 @@ class BingoRoomManager:
         except Exception as e:
             print(f"Jackpot update error: {e}")
 
+    # Soglia minima per pagare il jackpot
+    JACKPOT_MIN = {"usdt": 10.0, "ton": 2.0}
+
     async def _get_jackpot(self, currency: str) -> float:
         if currency not in self._jackpot_cache:
             try:
                 r = self.sb.table("jackpot_pools").select("amount").eq("currency", currency).single().execute()
-                self._jackpot_cache[currency] = float(r.data.get("amount", 5.0))
+                self._jackpot_cache[currency] = float(r.data.get("amount", 0.0))
             except:
-                self._jackpot_cache[currency] = 5.0  # seed minimo
-        return self._jackpot_cache.get(currency, 5.0)
+                self._jackpot_cache[currency] = 0.0  # parte da 0
+        return self._jackpot_cache.get(currency, 0.0)
 
     async def _reset_jackpot(self, currency: str):
-        seed = 5.0  # seed minimo dopo vincita
+        seed = 0.0  # riparte da 0 dopo vincita
         self._jackpot_cache[currency] = seed
         try:
             self.sb.table("jackpot_pools").upsert({
