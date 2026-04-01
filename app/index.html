@@ -2907,9 +2907,10 @@ function selC(n,el){
 }
 
 function updateCost(){
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const c=ROOMS[curRoom]
   const discount=c.cur!=='free'&&nCards>=2?0.9:1
   const totalPrice=c.price*nCards*discount
+  const pool=c.cur==='free'?0:totalPrice*0.55
   const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
   const el=document.getElementById('l-cost')
   if(el){
@@ -3152,7 +3153,10 @@ function checkW(){
 }
 
 function showWin(type){
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const c=ROOMS[curRoom]
+  const discount=c.cur!=='free'&&nCards>=2?0.9:1
+  const paidAmt=c.price*nCards*discount
+  const pool=c.cur==='free'?0:paidAmt*0.55
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
     c.cur==='usdt'?prizeVal.toFixed(2)+' USDT':prizeVal.toFixed(2)+' TON'
@@ -6820,9 +6824,10 @@ function selC(n,el){
 }
 
 function updateCost(){
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const c=ROOMS[curRoom]
   const discount=c.cur!=='free'&&nCards>=2?0.9:1
   const totalPrice=c.price*nCards*discount
+  const pool=c.cur==='free'?0:totalPrice*0.55
   const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
   const el=document.getElementById('l-cost')
   if(el){
@@ -7065,7 +7070,10 @@ function checkW(){
 }
 
 function showWin(type){
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const c=ROOMS[curRoom]
+  const discount=c.cur!=='free'&&nCards>=2?0.9:1
+  const paidAmt=c.price*nCards*discount
+  const pool=c.cur==='free'?0:paidAmt*0.55
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
     c.cur==='usdt'?prizeVal.toFixed(2)+' USDT':prizeVal.toFixed(2)+' TON'
