@@ -791,7 +791,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">0</span> warriors</div>
-        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.25 $TON / card</div>
+        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.2 $TON / card</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(34,211,238,.6);text-transform:uppercase">🎰 Jackpot</span>
@@ -2228,7 +2228,7 @@ let lastGameId = null
 let pvpCountdownTimer = null
 let pvpSelectedBet = 1
 let pvpFilterCur = 'all'
-let crCurrency='usdt', crPrice=0.50
+let crCurrency='usdt', crPrice=0.25
 let crPriceAccum = 0
 let autoSpinActive = false
 let autoSpinTimeout = null
@@ -2372,16 +2372,11 @@ function openPvpGated(){
 }
 
 const ROOMS={
-  free:  {name:'Free Room',     cur:'free', price:0,    tbola:10,  icon:'🏕️'},
-  stars: {name:'$USDT Room',    cur:'usdt', price:0.50, tbola:100, icon:'💵'},
-  ton:   {name:'$TON Room',     cur:'ton',  price:0.25, tbola:200, icon:'💎'},
-  vip:   {name:'VIP $TON Room', cur:'ton',  price:1.00, tbola:500, icon:'👑'}
+  free:{name:'Free Room',cur:'free',price:0,tbola:10,icon:'🏕️'},
+  stars:{name:'$USDT Room',cur:'usdt',price:0.25,tbola:50,icon:'💵'},
+  ton:{name:'$TON Room',cur:'ton',price:0.2,tbola:100,icon:'💎'},
+  vip:{name:'VIP $TON Room',cur:'ton',price:1,tbola:150,icon:'👑'}
 }
-// LOGICA PREZZI:
-// Free  → 0        → solo TBOLA rewards
-// USDT  → 0.50     → pool 0.275 USDT → line ~0.07 USDT → bingo ~0.21 USDT  (10 giocatori → bingo 2.06 USDT)
-// TON   → 0.25 TON → pool 0.138 TON  → line ~0.03 TON  → bingo ~0.10 TON  (10 giocatori → bingo 1.03 TON ≈$6)
-// VIP   → 1.00 TON → pool 0.55  TON  → line ~0.14 TON  → bingo ~0.41 TON  (10 giocatori → bingo 4.13 TON ≈$25)
 const BC=['c1','c2','c3','c4','c5','c6']
 let curRoom='stars',nCards=1,drawn=[],cards=[],timer=null,cd=3
 
@@ -3106,11 +3101,15 @@ function startGame(){
   // prize labels
   document.querySelectorAll('.pblbl').forEach(el=>el.style.color='rgba(255,255,255,.65)')
   document.querySelectorAll('.pbv').forEach(el=>el.style.color='#fff')
-  const c=ROOMS[curRoom],tot=16+nCards,pool=c.cur==='free'?0:c.price*tot*0.55
+  const c=ROOMS[curRoom]
+  const discount2=nCards>=2?0.9:1
+  const paidReal=c.price*nCards*discount2
+  const poolReal=c.cur==='free'?0:paidReal*0.55
   const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' USDT':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
-  document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(pool*0.25)
-  document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(pool*0.75)
+  // Premi minimi garantiti (solo pagamento del giocatore) — server sovrascriverà con pool totale
+  document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(poolReal*0.25)
+  document.getElementById('g-bp').textContent=c.cur==='free'?'750 $TBOLA':fmt(poolReal*0.75)
   renderCards()
   if(timer)clearInterval(timer)
   const cdEl=document.getElementById('g-cd')
@@ -6289,108 +6288,294 @@ function pvpEndGame(won,oppName) {
 
 function pvpPlayAgain() { pvpGameActive=false; pvpShowLobby() }
 
-</script>
 
+// ── connectBingoWS (from multiplayer WS) ──
+function connectBingoWS() {
+  if(bingoWS) { try{bingoWS.close()}catch{} }
 
+  const wsUrl = WS_BASE.replace('https','wss').replace('http','ws') + '/ws/bingo/' + curRoom
+  bingoWS = new WebSocket(wsUrl)
 
-</body>
-</html>
-/* deploy trigger */
+  bingoWS.onopen = () => {
+    bingoWS.send(JSON.stringify({
+      user_id:        user.telegramId || user.id || 'anon',
+      name:           user.name || user.username || 'Player',
+      cards:          nCards,
+      wallet_address: tcWallet?.account?.address || '',
+    }))
+  }
 
-// ── JACKPOT LIVE ─────────────────────────────────────────
-async function loadJackpotData() {
-  try {
-    const r = await fetch(API_BASE + '/jackpot/wallets')
-    const d = await r.json()
-    const s = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v }
-    // Bingo jackpot
-    s('jackpot-stars', parseFloat(d.bingo?.usdt||0).toFixed(2)+' USDT')
-    s('jackpot-ton',   parseFloat(d.bingo?.ton||0).toFixed(2)+' TON')
-    s('jackpot-vip',   parseFloat(d.bingo?.ton||0).toFixed(2)+' TON')
-    const cur = ROOMS[curRoom]?.cur
-    s('g-jackpot-amt', cur==='ton'
-      ? parseFloat(d.bingo?.ton||0).toFixed(2)+' TON'
-      : parseFloat(d.bingo?.usdt||0).toFixed(2)+' USDT')
-    // Wheel jackpot
-    s('w-jackpot-amt',    parseFloat(d.wheel?.ton||0).toFixed(2)+' TON')
-    s('w-jackpot-usdt',   parseFloat(d.wheel?.usdt||0).toFixed(2)+' USDT')
-    s('hub-jackpot',      parseFloat(d.wheel?.ton||0).toFixed(2)+' TON')
-    s('hub-jackpot-usdt', parseFloat(d.wheel?.usdt||0).toFixed(2)+' USDT')
-    // Scratch jackpot
-    s('sc-jp-usdt', parseFloat(d.scratch?.usdt||0).toFixed(2)+' USDT')
-    s('sc-jp-ton',  parseFloat(d.scratch?.ton||0).toFixed(2)+' TON')
-    s('hub-sc-jackpot', parseFloat(d.scratch?.usdt||0).toFixed(2)+' USDT')
-    s('hub-sc-jp-ton',  parseFloat(d.scratch?.ton||0).toFixed(2)+' TON')
-    window._jackpotData = d
-  } catch(e) {
-    try {
-      const r2 = await fetch(API_BASE + '/jackpot/bingo')
-      const d2 = await r2.json()
-      const usdt=parseFloat(d2.usdt||0).toFixed(2), ton=parseFloat(d2.ton||0).toFixed(2)
-      const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
-      s('jackpot-stars',usdt+' USDT'); s('jackpot-ton',ton+' TON'); s('jackpot-vip',ton+' TON')
-      const cur=ROOMS[curRoom]?.cur; s('g-jackpot-amt',cur==='ton'?ton+' TON':usdt+' USDT')
-    } catch(e2) {}
+  bingoWS.onmessage = (evt) => {
+    try { handleBingoMsg(JSON.parse(evt.data)) } catch(e) {}
+  }
+
+  bingoWS.onerror = () => {
+    // Fallback to local game
+    startLocalGame()
+  }
+
+  bingoWS.onclose = () => {
+    bingoWS = null
+  }
+
+  // Ping keepalive
+  if(bingoWS._pingTimer) clearInterval(bingoWS._pingTimer)
+  bingoWS._pingTimer = setInterval(() => {
+    if(bingoWS?.readyState === 1) bingoWS.send(JSON.stringify({type:'ping'}))
+  }, 30000)
+}
+
+// ── drawLocalN (from multiplayer WS) ──
+function drawLocalN(){
+  const av=Array.from({length:90},(_,i)=>i+1).filter(n=>!drawn.includes(n))
+  if(!av.length)return
+  const n=av[Math.floor(Math.random()*av.length)]
+  drawn.push(n);renderBalls();markC(n);checkW()
+}
+
+// ── formatPrize (from multiplayer WS) ──
+function formatPrize(val) {
+  if(!val) return '0'
+  return typeof val === 'number' ? val.toFixed(2) : val
+}
+
+// ── handleBingoMsg (from multiplayer WS) ──
+function handleBingoMsg(d) {
+  if(d.type === 'joined') {
+    // Got our cards from server
+    if(d.cards && d.cards.length > 0) {
+      cards = d.cards
+      drawn = d.drawn || []
+    }
+    bingoRoomId = d.room_id
+    bingoJackpot = d.jackpot || 0
+    // update game screen jackpot
+    ;(()=>{ const el=document.getElementById('g-jackpot-amt'); if(el&&d.jackpot){ const cur=ROOMS[curRoom]?.cur; el.textContent=(d.jackpot).toFixed(2)+(cur==='ton'?' TON':' USDT') } })()
+    updateGameJackpot(d.jackpot, d.currency || (ROOMS[curRoom]?.cur))
+
+    if(d.status === 'lobby') {
+      showLobbyState(d)
+    } else if(d.status === 'playing') {
+      showPlayingState()
+      renderCards()
+    }
+  }
+  else if(d.type === 'lobby_update' || d.type === 'player_joined') {
+    updateLobbyUI(d)
+  }
+  else if(d.type === 'countdown') {
+    showCountdownState(d)
+  }
+  else if(d.type === 'game_start') {
+    bingoJackpot = d.jackpot || bingoJackpot
+    updateGameJackpot(d.jackpot || bingoJackpot, d.currency || (ROOMS[curRoom]?.cur))
+    updatePrizeDisplay(d)
+    showPlayingState()
+    renderCards()
+    renderBalls()
+    if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium')
+  }
+  else if(d.type === 'draw') {
+    drawn = d.drawn || drawn
+    const n = d.number
+    renderBalls()
+    markC(n)
+    // Check jackpot highlight (corners + center)
+    highlightJackpotProgress()
+
+    if(d.line_winner) showLineBanner('+' + formatPrize(d.line_prize))
+    if(d.bingo_winner) {
+      gameOver = true
+      clearInterval(timer)
+      setTimeout(() => {
+        lastWinType = 'bingo'
+        lastWinAmount = d.bingo_prize || 0
+        lastWinCurrency = ROOMS[curRoom]?.cur
+        lastGameId = bingoRoomId
+        showWinFromServer(d)
+      }, 600)
+    }
+    if(d.jackpot_winner) {
+      showJackpotBanner(d.jackpot_prize || bingoJackpot)
+    }
+  }
+  else if(d.type === 'game_over') {
+    if(!gameOver) {
+      gameOver = true
+      clearInterval(timer)
+      document.getElementById('game-bar').style.display='none'
+      sessionStorage.removeItem('tbgame')
+      isGameActive = false
+      // Se non hai vinto, torna all'hub dopo 3s
+      setTimeout(() => {
+        if(!lastWinType) { go('sh'); setNav('nb-h') }
+      }, 3000)
+    }
+  }
+  else if(d.type === 'lobby_cancelled') {
+    if(tg?.showPopup) tg.showPopup({title:'❌ Partita annullata',message:d.message||'Troppo pochi giocatori.',buttons:[{type:'ok'}]})
+    go('sh'); setNav('nb-h')
+  }
+  else if(d.type === 'payout_ready') {
+    // Oracle ha firmato — processa il pagamento
+    if(d.signed_payload) {
+      submitPayWinner(JSON.parse(d.signed_payload))
+    }
+  }
+  else if(d.type === 'ping') {
+    if(bingoWS?.readyState === 1) bingoWS.send(JSON.stringify({type:'pong'}))
   }
 }
-loadJackpotData()
-setInterval(loadJackpotData, 30000)
 
-
-// ── GLOBAL WS — notifiche jackpot per tutti ──────────────
-let globalWS = null
-
-function connectGlobalWS() {
-  try {
-    const wsUrl = (typeof WS_BASE !== 'undefined' ? WS_BASE : 'wss://api.fundshot.app/tonbola') + '/ws/global'
-    globalWS = new WebSocket(wsUrl)
-    globalWS.onmessage = (evt) => {
-      try {
-        const d = JSON.parse(evt.data)
-        if(d.type === 'jackpot_win') showGlobalJackpotBanner(d)
-        if(d.type === 'jackpot_update' && d.jackpots) {
-          const usdt = parseFloat(d.jackpots.usdt || 0).toFixed(2)
-          const ton  = parseFloat(d.jackpots.ton  || 0).toFixed(2)
-          const elS = document.getElementById('jackpot-stars')
-          const elT = document.getElementById('jackpot-ton')
-          const elV = document.getElementById('jackpot-vip')
-          if(elS) elS.textContent = usdt + ' USDT'
-          if(elT) elT.textContent = ton  + ' TON'
-          if(elV) elV.textContent = ton  + ' TON'
+// ── highlightJackpotProgress (from multiplayer WS) ──
+function highlightJackpotProgress() {
+  // Evidenzia angoli e centro se già estratti (posizioni 0,4,7,10,14)
+  const jackpotPositions = [0, 4, 7, 10, 14]
+  cards.forEach((card, ci) => {
+    jackpotPositions.forEach(pos => {
+      const n = card[pos]
+      if(drawn.includes(n)) {
+        const el = document.getElementById('c'+ci+'-'+n)
+        if(el && !el.classList.contains('mk') && !el.classList.contains('bh')) {
+          el.style.boxShadow = '0 0 8px rgba(255,215,0,.6)'
+          el.style.border = '1px solid rgba(255,215,0,.4)'
         }
-        if(d.type === 'ping') { try{globalWS.send(JSON.stringify({type:'pong'}))}catch{} }
-      } catch(e) {}
-    }
-    globalWS.onclose = () => { globalWS = null; setTimeout(connectGlobalWS, 10000) }
-    globalWS.onerror = () => { try{globalWS.close()}catch{} }
-    setInterval(() => { try{if(globalWS?.readyState===1)globalWS.send(JSON.stringify({type:'ping'}))}catch{} }, 30000)
-  } catch(e) {}
+      }
+    })
+  })
 }
 
-function showGlobalJackpotBanner(d) {
-  const banner = document.getElementById('jp-win-banner')
-  const text   = document.getElementById('jp-win-text')
-  const ticker = document.getElementById('jp-ticker')
-  if(!banner) return
-  const gameLabel = {bingo:'Bingo', wheel:'Fortune Wheel', scratch:'Scratch Cards'}[d.game_type] || d.game_type
-  const amtFmt = parseFloat(d.amount||0).toFixed(2) + ' ' + (d.currency||'TON').toUpperCase()
-  const name = d.winner_name || 'Someone'
-  if(text) text.textContent = name + ' won ' + amtFmt + ' in ' + gameLabel + '!'
-  if(ticker) ticker.textContent = '   \u{1F3B0} JACKPOT! ' + name + ' just won ' + amtFmt + ' in ' + gameLabel + '!   \xB7   Play now for your chance!   \xB7   TonBola   '
-  banner.style.display = 'block'
-  banner.style.transform = 'translateY(-100%)'; banner.style.opacity = '0'
-  requestAnimationFrame(() => {
-    banner.style.transition = 'all .4s cubic-bezier(.34,1.56,.64,1)'
-    banner.style.transform = 'translateY(0)'; banner.style.opacity = '1'
+// ── showCountdownState (from multiplayer WS) ──
+function showCountdownState(d) {
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) {
+    const el = lobbyBar.querySelector('#lobby-timer')
+    if(el) { el.textContent = d.seconds + 's'; el.style.color = '#FF6B6B' }
+  }
+  // Vibra
+  if(d.seconds <= 3 && tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
+}
+
+// ── showJackpotBanner (from multiplayer WS) ──
+function showJackpotBanner(amount) {
+  const fmt = ROOMS[curRoom]?.cur === 'usdt' ? amount.toFixed(2)+' USDT' : amount.toFixed(2)+' TON'
+  if(tg?.showPopup) tg.showPopup({
+    title: '🎰 JACKPOT!',
+    message: 'Qualcuno ha completato 4 angoli + centro! Premio: ' + fmt,
+    buttons: [{type:'ok'}]
   })
   if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
-  setTimeout(() => {
-    banner.style.transition = 'opacity .5s, transform .5s'
-    banner.style.opacity = '0'; banner.style.transform = 'translateY(-100%)'
-    setTimeout(() => { banner.style.display='none'; banner.style.transition=''; banner.style.transform=''; banner.style.opacity='' }, 500)
-  }, 8000)
 }
 
-setTimeout(connectGlobalWS, 2000)
+// ── showLobbyState (from multiplayer WS) ──
+function showLobbyState(d) {
+  // Mostra UI lobby con countdown e numero giocatori
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) {
+    lobbyBar.style.display = 'flex'
+    lobbyBar.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;width:100%;padding:0 12px;justify-content:space-between">
+        <div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700">LOBBY</div>
+          <div id="lobby-players" style="font-size:.85rem;font-weight:800">${d.player_count || 1}/20 giocatori</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">parte tra</div>
+          <div id="lobby-timer" style="font-size:1.1rem;font-weight:800;color:#FBBF24">5:00</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">min</div>
+          <div style="font-size:.85rem;font-weight:700;color:#34D399">5 gioc</div>
+        </div>
+      </div>`
+
+    // Countdown timer
+    let secs = d.seconds_remaining || 300
+    if(timer) clearInterval(timer)
+    timer = setInterval(() => {
+      secs--
+      const el = document.getElementById('lobby-timer')
+      if(el) el.textContent = Math.floor(secs/60)+':'+(secs%60).toString().padStart(2,'0')
+      if(secs <= 0) clearInterval(timer)
+    }, 1000)
+  }
+}
+
+// ── showPlayingState (from multiplayer WS) ──
+function showPlayingState() {
+  gameOver = false
+  isGameActive = true
+  sessionStorage.removeItem('tbgame')
+  const lobbyBar = document.getElementById('game-bar')
+  if(lobbyBar) lobbyBar.style.display = 'none'
+}
+
+// ── showWinFromServer (from multiplayer WS) ──
+function showWinFromServer(d) {
+  const prizeFmt = d.bingo_prize ?
+    (ROOMS[curRoom]?.cur === 'usdt' ? d.bingo_prize.toFixed(2)+' USDT' :
+     ROOMS[curRoom]?.cur === 'ton'  ? d.bingo_prize.toFixed(2)+' TON' :
+     d.bingo_prize + ' $TBOLA') : '🎱 BINGO!'
+
+  document.getElementById('wb').textContent = '🎱'
+  document.getElementById('wtype').textContent = 'FULL HOUSE'
+  document.getElementById('wt').textContent = 'BINGO!'
+  document.getElementById('wamt').textContent = '+' + prizeFmt
+  document.getElementById('wtbola').textContent = '+250 $TBOLA earned'
+
+  const wname = document.getElementById('w-winner-name')
+  const wroom = document.getElementById('w-winner-room')
+  if(wname) wname.textContent = user.name || '@'+user.username || 'Player'
+  if(wroom) wroom.textContent = (ROOMS[curRoom]?.name||curRoom)
+
+  showBingoBanner('+'+prizeFmt)
+  setTimeout(() => {
+    spawnConf()
+    const wovEl = document.getElementById('wov')
+    if(wovEl) { wovEl.style.display='flex'; wovEl.style.flexDirection='column'; wovEl.style.alignItems='center'; wovEl.style.justifyContent='center' }
+    if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+  }, 900)
+}
+
+// ── startLocalGame (from multiplayer WS) ──
+function startLocalGame() {
+  gameOver = false; isGameActive = true
+  cards = Array.from({length:nCards},()=>genCard())
+  drawn = []
+  renderCards(); renderBalls()
+  if(timer) clearInterval(timer)
+  let cd=3
+  timer = setInterval(()=>{
+    cd--; if(cd<=0){cd=3;drawLocalN()}
+  },1000)
+}
+
+// ── updateLobbyUI (from multiplayer WS) ──
+function updateLobbyUI(d) {
+  const el = document.getElementById('lobby-players')
+  if(el) el.textContent = (d.player_count||1) + '/20 giocatori'
+  // Update prize pool display
+  if(d.player_count >= 5) {
+    const el2 = document.getElementById('lobby-timer')
+    if(el2) el2.style.color = '#34D399'
+  }
+}
+
+// ── updatePrizeDisplay (from multiplayer WS) ──
+function updatePrizeDisplay(d) {
+  const prizeEl = document.getElementById('room-prize-pool')
+  if(prizeEl) prizeEl.textContent = formatPrize(d.prize_pool) + ' ' + (d.currency||'').toUpperCase()
+  // Aggiorna premi reali dal server (pool di TUTTI i giocatori nella stanza)
+  if(d.prize_pool) {
+    const pool = parseFloat(d.prize_pool)
+    const cur  = d.currency || ROOMS[curRoom]?.cur || 'usdt'
+    const fmt  = v => cur==='usdt' ? v.toFixed(2)+' USDT' : v.toFixed(2)+' TON'
+    const lpEl = document.getElementById('g-lp')
+    const bpEl = document.getElementById('g-bp')
+    if(lpEl) lpEl.textContent = fmt(pool * 0.25)
+    if(bpEl) bpEl.textContent = fmt(pool * 0.75)
+  }
+}
 </script>
 </body>
+</html>
