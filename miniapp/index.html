@@ -175,7 +175,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 /* ── ROOM CARDS ── */
 .rooms{padding:0 10px;display:flex;flex-direction:column;gap:8px}
-.rc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .12s;height:115px;display:flex;flex-direction:column;position:relative;justify-content:center;padding:0}
+.rc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .12s;min-height:115px;display:flex;flex-direction:column;position:relative;justify-content:center;padding:0}
 .rc:active{transform:scale(.96)}
 .rc::before{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.13),transparent);pointer-events:none}
 .rc.free{background:linear-gradient(135deg,#065F46,#34D399);box-shadow:0 6px 20px rgba(52,211,153,.25),inset 0 0 0 1px rgba(255,255,255,.12)}
@@ -2464,7 +2464,12 @@ async function sbUpsertUser() {
     if (data.total_wins)   user.wins  = data.total_wins
     if (data.streak_days)  user.streak = data.streak_days
 
-    console.log('User loaded from DB:', data.telegram_id, 'XP:', data.xp, 'Lv:', data.level)
+    console.log('User loaded from DB:', data.telegram_id, 'XP:', data.xp, 'TBOLA:', data.tbola_balance, 'Lv:', data.level)
+    // Aggiorna TBOLA in hub subito dopo caricamento DB
+    const hubTbola = document.getElementById('hub-tbola')
+    if(hubTbola) hubTbola.textContent = formatTbola(user.tbola || 0)
+    const bcTbola = document.getElementById('bc-tbola')
+    if(bcTbola) bcTbola.textContent = formatTbola(user.tbola || 0)
     initHub()  // Refresh UI with DB data
   } catch(e) {
     console.warn('sbUpsertUser error:', e)
@@ -2876,6 +2881,20 @@ function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
+  // Auto-prompt wallet connection after 4s if not connected
+  setTimeout(() => {
+    if(!tcWallet && !sessionStorage.getItem('wallet_prompt_shown')) {
+      sessionStorage.setItem('wallet_prompt_shown', '1')
+      if(tg?.showPopup) tg.showPopup({
+        title: '🔗 Connect your wallet',
+        message: 'Connect your TON wallet to play paid rooms and receive prizes directly.',
+        buttons: [
+          {id:'connect', type:'default', text:'🔗 Connect Wallet'},
+          {type:'cancel', text:'Later'}
+        ]
+      }, (btnId) => { if(btnId === 'connect') connectWallet() })
+    }
+  }, 4000)
   setTimeout(renderSquad, 50)
   // Load from Supabase
   setTimeout(async () => { await sbUpsertUser(); sbLoadJackpots(); sbLoadUserSquad() }, 500)
@@ -4368,7 +4387,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 
 /* ── ROOM CARDS ── */
 .rooms{padding:0 10px;display:flex;flex-direction:column;gap:8px}
-.rc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .12s;height:115px;display:flex;flex-direction:column;position:relative;justify-content:center;padding:0}
+.rc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .12s;min-height:115px;display:flex;flex-direction:column;position:relative;justify-content:center;padding:0}
 .rc:active{transform:scale(.96)}
 .rc::before{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.13),transparent);pointer-events:none}
 .rc.free{background:linear-gradient(135deg,#065F46,#34D399);box-shadow:0 6px 20px rgba(52,211,153,.25),inset 0 0 0 1px rgba(255,255,255,.12)}
@@ -6648,7 +6667,12 @@ async function sbUpsertUser() {
     if (data.total_wins)   user.wins  = data.total_wins
     if (data.streak_days)  user.streak = data.streak_days
 
-    console.log('User loaded from DB:', data.telegram_id, 'XP:', data.xp, 'Lv:', data.level)
+    console.log('User loaded from DB:', data.telegram_id, 'XP:', data.xp, 'TBOLA:', data.tbola_balance, 'Lv:', data.level)
+    // Aggiorna TBOLA in hub subito dopo caricamento DB
+    const hubTbola = document.getElementById('hub-tbola')
+    if(hubTbola) hubTbola.textContent = formatTbola(user.tbola || 0)
+    const bcTbola = document.getElementById('bc-tbola')
+    if(bcTbola) bcTbola.textContent = formatTbola(user.tbola || 0)
     initHub()  // Refresh UI with DB data
   } catch(e) {
     console.warn('sbUpsertUser error:', e)
@@ -7060,6 +7084,20 @@ function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
+  // Auto-prompt wallet connection after 4s if not connected
+  setTimeout(() => {
+    if(!tcWallet && !sessionStorage.getItem('wallet_prompt_shown')) {
+      sessionStorage.setItem('wallet_prompt_shown', '1')
+      if(tg?.showPopup) tg.showPopup({
+        title: '🔗 Connect your wallet',
+        message: 'Connect your TON wallet to play paid rooms and receive prizes directly.',
+        buttons: [
+          {id:'connect', type:'default', text:'🔗 Connect Wallet'},
+          {type:'cancel', text:'Later'}
+        ]
+      }, (btnId) => { if(btnId === 'connect') connectWallet() })
+    }
+  }, 4000)
   setTimeout(renderSquad, 50)
   // Load from Supabase
   setTimeout(async () => { await sbUpsertUser(); sbLoadJackpots(); sbLoadUserSquad() }, 500)
