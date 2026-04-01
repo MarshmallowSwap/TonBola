@@ -2386,11 +2386,14 @@ async function sbUpsertUser() {
     if (!data) return
     dbUserId = data.telegram_id
 
-    // Restore progress from DB (only if DB has higher XP)
+    // Restore progress from DB
     if (data.xp > user.xp) {
-      user.xp      = data.xp
-      user.level   = data.level
-      user.tbola   = data.tbola_balance
+      user.xp    = data.xp
+      user.level = data.level
+    }
+    // Always restore tbola_balance from DB (bot may have added tokens)
+    if (data.tbola_balance > user.tbola) {
+      user.tbola = data.tbola_balance
     }
     // Restore Warrior Pass
     if (data.warrior_pass_expiry) {
@@ -6296,11 +6299,14 @@ async function sbUpsertUser() {
     if (!data) return
     dbUserId = data.telegram_id
 
-    // Restore progress from DB (only if DB has higher XP)
+    // Restore progress from DB
     if (data.xp > user.xp) {
-      user.xp      = data.xp
-      user.level   = data.level
-      user.tbola   = data.tbola_balance
+      user.xp    = data.xp
+      user.level = data.level
+    }
+    // Always restore tbola_balance from DB (bot may have added tokens)
+    if (data.tbola_balance > user.tbola) {
+      user.tbola = data.tbola_balance
     }
     // Restore Warrior Pass
     if (data.warrior_pass_expiry) {
