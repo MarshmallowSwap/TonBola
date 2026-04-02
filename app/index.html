@@ -3341,8 +3341,7 @@ function startGame(){
   document.querySelectorAll('.pblbl').forEach(el=>el.style.color='rgba(255,255,255,.65)')
   document.querySelectorAll('.pbv').forEach(el=>el.style.color='#fff')
   const c=ROOMS[curRoom]
-  const discount2=nCards>=2?0.9:1
-  const paidReal=c.price*nCards*discount2
+  const paidReal=c.price*nCards
   const poolReal=c.cur==='free'?0:paidReal*0.55
   const fmt=v=>v.toFixed(3)+' TON'
   document.getElementById('g-rm').textContent=c.name
@@ -3851,12 +3850,7 @@ function initTonConnect() {
     tc = new UI.TonConnectUI({
       manifestUrl: MANIFEST_URL,
       buttonRootId: null,
-      uiPreferences: { theme: 'DARK' },
-      walletsListConfiguration: {
-        includeWallets: [
-          { name: 'Telegram Wallet', appName: 'telegram-wallet' }
-        ]
-      }
+      uiPreferences: { theme: 'DARK' }
     })
     tc.onStatusChange(w => {
       tcWallet = w
@@ -3992,22 +3986,9 @@ async function connectWallet() {
 
   // Tenta apertura diretta Telegram Wallet, fallback al modal
   try {
-    // Prova prima il Telegram Wallet (TON Space)
-    if (typeof tc.openSingleWalletModal === 'function') {
-      await tc.openSingleWalletModal('telegram-wallet')
-    } else {
-      await tc.openModal()
-    }
-  } catch(e) {
-    console.warn('openSingleWalletModal failed, using modal:', e)
     await tc.openModal()
-  }
-  // Aspetta 3s e controlla se si è connesso
-  await new Promise(r => setTimeout(r, 3000))
-  if (tc.wallet && !tcWallet) {
-    tcWallet = tc.wallet
-    user.wallet_address = tc.wallet.account?.address || ''
-    updateWalletUI()
+  } catch(e) {
+    console.warn('TonConnect modal error:', e)
   }
 }
 
@@ -4917,8 +4898,7 @@ function updateWheelUI() {
   const total = wheelSpinsSelected * price
   const isTon = wheelCur === 'ton'
   document.getElementById('w-spin-count').textContent = wheelSpinsSelected
-  const discountW = wheelSpinsSelected >= 50 ? 0.9 : 1
-  const totalDisc = total * discountW
+  const totalDisc = total
   if(wheelSpinsSelected > 0) {
     const costStr = isTon ? totalDisc.toFixed(2)+' TON' : totalDisc.toFixed(2)+' TON'
     const discTag = discountW < 1 ? ' <span style="color:#3AFF8A;font-size:.6rem">-10%</span>' : ''
@@ -4930,9 +4910,9 @@ function updateWheelUI() {
   const btn = document.getElementById('w-start-btn')
   if(btn) {
     if(wheelSpinsSelected > 0) {
-      const discW = wheelSpinsSelected >= 50 ? 0.9 : 1
+      const discW = 1
       const costStr = isTon ? (total*discW).toFixed(2)+' TON' : (total*discW).toFixed(2)+' TON'
-      const discLabel = discW < 1 ? ' (-10%)' : ''
+      const discLabel = ''
       btn.textContent = '🎰 Start & Pay — '+costStr+discLabel
       btn.removeAttribute('disabled')
       btn.style.pointerEvents='auto'
