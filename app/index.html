@@ -5352,21 +5352,16 @@ function renderPoolBanner(tab) {
   let boxes = []
 
   if(isAlltime) {
-    // alltime: 2 top + 1 centered below
+    // alltime: TON Paid + TBOLA Accumulated
     grid.style.gridTemplateColumns = '1fr 1fr'
     grid.innerHTML = `
-      <div style="background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:10px 8px;text-align:center">
-        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--yellow);font-weight:800;margin-bottom:5px">💎 $TON Paid</div>
-        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--yellow);text-shadow:0 0 12px rgba(255,184,0,.5)">${starsVal.toLocaleString()} ⭐</div>
-        <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
-      </div>
       <div style="background:rgba(61,158,255,.1);border:1.5px solid rgba(61,158,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
-        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px;opacity:.85">💎 $TON Paid</div>
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#40B8FF;margin-bottom:5px">💎 $TON Paid</div>
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#40B8FF;text-shadow:0 0 12px rgba(61,158,255,.5)">${tonVal} TON</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">all time total</div>
       </div>
-      <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center;grid-column:1/-1;max-width:200px;margin:0 auto;width:100%">
-        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px;opacity:.85">◆ $TBOLA Accumulated</div>
+      <div style="background:rgba(192,128,255,.1);border:1.5px solid rgba(192,128,255,.3);border-radius:10px;padding:10px 8px;text-align:center">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#C080FF;margin-bottom:5px">◆ $TBOLA</div>
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:#C080FF;text-shadow:0 0 12px rgba(192,128,255,.5)">${tbolaVal.toLocaleString()}</div>
         <div style="font-size:.62rem;color:var(--muted);margin-top:3px">airdrop snapshot</div>
       </div>`
