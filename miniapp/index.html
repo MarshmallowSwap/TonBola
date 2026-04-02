@@ -597,6 +597,84 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .bingo-banner-text{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem;color:#003310;
   text-shadow:0 1px 0 rgba(255,255,255,.4)}
 .bingo-banner-prize{font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;
+
+/* ── WHEEL WIN BANNER ── */
+.wheel-win-banner{position:fixed;top:0;left:0;right:0;z-index:400;
+  background:linear-gradient(135deg,#003320,#006640,#00CC66,#006640,#003320);
+  border-bottom:3px solid #00FF88;padding:0;transform:translateY(-100%);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px 20px;pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,255,136,.3)}
+.wheel-win-banner.show{animation:lineBannerIn .25s ease forwards}
+.wheel-win-banner.hide{animation:lineBannerOut .3s .8s ease forwards}
+.wheel-win-icon{font-size:1.8rem;animation:lineIconBounce .35s ease infinite alternate}
+.wheel-win-text{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;color:#001A0D;flex:1;text-align:center}
+.wheel-win-prize{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;color:#001A0D;opacity:.8}
+
+/* ── WHEEL JACKPOT BANNER ── */
+.wheel-jp-banner{position:fixed;top:0;left:0;right:0;z-index:401;
+  background:linear-gradient(135deg,#1A0800,#7A3A00,#FFB800,#FF8C00,#7A3A00,#1A0800);
+  border-bottom:3px solid #FFE566;padding:0;transform:translateY(-100%);
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;padding:14px 20px;pointer-events:none;
+  box-shadow:0 4px 30px rgba(255,184,0,.5)}
+.wheel-jp-banner.show{animation:lineBannerIn .2s ease forwards}
+.wheel-jp-banner.hide{animation:lineBannerOut .4s 2.5s ease forwards}
+.wheel-jp-spin{font-size:2rem;animation:jpSpin 0.6s linear infinite}
+.wheel-jp-text{font-family:'Outfit',sans-serif;font-weight:900;font-size:1.2rem;color:#FFD700;text-align:center;text-shadow:0 0 20px rgba(255,215,0,.8)}
+.wheel-jp-sub{font-size:.72rem;font-weight:700;color:#3D1A00;text-align:center}
+
+/* ── SCRATCH WIN BANNER ── */
+.scratch-win-banner{position:fixed;top:0;left:0;right:0;z-index:400;
+  background:linear-gradient(135deg,#1A0040,#5B21B6,#A855F7,#7C3AED,#1A0040);
+  border-bottom:3px solid #C084FF;padding:12px 20px;transform:translateY(-100%);
+  display:flex;align-items:center;gap:12px;pointer-events:none;
+  box-shadow:0 4px 20px rgba(168,85,247,.4)}
+.scratch-win-banner.show{animation:lineBannerIn .25s ease forwards}
+.scratch-win-banner.hide{animation:lineBannerOut .3s .9s ease forwards}
+.scratch-win-icon{font-size:1.8rem;animation:lineIconBounce .4s ease infinite alternate}
+.scratch-win-text{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.05rem;color:#F5D0FF;flex:1;text-align:center}
+.scratch-win-prize{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;color:#E9D5FF;opacity:.9}
+
+/* ── SCRATCH JACKPOT BANNER ── */
+.scratch-jp-banner{position:fixed;top:0;left:0;right:0;z-index:401;
+  background:linear-gradient(135deg,#1A0040,#3B0764,#7C3AED,#A855F7,#3B0764,#1A0040);
+  border-bottom:3px solid #E879F9;padding:14px 20px;transform:translateY(-100%);
+  display:flex;align-items:center;justify-content:center;gap:14px;pointer-events:none;
+  box-shadow:0 4px 30px rgba(232,121,249,.5)}
+.scratch-jp-banner.show{animation:lineBannerIn .2s ease forwards}
+.scratch-jp-banner.hide{animation:lineBannerOut .4s 2.5s ease forwards}
+
+/* ── REFERRAL BANNER ── */
+.referral-banner{position:fixed;top:0;left:0;right:0;z-index:400;
+  background:linear-gradient(135deg,#001A3A,#1A3A6A,#3B82F6,#1A3A6A,#001A3A);
+  border-bottom:3px solid #60A5FA;padding:12px 20px;transform:translateY(-100%);
+  display:flex;align-items:center;gap:12px;pointer-events:none;
+  box-shadow:0 4px 20px rgba(59,130,246,.4)}
+.referral-banner.show{animation:lineBannerIn .25s ease forwards}
+.referral-banner.hide{animation:lineBannerOut .3s 1.2s ease forwards}
+
+/* ── JACKPOT NEAR BANNER ── */
+.jp-near-banner{position:fixed;bottom:80px;left:12px;right:12px;z-index:400;
+  background:linear-gradient(135deg,rgba(255,184,0,.15),rgba(255,140,0,.1));
+  border:1.5px solid rgba(255,184,0,.4);border-radius:14px;padding:10px 16px;
+  display:flex;align-items:center;gap:10px;pointer-events:none;
+  backdrop-filter:blur(8px);transform:translateY(120px);opacity:0;
+  box-shadow:0 4px 20px rgba(255,184,0,.15)}
+.jp-near-banner.show{animation:jpNearIn .3s ease forwards}
+.jp-near-banner.hide{animation:jpNearOut .3s ease forwards}
+@keyframes jpNearIn{to{transform:translateY(0);opacity:1}}
+@keyframes jpNearOut{to{transform:translateY(120px);opacity:0}}
+
+/* ── COLLECT WIN BANNER (wheel/scratch session end) ── */
+.collect-banner{position:fixed;bottom:80px;left:12px;right:12px;z-index:400;
+  background:linear-gradient(135deg,rgba(0,200,100,.15),rgba(0,150,70,.1));
+  border:1.5px solid rgba(52,211,153,.4);border-radius:14px;padding:12px 16px;
+  display:flex;align-items:center;gap:10px;pointer-events:none;
+  backdrop-filter:blur(8px);transform:translateY(120px);opacity:0;
+  box-shadow:0 4px 20px rgba(52,211,153,.15)}
+.collect-banner.show{animation:jpNearIn .3s ease forwards}
+.collect-banner.hide{animation:jpNearOut .3s ease forwards}
   color:#004A18;background:rgba(0,0,0,.15);border-radius:50px;padding:3px 12px}
 
 /* ── MINOR LEVEL UP TOAST ── */
@@ -2095,6 +2173,71 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <div class="bingo-banner-icon">🎱</div>
   <div class="bingo-banner-text">BINGO!</div>
   <div class="bingo-banner-prize" id="bingo-banner-prize">+3.75 TON</div>
+</div>
+
+
+<!-- WHEEL WIN BANNER -->
+<div class="wheel-win-banner" id="wheel-win-banner">
+  <div class="wheel-win-icon">🎡</div>
+  <div class="wheel-win-text" id="wheel-win-text">You Won!</div>
+  <div class="wheel-win-prize" id="wheel-win-prize">+0.10 TON</div>
+</div>
+
+<!-- WHEEL JACKPOT BANNER -->
+<div class="wheel-jp-banner" id="wheel-jp-banner">
+  <span class="wheel-jp-spin">🎰</span>
+  <div>
+    <div class="wheel-jp-text">🏆 JACKPOT HIT!</div>
+    <div class="wheel-jp-sub" id="wheel-jp-sub">Fortune Wheel Jackpot!</div>
+  </div>
+  <span class="wheel-jp-spin" style="animation-direction:reverse">🎰</span>
+</div>
+
+<!-- SCRATCH WIN BANNER -->
+<div class="scratch-win-banner" id="scratch-win-banner">
+  <div class="scratch-win-icon">🎟️</div>
+  <div class="scratch-win-text" id="scratch-win-text">Scratch Win!</div>
+  <div class="scratch-win-prize" id="scratch-win-prize">+0.50 TON</div>
+</div>
+
+<!-- SCRATCH JACKPOT BANNER -->
+<div class="scratch-jp-banner" id="scratch-jp-banner">
+  <span style="font-size:2rem;animation:jpSpin .7s linear infinite">🎟️</span>
+  <div style="text-align:center">
+    <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1.2rem;color:#F0ABFC;text-shadow:0 0 20px rgba(240,171,252,.8)">🏆 SCRATCH JACKPOT!</div>
+    <div style="font-size:.72rem;font-weight:700;color:#E9D5FF" id="scratch-jp-sub">Jackpot claimed!</div>
+  </div>
+  <span style="font-size:2rem;animation:jpSpin .7s linear infinite reverse">🎟️</span>
+</div>
+
+<!-- REFERRAL ACTIVATED BANNER -->
+<div class="referral-banner" id="referral-banner">
+  <div style="font-size:1.6rem">🏹</div>
+  <div style="flex:1;text-align:center">
+    <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:.95rem;color:#BFDBFE">Referral Activated!</div>
+    <div style="font-size:.68rem;color:rgba(191,219,254,.7)">Your friend earns 5% of your $TBOLA forever</div>
+  </div>
+  <div style="font-size:1.6rem">🎁</div>
+</div>
+
+<!-- JACKPOT NEAR BANNER (bottom toast) -->
+<div class="jp-near-banner" id="jp-near-banner">
+  <span style="font-size:1.4rem;animation:lineIconBounce .5s ease infinite alternate">🎰</span>
+  <div style="flex:1">
+    <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:800;color:#FCD34D">Jackpot Almost Ready!</div>
+    <div style="font-size:.65rem;color:rgba(252,211,77,.6)" id="jp-near-text">X TON / 5 TON</div>
+  </div>
+  <div style="font-size:.65rem;font-weight:700;color:rgba(255,184,0,.5)">Keep playing!</div>
+</div>
+
+<!-- COLLECT WIN BANNER (bottom — session end) -->
+<div class="collect-banner" id="collect-banner">
+  <span style="font-size:1.4rem">💰</span>
+  <div style="flex:1">
+    <div style="font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:800;color:#34D399" id="collect-banner-text">Session complete!</div>
+    <div style="font-size:.65rem;color:rgba(52,211,153,.6)" id="collect-banner-sub">Tap Collect to claim your winnings</div>
+  </div>
+  <div style="font-size:1.2rem">🎉</div>
 </div>
 
 <!-- MINOR LEVEL UP TOAST -->
@@ -3892,6 +4035,8 @@ let scratchTotal    = 0
 
 
 function updateScratchJackpot() {
+  // Check jackpot near threshold
+  if (scratchJpTon > 0) showJackpotNearBanner(scratchJpTon, JACKPOT_THRESHOLD)
   const usdtEl  = document.getElementById('sc-jp-ton-usdt')
   const tonEl   = document.getElementById('sc-jp-ton')
   const bar     = document.getElementById('sc-jp-ton-usdt-bar')
@@ -4086,10 +4231,14 @@ async function playMultiScratch(t, qty, autoReveal) {
     if (cardsLeft <= 0) {
       // Fine sessione multi-card
       if (qty > 1) {
+        if (totalWon > 0) {
+          showScratchWinBanner(totalWon.toFixed(3) + ' TON', scratchSelected)
+          showCollectBanner(totalWon, 'scratch')
+        }
         const msg = totalWon > 0
           ? `🎉 Session complete! You won ${totalWon.toFixed(3)} TON across ${qty} cards!`
           : `${qty} cards scratched — better luck next time!`
-        if (tg?.showPopup) tg.showPopup({ title: '🎟️ Scratch Session', message: msg, buttons: [{type:'ok'}] })
+        if (qty > 1 && tg?.showPopup) tg.showPopup({ title: '🎟️ Scratch Session', message: msg, buttons: [{type:'ok'}] })
       }
       // Ripristina bottone buy
       const btn = document.getElementById('sc-buy-btn')
@@ -4768,6 +4917,7 @@ function handleWheelResult(segIdx) {
       wheelSessionBal += won
       resultMsg = `🎰 JACKPOT! +${won.toFixed(2)} TON`
       resultColor = '#FFD700'
+      showWheelJackpotBanner(won.toFixed(2) + ' TON')
       if(tg?.showPopup) tg.showPopup({
         title:'🎰 JACKPOT!!!',
         message:`INCREDIBLE! You hit the jackpot!\n\n+${won.toFixed(2)} TON added to your session balance.\n\nCollect your winnings!`,
@@ -4813,6 +4963,8 @@ function handleWheelResult(segIdx) {
     const tbolaStr = user.warriorPass ? ` +${tbolaBonus} $TBOLA ⚔️` : ` +${tbolaBonus} $TBOLA`
     resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toFixed(2)+' TON'}${tbolaStr}`
     resultColor = seg.textColor
+    // Show win banner
+    setTimeout(() => showWheelWinBanner(isTon?won.toFixed(3)+' TON':won.toFixed(2)+' TON', seg.mult), 800)
   }
   // Update session balance display
   const balEl = document.getElementById('w-session-bal')
@@ -4864,6 +5016,7 @@ function handleWheelResult(segIdx) {
 }
 
 function collectWheelWinnings() {
+  if (wheelSessionBal > 0) showCollectBanner(wheelSessionBal, 'wheel')
   if(wheelSessionBal <= 0) return
   const isTon = wheelCur === 'ton'
   const amtStr = isTon ? wheelSessionBal.toFixed(3)+' TON' : wheelSessionBal.toFixed(2)+' TON'
@@ -4912,6 +5065,78 @@ function awardXp(amount) {
   // Legacy: use new XP system (amount in old XP units, convert to TON-equivalent)
   // 1 old XP = 0.002 TON equivalent → addXP(0.002 * amount, 'usdt')
   addXP(amount * 0.002, 'usdt')
+}
+
+
+// ── BANNER SYSTEM ──────────────────────────────────────────────────────────
+
+function _showBanner(id, duration) {
+  const el = document.getElementById(id)
+  if (!el) return
+  el.classList.remove('show', 'hide')
+  void el.offsetWidth
+  el.classList.add('show')
+  clearTimeout(el._t)
+  el._t = setTimeout(() => {
+    el.classList.add('hide')
+    setTimeout(() => el.classList.remove('show', 'hide'), 500)
+  }, duration || 2800)
+}
+
+function showWheelWinBanner(prize, mult) {
+  const text = document.getElementById('wheel-win-text')
+  const prizeEl = document.getElementById('wheel-win-prize')
+  if (text) text.textContent = mult >= 5 ? '🔮 Big Win!' : mult >= 2 ? '💎 Nice Win!' : '⚡ Win!'
+  if (prizeEl) prizeEl.textContent = '+' + prize
+  _showBanner('wheel-win-banner', 2200)
+  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(mult >= 5 ? 'heavy' : 'medium')
+}
+
+function showWheelJackpotBanner(amount) {
+  const sub = document.getElementById('wheel-jp-sub')
+  if (sub) sub.textContent = '+' + amount + ' — Fortune Wheel Jackpot!'
+  _showBanner('wheel-jp-banner', 4000)
+  if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+
+function showScratchWinBanner(prize, tier) {
+  const text = document.getElementById('scratch-win-text')
+  const prizeEl = document.getElementById('scratch-win-prize')
+  const tierName = tier === 'ton_high' ? '🥇 Gold Win!' : tier === 'ton_mid' ? '🥈 Silver Win!' : '🥉 Bronze Win!'
+  if (text) text.textContent = tierName
+  if (prizeEl) prizeEl.textContent = '+' + prize
+  _showBanner('scratch-win-banner', 2500)
+  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium')
+}
+
+function showScratchJackpotBanner(amount) {
+  const sub = document.getElementById('scratch-jp-sub')
+  if (sub) sub.textContent = '+' + amount + ' — Scratch Jackpot!'
+  _showBanner('scratch-jp-banner', 4000)
+  if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+
+function showReferralBanner() {
+  _showBanner('referral-banner', 3500)
+}
+
+function showJackpotNearBanner(current, threshold) {
+  const text = document.getElementById('jp-near-text')
+  if (text) text.textContent = current.toFixed(2) + ' TON / ' + threshold + ' TON'
+  const el = document.getElementById('jp-near-banner')
+  if (!el) return
+  // Only show if within 80% of threshold
+  if (current < threshold * 0.7) return
+  _showBanner('jp-near-banner', 4000)
+}
+
+function showCollectBanner(totalWon, game) {
+  if (!totalWon || totalWon <= 0) return
+  const text = document.getElementById('collect-banner-text')
+  const sub = document.getElementById('collect-banner-sub')
+  if (text) text.textContent = game === 'wheel' ? '🎡 Wheel Session: +' + totalWon.toFixed(3) + ' TON' : '🎟️ Scratch Session: +' + totalWon.toFixed(3) + ' TON'
+  if (sub) sub.textContent = 'Tap Collect to claim your winnings!'
+  _showBanner('collect-banner', 5000)
 }
 
 function showLineBanner(prize) {
@@ -5160,12 +5385,7 @@ async function initReferral() {
     console.log('[REF] register_referral result:', result)
     
     if (result.includes('"ok"')) {
-      // Prima volta che viene registrato — mostra messaggio
-      if (tg?.showPopup) tg.showPopup({
-        title: '🏹 Referral Activated!',
-        message: `You joined via a friend's invite. They'll earn 5% of your $TBOLA rewards forever!`,
-        buttons: [{type: 'ok'}]
-      })
+      showReferralBanner()
     }
   } catch(e) {
     console.warn('[REF] register_referral error:', e)
@@ -6843,12 +7063,12 @@ function showLobbyState(d) {
           <div id="lobby-players" style="font-size:.85rem;font-weight:800">${d.player_count || 1}/20 players</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">parte tra</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4)">starts in</div>
           <div id="lobby-timer" style="font-size:1.1rem;font-weight:800;color:#FBBF24">5:00</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:.65rem;color:rgba(255,255,255,.4)">min</div>
-          <div style="font-size:.85rem;font-weight:700;color:#34D399">5 gioc</div>
+          <div style="font-size:.85rem;font-weight:700;color:#34D399">5 players min</div>
         </div>
       </div>`
 
