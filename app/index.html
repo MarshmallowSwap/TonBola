@@ -765,7 +765,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="r-icon ri-stars" style="background-image:url(assets/icon-ton-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">$TON Room</div>
-          <div class="rd">Pay $TON · Win $TON · +$TBOLA</div>
+          <div class="rd">Win $TON · +$TBOLA rewards</div>
         </div>
         <div class="rbadge" style="background:rgba(139,112,0,.25);color:#E0E0E0;border-color:#666">$TON</div>
       </div>
@@ -785,7 +785,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="r-icon ri-ton" style="background-image:url(assets/icon-ton.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">$TON Room</div>
-          <div class="rd">Pay $TON · Win $TON · +$TBOLA</div>
+          <div class="rd">Win $TON · +$TBOLA rewards</div>
         </div>
         <div class="rbadge" style="background:rgba(0,96,160,.25);color:#40B8FF;border-color:#0060A0">$TON</div>
       </div>
@@ -936,7 +936,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="text-align:right;flex-shrink:0" onclick="event.stopPropagation();hubWheelJpToggle()">
         <div style="font-size:.48rem;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">🎰 Jackpot</div>
         <div id="hub-jackpot" style="font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;color:#fff;line-height:1">0.00 TON</div>
-        <div id="hub-jackpot-ton2" style="font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.3">0.00 TON</div>
+        <div id="hub-jackpot-ton2" style="font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.45);line-height:1.3">🎯 pays at 5 TON</div>
         <div style="font-size:.48rem;color:rgba(255,255,255,.45);margin-top:3px">tap to toggle</div>
       </div>
     </div>
@@ -1015,10 +1015,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="font-size:1.6rem">🎰</div>
     <div>
       <div style="font-size:.5rem;font-weight:700;letter-spacing:1.5px;color:rgba(255,184,0,.5);text-transform:uppercase;margin-bottom:4px">Jackpot Pools</div>
-      <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px">
         <div id="w-jackpot-amt" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#FFD700">0.00 TON</div>
-        <div style="color:rgba(255,184,0,.3);font-size:.9rem">·</div>
-        <div id="w-jackpot-ton2" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#FFD700">0.00 TON</div>
+        <div style="font-size:.6rem;color:rgba(255,184,0,.4);font-weight:600">/ 5 TON</div>
       </div>
     </div>
     <div style="flex:1"></div>
@@ -3554,7 +3553,7 @@ async function initHub() {
   const jp = document.getElementById('hub-jackpot')
   if(jp) jp.textContent = wheelJackpot.toFixed(2)+' TON'
   const jpU = document.getElementById('hub-jackpot-ton2')
-  if(jpU) jpU.textContent = (0).toFixed(2)+' TON'
+  // hub-jackpot-ton2 shows threshold, not value
   // Update bingo players
   const bp = document.getElementById('hub-bingo-players')
   if(bp) bp.textContent = '-- players'
@@ -4909,9 +4908,9 @@ function handleWheelResult(segIdx) {
   const jel = document.getElementById('w-jackpot-amt')
   if(jel) jel.textContent = wheelJackpot.toFixed(2)+' TON'
   const hw = document.getElementById('hw-jackpot')
-  if(hw) hw.textContent = wheelJackpot.toFixed(2)+' TON'
+  // w-jackpot-ton2 is static, not updated
   const hwU = document.getElementById('hub-jackpot-ton2')
-  if(hwU) hwU.textContent = (0).toFixed(2)+' TON'
+  if(hwU) hwU.textContent = '🎯 pays at 5 TON'
   const hwT = document.getElementById('hub-jackpot')
   if(hwT) hwT.textContent = wheelJackpot.toFixed(2)+' TON'
   updateWheelUI()
@@ -5524,12 +5523,11 @@ async function loadJackpot() {
     wheelJackpot = parseFloat(data.pool_ton)
     const el = document.getElementById('w-jackpot-amt')
     if(el) el.textContent = wheelJackpot.toFixed(2)+' TON'
-    const ju = document.getElementById('w-jackpot-ton2')
-    if(ju) ju.textContent = (0).toFixed(2)+' TON'
+    // w-jackpot-ton2 is static
     const hw = document.getElementById('hub-jackpot')
-    if(hw) hw.textContent = wheelJackpot.toFixed(2)+' TON'
+    // w-jackpot-ton2 is static, not updated
     const hwU = document.getElementById('hub-jackpot-ton2')
-    if(hwU) hwU.textContent = (0).toFixed(2)+' TON'
+    if(hwU) hwU.textContent = '🎯 pays at 5 TON'
     const jpBar = document.getElementById('w-jp-bar')
     if(jpBar) jpBar.style.width = Math.min(100, (wheelJackpot/parseFloat(data.threshold||100))*100) + '%'
     const jpCur = document.getElementById('w-jp-cur')
