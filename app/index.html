@@ -3886,16 +3886,25 @@ function initTonConnect() {
     })
     console.log('✅ TonConnect UI ready')
 
-    // Polling: controlla wallet state ogni 2s (fallback per Telegram Wallet)
+    // Check wallet cached — aggiorna UI immediatamente
+    if (tc.wallet) {
+      tcWallet = tc.wallet
+      user.wallet_address = tc.wallet.account?.address || ''
+      updateWalletUI()
+      console.log('✅ Wallet restored from session:', tc.wallet.account?.address?.slice(0,12))
+    }
+
+    // Polling ogni 2s come fallback
     setInterval(() => {
       const w = tc.wallet
-      if (w && !tcWallet) {
+      if (w && w.account?.address !== tcWallet?.account?.address) {
         tcWallet = w
         user.wallet_address = w.account?.address || ''
         updateWalletUI()
-        console.log('✅ Wallet detected via polling:', w.account?.address?.slice(0,12))
+        console.log('✅ Wallet updated:', w.account?.address?.slice(0,12))
       } else if (!w && tcWallet) {
         tcWallet = null
+        user.wallet_address = ''
         updateWalletUI()
       }
     }, 2000)
@@ -3907,30 +3916,50 @@ function initTonConnect() {
 }
 
 function updateWalletUI() {
-  // Usa tc.wallet come fonte di verità (più affidabile di tcWallet per Telegram Wallet)
   const w = tcWallet || tc?.wallet || null
-  if (w && !tcWallet) tcWallet = w
+  if (w && !tcWallet) { tcWallet = w; user.wallet_address = w.account?.address || '' }
   const connected = !!(w?.account?.address)
   const addr = w?.account?.address || ''
-  const short = addr ? addr.slice(0,4) + '...' + addr.slice(-4) : ''
+  // Mostra primi 6 + ultimi 4 per riconoscimento
+  const short = addr ? addr.slice(0,6) + '..' + addr.slice(-4) : ''
   document.querySelectorAll('.tc-connect-btn').forEach(btn => {
     btn.textContent = connected ? '💎 ' + short : '🔗 Connect Wallet'
     btn.style.borderColor = connected ? '#0098EA' : 'rgba(255,255,255,.15)'
     btn.style.color = connected ? '#40B8FF' : 'rgba(255,255,255,.6)'
+    btn.title = connected ? 'Connected: ' + addr + '\nTap to disconnect' : 'Connect TON wallet'
   })
-  // Aggiorna anche header hub se esiste
-  const hubWallet = document.getElementById('h-wallet-addr')
-  if (hubWallet) hubWallet.textContent = connected ? short : ''
 }
 
 async function connectWallet() {
   if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1200)) }
   if (!tc) { alert('TonConnect not ready'); return }
 
-  if (tcWallet) {
-    const addr = tcWallet.account.address
+  if (tcWallet || tc?.wallet) {
+    const w = tcWallet || tc.wallet
+    const addr = w.account?.address || ''
     const short = addr.slice(0,6)+'...'+addr.slice(-4)
-    if (confirm('Wallet: ' + short + '\nDisconnect?')) tc.disconnect()
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: '💎 Wallet Connected',
+        message: 'Address: ' + short + '\n\nIs this your wallet?',
+        buttons: [
+          {id:'ok', type:'default', text:'Yes, keep it'},
+          {id:'disc', type:'destructive', text:'Disconnect'}
+        ]
+      }, (id) => {
+        if (id === 'disc') {
+          tc.disconnect()
+          tcWallet = null
+          user.wallet_address = ''
+          updateWalletUI()
+        }
+      })
+    } else if (confirm('Wallet: ' + short + '\nDisconnect?')) {
+      tc.disconnect()
+      tcWallet = null
+      user.wallet_address = ''
+      updateWalletUI()
+    }
     return
   }
 
