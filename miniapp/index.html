@@ -3494,7 +3494,8 @@ function subscribeWarriorPass() {
     if(tg?.showPopup) tg.showPopup({title:'Payment failed',message:'Transaction cancelled or failed. Please try again.',buttons:[{type:'ok'}]})
   }
 
-  sendTonPayment(3, 'TonBola:warrior-pass:ton', onSuccess, onFail)
+  // Warrior pass → owner wallet direttamente (non è un gioco, no split)
+  await sendTonPayment(3, 'TonBola:warrior-pass:ton', onSuccess, onFail)
 }
 
 function initHub() {
@@ -3678,23 +3679,61 @@ async function connectWallet() {
   await tc.openModal()
 }
 
-async function sendTonPayment(amountTon, comment, onSuccess, onFail) {
+
+// ── Build GamePayment BOC per TonBolaVault ──────────────────────────────────
+// Il contratto si aspetta: op(uint32=0x01) + game_type(uint8) + game_id(uint64)
+// game_type: 0=bingo  1=wheel  2=scratch
+function buildGamePaymentBOC(gameType, gameId) {
+  const buf = new Uint8Array(32)
+  let bp = 0
+  const wb = (v, n) => {
+    for (let i = n-1; i >= 0; i--) {
+      const by = bp >> 3, bi = 7 - (bp & 7)
+      if ((v >> i) & 1) buf[by] |= (1 << bi)
+      bp++
+    }
+  }
+  const wbig = (v, n) => {
+    for (let i = n-1; i >= 0; i--) {
+      const by = bp >> 3, bi = 7 - (bp & 7)
+      if (Number((v >> BigInt(i)) & 1n)) buf[by] |= (1 << bi)
+      bp++
+    }
+  }
+  wb(0x00000001, 32)               // op = GamePayment
+  wb(gameType, 8)                   // game_type: 0=bingo 1=wheel 2=scratch
+  wbig(BigInt(gameId), 64)         // game_id
+
+  const dataBits = bp
+  const dataBytes = Math.ceil(dataBits / 8)
+  if (dataBits % 8 !== 0) buf[dataBytes-1] |= (1 << (7 - (dataBits & 7)))
+  const d2 = Math.floor(dataBits/8)*2 + (dataBits%8 !== 0 ? 1 : 0)
+  const totSize = 2 + dataBytes
+  const boc = [0xb5,0xee,0x9c,0x72,0x01,0x01,0x01,0x01,0x00,totSize,0x00,0x00,d2]
+  for (let i = 0; i < dataBytes; i++) boc.push(buf[i])
+  return btoa(String.fromCharCode(...boc))
+}
+
+async function sendTonPayment(amountTon, comment, onSuccess, onFail, gameType=1, gameId=null) {
   if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1200)) }
   if (!tc) { if(onFail) onFail('no_tc'); return }
 
   const nanotons = String(Math.round(amountTon * 1000000000))
-  console.log('sendTonPayment', amountTon, 'TON =', nanotons, 'nanoton to', PLATFORM_WALLET)
+  const gid = gameId || Date.now()
+  const payload = buildGamePaymentBOC(gameType, gid)
+  console.log('sendTonPayment', amountTon, 'TON gameType=', gameType, 'gameId=', gid)
 
   try {
     const result = await tc.sendTransaction({
       validUntil: Math.floor(Date.now()/1000) + 600,
       messages: [{
-        address: PLATFORM_WALLET,
-        amount: nanotons
+        address: VAULT_ADDRESS,
+        amount: nanotons,
+        payload: payload
       }]
     })
-    console.log('✅ TON TX ok:', result)
-    if (onSuccess) onSuccess(result)
+    console.log('✅ GamePayment TX ok:', result)
+    if (onSuccess) onSuccess(result, gid)
   } catch(e) {
     console.warn('❌ TX error:', e)
     if (e?.message) alert('TX Error: ' + e.message)
@@ -3717,7 +3756,7 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
   }
   // TON
   const total = +((wheelPricePerSpin.ton || 0.1) * spins).toFixed(2)
-  await sendTonPayment(total, `TonBola:wheel:ton:${spins}`, success, fail)
+  await sendTonPayment(total, `TonBola:wheel:ton:${spins}`, success, fail, 1)
 }
 
 
@@ -3875,7 +3914,7 @@ async function buyScratchCard() {
     selectScratchCard(scratchSelected)
   }
 
-  await sendTonPayment(t.price, comment, onSuccess, onFail)
+  await sendTonPayment(t.price, comment, onSuccess, onFail, 2)  // game_type=2 (scratch)
 }
 
 let scCanvas = null, scCtx = null, scIsScratching = false
@@ -4302,8 +4341,9 @@ async function payAndEnterLobby(room, numCards) {
         return
       }
       await sendTonPayment(total, comment,
-        () => { paymentVerified = true; startGame() },
-        (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') }
+        (res, gid) => { lastGameId = gid || Date.now(); paymentVerified = true; startGame() },
+        (err) => { if (err !== 'no_wallet') showAlert('Payment failed. Please try again.') },
+        0  // game_type=0 (bingo)
       )
     }
 
@@ -4944,26 +4984,22 @@ async function requestPrizePayout() {
   if(btn) { btn.textContent = '⏳ Processing...'; btn.disabled = true }
 
   try {
-    const r = await fetch(ORACLE_URL + '/pay_winner', {
+    // Il nuovo vault usa sender() == oracle, non firma crittografica.
+    // Il frontend notifica il backend che a sua volta trigga l'oracle on-chain.
+    const r = await fetch(ORACLE_URL + '/oracle/pay-winner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        game_id:         lastGameId || Date.now(),
-        winner_address:  winnerAddr,
-        amount_nano:     amountNano,
-        currency:        lastWinCurrency || 'ton',
-        game_type:       'bingo'
+        winner_wallet:  winnerAddr,
+        amount_ton:     lastWinAmount || (amountNano / 1e9),
+        game_id:        lastGameId || Date.now(),
+        win_type:       1  // 1 = bingo
       })
     })
     if(r.ok) {
-      const data = await r.json()
-      if(data.success && data.signed_payload) {
-        // Oracle signed — now submit to blockchain via vault
-        const payload = JSON.parse(data.signed_payload)
-        await submitPayWinner(payload)
-      }
+      console.log('✅ Oracle notified — payment in progress')
     } else {
-      console.warn('Oracle payout failed:', r.status)
+      console.warn('Oracle notify failed:', r.status)
     }
   } catch(e) {
     console.warn('Payout request error:', e.message)
@@ -6248,7 +6284,7 @@ function pvpCreateRoom() {
   }
   const onFail = () => {}
   if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail)
-  else sendTonPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail)
+  else sendTonPayment(pvpBet,'TonBola:pvp:create:'+pvpBet,onSuccess,onFail, 0)  // pvp=bingo
 }
 
 function pvpJoinRoom(roomId) {
@@ -6267,7 +6303,7 @@ function pvpJoinRoom(roomId) {
   }
   const onFail = () => {}
   if(pvpCur==='usdt') sendUsdtPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail)
-  else sendTonPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail)
+  else sendTonPayment(pvpBet,'TonBola:pvp:join:'+roomId,onSuccess,onFail, 0)  // pvp=bingo
 }
 
 function pvpCopyCode() {
