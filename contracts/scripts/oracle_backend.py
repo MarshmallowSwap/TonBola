@@ -185,6 +185,77 @@ main().catch(e => {{ console.error('TX_ERROR', e.message); process.exit(1); }});
             os.unlink(tmp)
         return False
 
+
+# ── Auto-sweep oracle → owner ─────────────────────────────────
+ORACLE_MAX_BALANCE = float(os.environ.get("ORACLE_MAX_TON", "2.0"))   # default 2 TON
+ORACLE_KEEP        = float(os.environ.get("ORACLE_KEEP_TON", "0.5"))  # tieni sempre 0.5 TON
+OWNER_WALLET       = os.environ.get("OWNER_WALLET",
+    "UQCU4QrHnuuLUzu0qJEOwQFSTFol5ihNbmd0EkLX81zoJK5b")
+
+async def check_and_sweep_oracle():
+    """
+    Controlla il balance oracle. Se supera ORACLE_MAX_BALANCE,
+    invia il surplus all'owner automaticamente.
+    Chiamato in background dopo ogni pagamento.
+    """
+    try:
+        async with httpx.AsyncClient() as c:
+            r = await c.get(
+                f"https://tonapi.io/v2/accounts/UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l",
+                timeout=8
+            )
+        d = r.json()
+        balance_ton = int(d.get("balance", 0)) / 1e9
+
+        if balance_ton > ORACLE_MAX_BALANCE:
+            surplus_ton  = balance_ton - ORACLE_KEEP
+            surplus_nano = int(surplus_ton * 1e9)
+            print(f"[ORACLE SWEEP] Balance {balance_ton:.3f} TON > max {ORACLE_MAX_BALANCE} TON")
+            print(f"[ORACLE SWEEP] Sending {surplus_ton:.3f} TON → {OWNER_WALLET}")
+
+            # Costruisci TX: oracle → owner
+            script = f"""
+const {{ mnemonicToPrivateKey }} = require('@ton/crypto');
+const {{ WalletContractV4, TonClient, internal, toNano }} = require('@ton/ton');
+async function main() {{
+    const kp = await mnemonicToPrivateKey('{ORACLE_MNEMONIC}'.split(' '));
+    const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
+    const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC', apiKey: '{TONCENTER_KEY}' }});
+    const wc = client.open(wallet);
+    const seqno = await wc.getSeqno();
+    await wc.sendTransfer({{
+        seqno, secretKey: kp.secretKey,
+        messages: [internal({{
+            to: '{OWNER_WALLET}',
+            value: BigInt({surplus_nano}),
+            body: 'oracle_sweep',
+            bounce: false
+        }})]
+    }});
+    console.log('SWEEP_SENT surplus=' + {surplus_ton:.4f});
+}}
+main().catch(e => console.error('SWEEP_ERROR', e.message));
+"""
+            import subprocess, tempfile
+            node_dir = "/root/tonbola-deploy/contract"
+            if not __import__('os').path.exists(node_dir):
+                node_dir = "/root/tbola"
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.cjs',
+                                              dir=node_dir, delete=False) as f:
+                f.write(script)
+                tmp = f.name
+            r2 = subprocess.run(['node', tmp], capture_output=True, text=True,
+                                timeout=30, cwd=node_dir)
+            __import__('os').unlink(tmp)
+            if 'SWEEP_SENT' in r2.stdout:
+                print(f"[ORACLE SWEEP] ✅ Inviati {surplus_ton:.4f} TON all'owner")
+            else:
+                print(f"[ORACLE SWEEP] ❌ Errore: {r2.stderr[:100]}")
+        else:
+            print(f"[ORACLE] Balance OK: {balance_ton:.3f} TON (max: {ORACLE_MAX_BALANCE})")
+    except Exception as e:
+        print(f"[ORACLE SWEEP] error: {e}")
+
 # ── Modelli API ───────────────────────────────────────────────
 class PayWinnerReq(BaseModel):
     winner_wallet: str
@@ -226,6 +297,7 @@ async def pay_winner(req: PayWinnerReq, bg: BackgroundTasks):
 
     # Invia TX in background (non blocca la risposta)
     bg.add_task(send_to_contract, boc, 50_000_000)  # 0.05 TON per gas
+    bg.add_task(check_and_sweep_oracle)  # controlla surplus oracle
 
     # Marca come payment_pending su Supabase
     if SUPABASE_URL:
@@ -277,6 +349,37 @@ async def health():
         "vault": VAULT_ADDRESS or "NOT CONFIGURED",
         "oracle": "UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l"
     }
+
+
+@app.post("/oracle/set-max-balance")
+async def set_max_balance(max_ton: float, keep_ton: float = 0.5):
+    """Configura la soglia di auto-sweep (default: max=2 TON, keep=0.5 TON)."""
+    global ORACLE_MAX_BALANCE, ORACLE_KEEP
+    ORACLE_MAX_BALANCE = max_ton
+    ORACLE_KEEP = keep_ton
+    return {
+        "oracle_max_ton": ORACLE_MAX_BALANCE,
+        "oracle_keep_ton": ORACLE_KEEP,
+        "note": f"Oracle invia il surplus all'owner quando supera {max_ton} TON"
+    }
+
+@app.get("/oracle/balance")
+async def oracle_balance():
+    """Controlla il balance corrente del wallet oracle."""
+    async with httpx.AsyncClient() as c:
+        r = await c.get(
+            "https://tonapi.io/v2/accounts/UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l"
+        )
+    d = r.json()
+    bal = int(d.get("balance", 0)) / 1e9
+    return {
+        "oracle_balance_ton": bal,
+        "max_before_sweep": ORACLE_MAX_BALANCE,
+        "keep_minimum": ORACLE_KEEP,
+        "will_sweep": bal > ORACLE_MAX_BALANCE,
+        "surplus_ton": max(0, bal - ORACLE_KEEP) if bal > ORACLE_MAX_BALANCE else 0
+    }
+
 
 if __name__ == "__main__":
     import uvicorn

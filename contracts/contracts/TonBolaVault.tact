@@ -9,8 +9,8 @@
 //     1.0% → Rank Monthly Individual
 //     1.0% → Rank Weekly Squad
 //     0.5% → Rank Monthly Squad
-//     0.2% → Oracle gas (autofinanziamento)
-//    35.8% → Dev / Operations
+//     1.0% → Oracle gas (autofinanziamento)
+//    35.0% → Dev / Operations
 // ═══════════════════════════════════════════════════════════════
 
 import "@stdlib/deploy";
@@ -95,7 +95,7 @@ contract TonBolaVault with Deployable, Ownable {
     const BP_RANK_MONTHLY_I:Int = 100;   //  1.0%
     const BP_RANK_WEEKLY_S: Int = 100;   //  1.0%
     const BP_RANK_MONTHLY_S:Int = 50;    //  0.5%
-    const BP_ORACLE_GAS:    Int = 20;    //  0.2% → oracle autofinanziamento
+    const BP_ORACLE_GAS:    Int = 100;   //  1.0% → oracle autofinanziamento
     // dev = remainder ≈ 35.8%
 
     // Jackpot threshold: 5 TON
