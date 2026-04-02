@@ -1,214 +1,281 @@
 """
 TonBola Oracle Backend — FastAPI
-Gira su Hetzner, firma i pagamenti vincitori e li invia al contratto.
+Gira su VPS porta 8003 — firma e invia i pagamenti al TonBolaVault mainnet.
 
-Questo va integrato nel backend FastAPI esistente su porta 8001.
+AUTH: il contratto verifica sender() == oracle_address (indirizzo, non firma)
+Quindi l'oracle deve inviare le TX con il wallet oracle UQA3AUgp...17l
 """
 
-import os
-import time
-import hashlib
-import struct
+import os, time, asyncio, json, base64
 from typing import Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 import httpx
 
-# pip install PyNaCl tonsdk
-from nacl.signing import SigningKey
-from tonsdk.utils import Address as TonAddress
-from tonsdk.boc import Cell, begin_cell
+app = FastAPI(title="TonBola Oracle")
 
-app = FastAPI()
+# ── Config da env ────────────────────────────────────────────
+VAULT_ADDRESS   = os.environ.get("VAULT_ADDRESS", "")      # dopo il deploy
+ORACLE_MNEMONIC = os.environ.get("ORACLE_MNEMONIC",
+    "bulk royal camp fame baby accuse item method air reflect vendor "
+    "bundle feel carpet rescue borrow switch bubble gentle grid summer "
+    "fiction coffee token")
+SUPABASE_URL    = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY    = os.environ.get("SUPABASE_SERVICE_KEY", "")
+TONCENTER_KEY   = os.environ.get("TONCENTER_KEY", "")
+TONAPI_KEY      = os.environ.get("TONAPI_KEY", "")
 
-# ── Configurazione ────────────────────────────────────────────
-CONTRACT_ADDRESS = os.environ["CONTRACT_ADDRESS"]   # indirizzo del vault deployato
-ORACLE_SECRET    = bytes.fromhex(os.environ["ORACLE_SECRET_KEY"])  # 64 bytes
-SUPABASE_URL     = os.environ["SUPABASE_URL"]
-SUPABASE_KEY     = os.environ["SUPABASE_SERVICE_KEY"]
+# ── TON wallet oracle ─────────────────────────────────────────
+_oracle_wallet  = None
+_oracle_kp      = None
 
-# Il wallet che paga le gas fees delle TX verso il contratto
-# (non quello che riceve i fondi — quello è il contratto)
-SENDER_MNEMONIC  = os.environ["SENDER_MNEMONIC"]
+async def get_oracle_wallet():
+    """Inizializza il wallet oracle (lazy)."""
+    global _oracle_wallet, _oracle_kp
+    if _oracle_wallet:
+        return _oracle_wallet, _oracle_kp
+    try:
+        from pytoniq_core.crypto.keys import mnemonic_to_private_key
+        priv, pub = mnemonic_to_private_key(ORACLE_MNEMONIC.split())
+        _oracle_kp = (bytes(priv), bytes(pub))
+        _oracle_wallet = True  # flag init
+        return _oracle_wallet, _oracle_kp
+    except Exception as e:
+        print(f"[ORACLE] Wallet init error: {e}")
+        return None, None
 
-signing_key = SigningKey(ORACLE_SECRET[:32])
+# ── Costruttori messaggi Tact ────────────────────────────────
+# I message op codes sono generati da Tact automaticamente
+# Per TonBolaVault: 0x01=GamePayment, 0x02=PayWinner, 0x03=PayRank, 0x04=JackpotPayout
 
-# ── Modelli ───────────────────────────────────────────────────
-class PayWinnerRequest(BaseModel):
-    winner_wallet: str    # indirizzo TON del vincitore
-    amount_ton: float     # importo in TON (es. 0.275)
-    game_id: int          # ID partita da Supabase
-    game_type: str        # "bingo" | "scratch" | "wheel" | "pvp"
+def build_pay_winner_boc(winner_addr: str, amount_nano: int,
+                          game_id: int, win_type: int) -> str:
+    """Costruisce il BOC del messaggio PayWinner per il contratto Tact."""
+    try:
+        from pytoniq_core import begin_cell, Address
+        body = (begin_cell()
+            .store_uint(0x02, 32)          # op = PayWinner
+            .store_uint(game_id, 64)       # game_id
+            .store_address(Address(winner_addr))  # winner
+            .store_coins(amount_nano)      # amount
+            .store_uint(win_type, 8)       # win_type: 0=line 1=bingo 2=pvp 3=jackpot
+            .end_cell()
+        )
+        return base64.b64encode(body.to_boc()).decode()
+    except Exception as e:
+        raise ValueError(f"BOC build error: {e}")
 
-class PayJackpotRequest(BaseModel):
+def build_jackpot_payout_boc(winner_addr: str, amount_nano: int,
+                               game_type: int) -> str:
+    """Costruisce il BOC del messaggio JackpotPayout."""
+    try:
+        from pytoniq_core import begin_cell, Address
+        body = (begin_cell()
+            .store_uint(0x04, 32)          # op = JackpotPayout
+            .store_uint(game_type, 8)      # 0=bingo 1=wheel 2=scratch
+            .store_address(Address(winner_addr))
+            .store_coins(amount_nano)
+            .end_cell()
+        )
+        return base64.b64encode(body.to_boc()).decode()
+    except Exception as e:
+        raise ValueError(f"BOC build error: {e}")
+
+def build_pay_rank_boc(rank_type: int, period_key: int,
+                        winners: list) -> str:
+    """Costruisce il BOC del messaggio PayRank (top 5)."""
+    try:
+        from pytoniq_core import begin_cell, Address
+        # winners = [{address, amount_nano}, ...] max 5
+        while len(winners) < 5:
+            winners.append({"address": winners[0]["address"], "amount_nano": 0})
+        b = begin_cell()
+        b.store_uint(0x03, 32)              # op = PayRank
+        b.store_uint(rank_type, 8)          # 0=weekly_ind 1=monthly_ind 2=weekly_squad 3=monthly_squad
+        b.store_uint(period_key, 64)        # anti-replay
+        for w in winners[:5]:
+            b.store_address(Address(w["address"]))
+            b.store_coins(w["amount_nano"])
+        return base64.b64encode(b.end_cell().to_boc()).decode()
+    except Exception as e:
+        raise ValueError(f"BOC build error: {e}")
+
+# ── Invia TX on-chain ─────────────────────────────────────────
+async def send_to_contract(body_boc: str, attach_ton: int = 50_000_000):
+    """
+    Invia una transazione al vault dal wallet oracle.
+    attach_ton: nanoton allegati al messaggio (per gas del contratto)
+    """
+    if not VAULT_ADDRESS:
+        print("[ORACLE] VAULT_ADDRESS non configurato — skip TX")
+        return False
+
+    try:
+        from pytoniq_core.crypto.keys import mnemonic_to_private_key
+        from pytoniq_core import WalletV4R2, LiteBalancer
+    except ImportError:
+        # Fallback: usa toncenter API per inviare il BOC direttamente
+        pass
+
+    # Metodo più robusto: costruisci TX con @ton/ton via subprocess Node
+    # (già installato sul VPS nel contratto)
+    import subprocess, tempfile, os
+
+    script = f"""
+const {{ mnemonicToPrivateKey }} = require('@ton/crypto');
+const {{ WalletContractV4, TonClient, internal, toNano, Cell, beginCell }} = require('@ton/ton');
+
+async function main() {{
+    const mnemonic = '{ORACLE_MNEMONIC}'.split(' ');
+    const kp = await mnemonicToPrivateKey(mnemonic);
+    const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
+
+    const client = new TonClient({{
+        endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+        apiKey: '{TONCENTER_KEY}'
+    }});
+
+    const wc = client.open(wallet);
+    const seqno = await wc.getSeqno();
+
+    const body = Cell.fromBoc(Buffer.from('{body_boc}', 'base64'))[0];
+
+    await wc.sendTransfer({{
+        seqno,
+        secretKey: kp.secretKey,
+        messages: [internal({{
+            to: '{VAULT_ADDRESS}',
+            value: BigInt({attach_ton}),
+            body: body,
+            bounce: true
+        }})]
+    }});
+
+    console.log('TX_SENT seqno=' + seqno);
+}}
+main().catch(e => {{ console.error('TX_ERROR', e.message); process.exit(1); }});
+"""
+
+    # Salva script temporaneo nella dir con node_modules
+    node_dir = "/root/tonbola-deploy/contract"
+    if not os.path.exists(node_dir):
+        node_dir = "/root/tbola"
+    if not os.path.exists(node_dir):
+        print(f"[ORACLE] node_dir non trovato — TX non inviata")
+        return False
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.cjs',
+                                      dir=node_dir, delete=False) as f:
+        f.write(script)
+        tmp = f.name
+
+    try:
+        r = subprocess.run(['node', tmp], capture_output=True, text=True,
+                           timeout=30, cwd=node_dir)
+        os.unlink(tmp)
+        if 'TX_SENT' in r.stdout:
+            print(f"[ORACLE] ✅ {r.stdout.strip()}")
+            return True
+        else:
+            print(f"[ORACLE] ❌ TX error: {r.stderr[:200]}")
+            return False
+    except Exception as e:
+        print(f"[ORACLE] send error: {e}")
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        return False
+
+# ── Modelli API ───────────────────────────────────────────────
+class PayWinnerReq(BaseModel):
     winner_wallet: str
-    pool_id: int          # 0=wheel_ton, 1=wheel_usdt, 2=scratch_usdt, 3=scratch_ton
+    amount_ton: float
+    game_id: int
+    win_type: int = 1    # 0=line 1=bingo 2=pvp
 
-# ── Firma messaggi ────────────────────────────────────────────
-def sign_pay_winner(winner: str, amount_nano: int, game_id: int, nonce: int) -> bytes:
-    """Firma il messaggio PayWinner con la chiave oracle."""
-    # Costruisce la cell da firmare (identica al contratto Tact)
-    cell = (begin_cell()
-        .store_address(TonAddress(winner))
-        .store_coins(amount_nano)
-        .store_uint(game_id, 64)
-        .store_uint(nonce, 64)
-        .end_cell()
-    )
-    msg_hash = cell.bytes_hash()
-    return signing_key.sign(msg_hash).signature
+class PayJackpotReq(BaseModel):
+    winner_wallet: str
+    amount_ton: float
+    game_type: int       # 0=bingo 1=wheel 2=scratch
 
-def sign_pay_jackpot(winner: str, pool_id: int, nonce: int) -> bytes:
-    """Firma il messaggio PayJackpot con la chiave oracle."""
-    cell = (begin_cell()
-        .store_address(TonAddress(winner))
-        .store_uint(pool_id, 8)
-        .store_uint(nonce, 64)
-        .end_cell()
-    )
-    msg_hash = cell.bytes_hash()
-    return signing_key.sign(msg_hash).signature
+class PayRankReq(BaseModel):
+    rank_type: int       # 0=weekly_ind 1=monthly_ind 2=weekly_squad 3=monthly_squad
+    period_key: int      # unix timestamp del periodo (lunedì 00:00 UTC)
+    winners: list        # [{address, amount_nano}, ...]
 
-async def send_to_contract(body_cell: Cell, amount_ton: float = 0.05):
-    """Invia una transazione al contratto (usa il backend TON)."""
-    # In produzione: usa tonsdk o tonutils per firmare e inviare la TX
-    # Per ora logga l'intent — verrà integrato con il wallet sender
-    print(f"[ORACLE] Sending TX to {CONTRACT_ADDRESS}, amount={amount_ton} TON")
-    print(f"[ORACLE] Body BOC: {body_cell.to_boc(False).hex()[:50]}...")
-
-# ── Endpoint API ──────────────────────────────────────────────
-
+# ── Endpoints ─────────────────────────────────────────────────
 @app.post("/oracle/pay-winner")
-async def pay_winner(req: PayWinnerRequest, background_tasks: BackgroundTasks):
-    """
-    Chiamato dal backend dopo che una vincita è confermata su Supabase.
-    Firma e invia il pagamento al vincitore tramite il contratto.
-    """
-    # 1. Verifica che il game esista e non sia già pagato
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"{SUPABASE_URL}/rest/v1/games?id=eq.{req.game_id}&select=id,status,bingo_winner_id",
-            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
-        )
-    
-    games = resp.json()
-    if not games:
-        raise HTTPException(404, "Game not found")
-    
-    game = games[0]
-    if game.get("status") == "paid":
-        raise HTTPException(409, "Game already paid")
+async def pay_winner(req: PayWinnerReq, bg: BackgroundTasks):
+    """Chiamato dal backend dopo che una vincita è confermata. Paga il vincitore tramite contratto."""
+    amount_nano = int(req.amount_ton * 1e9)
+    if amount_nano <= 0:
+        raise HTTPException(400, "Amount must be > 0")
 
-    # 2. Genera nonce unico (timestamp in ms)
-    nonce = int(time.time() * 1000)
-    amount_nano = int(req.amount_ton * 1_000_000_000)  # TON → nanoton
+    # Verifica non sia già pagato
+    if SUPABASE_URL:
+        async with httpx.AsyncClient() as c:
+            r = await c.get(
+                f"{SUPABASE_URL}/rest/v1/bingo_games?id=eq.{req.game_id}&select=id,status",
+                headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+            )
+        games = r.json()
+        if games and games[0].get("status") == "paid":
+            raise HTTPException(409, "Already paid")
 
-    # 3. Firma il messaggio
-    signature = sign_pay_winner(req.winner_wallet, amount_nano, req.game_id, nonce)
+    boc = build_pay_winner_boc(req.winner_wallet, amount_nano,
+                                req.game_id, req.win_type)
 
-    # 4. Costruisce il body del messaggio per il contratto
-    body = (begin_cell()
-        .store_uint(0x6d2b2321, 32)  # op code PayWinner (hash del nome)
-        .store_address(TonAddress(req.winner_wallet))
-        .store_coins(amount_nano)
-        .store_uint(req.game_id, 64)
-        .store_uint(nonce, 64)
-        .store_bytes(signature)
-        .end_cell()
-    )
+    # Invia TX in background (non blocca la risposta)
+    bg.add_task(send_to_contract, boc, 50_000_000)  # 0.05 TON per gas
 
-    # 5. Invia al contratto (background task per non bloccare la risposta)
-    background_tasks.add_task(send_to_contract, body, 0.05)
+    # Marca come payment_pending su Supabase
+    if SUPABASE_URL:
+        async with httpx.AsyncClient() as c:
+            await c.patch(
+                f"{SUPABASE_URL}/rest/v1/bingo_games?id=eq.{req.game_id}",
+                json={"status": "payment_pending"},
+                headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+            )
 
-    # 6. Marca game come "payment_pending" su Supabase
-    async with httpx.AsyncClient() as client:
-        await client.patch(
-            f"{SUPABASE_URL}/rest/v1/games?id=eq.{req.game_id}",
-            json={"status": "payment_pending", "nonce": nonce},
-            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
-        )
-
-    return {
-        "status": "pending",
-        "nonce": nonce,
-        "amount_ton": req.amount_ton,
-        "winner": req.winner_wallet,
-        "game_id": req.game_id
-    }
+    return {"status": "pending", "amount_ton": req.amount_ton,
+            "winner": req.winner_wallet, "game_id": req.game_id}
 
 @app.post("/oracle/pay-jackpot")
-async def pay_jackpot(req: PayJackpotRequest, background_tasks: BackgroundTasks):
-    """Chiamato quando il jackpot viene triggerato (scratch/wheel)."""
-    nonce = int(time.time() * 1000)
-    signature = sign_pay_jackpot(req.winner_wallet, req.pool_id, nonce)
+async def pay_jackpot(req: PayJackpotReq, bg: BackgroundTasks):
+    """Chiamato quando il jackpot ≥ 5 TON e viene triggerato."""
+    amount_nano = int(req.amount_ton * 1e9)
+    boc = build_jackpot_payout_boc(req.winner_wallet, amount_nano, req.game_type)
+    bg.add_task(send_to_contract, boc, 50_000_000)
+    return {"status": "pending", "game_type": req.game_type,
+            "winner": req.winner_wallet, "amount_ton": req.amount_ton}
 
-    body = (begin_cell()
-        .store_uint(0x7f3a1b2c, 32)  # op code PayJackpot
-        .store_address(TonAddress(req.winner_wallet))
-        .store_uint(req.pool_id, 8)
-        .store_uint(nonce, 64)
-        .store_bytes(signature)
-        .end_cell()
-    )
+@app.post("/oracle/pay-rank")
+async def pay_rank(req: PayRankReq, bg: BackgroundTasks):
+    """Chiamato ogni lunedì/1° del mese per i rank payout."""
+    boc = build_pay_rank_boc(req.rank_type, req.period_key, req.winners)
+    bg.add_task(send_to_contract, boc, 50_000_000)
+    return {"status": "pending", "rank_type": req.rank_type,
+            "period_key": req.period_key, "winners_count": len(req.winners)}
 
-    background_tasks.add_task(send_to_contract, body, 0.05)
-
+@app.get("/oracle/vault-status")
+async def vault_status():
+    """Controlla saldi e pool del vault via TON API getter."""
+    if not VAULT_ADDRESS:
+        return {"error": "VAULT_ADDRESS not configured"}
+    async with httpx.AsyncClient() as c:
+        r = await c.get(f"https://tonapi.io/v2/accounts/{VAULT_ADDRESS}")
+    d = r.json()
     return {
-        "status": "pending",
-        "pool_id": req.pool_id,
-        "winner": req.winner_wallet,
-        "nonce": nonce
+        "balance_ton": int(d.get("balance", 0)) / 1e9,
+        "status": d.get("status"),
+        "vault": VAULT_ADDRESS
     }
 
-@app.get("/oracle/contract-balance")
-async def get_balance():
-    """Controlla il bilancio del contratto via TON API."""
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"https://tonapi.io/v2/accounts/{CONTRACT_ADDRESS}",
-            headers={"Accept": "application/json"}
-        )
-    data = resp.json()
-    balance_nano = data.get("balance", 0)
+@app.get("/oracle/health")
+async def health():
     return {
-        "balance_ton": balance_nano / 1_000_000_000,
-        "balance_nano": balance_nano,
-        "contract": CONTRACT_ADDRESS
-    }
-
-@app.post("/oracle/weekly-leaderboard")
-async def pay_leaderboard(background_tasks: BackgroundTasks):
-    """
-    Chiamato ogni lunedì da un cron job.
-    Legge i top player da Supabase e li paga.
-    """
-    # Recupera top 50 dalla settimana appena finita
-    week_start = "2026-03-24"  # calcolare dynamicamente
-    
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"{SUPABASE_URL}/rest/v1/leaderboard_weekly?week_start=eq.{week_start}&order=score.desc&limit=50",
-            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
-        )
-    
-    players = resp.json()
-    if not players:
-        return {"status": "no_players"}
-
-    # Distribuzione premi leaderboard (dal leaderboard_wallet, non dal contratto)
-    # Top 50 ricevono quote del fondo leaderboard accumulato
-    DISTRIBUTION = {
-        1: 0.30, 2: 0.18, 3: 0.12,
-        4: 0.05, 5: 0.05,  # 4-5
-        6: 0.03, 7: 0.03, 8: 0.03, 9: 0.03, 10: 0.03,  # 6-10
-        # 11-25: 0.10 diviso 15
-        # 26-50: 0.05 diviso 25
-    }
-    
-    return {
-        "status": "queued",
-        "players_count": len(players),
-        "week_start": week_start
+        "status": "ok",
+        "vault": VAULT_ADDRESS or "NOT CONFIGURED",
+        "oracle": "UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l"
     }
 
 if __name__ == "__main__":
