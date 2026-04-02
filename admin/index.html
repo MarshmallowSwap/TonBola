@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TonBola — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #08080E;
+  --bg2:    #0E0E1A;
+  --bg3:    #14141F;
+  --border: rgba(255,255,255,.07);
+  --violet: #8B5CF6;
+  --cyan:   #22D3EE;
+  --green:  #34D399;
+  --yellow: #FCD34D;
+  --orange: #FB923C;
+  --red:    #F87171;
+  --muted:  rgba(255,255,255,.35);
+  --dim:    rgba(255,255,255,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── LOGIN OVERLAY ── */
+#login-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  padding:40px;width:340px;text-align:center;
+}
+.login-logo{font-size:2.5rem;margin-bottom:8px}
+.login-title{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--muted);margin-bottom:28px}
+.login-input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;color:#fff;font-family:'Outfit',sans-serif;font-size:1rem;
+  outline:none;margin-bottom:12px;
+}
+.login-input:focus{border-color:var(--violet)}
+.login-btn{
+  width:100%;background:linear-gradient(135deg,var(--violet),#6D28D9);
+  border:none;border-radius:12px;padding:14px;color:#fff;font-family:'Outfit',sans-serif;
+  font-size:1rem;font-weight:700;cursor:pointer;
+}
+.login-err{color:var(--red);font-size:.8rem;margin-top:8px;display:none}
+
+/* ── LAYOUT ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,8,14,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;display:flex;align-items:center;gap:16px;
+}
+.logo{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;
+  background:linear-gradient(135deg,var(--violet),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.status-pill{
+  display:flex;align-items:center;gap:6px;padding:4px 12px;
+  border-radius:50px;font-size:.72rem;font-weight:700;
+}
+.pill-green{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:var(--green)}
+.pill-yellow{background:rgba(252,211,77,.1);border:1px solid rgba(252,211,77,.3);color:var(--yellow)}
+.pill-red{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.refresh-btn{
+  background:transparent;border:1px solid var(--border);border-radius:8px;
+  padding:6px 14px;color:var(--muted);font-size:.75rem;font-family:'Outfit',sans-serif;cursor:pointer;
+  transition:all .15s;
+}
+.refresh-btn:hover{border-color:var(--violet);color:#fff}
+.last-update{font-size:.65rem;color:var(--dim);font-family:'Space Mono',monospace}
+
+.main{padding:24px;max-width:1400px;margin:0 auto}
+
+/* ── GRID ── */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:900px){.grid-3,.grid-2{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}}
+
+/* ── CARDS ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:20px;position:relative;overflow:hidden;
+}
+.card-accent{position:absolute;top:0;left:0;right:0;height:2px}
+.card-label{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.card-value{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;line-height:1}
+.card-sub{font-size:.7rem;color:var(--muted);margin-top:4px}
+.card-addr{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--dim);margin-top:8px;word-break:break-all}
+.card-addr a{color:var(--violet);text-decoration:none}
+.card-addr a:hover{text-decoration:underline}
+
+/* ── SPLIT VISUALIZATION ── */
+.split-section{margin-bottom:20px}
+.split-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.split-title{font-size:.85rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.split-total{font-family:'Space Mono',monospace;font-size:1rem;color:#fff}
+.split-bar{height:10px;border-radius:50px;overflow:hidden;display:flex;gap:2px;margin-bottom:16px;background:var(--bg3)}
+.split-seg{height:100%;border-radius:50px;transition:flex .5s ease}
+.split-rows{display:grid;gap:8px}
+.split-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+}
+.split-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.split-name{font-size:.82rem;font-weight:600;flex:1}
+.split-pct{font-size:.72rem;color:var(--muted)}
+.split-amount{font-family:'Space Mono',monospace;font-size:.85rem;font-weight:700;text-align:right}
+.split-note{font-size:.6rem;color:var(--dim);text-align:right;margin-top:1px}
+
+/* ── JACKPOT POOLS ── */
+.pool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:700px){.pool-grid{grid-template-columns:1fr}}
+.pool-card{
+  background:var(--bg3);border-radius:14px;padding:16px;border:1px solid var(--border);
+  position:relative;
+}
+.pool-icon{font-size:1.4rem;margin-bottom:8px}
+.pool-name{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.pool-val{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700}
+.pool-bar-wrap{height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:10px;overflow:hidden}
+.pool-bar{height:100%;border-radius:2px;transition:width .6s ease}
+.pool-thresh{font-size:.6rem;color:var(--dim);margin-top:4px;text-align:right}
+.pool-pct{font-size:.65rem;font-weight:700;margin-top:2px}
+
+/* ── ACTIONS ── */
+.actions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:600px){.actions-grid{grid-template-columns:1fr}}
+.action-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;
+}
+.action-title{font-size:.82rem;font-weight:700;margin-bottom:4px}
+.action-desc{font-size:.68rem;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.action-row{display:flex;gap:8px;align-items:center}
+.action-input{
+  flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;color:#fff;font-size:.82rem;font-family:'Outfit',sans-serif;outline:none;
+}
+.action-input:focus{border-color:var(--violet)}
+.action-btn{
+  padding:8px 16px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;
+  font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-violet{background:linear-gradient(135deg,var(--violet),#6D28D9);color:#fff}
+.btn-green{background:linear-gradient(135deg,var(--green),#059669);color:#001A10}
+.btn-red{background:linear-gradient(135deg,var(--red),#DC2626);color:#fff}
+.btn-yellow{background:linear-gradient(135deg,var(--yellow),#D97706);color:#1A1000}
+.action-btn:hover{filter:brightness(1.15)}
+.action-result{
+  margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem;
+  font-family:'Space Mono',monospace;display:none;word-break:break-all;line-height:1.5;
+}
+.result-ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);color:var(--green)}
+.result-err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);color:var(--red)}
+
+/* ── USERS TABLE ── */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.table-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-head-title{font-size:.82rem;font-weight:700}
+.table-head-sub{font-size:.68rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:.78rem;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.badge{
+  display:inline-flex;align-items:center;padding:2px 8px;border-radius:50px;
+  font-size:.6rem;font-weight:700;
+}
+.badge-violet{background:rgba(139,92,246,.15);color:var(--violet);border:1px solid rgba(139,92,246,.3)}
+.badge-green{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.25)}
+.badge-yellow{background:rgba(252,211,77,.1);color:var(--yellow);border:1px solid rgba(252,211,77,.25)}
+
+/* ── LOADING ── */
+.loading{color:var(--dim);font-family:'Space Mono',monospace;font-size:.75rem;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.section-title{font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">⚡</div>
+    <div class="login-title">TonBola / Admin</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err">Wrong password</div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">⚡ TonBola Admin</div>
+  <div class="status-pill pill-green" id="pill-oracle"><span class="dot"></span> Oracle</div>
+  <div class="status-pill pill-green" id="pill-backend"><span class="dot"></span> Backend</div>
+  <div class="status-pill pill-green" id="pill-vault"><span class="dot"></span> Vault</div>
+  <div class="topbar-right">
+    <div class="last-update" id="last-update">—</div>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main" style="display:none">
+
+  <!-- KPI row -->
+  <div class="section-title">Overview</div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-accent" style="background:linear-gradient(90deg,var(--violet),var(--cyan))"></div>
+      <div class="card-label">Vault Balance</div>
+      <div class="card-value" id="kpi-vault">—</div>
+      <div class="card-sub">TON on-chain</div>
+      <div class="card-addr"><a href="https://tonviewer.com/UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW" target="_blank">UQDF2yS...CuW ↗</a></div>
+    </div>
+    <div class="card">
+      <div class="card-accent" style="background:linear-gradient(90deg,var(--green),#059669)"></div>
+      <div class="card-label">Dev Balance (35%)</div>
+      <div class="card-value" id="kpi-dev">—</div>
+      <div class="card-sub">Withdrawable now</div>
+    </div>
+    <div class="card">
+      <div class="card-accent" style="background:linear-gradient(90deg,var(--orange),var(--yellow))"></div>
+      <div class="card-label">Oracle Balance</div>
+      <div class="card-value" id="kpi-oracle">—</div>
+      <div class="card-sub">Auto-sweep at 2 TON</div>
+      <div class="card-addr"><a href="https://tonviewer.com/UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l" target="_blank">UQA3AU...17l ↗</a></div>
+    </div>
+    <div class="card">
+      <div class="card-accent" style="background:linear-gradient(90deg,var(--cyan),#0891B2)"></div>
+      <div class="card-label">Total Users</div>
+      <div class="card-value" id="kpi-users">—</div>
+      <div class="card-sub">Registered players</div>
+    </div>
+  </div>
+
+  <!-- SPLIT VISUALIZATION -->
+  <div class="section-title">Revenue Split — Per Entry</div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="split-header">
+      <div class="split-title">On every GamePayment received</div>
+      <div class="split-total">Total in vault: <span id="split-total" style="color:var(--violet)">— TON</span></div>
+    </div>
+    <div class="split-bar" id="split-bar">
+      <div class="split-seg" style="flex:55;background:linear-gradient(90deg,#10B981,#34D399)"></div>
+      <div class="split-seg" style="flex:5;background:linear-gradient(90deg,#F97316,#FB923C)"></div>
+      <div class="split-seg" style="flex:4;background:linear-gradient(90deg,#06B6D4,#22D3EE)"></div>
+      <div class="split-seg" style="flex:1;background:linear-gradient(90deg,#EC4899,#F472B6)"></div>
+      <div class="split-seg" style="flex:35;background:linear-gradient(90deg,#7C3AED,#A855F7)"></div>
+    </div>
+    <div class="split-rows">
+      <div class="split-row">
+        <div class="split-dot" style="background:#34D399"></div>
+        <div class="split-name">🏆 Prize Pool</div>
+        <div class="split-pct">55%</div>
+        <div>
+          <div class="split-amount" style="color:#34D399" id="split-prize">— TON</div>
+          <div class="split-note">Paid to winners on-chain</div>
+        </div>
+      </div>
+      <div class="split-row">
+        <div class="split-dot" style="background:#FB923C"></div>
+        <div class="split-name">🎰 Jackpot Pools</div>
+        <div class="split-pct">5%</div>
+        <div>
+          <div class="split-amount" style="color:#FB923C" id="split-jackpot">— TON</div>
+          <div class="split-note">Bingo + Wheel + Scratch</div>
+        </div>
+      </div>
+      <div class="split-row">
+        <div class="split-dot" style="background:#22D3EE"></div>
+        <div class="split-name">🥇 Rank Rewards</div>
+        <div class="split-pct">4%</div>
+        <div>
+          <div class="split-amount" style="color:#22D3EE" id="split-rank">— TON</div>
+          <div class="split-note">Weekly + Monthly payouts</div>
+        </div>
+      </div>
+      <div class="split-row">
+        <div class="split-dot" style="background:#F472B6"></div>
+        <div class="split-name">⚡ Oracle Gas</div>
+        <div class="split-pct">1%</div>
+        <div>
+          <div class="split-amount" style="color:#F472B6" id="split-oracle-gas">— TON</div>
+          <div class="split-note">Auto-sent to oracle wallet</div>
+        </div>
+      </div>
+      <div class="split-row" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.2)">
+        <div class="split-dot" style="background:#A855F7"></div>
+        <div class="split-name" style="color:#A855F7;font-weight:700">⚙️ Operations (Dev)</div>
+        <div class="split-pct" style="color:#A855F7">35%</div>
+        <div>
+          <div class="split-amount" style="color:#A855F7;font-size:1rem" id="split-dev">— TON</div>
+          <div class="split-note" style="color:rgba(168,85,247,.5)">Withdrawable anytime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JACKPOT POOLS -->
+  <div class="section-title">Jackpot Pools</div>
+  <div class="pool-grid">
+    <div class="pool-card" style="border-color:rgba(52,211,153,.2)">
+      <div class="pool-icon">🎱</div>
+      <div class="pool-name">Bingo Jackpot</div>
+      <div class="pool-val" style="color:var(--green)" id="jp-bingo">— TON</div>
+      <div class="pool-bar-wrap"><div class="pool-bar" style="background:var(--green)" id="jp-bingo-bar"></div></div>
+      <div class="pool-thresh">Threshold: 5 TON</div>
+      <div class="pool-pct" style="color:var(--green)" id="jp-bingo-pct">0%</div>
+    </div>
+    <div class="pool-card" style="border-color:rgba(251,146,60,.2)">
+      <div class="pool-icon">🎡</div>
+      <div class="pool-name">Wheel Jackpot</div>
+      <div class="pool-val" style="color:var(--orange)" id="jp-wheel">— TON</div>
+      <div class="pool-bar-wrap"><div class="pool-bar" style="background:var(--orange)" id="jp-wheel-bar"></div></div>
+      <div class="pool-thresh">Threshold: 5 TON</div>
+      <div class="pool-pct" style="color:var(--orange)" id="jp-wheel-pct">0%</div>
+    </div>
+    <div class="pool-card" style="border-color:rgba(167,139,250,.2)">
+      <div class="pool-icon">🎟️</div>
+      <div class="pool-name">Scratch Jackpot</div>
+      <div class="pool-val" style="color:var(--violet)" id="jp-scratch">— TON</div>
+      <div class="pool-bar-wrap"><div class="pool-bar" style="background:var(--violet)" id="jp-scratch-bar"></div></div>
+      <div class="pool-thresh">Threshold: 5 TON</div>
+      <div class="pool-pct" style="color:var(--violet)" id="jp-scratch-pct">0%</div>
+    </div>
+  </div>
+
+  <!-- RANK POOLS -->
+  <div class="section-title">Rank Pools</div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-label">Weekly Individual</div>
+      <div class="card-value" style="color:var(--cyan)" id="rank-wi">— TON</div>
+      <div class="card-sub">1.5% · Resets Monday</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Monthly Individual</div>
+      <div class="card-value" style="color:var(--cyan)" id="rank-mi">— TON</div>
+      <div class="card-sub">1.0% · Resets 1st</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Weekly Squad</div>
+      <div class="card-value" style="color:var(--cyan)" id="rank-ws">— TON</div>
+      <div class="card-sub">1.0% · Resets Monday</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Monthly Squad</div>
+      <div class="card-value" style="color:var(--cyan)" id="rank-ms">— TON</div>
+      <div class="card-sub">0.5% · Resets 1st</div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="section-title">Actions</div>
+  <div class="actions-grid">
+    <div class="action-card" style="border-color:rgba(139,92,246,.25)">
+      <div class="action-title" style="color:var(--violet)">💸 Withdraw Dev Balance</div>
+      <div class="action-desc">Withdraw accumulated 35% operations revenue from the vault to your owner wallet.</div>
+      <div class="action-row">
+        <input class="action-input" id="withdraw-amount" type="number" placeholder="Amount TON" step="0.1" min="0.1">
+        <button class="action-btn btn-violet" onclick="doWithdraw()">Withdraw</button>
+      </div>
+      <div class="action-result" id="withdraw-result"></div>
+    </div>
+
+    <div class="action-card" style="border-color:rgba(252,211,77,.2)">
+      <div class="action-title" style="color:var(--yellow)">🔄 Trigger Rank Payout</div>
+      <div class="action-desc">Manually trigger the weekly rank payout (runs automatically every Monday 00:05 UTC).</div>
+      <div class="action-row">
+        <button class="action-btn btn-yellow" onclick="doRankPayout()" style="width:100%">Run Weekly Rank Now</button>
+      </div>
+      <div class="action-result" id="rank-result"></div>
+    </div>
+
+    <div class="action-card" style="border-color:rgba(34,211,238,.2)">
+      <div class="action-title" style="color:var(--cyan)">⚡ Oracle Sweep</div>
+      <div class="action-desc">Check oracle balance and sweep surplus to owner wallet if above threshold (2 TON).</div>
+      <div class="action-row">
+        <input class="action-input" id="max-oracle" type="number" placeholder="Max TON (default 2)" step="0.5">
+        <button class="action-btn btn-green" onclick="doSetSweep()">Set & Sweep</button>
+      </div>
+      <div class="action-result" id="sweep-result"></div>
+    </div>
+
+    <div class="action-card" style="border-color:rgba(248,113,113,.15)">
+      <div class="action-title" style="color:var(--red)">🩺 System Health</div>
+      <div class="action-desc">Run a full health check on all services: oracle, backend, vault on-chain.</div>
+      <div class="action-row">
+        <button class="action-btn btn-red" onclick="doHealthCheck()" style="width:100%">Run Health Check</button>
+      </div>
+      <div class="action-result" id="health-result"></div>
+    </div>
+  </div>
+
+  <!-- USERS TABLE -->
+  <div class="section-title">Players</div>
+  <div class="table-wrap">
+    <div class="table-head">
+      <div>
+        <div class="table-head-title">Registered Users</div>
+        <div class="table-head-sub" id="users-count">Loading...</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Level</th>
+            <th>$TBOLA</th>
+            <th>Games</th>
+            <th>Wins</th>
+            <th>Warrior Pass</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          <tr><td colspan="7" style="text-align:center;color:var(--dim);padding:24px" class="loading">Loading players...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ORACLE  = 'https://api.fundshot.app/tonbola/oracle'
+const BACKEND = 'https://api.fundshot.app/tonbola'
+const SUPA    = 'https://lajeiwuumqbzcmdgsczq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhamVpd3V1bXFiemNtZGdzY3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ4NTgzNiwiZXhwIjoyMDkwMDYxODM2fQ.bmUUgJfpoOyj8QR9NfH_7Fyzg360VkuH-ReZsz-fRyk'
+const VAULT   = 'UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW'
+const ADMIN_SECRET = 'tonbola-dev-2026'
+
+// ── AUTH ──────────────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('pw-input').value
+  if (pw === ADMIN_SECRET) {
+    document.getElementById('login-overlay').style.display = 'none'
+    document.getElementById('main').style.display = 'block'
+    loadAll()
+    setInterval(loadAll, 30000)
+  } else {
+    const err = document.getElementById('login-err')
+    err.style.display = 'block'
+    setTimeout(() => err.style.display = 'none', 2000)
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+const fmt = (n, d=4) => parseFloat(n || 0).toFixed(d)
+const fmtTON = n => fmt(n, 4) + ' TON'
+function setPill(id, ok) {
+  const el = document.getElementById(id)
+  el.className = 'status-pill ' + (ok ? 'pill-green' : 'pill-red')
+  el.innerHTML = `<span class="dot"></span> ${id.replace('pill-','').charAt(0).toUpperCase()+id.slice(6)}`
+}
+function showResult(id, msg, ok) {
+  const el = document.getElementById(id)
+  el.textContent = msg
+  el.className = 'action-result ' + (ok ? 'result-ok' : 'result-err')
+  el.style.display = 'block'
+  setTimeout(() => el.style.display = 'none', 8000)
+}
+
+// ── LOAD ALL DATA ─────────────────────────────────────────────
+async function loadAll() {
+  try {
+    await Promise.all([loadOracleData(), loadVaultData(), loadSupabaseData()])
+    document.getElementById('last-update').textContent =
+      'Updated ' + new Date().toLocaleTimeString('en', {hour:'2-digit',minute:'2-digit',second:'2-digit'})
+  } catch(e) { console.error('loadAll error:', e) }
+}
+
+async function loadOracleData() {
+  try {
+    const [health, balance] = await Promise.all([
+      fetch(ORACLE + '/health').then(r=>r.json()),
+      fetch(ORACLE + '/balance').then(r=>r.json()),
+    ])
+    setPill('pill-oracle', health.status === 'ok')
+    document.getElementById('kpi-oracle').textContent = fmtTON(balance.oracle_balance_ton)
+  } catch(e) { setPill('pill-oracle', false) }
+}
+
+async function loadVaultData() {
+  try {
+    // Vault on-chain balance
+    const vaultResp = await fetch(`https://tonapi.io/v2/accounts/${VAULT}`).then(r=>r.json())
+    const vaultBal = parseInt(vaultResp.balance || 0) / 1e9
+    document.getElementById('kpi-vault').textContent = fmtTON(vaultBal)
+    document.getElementById('split-total').textContent = fmtTON(vaultBal)
+    setPill('pill-vault', vaultResp.status === 'active')
+
+    // Estimated split amounts from vault balance
+    // (These are estimates based on the split percentages applied to total vault balance)
+    const estimateSplit = (pct) => (vaultBal * pct / 100).toFixed(4) + ' TON'
+    // Note: real values would come from contract getters
+    // For now show estimates
+    document.getElementById('split-prize').textContent   = estimateSplit(55)
+    document.getElementById('split-jackpot').textContent = estimateSplit(5)
+    document.getElementById('split-rank').textContent    = estimateSplit(4)
+    document.getElementById('split-oracle-gas').textContent = estimateSplit(1)
+    document.getElementById('split-dev').textContent     = estimateSplit(35)
+
+    // Try contract getters for jackpot pools
+    const getters = [
+      { method: 'jackpotBingo',   bingoId: 'jp-bingo',   barId: 'jp-bingo-bar',   pctId: 'jp-bingo-pct' },
+      { method: 'jackpotWheel',   id: 'jp-wheel',   barId: 'jp-wheel-bar',   pctId: 'jp-wheel-pct' },
+      { method: 'jackpotScratch', id: 'jp-scratch', barId: 'jp-scratch-bar', pctId: 'jp-scratch-pct' },
+    ]
+    const jp_ids = ['jp-bingo','jp-wheel','jp-scratch']
+    const methods = ['jackpotBingo','jackpotWheel','jackpotScratch']
+    for (let i = 0; i < methods.length; i++) {
+      try {
+        const r = await fetch(`https://tonapi.io/v2/blockchain/accounts/${VAULT}/methods/${methods[i]}`).then(r=>r.json())
+        const raw = r.decoded?.[methods[i]] ?? r.stack?.[0]?.num ?? 0
+        const ton = parseInt(raw) / 1e9
+        const pct = Math.min(100, ton / 5 * 100)
+        document.getElementById(jp_ids[i]).textContent = ton.toFixed(4) + ' TON'
+        document.getElementById(jp_ids[i]+'-bar').style.width = pct + '%'
+        document.getElementById(jp_ids[i]+'-pct').textContent = pct.toFixed(1) + '% of 5 TON threshold'
+      } catch(e) {}
+    }
+
+    // Rank pools getters
+    const rankMethods = ['rankWeeklyInd','rankMonthlyInd','rankWeeklySquad','rankMonthlySquad']
+    const rankIds = ['rank-wi','rank-mi','rank-ws','rank-ms']
+    for (let i = 0; i < rankMethods.length; i++) {
+      try {
+        const r = await fetch(`https://tonapi.io/v2/blockchain/accounts/${VAULT}/methods/${rankMethods[i]}`).then(r=>r.json())
+        const raw = r.decoded?.[rankMethods[i]] ?? r.stack?.[0]?.num ?? 0
+        document.getElementById(rankIds[i]).textContent = (parseInt(raw)/1e9).toFixed(4) + ' TON'
+      } catch(e) {}
+    }
+
+    // Dev balance getter
+    try {
+      const r = await fetch(`https://tonapi.io/v2/blockchain/accounts/${VAULT}/methods/devBalance`).then(r=>r.json())
+      const raw = r.decoded?.devBalance ?? r.stack?.[0]?.num ?? 0
+      const devTon = parseInt(raw) / 1e9
+      document.getElementById('kpi-dev').textContent = fmtTON(devTon)
+      document.getElementById('split-dev').textContent = devTon.toFixed(4) + ' TON'
+    } catch(e) {}
+
+  } catch(e) { setPill('pill-vault', false) }
+}
+
+async function loadSupabaseData() {
+  try {
+    const headers = { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+
+    // Backend health
+    try {
+      const h = await fetch(BACKEND + '/health').then(r=>r.json())
+      setPill('pill-backend', h.status === 'ok')
+    } catch(e) { setPill('pill-backend', false) }
+
+    // Users
+    const users = await fetch(
+      `${SUPA}/rest/v1/users?order=created_at.desc&limit=50&select=telegram_id,username,first_name,level,xp,tbola_balance,total_games,total_wins,warrior_pass_expiry,created_at`,
+      {headers}
+    ).then(r=>r.json())
+
+    document.getElementById('kpi-users').textContent = users.length
+    document.getElementById('users-count').textContent = users.length + ' players registered'
+
+    const tbody = document.getElementById('users-tbody')
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:24px">No players yet</td></tr>'
+      return
+    }
+
+    const hasWP = u => u.warrior_pass_expiry && new Date(u.warrior_pass_expiry) > new Date()
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td>
+          <div style="font-weight:700">${u.first_name || u.username || 'Anonymous'}</div>
+          <div style="font-size:.65rem;color:var(--dim)">${u.username ? '@'+u.username : 'ID: '+u.telegram_id}</div>
+        </td>
+        <td><span class="badge badge-violet">Lv.${u.level || 1}</span></td>
+        <td style="font-family:'Space Mono',monospace;color:var(--yellow)">${(u.tbola_balance||0).toLocaleString()}</td>
+        <td>${u.total_games || 0}</td>
+        <td>${u.total_wins || 0}</td>
+        <td>${hasWP(u) ? '<span class="badge badge-yellow">⚔️ Active</span>' : '<span class="badge" style="color:var(--dim);border-color:var(--dim)">—</span>'}</td>
+        <td style="font-size:.68rem;color:var(--muted)">${new Date(u.created_at).toLocaleDateString('en')}</td>
+      </tr>
+    `).join('')
+
+  } catch(e) { console.error('supabase error:', e) }
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+async function doWithdraw() {
+  const amount = parseFloat(document.getElementById('withdraw-amount').value)
+  if (!amount || amount <= 0) { showResult('withdraw-result', 'Enter a valid amount', false); return }
+  try {
+    showResult('withdraw-result', '⏳ Sending WithdrawDev TX...', true)
+    const r = await fetch(`${ORACLE}/withdraw-dev`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({amount_ton: amount, secret: ADMIN_SECRET})
+    }).then(r=>r.json())
+    showResult('withdraw-result', '✅ ' + JSON.stringify(r), true)
+    setTimeout(loadAll, 5000)
+  } catch(e) { showResult('withdraw-result', '❌ Error: ' + e.message, false) }
+}
+
+async function doRankPayout() {
+  try {
+    showResult('rank-result', '⏳ Triggering rank payout...', true)
+    const r = await fetch(`${ORACLE}/cron-rank-weekly?secret=${ADMIN_SECRET}`, {method:'POST'}).then(r=>r.json())
+    showResult('rank-result', '✅ ' + JSON.stringify(r), true)
+  } catch(e) { showResult('rank-result', '❌ ' + e.message, false) }
+}
+
+async function doSetSweep() {
+  const max = parseFloat(document.getElementById('max-oracle').value) || 2.0
+  try {
+    const r = await fetch(`${ORACLE}/set-max-balance?max_ton=${max}&keep_ton=0.5`, {method:'POST'}).then(r=>r.json())
+    showResult('sweep-result', '✅ Max set to ' + max + ' TON. ' + JSON.stringify(r), true)
+    loadAll()
+  } catch(e) { showResult('sweep-result', '❌ ' + e.message, false) }
+}
+
+async function doHealthCheck() {
+  const results = []
+  const check = async (label, url) => {
+    try {
+      const start = Date.now()
+      const r = await fetch(url, {signal: AbortSignal.timeout(5000)}).then(r=>r.json())
+      results.push(`✅ ${label}: ${Date.now()-start}ms`)
+    } catch(e) { results.push(`❌ ${label}: ${e.message}`) }
+  }
+  showResult('health-result', '⏳ Running checks...', true)
+  await check('Oracle', ORACLE + '/health')
+  await check('Backend', BACKEND + '/health')
+  await check('Vault on-chain', `https://tonapi.io/v2/accounts/${VAULT}`)
+  await check('Supabase', `${SUPA}/rest/v1/users?limit=1`)
+  showResult('health-result', results.join('\n'), !results.some(r=>r.startsWith('❌')))
+}
+</script>
+</body>
+</html>
