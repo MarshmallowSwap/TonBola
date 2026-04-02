@@ -1574,6 +1574,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div class="reflink" id="p-ref">t.me/TonBolaBot_bot?start=ref_0</div>
     <div class="refhint">Tap to copy · 5% of friends' $TBOLA forever 🏹</div>
   </div>
+  <div style="margin:8px 12px 0;padding:8px 12px;background:rgba(192,128,255,.08);border:1px solid rgba(192,128,255,.15);border-radius:10px;font-size:.75rem;color:var(--muted);text-align:center" id="ref-stats">Loading referrals...</div>
 
   <div class="sec">Level Unlocks</div>
   <div id="p-unlocks"></div>
@@ -2392,6 +2393,8 @@ function addXP(amount, cur) {
   if (getCurrentLevel() > prevLv) showLevelUp(getCurrentLevel())
   updateXpUI()
   scheduleSave()
+  // Paga 5% TBOLA al referrer (fire & forget)
+  if (gained > 0) payReferralReward(gained)
 }
 function showLevelUp(lv) {
   const ms = getMilestoneName()
@@ -2569,6 +2572,9 @@ async function sbUpsertUser() {
     const bcTbola = document.getElementById('bc-tbola')
     if(bcTbola) bcTbola.textContent = formatTbola(user.tbola || 0)
     initHub()  // Refresh UI with DB data
+    // Referral: registra se arrivato via link + carica stats
+    initReferral()
+    loadReferralStats()
   } catch(e) {
     console.warn('sbUpsertUser error:', e)
   }
@@ -3349,6 +3355,7 @@ function showWin(type){
   lastWinCurrency = ROOMS[curRoom]?.cur || 'free'
   lastGameId = Date.now()
   user.tbola+=tbolaWon
+  payReferralReward(tbolaWon)  // 5% al referrer
   user.wins+=(type==='bingo'?1:0)
   user.lines+=(type==='line'?1:0)
   user.games+=1
@@ -4098,6 +4105,7 @@ function finalizeScratch() {
     const sym = scTier.cur==='usdt' ? prize.toFixed(2)+' TON' : prize.toFixed(2)+' TON'
     msg.innerHTML = `🎉 <span style="color:#34D399">You won ${sym}!</span><br><span style="font-size:1.5rem">${matchSym} ${matchSym} ${matchSym}</span>`
     user.tbola = (user.tbola||0)+50
+    payReferralReward(50)  // 5% al referrer
     document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola)+' $TBOLA'
   } else {
     msg.innerHTML = `😔 <span style="color:rgba(255,255,255,.4)">No match — better luck next time!</span>`
@@ -5146,6 +5154,95 @@ function renderProfile(){
       <div class="utag" style="background:${col}22;color:${col};border:1px solid ${col};border-radius:6px;padding:3px 8px;font-size:.65rem;font-weight:700;white-space:nowrap;flex-shrink:0">Lv.${u.lv}</div>
     </div>`
   }).join('')
+}
+
+
+// ── REFERRAL SYSTEM ──────────────────────────────────────────────────────────
+
+async function initReferral() {
+  if (!user.telegramId) return
+  
+  // Leggi start_param da Telegram (es. "ref_12345678")
+  const startParam = tg?.initDataUnsafe?.start_param || ''
+  if (!startParam.startsWith('ref_')) return
+  
+  const referrerTgId = parseInt(startParam.replace('ref_', ''))
+  if (!referrerTgId || isNaN(referrerTgId)) return
+  if (referrerTgId === user.telegramId) return  // no auto-referral
+  
+  console.log('[REF] Referred by:', referrerTgId)
+  
+  try {
+    // Chiama la funzione RPC Supabase
+    const r = await fetch(`${SUPA_URL}/rest/v1/rpc/register_referral`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_referrer_tg_id: referrerTgId,
+        p_referred_tg_id: user.telegramId
+      })
+    })
+    const result = await r.text()
+    console.log('[REF] register_referral result:', result)
+    
+    if (result.includes('"ok"')) {
+      // Prima volta che viene registrato — mostra messaggio
+      if (tg?.showPopup) tg.showPopup({
+        title: '🏹 Referral Activated!',
+        message: 'You joined via a friend's invite. They'll earn 5% of your $TBOLA rewards forever!',
+        buttons: [{type: 'ok'}]
+      })
+    }
+  } catch(e) {
+    console.warn('[REF] register_referral error:', e)
+  }
+}
+
+async function payReferralReward(tbolaEarned) {
+  if (!user.telegramId || !tbolaEarned || tbolaEarned < 1) return
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/rpc/pay_referral_reward`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_referred_tg_id: user.telegramId,
+        p_tbola_earned: Math.round(tbolaEarned)
+      })
+    })
+    console.log('[REF] Referral reward paid:', Math.round(tbolaEarned * 0.05), '$TBOLA')
+  } catch(e) {
+    console.warn('[REF] pay_referral_reward error:', e)
+  }
+}
+
+// Mostra statistiche referral nel profilo
+async function loadReferralStats() {
+  if (!user.telegramId) return
+  try {
+    const url = `${SUPA_URL}/rest/v1/referrals?referrer_id=eq.${user.telegramId}&select=referred_id,total_tbola_earned,created_at`
+    const r = await fetch(url, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    })
+    const data = await r.json()
+    
+    const el = document.getElementById('ref-stats')
+    if (!el) return
+    
+    if (!data || data.length === 0) {
+      el.textContent = 'No referrals yet. Share your link!'
+      return
+    }
+    const totalEarned = data.reduce((s, r) => s + (r.total_tbola_earned || 0), 0)
+    el.innerHTML = `<span style="color:#34D399;font-weight:700">${data.length} friend${data.length>1?'s':''} invited</span> · <span style="color:#C080FF">${totalEarned.toLocaleString()} $TBOLA earned</span>`
+  } catch(e) {}
 }
 
 function copyRef(){
