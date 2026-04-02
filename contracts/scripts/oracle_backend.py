@@ -22,6 +22,15 @@ import httpx
 
 app = FastAPI(title="TonBola Oracle", version="2.0")
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # ── Config ────────────────────────────────────────────────────
 VAULT_ADDRESS    = os.environ.get("VAULT_ADDRESS",
     "UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW")
@@ -53,7 +62,7 @@ const {{ WalletContractV4, TonClient, internal, Cell, beginCell }} = require('@t
     const kp = await mnemonicToPrivateKey(mnemonic);
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
     const client = new TonClient({{
-        endpoint: 'https://ton.access.orbs.network/va3HaCKpCXZZgRqT15qzMnVm0dLRqw_Ld/1/mainnet/toncenter-v2/',
+        endpoint: 'https://toncenter.com/api/v2/jsonRPC',
     }});
     const wc = client.open(wallet);
     const seqno = await wc.getSeqno();
@@ -95,7 +104,7 @@ const {{ WalletContractV4, TonClient, internal }} = require('@ton/ton');
 (async () => {{
     const kp = await mnemonicToPrivateKey(`{ORACLE_MNEMONIC}`.trim().split(' '));
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
-    const client = new TonClient({{ endpoint: 'https://ton.access.orbs.network/va3HaCKpCXZZgRqT15qzMnVm0dLRqw_Ld/1/mainnet/toncenter-v2/' }});
+    const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
     const wc = client.open(wallet);
     const seqno = await wc.getSeqno();
     await wc.sendTransfer({{
