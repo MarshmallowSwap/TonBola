@@ -762,26 +762,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">$TBOLA prizes</div>
       </div>
     </div>
-    <div class="rc ton" onclick="openLobby('ton')">
-      <div class="ri">
-        <div class="r-icon ri-stars" style="background-image:url(assets/icon-ton-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
-        <div style="flex:1">
-          <div class="rn">$TON Room</div>
-          <div class="rd">Win $TON · +$TBOLA rewards</div>
-        </div>
-        <div class="rbadge" style="background:rgba(139,112,0,.25);color:#E0E0E0;border-color:#666">$TON</div>
-      </div>
-      <div class="rf">
-        <div class="rp"><span class="live-dot"></span><span id="rp-stars">0</span> warriors</div>
-        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.50 $TON / card</div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
-        <div style="display:flex;align-items:center;gap:5px">
-          <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,215,0,.6);text-transform:uppercase">🎰 Jackpot</span>
-        </div>
-        <div style="font-size:.78rem;font-weight:800;color:#FCD34D" id="jackpot-stars">0.00 TON</div>
-      </div>
-    </div>
+
     <div class="rc ton" onclick="openLobby('ton')">
       <div class="ri">
         <div class="r-icon ri-ton" style="background-image:url(assets/icon-ton.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
@@ -805,7 +786,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="r-icon ri-vip" style="background-image:url(assets/icon-vip-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">VIP $TON Room</div>
-          <div class="rd">High stakes · Lv.20+ · VIP pools</div>
+          <div class="rd">High stakes · Lv.15+ · VIP pools</div>
         </div>
         <div class="rbadge" style="background:rgba(139,34,0,.25);color:#FF8060;border-color:#8B2200">VIP</div>
       </div>
@@ -2362,9 +2343,9 @@ function xpForLevel(lv) {
 
 const XP_MILESTONES = {
   1:  { name:'Rookie',   icon:'\u{1F3D5}', color:'#3A7A24',
-        unlocks:{ freeRoom:true,  tonRoom:false, vipRoom:false,  wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true,  scratchGold:false, tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
+        unlocks:{ freeRoom:true,  tonRoom:true, vipRoom:false,  wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true,  scratchGold:false, tbola_bonus:0, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
   5:  { name:'Player',   icon:'\u2694\uFE0F', color:'#0060A0',
-        unlocks:{ freeRoom:true,  tonRoom:false, vipRoom:false,  wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true,  scratchGold:false, tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
+        unlocks:{ freeRoom:true,  tonRoom:true, vipRoom:false,  wheelTon:false, pvp:false, autoSpin:false, scratchBronze:true,  scratchGold:false, tbola_bonus:0.05, prize_bonus:0, free_scratches_week:0, jackpot_share:0 } },
   10: { name:'Warrior',  icon:'\u{1F6E1}\uFE0F', color:'#0F6E56',
         unlocks:{ freeRoom:true,  tonRoom:true, vipRoom:false,  wheelTon:true, pvp:true, autoSpin:false, scratchBronze:true,  scratchGold:true, tbola_bonus:0.10, prize_bonus:0, free_scratches_week:1, jackpot_share:0 } },
   15: { name:'Expert',   icon:'\u{1F525}', color:'#854F0B',
@@ -3030,7 +3011,7 @@ function initHome(){
 
   // Show lock overlays on gated room cards
   const ul = getMilestoneUnlocks()
-  const roomGates = {ton:'tonRoom', vip:'vipRoom'}
+  const roomGates = {vip:'vipRoom'}  // ton room sempre aperta
   Object.entries(roomGates).forEach(([room, key]) => {
     const card = document.querySelector('.rc.'+room)
     if (!card) return
@@ -3052,7 +3033,7 @@ function initHome(){
 function openLobby(r){
   const ul=getMilestoneUnlocks(),gates={ton:'tonRoom',vip:'vipRoom'},gk=gates[r]
   if(gk&&!ul[gk]){
-    const lm={tonRoom:10,vipRoom:15},lv=lm[gk],ul2={tonRoom:['PvP','Gold Scratch'],vipRoom:['VIP Room','+5% prizes']}
+    const lm={vipRoom:15},lv=lm[gk],ul2={vipRoom:['VIP Room','+5% prizes']}
     showLevelGatePopup(ROOMS[r]?.name||r,getCurrentLevel(),lv,XP_MILESTONES[lv]?.name||'',ul2[gk]||[]);return
   }
   console.log('openLobby called:', r, 'isGameActive:', isGameActive, 'pointerEvents:', document.querySelector('.rc')?.style?.pointerEvents)
@@ -5169,23 +5150,12 @@ function updateLevelLocks() {
   const rcVip = document.querySelector('.rc.vip')
   const rcTons = document.querySelectorAll('.rc.ton')
 
-  // TON Room: lv 10
+  // TON Room: sempre aperta da Lv.1 — rimuovi eventuali lock badge
   rcTons.forEach(el => {
-    const locked = !ul.tonRoom
-    el.style.opacity  = locked ? '0.45' : '1'
-    el.style.filter   = locked ? 'grayscale(0.6)' : ''
-    // Badge lock
-    let lockBadge = el.querySelector('.lock-badge')
-    if (locked && !lockBadge) {
-      lockBadge = document.createElement('div')
-      lockBadge.className = 'lock-badge'
-      lockBadge.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);color:rgba(255,255,255,.7);font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;pointer-events:none'
-      lockBadge.textContent = '🔒 Lv.10'
-      el.style.position = 'relative'
-      el.appendChild(lockBadge)
-    } else if (!locked && lockBadge) {
-      lockBadge.remove()
-    }
+    el.style.opacity = '1'
+    el.style.filter  = ''
+    const lockBadge = el.querySelector('.lock-badge')
+    if (lockBadge) lockBadge.remove()
   })
 
   // VIP Room: lv 15
