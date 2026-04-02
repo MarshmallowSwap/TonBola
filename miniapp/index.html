@@ -773,6 +773,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 <body>
 
 
+  <!-- TEST MODE BANNER -->
+  <div id="test-mode-banner" style="background:linear-gradient(90deg,#7C3AED,#DB2777);padding:6px 12px;text-align:center;font-size:.65rem;font-weight:700;color:#fff;letter-spacing:.5px">
+    ⚠️ TEST MODE — All features unlocked · Min 1 player · Restore before launch
+  </div>
   <!-- TESTNET BANNER -->
   <div id="testnet-banner" style="display:none;background:rgba(251,191,36,.15);border-bottom:1px solid rgba(251,191,36,.3);padding:6px 12px;text-align:center;font-size:.65rem;font-weight:700;color:#FCD34D">
     ⚠️ TESTNET MODE — Token e pagamenti non hanno valore reale
@@ -3175,7 +3179,7 @@ function initHome(){
 
   // Show lock overlays on gated room cards
   const ul = getMilestoneUnlocks()
-  const roomGates = {vip:'vipRoom'}  // ton room sempre aperta
+  const roomGates = {}  // TEST MODE: nessun gate attivo
   Object.entries(roomGates).forEach(([room, key]) => {
     const card = document.querySelector('.rc.'+room)
     if (!card) return
@@ -4098,12 +4102,8 @@ const SCRATCH_QTY_MAX = 20
 let scratchAutoEnabled = false  // auto-scratch toggle
 
 function toggleAutoScratch() {
-  if (!user.warriorPass) {
-    // Mostra lock hint
-    const lock = document.getElementById('sc-auto-lock')
-    if (lock) { lock.style.display = 'block'; setTimeout(() => lock.style.display='none', 3000) }
-    return
-  }
+  // TEST MODE: auto-scratch sempre disponibile
+  // if (!user.warriorPass) { ... }
   scratchAutoEnabled = !scratchAutoEnabled
   _updateAutoToggleUI()
 }
@@ -4167,7 +4167,7 @@ function updateScratchBuyBtn() {
 function selectScratchCard(tier) {
   // Level gate
   const ul = getMilestoneUnlocks()
-  const scratchGateMap = { ton_low:'scratchBronze', ton_mid:'scratchSilver', ton:'scratchGold', ton_high:'scratchGold' }
+  const scratchGateMap = {}  // TEST MODE: nessun gate scratch
   const gateKey = scratchGateMap[tier]
   if (gateKey && !ul[gateKey]) {
     const lvMap = { scratchBronze:1, scratchSilver:1, scratchGold:10 }
@@ -4733,7 +4733,7 @@ function drawWheel(angle) {
 
 function setWheelCur(cur) {
   const ul=getMilestoneUnlocks()
-  if(cur==='ton'&&!ul.wheelTon){showLevelGatePopup('Wheel TON',getCurrentLevel(),10,'Warrior',['TON Room','PvP','Gold Scratch']);return}
+  // TEST MODE: wheel sempre aperta // if(cur==='ton'&&!ul.wheelTon){...}
   wheelCur = cur
   const usdtBtn = document.getElementById('w-cur-usdt')
   const tonBtn  = document.getElementById('w-cur-ton')
