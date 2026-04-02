@@ -4330,6 +4330,13 @@ const WHEEL_SEGMENTS = [
   // 1× JACKPOT (3.125%)
   {label:'🎰',     mult:-2, color:'#6A4A00', colorEnd:'#3A2800', textColor:'#FFD700', emoji:'🎰'},
 ]
+;(function shuffleWheel() {
+  // Fisher-Yates shuffle — mischia i segmenti visivamente mantenendo le probabilità
+  for (let i = WHEEL_SEGMENTS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[WHEEL_SEGMENTS[i], WHEEL_SEGMENTS[j]] = [WHEEL_SEGMENTS[j], WHEEL_SEGMENTS[i]]
+  }
+})()
 const SEG_COUNT = WHEEL_SEGMENTS.length
 const JACKPOT_THRESHOLD = 5.0  // TON — threshold pagamento jackpot
 let wheelAngle = 0
@@ -4414,8 +4421,9 @@ function updateWheelWarriorUI() {
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   drawWheel(0)
-  setWheelCur('usdt')
+  setWheelCur('ton')
   updateWheelUI()
+  updateWheelWarriorUI()
   document.getElementById('w-tbola').textContent = formatTbola(user.tbola||0)
 }
 
@@ -4714,7 +4722,12 @@ function handleWheelResult(segIdx) {
   } else if(seg.mult === -1) {
     // Free spin
     wheelSpinsRemaining++
-    resultMsg = '⚔️ Free Spin! +1 spin added'
+    const freeTbola = user.warriorPass ? 100 : 50  // 2× TBOLA con Warrior Pass
+    user.tbola = (user.tbola||0) + freeTbola
+    const tbolaEl2 = document.getElementById('w-tbola')
+    if (tbolaEl2) tbolaEl2.textContent = formatTbola(user.tbola)
+    scheduleSave()
+    resultMsg = `⚔️ Free Spin! +1 spin${user.warriorPass ? ' +'+freeTbola+' $TBOLA ⚔️' : ' +'+freeTbola+' $TBOLA'}`
     resultColor = '#C080FF'
     const badge = document.getElementById('w-pass-badge')
     if(badge){ badge.style.display='flex'; setTimeout(()=>badge.style.display='none', 4000) }
@@ -4726,7 +4739,18 @@ function handleWheelResult(segIdx) {
   } else {
     const won = price * seg.mult
     wheelSessionBal += won
-    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toFixed(2)+' TON'}`
+    // Warrior Pass: 2× TBOLA su ogni spin (vincite e free spin)
+    const baseTbola = Math.round(price * 50)  // 50 TBOLA per TON speso base
+    const tbolaBonus = user.warriorPass ? baseTbola * 2 : baseTbola
+    addXP(price * seg.mult, wheelCur)  // XP per la vincita
+    if (tbolaBonus > 0) {
+      user.tbola = (user.tbola||0) + tbolaBonus
+      const tbolaEl = document.getElementById('w-tbola')
+      if (tbolaEl) tbolaEl.textContent = formatTbola(user.tbola)
+      scheduleSave()
+    }
+    const tbolaStr = user.warriorPass ? ` +${tbolaBonus} $TBOLA ⚔️` : ` +${tbolaBonus} $TBOLA`
+    resultMsg = `${seg.label} — +${isTon?won.toFixed(3)+' TON':won.toFixed(2)+' TON'}${tbolaStr}`
     resultColor = seg.textColor
   }
   // Update session balance display
