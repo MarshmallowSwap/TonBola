@@ -94,7 +94,8 @@ function buildBody(type, p) {{
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
     const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
     const wc = client.open(wallet);
-    const seqno = await wc.getSeqno();
+    let seqno = 0;
+    try {{ seqno = await wc.getSeqno(); }} catch(_e) {{ seqno = 0; }}
     const params = {params_json};
     const body = buildBody('{msg_type}', params);
     await wc.sendTransfer({{
@@ -136,7 +137,8 @@ const {{ WalletContractV4, TonClient, internal }} = require('@ton/ton');
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
     const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
     const wc = client.open(wallet);
-    const seqno = await wc.getSeqno();
+    let seqno = 0;
+    try {{ seqno = await wc.getSeqno(); }} catch(_e) {{ seqno = 0; }}
     await wc.sendTransfer({{
         seqno, secretKey: kp.secretKey,
         messages: [internal({{ to: '{to_addr}', value: BigInt({amount_nano}), body: '{comment}', bounce: false }})]
