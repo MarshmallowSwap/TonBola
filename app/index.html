@@ -760,7 +760,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">$TBOLA prizes</div>
       </div>
     </div>
-    <div class="rc stars" onclick="openLobby('ton')">
+    <div class="rc ton" onclick="openLobby('ton')">
       <div class="ri">
         <div class="r-icon ri-stars" style="background-image:url(assets/icon-ton-coin.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
@@ -2962,20 +2962,10 @@ function initHome(){
   setRoomCardsEnabled(true)
   isGameActive = false
   go('s-hub'); setNav('nb-h'); initHub()
-  // Auto-prompt wallet connection after 4s if not connected
+  // Auto-prompt wallet connection after 5s
   setTimeout(() => {
-    if(!tcWallet && !sessionStorage.getItem('wallet_prompt_shown')) {
-      sessionStorage.setItem('wallet_prompt_shown', '1')
-      if(tg?.showPopup) tg.showPopup({
-        title: '🔗 Connect your wallet',
-        message: 'Connect your TON wallet to play paid rooms and receive prizes directly.',
-        buttons: [
-          {id:'connect', type:'default', text:'🔗 Connect Wallet'},
-          {type:'cancel', text:'Later'}
-        ]
-      }, (btnId) => { if(btnId === 'connect') connectWallet() })
-    }
-  }, 4000)
+    if(!tcWallet) updateWalletUI()
+  }, 5000)
   setTimeout(renderSquad, 50)
   // Load from Supabase
   setTimeout(async () => { await sbUpsertUser(); sbLoadJackpots(); sbLoadUserSquad() }, 500)
@@ -3064,8 +3054,7 @@ function selC(n,el){
 
 function updateCost(){
   const c=ROOMS[curRoom]
-  const discount=c.cur!=='free'&&nCards>=2?0.9:1
-  const totalPrice=c.price*nCards*discount
+  const totalPrice=c.price*nCards  // no sconto
   const pool=c.cur==='free'?0:totalPrice*SPLIT.prizePool
   const fmt=v=>c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
   const el=document.getElementById('l-cost')
@@ -3235,17 +3224,15 @@ function renderCards(){
   // Room colors matching room cards
   const roomBg={
     free:'linear-gradient(135deg,#065F46,#0D9B6B)',
-    stars:'linear-gradient(135deg,#1D3461,#2D5FB5)',
     ton:'linear-gradient(135deg,#4C1D95,#7C3AED)',
     vip:'linear-gradient(135deg,#92400E,#D97706)'
   }
   const roomBorder={
     free:'rgba(52,211,153,.4)',
-    stars:'rgba(66,134,244,.4)',
     ton:'rgba(139,92,246,.4)',
     vip:'rgba(245,158,11,.4)'
   }
-  const cardLabel={free:'🆓 Card',stars:'💵 Card',ton:'💎 Card',vip:'👑 Card'}[curRoom]||'Card'
+  const cardLabel={free:'🆓 Card',ton:'💎 Card',vip:'👑 Card'}[curRoom]||'Card'
   const bg=roomBg[curRoom]||roomBg.ton
   const bd=roomBorder[curRoom]||roomBorder.ton
   cont.innerHTML=cards.map((card,ci)=>`
@@ -3313,8 +3300,7 @@ function checkW(){
 
 function showWin(type){
   const c=ROOMS[curRoom]
-  const discount=c.cur!=='free'&&nCards>=2?0.9:1
-  const paidAmt=c.price*nCards*discount
+  const paidAmt=c.price*nCards
   const pool=c.cur==='free'?0:paidAmt*SPLIT.prizePool
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
@@ -3579,69 +3565,9 @@ function hubWheelJpToggle() {
 }
 
 
-function setWheelMultiplier(mult) {
-  wheelMultiplier = mult
-  const price = (0.10 * mult).toFixed(2)
-  // Update UI
-  ;[1,2,5,10].forEach(m => {
-    const el = document.getElementById('w-mult-'+m)
-    if(!el) return
-    if(m === mult) {
-      el.style.background = 'rgba(0,152,234,.2)'
-      el.style.borderColor = '#0098EA'
-      el.querySelector('div').style.color = '#40B8FF'
-    } else {
-      el.style.background = 'rgba(255,255,255,.04)'
-      el.style.borderColor = 'rgba(255,255,255,.1)'
-      el.querySelector('div').style.color = '#fff'
-    }
-  })
-  const pd = document.getElementById('w-price-display')
-  if(pd) pd.textContent = price + ' TON'
-  // Update spin button
-  updateWheelUI()
-}
 
 
-function updateWheelWarriorUI() {
-  const active   = document.getElementById('w-warrior-active')
-  const inactive = document.getElementById('w-warrior-inactive')
-  const daysEl   = document.getElementById('w-wp-days')
-  const freeRow  = document.getElementById('w-free-spin-row')
-  const freeStatus = document.getElementById('w-free-spin-status')
 
-  if(user.warriorPass) {
-    if(active)   active.style.display   = 'block'
-    if(inactive) inactive.style.display = 'none'
-    // Days remaining
-    if(daysEl && user.wpExpiry) {
-      const d = Math.ceil((user.wpExpiry - Date.now()) / 86400000)
-      daysEl.textContent = Math.max(0,d) + 'd left'
-    }
-    // Free spin status
-    const hasFree = hasFreePlaysAvailable('wheel')
-    if(freeStatus) {
-      freeStatus.textContent   = hasFree ? 'Available ✓' : 'Used today'
-      freeStatus.style.color   = hasFree ? '#3AFF8A'     : 'rgba(255,255,255,.3)'
-    }
-    if(freeRow) freeRow.style.opacity = hasFree ? '1' : '.5'
-  } else {
-    if(active)   active.style.display   = 'none'
-    if(inactive) inactive.style.display = 'flex'
-  }
-}
-
-function openWheel() {
-  go('s-wheel'); setNav('nb-h')
-  wheelSpinsSelected = 0
-  updateWheelWarriorUI()
-  // Draw wheel with slight delay so canvas is visible
-  setTimeout(() => drawWheel(wheelAngle), 50)
-  setWheelCur('usdt')
-  updateWheelUI()
-  const tb = document.getElementById('w-tbola')
-  if(tb) tb.textContent = formatTbola(user.tbola||0)
-}
 
 function showTonFeeError() {
   if(tg?.showPopup) {
@@ -3887,12 +3813,13 @@ function openScratch() {
   document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola||0) + ' $TBOLA'
   showScratchTable('ton_low')
   // Reset selectors
-  Object.keys(SCRATCH_TIERS).forEach(k => {
+  ;['ton_low','ton_mid','ton_high'].forEach(k => {
     const card = document.getElementById('sc-card-'+k)
     const sel  = document.getElementById('sc-sel-'+k)
-    if(card){ card.style.opacity='1'; card.style.transform='scale(1)' }
+    if(card){ card.style.opacity='1'; card.style.transform='scale(1)'; card.style.boxShadow='' }
     if(sel){ sel.textContent=''; sel.style.background='transparent' }
   })
+  scratchSelected = null
   const btn = document.getElementById('sc-buy-btn')
   if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='🎟️ Buy & Scratch — select a card first' }
 }
@@ -5156,7 +5083,7 @@ function copyRef(){
 }
 
 // ── LEADERBOARD DATA — Opzione A: Stars vs TON separate ──
-let lbCurrency = 'ton' // 'stars' or 'ton'
+let lbCurrency = 'ton'
 let lbTab = 'weekly'
 
 const LBD = {
