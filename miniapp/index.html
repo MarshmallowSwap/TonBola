@@ -669,6 +669,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 #p-cards-box{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(245,158,11,.08))!important;border:1px solid rgba(251,191,36,.3)!important}
 #p-cards-box .sbn{color:var(--yellow)!important}
 
+.sc-qty-btn{padding:6px 14px;border-radius:8px;border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.08);color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .15s}
+.sc-qty-active{border-color:rgba(52,211,153,.6)!important;background:rgba(52,211,153,.2)!important;color:#34D399!important}
 /* Force rc cards always clickable */
 #sh .rc { pointer-events: auto !important; }
 
@@ -777,7 +779,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="display:flex;align-items:center;gap:5px">
           <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,215,0,.6);text-transform:uppercase">🎰 Jackpot</span>
         </div>
-        <div style="font-size:.78rem;font-weight:800;color:#FCD34D" id="jackpot-stars">5.00 TON</div>
+        <div style="font-size:.78rem;font-weight:800;color:#FCD34D" id="jackpot-stars">0.00 TON</div>
       </div>
     </div>
     <div class="rc ton" onclick="openLobby('ton')">
@@ -795,7 +797,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(34,211,238,.6);text-transform:uppercase">🎰 Jackpot</span>
-        <div style="font-size:.78rem;font-weight:800;color:#22D3EE" id="jackpot-ton">5.00 TON</div>
+        <div style="font-size:.78rem;font-weight:800;color:#22D3EE" id="jackpot-ton">0.00 TON</div>
       </div>
     </div>
     <div class="rc vip" onclick="openLobby('vip')">
@@ -813,7 +815,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.1)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(255,100,0,.7);text-transform:uppercase">🎰 Jackpot</span>
-        <div style="font-size:.78rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)" id="jackpot-vip">5.00 TON</div>
+        <div style="font-size:.78rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)" id="jackpot-vip">0.00 TON</div>
       </div>
     </div>
   </div>
@@ -1244,14 +1246,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">🎟️ Silver Card</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — better odds</div>
         <div style="display:flex;gap:6px;margin-top:4px">
-          <span style="font-size:.6rem;background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);color:#60A5FA;padding:1px 7px;border-radius:50px;font-weight:700">0.50 TON</span>
-          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 5 TON</span>
+          <span style="font-size:.6rem;background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);color:#60A5FA;padding:1px 7px;border-radius:50px;font-weight:700">0.25 TON</span>
+          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 2.50 TON</span>
         </div>
       </div>
       <div id="sc-sel-ton_mid" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0"></div>
     </div>
 
-    <!-- Gold 0.20 TON -->
+    <!-- Gold 0.50 TON -->
     <div onclick="selectScratchCard('ton')" id="sc-card-ton"
       style="cursor:pointer;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;
       background:linear-gradient(135deg,rgba(91,33,182,.6),rgba(109,40,217,.8));
@@ -1261,8 +1263,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">🎟️ Gold Card</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — max prizes</div>
         <div style="display:flex;gap:6px;margin-top:4px">
-          <span style="font-size:.6rem;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#A78BFA;padding:1px 7px;border-radius:50px;font-weight:700">0.20 TON</span>
-          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 2 TON</span>
+          <span style="font-size:.6rem;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#A78BFA;padding:1px 7px;border-radius:50px;font-weight:700">0.50 TON</span>
+          <span style="font-size:.6rem;color:rgba(255,255,255,.35)">Win up to 10 TON</span>
         </div>
       </div>
       <div id="sc-sel-ton" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0"></div>
@@ -1295,8 +1297,18 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     </table>
   </div>
 
-  <!-- Buy button -->
+  <!-- Buy section: quantità + button -->
   <div style="padding:0 12px 14px">
+    <!-- Selettore quantità -->
+    <div id="sc-qty-row" style="display:none;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700">QTY</span>
+      <div style="display:flex;gap:6px">
+        <button onclick="setScratchQty(1)" id="sc-qty-1" class="sc-qty-btn sc-qty-active">1</button>
+        <button onclick="setScratchQty(3)" id="sc-qty-3" class="sc-qty-btn">3</button>
+        <button onclick="setScratchQty(5)" id="sc-qty-5" class="sc-qty-btn">5</button>
+      </div>
+      <span id="sc-qty-total" style="font-size:.75rem;color:#34D399;font-weight:700;min-width:60px;text-align:right"></span>
+    </div>
     <button id="sc-buy-btn" onclick="buyScratchCard()"
       style="width:100%;padding:16px;border-radius:16px;border:none;
       font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#001A00;
@@ -1305,6 +1317,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       box-shadow:0 4px 0 #065F46;transition:all .2s">
       🎟️ Buy &amp; Scratch — select a card first
     </button>
+    <!-- Warrior Pass auto-scratch hint -->
+    <div id="sc-auto-hint" style="display:none;text-align:center;margin-top:6px;font-size:.62rem;color:rgba(139,92,246,.7);font-weight:600">
+      ⚔️ Warrior Pass · Auto-scratch attivo
+    </div>
   </div>
 
   <!-- Active scratch game area -->
@@ -1341,7 +1357,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       Reveal all
     </button>
 
-    <button id="sc-new-btn" onclick="openScratch()" style="display:none;width:100%;margin-top:8px;
+    <button id="sc-new-btn" onclick="window._scratchNextFn ? (window._scratchNextFn(), window._scratchNextFn=null) : openScratch()" style="display:none;width:100%;margin-top:8px;
       padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#34D399,#059669);
       font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#001A00;cursor:pointer;
       box-shadow:0 4px 0 #065F46">
@@ -2390,7 +2406,7 @@ function addXP(amount, cur) {
   const prevLv = getCurrentLevel()
   user.xp = (user.xp||0) + gained
   user.tbola = (user.tbola||0) + gained
-  if (getCurrentLevel() > prevLv) showLevelUp(getCurrentLevel())
+  if (getCurrentLevel() > prevLv) { showLevelUp(getCurrentLevel()); updateLevelLocks() }
   updateXpUI()
   scheduleSave()
   // Paga 5% TBOLA al referrer (fire & forget)
@@ -2575,6 +2591,7 @@ async function sbUpsertUser() {
     // Referral: registra se arrivato via link + carica stats
     initReferral()
     loadReferralStats()
+    updateLevelLocks()
   } catch(e) {
     console.warn('sbUpsertUser error:', e)
   }
@@ -3853,9 +3870,9 @@ const SCRATCH_TIERS = {
     prizes:[0, 0, 0, 0, 0.25, 0.75, 1.25, 2.5],
     jackpotSym:'🎰', jackpotCount:5
   },
-  // Gold: 1.00 TON · 3×4 · max 10.00 TON · RTP ~60%
+  // Gold: 0.50 TON · 3×4 · max 10.00 TON · RTP ~60%
   ton_high: {
-    name:'Gold', price:1.00, cur:'ton',
+    name:'Gold', price:0.50, cur:'ton',
     cols:3, rows:4,
     symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],
     maxWin:10.0,
@@ -3863,6 +3880,7 @@ const SCRATCH_TIERS = {
     jackpotSym:'🎰', jackpotCount:5
   }
 }
+SCRATCH_TIERS.ton = SCRATCH_TIERS.ton_high  // alias
 // JACKPOT: pagabile da 5 TON · 5% di ogni scratch va al jackpot pool
 // SPLIT: 55% prize · 5% jackpot · 4% ranks · 36% dev
 
@@ -3928,26 +3946,57 @@ function showScratchTable(tier) {
   `).join('')
 }
 
+let scratchQty = 1  // quantità selezionata
+
+function setScratchQty(n) {
+  scratchQty = n
+  document.querySelectorAll('.sc-qty-btn').forEach(b => b.classList.remove('sc-qty-active'))
+  const active = document.getElementById('sc-qty-'+n)
+  if (active) active.classList.add('sc-qty-active')
+  // Aggiorna totale e bottone
+  if (scratchSelected) updateScratchBuyBtn()
+}
+
+function updateScratchBuyBtn() {
+  const t = SCRATCH_TIERS[scratchSelected]
+  if (!t) return
+  const total = (t.price * scratchQty).toFixed(2)
+  const btn = document.getElementById('sc-buy-btn')
+  const totalEl = document.getElementById('sc-qty-total')
+  if (totalEl) totalEl.textContent = total + ' TON'
+  if (btn) {
+    const label = scratchQty > 1
+      ? `🎟️ Buy ${scratchQty} Cards — ${total} TON`
+      : `🎟️ Buy & Scratch — ${total} TON`
+    btn.textContent = label
+    btn.style.opacity = '1'
+    btn.style.pointerEvents = 'auto'
+  }
+  // Mostra hint auto-scratch per Warrior Pass
+  const hint = document.getElementById('sc-auto-hint')
+  if (hint) hint.style.display = user.warriorPass && scratchQty > 1 ? 'block' : 'none'
+}
+
 function selectScratchCard(tier) {
   // Level gate
   const ul = getMilestoneUnlocks()
-  const scratchGateMap = { usdt_low:'scratchBronze', usdt_mid:'scratchSilver', ton:'scratchGold' }
+  const scratchGateMap = { ton_low:'scratchBronze', ton_mid:'scratchSilver', ton:'scratchGold', ton_high:'scratchGold' }
   const gateKey = scratchGateMap[tier]
   if (gateKey && !ul[gateKey]) {
     const lvMap = { scratchBronze:1, scratchSilver:1, scratchGold:10 }
     const lv = lvMap[gateKey] || 10
     const ms = XP_MILESTONES[lv]
-    showLevelGatePopup(SCRATCH_TIERS[tier]?.name+' Scratch', getCurrentLevel(), lv, ms?.name||'', ['Gold Scratch cards','Wheel TON','TON Room bingo'])
+    showLevelGatePopup(SCRATCH_TIERS[tier]?.name+' Scratch', getCurrentLevel(), lv, ms?.name||'', ['Gold Scratch','Wheel TON','TON Room'])
     return
   }
   scratchSelected = tier
   showScratchTable(tier)
-  const t = SCRATCH_TIERS[tier]
-  // Update UI
+
+  // Highlight card selezionata
   Object.keys(SCRATCH_TIERS).forEach(k => {
     const card = document.getElementById('sc-card-'+k)
     const sel  = document.getElementById('sc-sel-'+k)
-    if(k === tier) {
+    if (k === tier) {
       if(card){ card.style.opacity='1'; card.style.transform='scale(1.02)'; card.style.boxShadow='0 0 20px rgba(52,211,153,.3)' }
       if(sel){ sel.textContent='✓'; sel.style.background='rgba(52,211,153,.3)'; sel.style.color='#34D399' }
     } else {
@@ -3955,270 +4004,102 @@ function selectScratchCard(tier) {
       if(sel){ sel.textContent=''; sel.style.background='transparent' }
     }
   })
-  const sym = t.cur === 'usdt' ? t.price.toFixed(2)+' TON' : t.price.toFixed(2)+' TON'
-  const btn = document.getElementById('sc-buy-btn')
-  if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; btn.textContent='🎟️ Buy & Scratch — '+sym }
+
+  // Mostra selettore quantità
+  const qtyRow = document.getElementById('sc-qty-row')
+  if (qtyRow) qtyRow.style.display = 'flex'
+
+  updateScratchBuyBtn()
 }
 
 async function buyScratchCard() {
-  if(!scratchSelected) return
+  if (!scratchSelected) return
   const t = SCRATCH_TIERS[scratchSelected]
+  const qty = scratchQty || 1
+  const totalTon = +(t.price * qty).toFixed(3)
   const btn = document.getElementById('sc-buy-btn')
-  if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; btn.textContent='⏳ Processing...' }
+  if (btn) { btn.style.opacity = '.6'; btn.style.pointerEvents = 'none'; btn.textContent = '⏳ Processing...' }
 
-  const comment = 'TonBola:scratch:'+scratchSelected
+  const comment = `TonBola:scratch:${scratchSelected}:x${qty}`
+  const isAuto = user.warriorPass && qty > 1  // auto-scratch se warrior pass + multi-card
 
   const onSuccess = () => {
-    if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Card purchased!' }
-    revealScratchCard(t)
-    // Warrior Pass: auto-scratch
-    if(user.warriorPass) setTimeout(() => revealAll(), 800)
+    if (btn) { btn.style.opacity = '.4'; btn.style.pointerEvents = 'none'; btn.textContent = '✅ ' + qty + ' card' + (qty>1?'s':'')+' purchased!' }
+    // Gioca le carte in sequenza
+    playMultiScratch(t, qty, isAuto)
   }
   const onFail = () => {
-    if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto' }
-    selectScratchCard(scratchSelected)
+    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto' }
+    updateScratchBuyBtn()
   }
 
-  await sendTonPayment(t.price, comment, onSuccess, onFail, 2)  // game_type=2 (scratch)
+  await sendTonPayment(totalTon, comment, onSuccess, onFail, 2, Date.now())
 }
 
-let scCanvas = null, scCtx = null, scIsScratching = false
-let scCells = [], scTier = null, scScratchedPx = 0, scTotalPx = 0
+async function playMultiScratch(t, qty, autoReveal) {
+  let cardsLeft = qty
+  let totalWon = 0
 
-function revealScratchCard(tier) {
-  scTier = tier
-  const area = document.getElementById('sc-game-area')
-  area.style.display = 'block'
-  document.getElementById('sc-result-msg').textContent = ''
-  document.getElementById('sc-new-btn').style.display = 'none'
-  document.getElementById('sc-reveal-btn').style.display = 'none'
-  document.getElementById('sc-progress').style.width = '0%'
-  document.getElementById('sc-scratch-pct').textContent = '0% scratched'
-
-  // Generate cells — 3 columns always
-  const cols = 3
-  const rows = tier.cells  // usdt_low=3, others=4
-  const n = cols * rows
-  const syms = [...tier.symbols]
-  scCells = Array.from({length:n}, () => syms[Math.floor(Math.random()*syms.length)])
-
-  // Maybe add winning triple (35% chance)
-  if(Math.random() < 0.35) {
-    const w = syms[Math.floor(Math.random()*syms.length)]
-    const pos = [0,1,2].map(() => Math.floor(Math.random()*n))
-    pos.forEach(p => scCells[p] = w)
-  }
-
-  // Build prize layer
-  const layer = document.getElementById('sc-prizes-layer')
-  layer.style.gridTemplateColumns = `repeat(${cols},1fr)`
-  layer.innerHTML = ''
-  scCells.forEach(sym => {
-    const cell = document.createElement('div')
-    cell.style.cssText = `
-      background:linear-gradient(135deg,#0D1F0D,#122012);
-      border:1.5px solid rgba(52,211,153,.15);border-radius:10px;
-      aspect-ratio:1;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;gap:2px;
-    `
-    cell.innerHTML = `<div style="font-size:1.6rem;line-height:1">${sym}</div>`
-    layer.appendChild(cell)
-  })
-
-  // Wait for DOM, then size and draw canvas
-  requestAnimationFrame(() => {
-    const canvas = document.getElementById('sc-canvas')
-    const rect = layer.getBoundingClientRect()
-    canvas.width  = Math.round(rect.width  * devicePixelRatio)
-    canvas.height = Math.round(rect.height * devicePixelRatio)
-    scCanvas = canvas
-    scCtx = canvas.getContext('2d')
-    scCtx.scale(devicePixelRatio, devicePixelRatio)
-
-    // Fill with silver scratch surface
-    const W = rect.width, H = rect.height
-    const grad = scCtx.createLinearGradient(0,0,W,H)
-    grad.addColorStop(0,  '#9CA3AF')
-    grad.addColorStop(0.3,'#D1D5DB')
-    grad.addColorStop(0.6,'#9CA3AF')
-    grad.addColorStop(1,  '#6B7280')
-    scCtx.fillStyle = grad
-    scCtx.fillRect(0, 0, W, H)
-
-    // Texture pattern
-    scCtx.fillStyle = 'rgba(0,0,0,.06)'
-    for(let x=0;x<W;x+=4) for(let y=0;y<H;y+=4) {
-      if((x+y)%8===0) scCtx.fillRect(x,y,2,2)
+  const playNext = async () => {
+    if (cardsLeft <= 0) {
+      // Fine sessione multi-card
+      if (qty > 1) {
+        const msg = totalWon > 0
+          ? `🎉 Session complete! You won ${totalWon.toFixed(3)} TON across ${qty} cards!`
+          : `${qty} cards scratched — better luck next time!`
+        if (tg?.showPopup) tg.showPopup({ title: '🎟️ Scratch Session', message: msg, buttons: [{type:'ok'}] })
+      }
+      // Ripristina bottone buy
+      const btn = document.getElementById('sc-buy-btn')
+      const newBtn = document.getElementById('sc-new-btn')
+      if (btn) { btn.style.display = 'block'; updateScratchBuyBtn() }
+      if (newBtn) newBtn.style.display = 'block'
+      return
     }
+    cardsLeft--
 
-    // "SCRATCH HERE" text
-    scCtx.font = `bold ${Math.min(18,W/10)}px Outfit,sans-serif`
-    scCtx.fillStyle = 'rgba(80,80,80,.6)'
-    scCtx.textAlign = 'center'
-    scCtx.fillText('SCRATCH HERE', W/2, H/2)
+    // Genera e mostra la carta
+    revealScratchCard(t)
 
-    scCtx.globalCompositeOperation = 'destination-out'
-    scScratchedPx = 0
-    scTotalPx = canvas.width * canvas.height
-
-    // Touch & mouse events
-    const getPos = e => {
-      const r = canvas.getBoundingClientRect()
-      const src = e.touches ? e.touches[0] : e
-      return { x: src.clientX - r.left, y: src.clientY - r.top }
+    if (autoReveal) {
+      // Auto-scratch: rivela immediatamente senza interazione
+      await new Promise(r => setTimeout(r, 600))
+      const winAmt = await revealAll()
+      totalWon += winAmt || 0
+      await new Promise(r => setTimeout(r, 1000))  // pausa tra card
+      playNext()
+    } else {
+      // Manuale: aspetta che l'utente finisca di grattare
+      // Il bottone "New Card" richiama playNext
+      window._scratchNextFn = () => { playNext() }
     }
-    const scratch = pos => {
-      scCtx.beginPath()
-      scCtx.arc(pos.x, pos.y, 22, 0, Math.PI*2)
-      scCtx.fill()
-      updateScratchProgress()
-    }
+  }
 
-    canvas.onmousedown  = e => { scIsScratching=true; scratch(getPos(e)) }
-    canvas.onmousemove  = e => { if(scIsScratching) scratch(getPos(e)) }
-    canvas.onmouseup    = ()  => { scIsScratching=false }
-    canvas.ontouchstart = e => { e.preventDefault(); scIsScratching=true; scratch(getPos(e)) }
-    canvas.ontouchmove  = e => { e.preventDefault(); if(scIsScratching) scratch(getPos(e)) }
-    canvas.ontouchend   = ()  => { scIsScratching=false }
+  // Aggiorna counter
+  const counterEl = document.getElementById('sc-card-counter')
+  if (!counterEl && qty > 1) {
+    const ctr = document.createElement('div')
+    ctr.id = 'sc-card-counter'
+    ctr.style.cssText = 'text-align:center;font-size:.75rem;color:rgba(255,255,255,.5);font-weight:700;margin:4px 0'
+    const area = document.getElementById('scCanvasWrap') || document.getElementById('scGameArea')
+    if (area) area.parentNode.insertBefore(ctr, area)
+  }
 
-    document.getElementById('sc-reveal-btn').style.display = 'block'
-  })
+  const updateCounter = (left) => {
+    const el = document.getElementById('sc-card-counter')
+    if (el) el.textContent = `Card ${qty - left + 1} of ${qty}`
+  }
+
+  const origPlayNext = playNext
+  window._scratchPlayNext = async () => {
+    updateCounter(cardsLeft)
+    await origPlayNext()
+  }
+
+  updateCounter(cardsLeft + 1)
+  await playNext()
 }
 
-function updateScratchProgress() {
-  if(!scCtx || !scCanvas) return
-  const data = scCtx.getImageData(0,0,scCanvas.width,scCanvas.height).data
-  let transparent = 0
-  for(let i=3; i<data.length; i+=4) if(data[i]<128) transparent++
-  const pct = Math.min(100, Math.round(transparent/(scCanvas.width*scCanvas.height)*100))
-  document.getElementById('sc-progress').style.width = pct+'%'
-  document.getElementById('sc-scratch-pct').textContent = pct+'% scratched'
-  if(pct >= 70 && !document.getElementById('sc-result-msg').textContent) {
-    finalizeScratch()
-  }
-}
-
-function revealAll() {
-  if(!scCtx||!scCanvas) return
-  const r = scCanvas.getBoundingClientRect ? scCanvas.getBoundingClientRect() : {width:scCanvas.width,height:scCanvas.height}
-  scCtx.fillRect(0,0,scCanvas.width/devicePixelRatio,scCanvas.height/devicePixelRatio)
-  document.getElementById('sc-progress').style.width = '100%'
-  document.getElementById('sc-scratch-pct').textContent = '100% scratched'
-  finalizeScratch()
-}
-
-function finalizeScratch() {
-  if(document.getElementById('sc-result-msg').textContent) return // already done
-  document.getElementById('sc-reveal-btn').style.display = 'none'
-
-  // Count matches
-  const counts = {}
-  scCells.forEach(s => counts[s]=(counts[s]||0)+1)
-  const maxMatch = Math.max(...Object.values(counts))
-  const matchSym = Object.keys(counts).find(k=>counts[k]===maxMatch)
-  let prize = 0
-  if(maxMatch>=3) prize = scTier.prizes[Math.min(maxMatch,scTier.prizes.length-1)]
-
-  const msg = document.getElementById('sc-result-msg')
-  const newBtn = document.getElementById('sc-new-btn')
-  newBtn.style.display = 'block'
-
-  if(prize>0) {
-    const sym = scTier.cur==='usdt' ? prize.toFixed(2)+' TON' : prize.toFixed(2)+' TON'
-    msg.innerHTML = `🎉 <span style="color:#34D399">You won ${sym}!</span><br><span style="font-size:1.5rem">${matchSym} ${matchSym} ${matchSym}</span>`
-    user.tbola = (user.tbola||0)+50
-    payReferralReward(50)  // 5% al referrer
-    document.getElementById('sc-tbola-bal').textContent = formatTbola(user.tbola)+' $TBOLA'
-  } else {
-    msg.innerHTML = `😔 <span style="color:rgba(255,255,255,.4)">No match — better luck next time!</span>`
-  }
-}
-
-// ── BINGO PAY & ENTER ──
-
-// ── Jetton Transfer ──
-const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
-const TON_JETTON_MASTER = TON_JETTON_MASTER_ADDR
-const USDT_JETTON_MASTER = TON_JETTON_MASTER_ADDR  // alias TON-only
-TON_DECIMALS = 6 // TON has 6 decimals on TON
-const NOT_DECIMALS = 100000000000 // 9 decimali
-
-
-// ── Minimal BOC builder for jetton transfer ──
-function parseTonAddress(addr) {
-  // Accept both friendly (EQ.../UQ...) and raw (0:hex) formats
-  if (addr.includes(':')) {
-    const [wc, hex] = addr.split(':')
-    return { workchain: parseInt(wc), hash: new Uint8Array(hex.match(/.{2}/g).map(h=>parseInt(h,16))) }
-  }
-  const b64 = addr.replace(/-/g,'+').replace(/_/g,'/')
-  const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0))
-  // byte[0]=tag, byte[1]=workchain(int8), bytes[2..33]=hash(32), bytes[34..35]=crc
-  const wc = bytes[1] > 127 ? bytes[1]-256 : bytes[1]
-  return { workchain: wc, hash: bytes.slice(2, 34) }
-}
-
-function buildJettonTransferBOC(nanoAmount, destAddr, senderAddr, fwdTon, comment) {
-  // BitWriter
-  const buf = new Uint8Array(128)
-  let bitPos = 0
-  const writeBit = b => {
-    const by = bitPos >> 3, bi = 7 - (bitPos & 7)
-    if (b) buf[by] |= 1 << bi
-    bitPos++
-  }
-  const writeBits = (v, n) => { for (let i=n-1;i>=0;i--) writeBit((v>>i)&1) }
-  const writeBigBits = (v, n) => { for (let i=n-1;i>=0;i--) writeBit(Number((v>>BigInt(i))&1n)) }
-  const writeCoins = v => {
-    if (v===0n){ writeBits(0,4); return }
-    let b=0, t=v; while(t>0n){t>>=8n;b++}
-    writeBits(b,4); writeBigBits(v,b*8)
-  }
-  const writeAddr = a => {
-    writeBits(0b10,2); writeBit(0)          // addr_std, no anycast
-    const wc = a.workchain < 0 ? a.workchain+256 : a.workchain
-    writeBits(wc,8)                          // workchain int8
-    for (const b of a.hash) writeBits(b,8)  // 256-bit hash
-  }
-
-  // op: 0x0f8a7ea5
-  writeBits(0x0f8a7ea5, 32)
-  // query_id: 0
-  writeBits(0, 64)
-  // amount
-  writeCoins(BigInt(nanoAmount))
-  // destination
-  writeAddr(parseTonAddress(destAddr))
-  // response_destination (sender)
-  writeAddr(parseTonAddress(senderAddr))
-  // custom_payload: none
-  writeBit(0)
-  // forward_ton_amount
-  writeCoins(BigInt(Math.round(fwdTon * 1e9)))
-  // forward_payload: inline (0 bit) + comment
-  writeBit(0)
-  if (comment) {
-    writeBits(0, 32) // text comment op
-    for (const ch of new TextEncoder().encode(comment)) writeBits(ch, 8)
-  }
-
-  // Serialize cell
-  const dataBits = bitPos
-  const dataBytes = Math.ceil(dataBits / 8)
-  // Add completion bit if not byte-aligned
-  if (dataBits % 8 !== 0) {
-    const bi = 7 - (dataBits & 7)
-    buf[dataBytes-1] |= 1 << bi
-  }
-  const d2 = Math.floor(dataBits/8)*2 + (dataBits%8 !== 0 ? 1 : 0)
-  const totSize = 2 + dataBytes
-
-  // BOC: magic + flags + counts + size + root_index + cell
-  const boc = [0xb5,0xee,0x9c,0x72, 0x01, 0x01, 0x01, 0x01, 0x00, totSize, 0x00, 0x00, d2]
-  for (let i=0;i<dataBytes;i++) boc.push(buf[i])
-
-  return btoa(String.fromCharCode(...boc))
-}
 
 async function sendJettonPayment(masterAddr, nanoAmount, decimals, comment, onSuccess, onFail) {
   if (!tc || !tcWallet) { if (onFail) onFail('no_wallet'); return }
@@ -5266,6 +5147,83 @@ async function loadReferralStats() {
     const totalEarned = data.reduce((s, r) => s + (r.total_tbola_earned || 0), 0)
     el.innerHTML = `<span style="color:#34D399;font-weight:700">${data.length} friend${data.length>1?'s':''} invited</span> · <span style="color:#C080FF">${totalEarned.toLocaleString()} $TBOLA earned</span>`
   } catch(e) {}
+}
+
+
+// ── Level lock visuale sulle room/game cards ─────────────────
+function updateLevelLocks() {
+  const ul = getMilestoneUnlocks()
+  const lv = getCurrentLevel()
+
+  // Mappa card → unlock key + livello richiesto
+  const LOCKS = [
+    { id: 'rc-ton-standard', key: 'tonRoom',      lv: 10, label: 'Lv.10 Warrior' },
+    { id: 'rc-ton-vip',      key: 'vipRoom',      lv: 15, label: 'Lv.15 Expert'  },
+    { id: 'sc-card-ton_mid', key: 'scratchSilver', lv: 10, label: 'Lv.10 Warrior' },
+    { id: 'sc-card-ton',     key: 'scratchGold',  lv: 10, label: 'Lv.10 Warrior' },
+    { id: 'sc-card-ton_high',key: 'scratchGold',  lv: 10, label: 'Lv.10 Warrior' },
+  ]
+
+  // Hub bingo cards: blocca TON e VIP se livello insufficiente
+  const rcTon = document.querySelector('.rc.ton')
+  const rcVip = document.querySelector('.rc.vip')
+  const rcTons = document.querySelectorAll('.rc.ton')
+
+  // TON Room: lv 10
+  rcTons.forEach(el => {
+    const locked = !ul.tonRoom
+    el.style.opacity  = locked ? '0.45' : '1'
+    el.style.filter   = locked ? 'grayscale(0.6)' : ''
+    // Badge lock
+    let lockBadge = el.querySelector('.lock-badge')
+    if (locked && !lockBadge) {
+      lockBadge = document.createElement('div')
+      lockBadge.className = 'lock-badge'
+      lockBadge.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);color:rgba(255,255,255,.7);font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;pointer-events:none'
+      lockBadge.textContent = '🔒 Lv.10'
+      el.style.position = 'relative'
+      el.appendChild(lockBadge)
+    } else if (!locked && lockBadge) {
+      lockBadge.remove()
+    }
+  })
+
+  // VIP Room: lv 15
+  if (rcVip) {
+    const locked = !ul.vipRoom
+    rcVip.style.opacity = locked ? '0.45' : '1'
+    rcVip.style.filter  = locked ? 'grayscale(0.6)' : ''
+    let lockBadge = rcVip.querySelector('.lock-badge')
+    if (locked && !lockBadge) {
+      lockBadge = document.createElement('div')
+      lockBadge.className = 'lock-badge'
+      lockBadge.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);color:rgba(255,100,0,.8);font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;pointer-events:none'
+      lockBadge.textContent = '🔒 Lv.15'
+      rcVip.style.position = 'relative'
+      rcVip.appendChild(lockBadge)
+    } else if (!locked && lockBadge) {
+      lockBadge.remove()
+    }
+  }
+
+  // Scratch cards
+  LOCKS.filter(l => l.id.startsWith('sc-card')).forEach(lock => {
+    const el = document.getElementById(lock.id)
+    if (!el) return
+    const locked = !ul[lock.key]
+    el.style.opacity = locked ? '0.4' : '1'
+    el.style.filter  = locked ? 'grayscale(0.7)' : ''
+    let lockBadge = el.querySelector('.lock-badge')
+    if (locked && !lockBadge) {
+      lockBadge = document.createElement('div')
+      lockBadge.className = 'lock-badge'
+      lockBadge.style.cssText = 'background:rgba(0,0,0,.6);color:rgba(255,255,255,.6);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;white-space:nowrap'
+      lockBadge.textContent = '🔒 ' + lock.label
+      el.querySelector('.sc-sel-'+lock.id.replace('sc-card-','')) // trova il div flex
+      const inner = el.querySelector('div:last-child')
+      if (inner) inner.replaceWith(lockBadge)
+    }
+  })
 }
 
 function copyRef(){
