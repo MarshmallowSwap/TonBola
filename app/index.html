@@ -791,7 +791,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       </div>
       <div class="rf">
         <div class="rp"><span class="live-dot"></span><span id="rp-ton">0</span> warriors</div>
-        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.2 $TON / card</div>
+        <div class="rprz" style="color:rgba(255,255,255,.9);font-weight:800">0.25 $TON / card</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;border-top:1px solid rgba(255,255,255,.06)">
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.5px;color:rgba(34,211,238,.6);text-transform:uppercase">🎰 Jackpot</span>
@@ -1055,12 +1055,34 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   </div>
 
   <!-- Currency selector -->
-  <div style="margin:0 12px 10px;display:grid;grid-template-columns:1fr;gap:8px">
-    <div id="w-cur-ton"
-      style="padding:12px 8px;border-radius:14px;text-align:center;background:rgba(0,152,234,.15);border:2px solid #0098EA">
-      <img src="assets/icon-ton-coin.png" style="width:30px;height:30px;object-fit:contain;margin-bottom:4px">
-      <div style="font-size:.78rem;font-weight:700;color:#40B8FF">$TON</div>
-      <div style="font-size:.6rem;color:rgba(64,184,255,.6);margin-top:1px">0.10 / spin</div>
+  <!-- Multiplier selector -->
+  <div style="margin:0 12px 10px">
+    <div style="font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(167,139,250,.5);margin-bottom:8px">🔢 Multiplier</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="w-mult-grid">
+      <div id="w-mult-1" onclick="setWheelMultiplier(1)"
+        style="padding:10px 4px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(0,152,234,.2);border:2px solid #0098EA;transition:all .15s">
+        <div style="font-size:1rem;font-weight:800;color:#40B8FF">1×</div>
+        <div style="font-size:.58rem;color:rgba(64,184,255,.7);margin-top:2px">0.10 TON</div>
+      </div>
+      <div id="w-mult-2" onclick="setWheelMultiplier(2)"
+        style="padding:10px 4px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+        <div style="font-size:1rem;font-weight:800;color:#fff">2×</div>
+        <div style="font-size:.58rem;color:rgba(255,255,255,.4);margin-top:2px">0.20 TON</div>
+      </div>
+      <div id="w-mult-5" onclick="setWheelMultiplier(5)"
+        style="padding:10px 4px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+        <div style="font-size:1rem;font-weight:800;color:#fff">5×</div>
+        <div style="font-size:.58rem;color:rgba(255,255,255,.4);margin-top:2px">0.50 TON</div>
+      </div>
+      <div id="w-mult-10" onclick="setWheelMultiplier(10)"
+        style="padding:10px 4px;border-radius:12px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.1);transition:all .15s">
+        <div style="font-size:1rem;font-weight:800;color:#fff">10×</div>
+        <div style="font-size:.58rem;color:rgba(255,255,255,.4);margin-top:2px">1.00 TON</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:.7rem;color:rgba(255,255,255,.4)">Prezzo/spin</div>
+      <div id="w-price-display" style="font-size:.85rem;font-weight:700;color:#40B8FF">0.10 TON</div>
     </div>
   </div>
 
@@ -1172,7 +1194,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       border:2px solid rgba(52,211,153,.35);transition:all .2s">
       <div style="font-size:2.2rem">🎟️</div>
       <div style="flex:1">
-        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Bronze Card</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">🎟️ Bronze Card</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 9 cells — match 3 to win</div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <span style="font-size:.6rem;background:rgba(0,152,234,.15);border:1px solid rgba(0,152,234,.3);color:#40B8FF;padding:1px 7px;border-radius:50px;font-weight:700">0.10 TON</span>
@@ -1189,7 +1211,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       border:2px solid rgba(96,165,250,.3);transition:all .2s">
       <div style="font-size:2.2rem">🎟️</div>
       <div style="flex:1">
-        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Silver Card</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">🎟️ Silver Card</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — better odds</div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <span style="font-size:.6rem;background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);color:#60A5FA;padding:1px 7px;border-radius:50px;font-weight:700">0.50 TON</span>
@@ -1206,7 +1228,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       border:2px solid rgba(167,139,250,.3);transition:all .2s">
       <div style="font-size:2.2rem">🎟️</div>
       <div style="flex:1">
-        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">Gold Card</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff">🎟️ Gold Card</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:1px">Scratch 12 cells — max prizes</div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <span style="font-size:.6rem;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#A78BFA;padding:1px 7px;border-radius:50px;font-weight:700">0.20 TON</span>
@@ -2104,7 +2126,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <!-- Subscribe button -->
     <button id="wp-btn" class="btn btn-gold" onclick="subscribeWarriorPass()"
       style="padding:14px;font-size:1rem;width:100%">
-      ⚔️ Activate — 3 $TON
+      ⚔️ Activate — 3 TON/month
     </button>
     <div style="font-family:'Outfit',sans-serif;font-size:.65rem;color:#4A3318;
       text-align:center;margin-top:8px">
@@ -2261,8 +2283,7 @@ sessionStorage.removeItem('tbgame')
 
 
 // XP LEVEL SYSTEM
-const XP_PER_TON_RATE = 500  // XP per TON spent
-const XP_PER_TON  = 2500
+const XP_PER_TON = 500  // XP per TON speso (tutti i giochi)
 
 function xpForLevel(lv) {
   if (lv <= 1) return 0
@@ -2308,7 +2329,7 @@ function getNextMilestoneLv() {
 }
 function getUserUnlocks() { return getMilestoneUnlocks() }
 function getXpForAmount(amount, cur) {
-  return Math.floor(amount*XP_PER_TON_RATE)
+  return Math.floor(amount*XP_PER_TON)
 }
 function addXP(amount, cur) {
   const gained = getXpForAmount(amount, cur)
@@ -2358,10 +2379,31 @@ function openPvpGated(){
 }
 
 const ROOMS={
-  free:{name:'Free Room',    cur:'free',price:0,   tbola:10, icon:'🏕️'},
-  ton: {name:'$TON Room',    cur:'ton', price:0.25,tbola:200,icon:'💎'},
-  vip: {name:'VIP $TON Room',cur:'ton', price:1.00,tbola:500,icon:'👑'}
+  free:{name:'Free Room',    cur:'free',price:0,    tbola:10,  icon:'🏕️', desc:'Free to play · $TBOLA rewards'},
+  ton: {name:'$TON Room',    cur:'ton', price:0.25, tbola:200, icon:'💎', desc:'0.25 TON / card · Min 3 players'},
+  vip: {name:'VIP $TON Room',cur:'ton', price:1.00, tbola:500, icon:'👑', desc:'1.00 TON / card · Lv.15+ · High stakes'}
 }
+// SPLIT: 55% prize · 5% jackpot · 4% ranks · 36% dev
+// BINGO PRIZES: 25% pool → line · 75% pool → bingo
+// MIN PLAYERS: 3 · NO multi-card discount
+// ── SPLIT UNIVERSALE ─────────────────────────────────
+const SPLIT = {
+  prizePool:    0.55,   // 55% → prize pool partita
+  jackpot:      0.05,   // 5%  → jackpot pool gioco specifico
+  rankWeeklyI:  0.015,  // 1.5%→ rank weekly individual
+  rankMonthlyI: 0.010,  // 1%  → rank monthly individual
+  rankWeeklyS:  0.010,  // 1%  → rank weekly squad
+  rankMonthlyS: 0.005,  // 0.5%→ rank monthly squad
+  dev:          0.36,   // 36% → dev / operations
+}
+// RANK PAYOUT Top 5: 40/25/18/11/6%
+const RANK_PAYOUT = [0.40, 0.25, 0.18, 0.11, 0.06]
+// RANK SQUAD Top 3: 50/30/20% · Capitano 10% fisso
+const SQUAD_PAYOUT = [0.50, 0.30, 0.20]
+const SQUAD_CAPTAIN_CUT = 0.10
+// JACKPOT threshold
+const JACKPOT_MIN_PAYOUT = 5.0  // TON
+
 const BC=['c1','c2','c3','c4','c5','c6']
 let curRoom='ton',nCards=1,drawn=[],cards=[],timer=null,cd=3
 
@@ -2988,7 +3030,7 @@ function updateCost(){
   const c=ROOMS[curRoom]
   const discount=c.cur!=='free'&&nCards>=2?0.9:1
   const totalPrice=c.price*nCards*discount
-  const pool=c.cur==='free'?0:totalPrice*0.55
+  const pool=c.cur==='free'?0:totalPrice*SPLIT.prizePool
   const fmt=v=>c.cur==='ton'?v.toFixed(2)+' TON':v+' $TBOLA'
   const el=document.getElementById('l-cost')
   if(el){
@@ -3237,7 +3279,7 @@ function showWin(type){
   const c=ROOMS[curRoom]
   const discount=c.cur!=='free'&&nCards>=2?0.9:1
   const paidAmt=c.price*nCards*discount
-  const pool=c.cur==='free'?0:paidAmt*0.55
+  const pool=c.cur==='free'?0:paidAmt*SPLIT.prizePool
   const prizeVal=type==='bingo'?pool*0.75:pool*0.25
   const prizeFmt=c.cur==='free'?(type==='bingo'?'375 $TBOLA':'125 $TBOLA'):
     c.cur==='usdt'?prizeVal.toFixed(2)+' TON':prizeVal.toFixed(2)+' TON'
@@ -3360,11 +3402,11 @@ function selectWPCur(cur) {
   if (cur === 'usdt') {
     if(usdt){ usdt.style.background = 'rgba(255,184,0,.12)'; usdt.style.borderColor = '#FFB800' }
     if(ton){  ton.style.background  = 'rgba(0,0,0,.2)';      ton.style.borderColor  = 'rgba(255,255,255,.1)' }
-    if(btn)   btn.textContent = '⚔️ Activate — 3 $TON'
+    if(btn)   btn.textContent = '⚔️ Activate — 3 TON/month'
   } else {
     if(ton){  ton.style.background  = 'rgba(0,152,234,.12)'; ton.style.borderColor  = '#0098EA' }
     if(usdt){ usdt.style.background = 'rgba(0,0,0,.2)';      usdt.style.borderColor = 'rgba(255,255,255,.1)' }
-    if(btn)   btn.textContent = '⚔️ Subscribe — 3 $TON'
+    if(btn)   btn.textContent = '⚔️ Subscribe — 3 TON'
   }
 }
 function showWarriorPass(isRenewal) {
@@ -3475,6 +3517,30 @@ function hubWheelJpToggle() {
     if(jpU) { jpU.style.fontSize='.9rem'; jpU.style.color='#fff'; jpU.textContent=0.toFixed(2)+' TON' }
     if(jp)  { jp.style.fontSize='.75rem'; jp.style.color='rgba(255,255,255,.7)'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
   }
+}
+
+
+function setWheelMultiplier(mult) {
+  wheelMultiplier = mult
+  const price = (0.10 * mult).toFixed(2)
+  // Update UI
+  ;[1,2,5,10].forEach(m => {
+    const el = document.getElementById('w-mult-'+m)
+    if(!el) return
+    if(m === mult) {
+      el.style.background = 'rgba(0,152,234,.2)'
+      el.style.borderColor = '#0098EA'
+      el.querySelector('div').style.color = '#40B8FF'
+    } else {
+      el.style.background = 'rgba(255,255,255,.04)'
+      el.style.borderColor = 'rgba(255,255,255,.1)'
+      el.querySelector('div').style.color = '#fff'
+    }
+  })
+  const pd = document.getElementById('w-price-display')
+  if(pd) pd.textContent = price + ' TON'
+  // Update spin button
+  updateWheelUI()
 }
 
 function openWheel() {
@@ -3643,60 +3709,67 @@ async function payWheelSpins(spins, currency, onPaid, onFail) {
 // ── SCRATCH CARDS ──
 
 const SCRATCH_PRIZES = {
-  usdt_low: [
-    {match:'3x', sym:'💎', prize:'5.00 TON', odds:'~1 in 216'},
-    {match:'3x', sym:'⭐', prize:'1.00 TON', odds:'~1 in 216'},
-    {match:'3x', sym:'🍒', prize:'0.50 TON', odds:'~1 in 216'},
-    {match:'3x', sym:'any', prize:'0.20 TON', odds:'~1 in 36'},
-    {match:'2x', sym:'any', prize:'—', odds:'no prize'},
+  // Bronze 0.10 TON · 3×3 grid · max win 1.00 TON
+  ton_low: [
+    {match:'3×', sym:'💎', prize:'1.00 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'⭐', prize:'0.50 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'7️⃣', prize:'0.30 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'🍒', prize:'0.20 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'any', prize:'0.10 TON', odds:'~1 in 36'},
+    {match:'🎰×5+', sym:'🎰', prize:'Jackpot', odds:'~1 in 146'},
   ],
-  usdt_mid: [
-    {match:'4x', sym:'💎', prize:'5.00 TON', odds:'~1 in 2401'},
-    {match:'4x', sym:'⭐', prize:'2.00 TON', odds:'~1 in 2401'},
-    {match:'4x', sym:'any', prize:'0.50 TON', odds:'~1 in 343'},
-    {match:'3x', sym:'any', prize:'—', odds:'no prize'},
+  // Silver 0.25 TON · 3×4 grid · max win 2.50 TON
+  ton_mid: [
+    {match:'4×', sym:'💎', prize:'2.50 TON',  odds:'~1 in 2401'},
+    {match:'4×', sym:'⭐', prize:'1.25 TON',  odds:'~1 in 2401'},
+    {match:'4×', sym:'7️⃣', prize:'0.75 TON',  odds:'~1 in 2401'},
+    {match:'3×', sym:'💎', prize:'0.50 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'any', prize:'0.25 TON', odds:'~1 in 36'},
+    {match:'🎰×5+', sym:'🎰', prize:'Jackpot', odds:'~1 in 146'},
   ],
-  ton: [
-    {match:'4x', sym:'💎', prize:'2.00 TON', odds:'~1 in 1296'},
-    {match:'4x', sym:'⭐', prize:'1.00 TON', odds:'~1 in 1296'},
-    {match:'4x', sym:'any', prize:'0.50 TON', odds:'~1 in 216'},
-    {match:'3x', sym:'any', prize:'—', odds:'no prize'},
-  ]
-}
-
-function showScratchTable(tier) {
-  const rows = SCRATCH_PRIZES[tier]
-  if(!rows) return
-  const tbody = document.getElementById('sc-prize-tbody')
-  if(!tbody) return
-  tbody.innerHTML = rows.map(r => `
-    <tr style="border-bottom:.5px solid rgba(255,255,255,.04)">
-      <td style="padding:7px 14px;font-weight:700;color:#fff">${r.match}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:1rem">${r.sym === 'any' ? '🎲' : r.sym}</td>
-      <td style="padding:7px 14px;text-align:right;font-weight:700;color:${r.prize==='—'?'rgba(255,255,255,.3)':'#34D399'}">${r.prize}</td>
-      <td style="padding:7px 14px;text-align:right;color:rgba(255,255,255,.35);font-size:.65rem">${r.odds}</td>
-    </tr>`).join('')
-  // Update tab buttons
-  ;['usdt_low','usdt_mid','ton'].forEach(k => {
-    const btn = document.getElementById('sct-'+k)
-    if(!btn) return
-    if(k === tier) {
-      btn.style.background = 'rgba(52,211,153,.1)'
-      btn.style.borderColor = 'rgba(52,211,153,.4)'
-      btn.style.color = '#34D399'
-    } else {
-      btn.style.background = 'transparent'
-      btn.style.borderColor = 'rgba(255,255,255,.1)'
-      btn.style.color = 'rgba(255,255,255,.4)'
-    }
-  })
+  // Gold 1.00 TON · 3×4 grid · max win 10.00 TON
+  ton_high: [
+    {match:'4×', sym:'💎', prize:'10.00 TON', odds:'~1 in 2401'},
+    {match:'4×', sym:'⭐', prize:'5.00 TON',  odds:'~1 in 2401'},
+    {match:'4×', sym:'7️⃣', prize:'3.00 TON',  odds:'~1 in 2401'},
+    {match:'3×', sym:'💎', prize:'2.00 TON',  odds:'~1 in 343'},
+    {match:'3×', sym:'any', prize:'1.00 TON', odds:'~1 in 36'},
+    {match:'🎰×5+', sym:'🎰', prize:'Jackpot', odds:'~1 in 146'},
+  ],
 }
 
 const SCRATCH_TIERS = {
-  ton_low:  { name:'Bronze', price:0.10, cur:'ton', cells:3, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'],       maxWin:1,   prizes:[0,0,0,0.10,0.30,0.50,1]  },
-  ton_mid:  { name:'Silver', price:0.25, cur:'ton', cells:4, symbols:['💎','⭐','7️⃣','🍋','🍒','🔔','🃏'], maxWin:2.5, prizes:[0,0,0,0,0.25,1,2.5]       },
-  ton_high: { name:'Gold',   price:1.00, cur:'ton', cells:4, symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],       maxWin:10,  prizes:[0,0,0,0,1,5,10]           }
+  // Bronze: 0.10 TON · 3×3 · max 1.00 TON · RTP ~60%
+  ton_low:  {
+    name:'Bronze', price:0.10, cur:'ton',
+    cols:3, rows:3,
+    symbols:['💎','⭐','7️⃣','🍋','🍒','🔔'],
+    maxWin:1.0,
+    prizes:[0, 0, 0, 0.10, 0.20, 0.30, 0.50, 1.0],
+    jackpotSym:'🎰', jackpotCount:5
+  },
+  // Silver: 0.25 TON · 3×4 · max 2.50 TON · RTP ~60%
+  ton_mid:  {
+    name:'Silver', price:0.25, cur:'ton',
+    cols:3, rows:4,
+    symbols:['💎','⭐','7️⃣','🍋','🍒','🔔','🃏'],
+    maxWin:2.5,
+    prizes:[0, 0, 0, 0, 0.25, 0.75, 1.25, 2.5],
+    jackpotSym:'🎰', jackpotCount:5
+  },
+  // Gold: 1.00 TON · 3×4 · max 10.00 TON · RTP ~60%
+  ton_high: {
+    name:'Gold', price:1.00, cur:'ton',
+    cols:3, rows:4,
+    symbols:['💎','⭐','7️⃣','🍒','🔔','🃏'],
+    maxWin:10.0,
+    prizes:[0, 0, 0, 0, 1.0, 3.0, 5.0, 10.0],
+    jackpotSym:'🎰', jackpotCount:5
+  }
 }
+// JACKPOT: pagabile da 5 TON · 5% di ogni scratch va al jackpot pool
+// SPLIT: 55% prize · 5% jackpot · 4% ranks · 36% dev
+
 let scratchSelected = null
 let scratchRevealed = 0
 let scratchTotal    = 0
@@ -4231,32 +4304,60 @@ async function payAndEnterLobby(room, numCards) {
 
 // ── FORTUNE WHEEL ──
 const WHEEL_SEGMENTS = [
-  {label:'💀 LOSE',  mult:0,   color:'#8B1A1A', colorEnd:'#5A0A0A', textColor:'#FFB0B0', emoji:'💀'},
-  {label:'×0.5',     mult:0.5, color:'#5A3A8A', colorEnd:'#3A1A6A', textColor:'#DDB8FF', emoji:'🔮'},
-  {label:'💀 LOSE',  mult:0,   color:'#8B1A1A', colorEnd:'#5A0A0A', textColor:'#FFB0B0', emoji:'💀'},
-  {label:'×1',       mult:1,   color:'#2A5A2A', colorEnd:'#1A3A1A', textColor:'#80FF80', emoji:'⚡'},
-  {label:'💀 LOSE',  mult:0,   color:'#8B1A1A', colorEnd:'#5A0A0A', textColor:'#FFB0B0', emoji:'💀'},
-  {label:'×0.5',     mult:0.5, color:'#5A3A8A', colorEnd:'#3A1A6A', textColor:'#DDB8FF', emoji:'🔮'},
-  {label:'×2',       mult:2,   color:'#1A6A3A', colorEnd:'#0A4A2A', textColor:'#3AFFAA', emoji:'💚'},
-  {label:'💀 LOSE',  mult:0,   color:'#8B1A1A', colorEnd:'#5A0A0A', textColor:'#FFB0B0', emoji:'💀'},
-  {label:'×1',       mult:1,   color:'#2A5A2A', colorEnd:'#1A3A1A', textColor:'#80FF80', emoji:'⚡'},
-  {label:'×5',       mult:5,   color:'#0A4A8A', colorEnd:'#0A2A6A', textColor:'#80D8FF', emoji:'🔵'},
-  {label:'×PASS',    mult:-1,  color:'#6A2A8A', colorEnd:'#4A0A6A', textColor:'#E0AAFF', emoji:'⚔️'},
-  {label:'JACKPOT',  mult:-2,  color:'#8A6A00', colorEnd:'#6A4A00', textColor:'#FFE566', emoji:'🎰'},
+  // 16× NIENTE (50%)
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  {label:'💀',    mult:0,   color:'#3A0A0A', colorEnd:'#220606', textColor:'#FF6060', emoji:'💀'},
+  // 8× FREE SPIN (25%)
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  {label:'🔄 FREE',mult:-1, color:'#1A3A6A', colorEnd:'#0A2040', textColor:'#80C8FF', emoji:'🔄'},
+  // 4× WIN ×1 (12.5%)
+  {label:'×1',     mult:1,  color:'#0A4A2A', colorEnd:'#063018', textColor:'#3AFF8A', emoji:'⚡'},
+  {label:'×1',     mult:1,  color:'#0A4A2A', colorEnd:'#063018', textColor:'#3AFF8A', emoji:'⚡'},
+  {label:'×1',     mult:1,  color:'#0A4A2A', colorEnd:'#063018', textColor:'#3AFF8A', emoji:'⚡'},
+  {label:'×1',     mult:1,  color:'#0A4A2A', colorEnd:'#063018', textColor:'#3AFF8A', emoji:'⚡'},
+  // 2× WIN ×2 (6.25%)
+  {label:'×2',     mult:2,  color:'#0A3A6A', colorEnd:'#061A40', textColor:'#40B8FF', emoji:'💎'},
+  {label:'×2',     mult:2,  color:'#0A3A6A', colorEnd:'#061A40', textColor:'#40B8FF', emoji:'💎'},
+  // 1× WIN ×5 (3.125%)
+  {label:'×5',     mult:5,  color:'#4A1A8A', colorEnd:'#2A0A5A', textColor:'#C084FF', emoji:'🔮'},
+  // 1× JACKPOT (3.125%)
+  {label:'🎰',     mult:-2, color:'#6A4A00', colorEnd:'#3A2800', textColor:'#FFD700', emoji:'🎰'},
 ]
 const SEG_COUNT = WHEEL_SEGMENTS.length
-const JACKPOT_THRESHOLD = 100
+const JACKPOT_THRESHOLD = 5.0  // TON — threshold pagamento jackpot
 let wheelAngle = 0
 let wheelSpinning = false
-let wheelCur = 'usdt'
+let wheelCur = 'ton'
 let wheelSpinsSelected = 0
 let wheelSpinsRemaining = 0
 let wheelSessionBal = 0
 let wheelJackpot = 0
-
 let scratchJpTon = 0
-let scratchJpTon  = 0
-let wheelPricePerSpin = {usdt:0.25, 'not':0.25, ton:0.1}
+const WHEEL_PRICE_PER_SPIN = 0.10  // TON per spin (base 1×)
+// Multiplier: 1×=0.10 · 2×=0.20 · 5×=0.50 · 10×=1.00 TON
+const WHEEL_MULTIPLIERS = [1, 2, 5, 10]
+let wheelMultiplier = 1  // selected multiplier
+let wheelPricePerSpin = {ton: 0.10}  // legacy compat
 function hubWheelJpToggle() {
   hubWheelJpCur = hubWheelJpCur === 'ton' ? 'usdt' : 'ton'
   const jp   = document.getElementById('hub-jackpot')
@@ -4268,6 +4369,30 @@ function hubWheelJpToggle() {
     if(jpU) { jpU.style.fontSize='.9rem'; jpU.style.color='#fff'; jpU.textContent=0.toFixed(2)+' TON' }
     if(jp)  { jp.style.fontSize='.75rem'; jp.style.color='rgba(255,255,255,.7)'; jp.textContent=wheelJackpot.toFixed(2)+' TON' }
   }
+}
+
+
+function setWheelMultiplier(mult) {
+  wheelMultiplier = mult
+  const price = (0.10 * mult).toFixed(2)
+  // Update UI
+  ;[1,2,5,10].forEach(m => {
+    const el = document.getElementById('w-mult-'+m)
+    if(!el) return
+    if(m === mult) {
+      el.style.background = 'rgba(0,152,234,.2)'
+      el.style.borderColor = '#0098EA'
+      el.querySelector('div').style.color = '#40B8FF'
+    } else {
+      el.style.background = 'rgba(255,255,255,.04)'
+      el.style.borderColor = 'rgba(255,255,255,.1)'
+      el.querySelector('div').style.color = '#fff'
+    }
+  })
+  const pd = document.getElementById('w-price-display')
+  if(pd) pd.textContent = price + ' TON'
+  // Update spin button
+  updateWheelUI()
 }
 
 function openWheel() {

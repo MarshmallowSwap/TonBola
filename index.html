@@ -253,7 +253,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
   <span class="hf hf1">🎱</span><span class="hf hf2">🎡</span><span class="hf hf3">🃏</span>
   <span class="hf hf4">⚔️</span><span class="hf hf5">💎</span><span class="hf hf6">🏆</span>
   <div class="hero-inner">
-    <div class="hero-badge"><span class="live-dot"></span> 4 Games Live · Draws every 5 minutes · Built on TON</div>
+    <div class="hero-badge"><span class="live-dot"></span> 4 Games Live · TON Blockchain · 3 Live Jackpots</div>
     <h1>The Gaming<br>Hub on TON</h1>
     <p class="hero-sub">Bingo, Fortune Wheel, Scratch Cards, PvP Battle — all inside Telegram. Play with TON & TON. Win instantly, on-chain.</p>
     <div class="hero-btns">
@@ -263,8 +263,8 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
     <div class="hero-stats">
       <div><div class="h-stat-v">4</div><div class="h-stat-l">Games Live</div></div>
       <div><div class="h-stat-v">5min</div><div class="h-stat-l">Draw Interval</div></div>
-      <div><div class="h-stat-v">55%</div><div class="h-stat-l">To Prize Pool</div></div>
-      <div><div class="h-stat-v">TON</div><div class="h-stat-l">Blockchain</div></div>
+      <div><div class="h-stat-v">55%</div><div class="h-stat-l">Prize Pool</div></div>
+      <div><div class="h-stat-v">5 TON</div><div class="h-stat-l">Jackpot Min</div></div>
     </div>
   </div>
 </section>
@@ -280,27 +280,133 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
       <div class="game-card aos" style="--gc:#7C3AED" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
         <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
         <span class="game-icon">🎱</span><div class="game-title">Bingo</div>
-        <div class="game-desc">Live multiplayer bingo with draws every 5 seconds. Get a line or full house — prizes hit your wallet instantly via smart contract.</div>
-        <div class="chips"><span class="chip">Free Room</span><span class="chip chip-c">$TON</span><span class="chip chip-v">$TON</span><span class="chip chip-y">VIP</span></div>
+        <div class="game-desc">Multiplayer bingo with server-side draws. Min 3 players per room. Get a line (25% pool) or full house (75% pool) — prize hits your wallet instantly.</div>
+        <div style="margin:8px 0;font-size:11px;color:var(--dim)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>🆓 Free Room</span><span style="color:var(--muted)">$TBOLA prizes only</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>💎 Standard</span><span style="color:var(--muted)">0.25 TON/card</span></div>
+          <div style="display:flex;justify-content:space-between"><span>👑 VIP</span><span style="color:var(--muted)">1.00 TON/card · Lv.15+</span></div>
+        </div>
+        <div class="chips"><span class="chip">Free</span><span class="chip chip-c">0.25 TON</span><span class="chip chip-y">1.00 TON VIP</span><span class="chip chip-v">5 TON 🎰</span></div>
       </div>
       <div class="game-card aos" style="--gc:#F97316;transition-delay:.07s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
         <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
         <span class="game-icon">🎡</span><div class="game-title">Fortune Wheel</div>
-        <div class="game-desc">Buy spin bundles, collect winnings in one tx. Hit the jackpot — a pool that grows with every spin until someone wins it all.</div>
-        <div class="chips"><span class="chip chip-c">$TON</span><span class="chip chip-v">$TON</span><span class="chip chip-y">🎰 Jackpot</span></div>
+        <div class="game-desc">Buy spin bundles with multipliers. 32 segments, 25% free spin chance for more plays. Jackpot pool grows with every spin — pays out from 5 TON.</div>
+        <div style="margin:8px 0;font-size:11px;color:var(--dim)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>⚡ Base</span><span style="color:var(--muted)">0.10 TON/spin</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>🔢 Multipliers</span><span style="color:var(--muted)">1× · 2× · 5× · 10×</span></div>
+          <div style="display:flex;justify-content:space-between"><span>🎰 Jackpot</span><span style="color:var(--muted)">from 5 TON</span></div>
+        </div>
+        <div class="chips"><span class="chip chip-c">0.10 TON</span><span class="chip chip-v">×1 ×2 ×5 ×10</span><span class="chip chip-y">5 TON 🎰</span></div>
       </div>
       <div class="game-card aos" style="--gc:#10B981;transition-delay:.14s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
         <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
         <span class="game-icon">🃏</span><div class="game-title">Scratch Cards</div>
-        <div class="game-desc">Instant win scratch cards in Bronze, Silver and Gold tiers. Buy, reveal, win — the fastest game in the hub. Pure instant.</div>
-        <div class="chips"><span class="chip chip-c">$TON</span><span class="chip chip-v">$TON</span><span class="chip chip-g">⚡ Instant</span></div>
+        <div class="game-desc">Instant solo game — no lobby, no waiting. Buy, scratch, win. Three tiers with growing prizes. Match 3+ symbols in a row to win.</div>
+        <div style="margin:8px 0;font-size:11px;color:var(--dim)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>🥉 Bronze</span><span style="color:var(--muted)">0.10 TON · max 1 TON</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>🥈 Silver</span><span style="color:var(--muted)">0.25 TON · max 2.5 TON</span></div>
+          <div style="display:flex;justify-content:space-between"><span>🥇 Gold</span><span style="color:var(--muted)">1.00 TON · max 10 TON</span></div>
+        </div>
+        <div class="chips"><span class="chip chip-c">0.10 TON</span><span class="chip chip-v">0.25 TON</span><span class="chip chip-y">1.00 TON</span><span class="chip chip-g">⚡ Instant</span></div>
       </div>
       <div class="game-card aos" style="--gc:#EC4899;transition-delay:.21s" onclick="location.href='https://t.me/TonBolaBot_bot/play'">
         <div class="game-glow"></div><span class="game-badge">🟢 LIVE</span>
         <span class="game-icon">⚔️</span><div class="game-title">PvP Battle</div>
-        <div class="game-desc">1v1 bingo against a real opponent. Challenge friends or get matched instantly. Winner takes the full pot.</div>
-        <div class="chips"><span class="chip chip-c">$TON</span><span class="chip chip-v">$TON</span><span class="chip chip-p">🥊 1v1</span></div>
+        <div class="game-desc">1v1 bingo duel against a real opponent. Set your bet, wait for a challenger — winner takes 90% of the pot. Unlocks at Level 10.</div>
+        <div style="margin:8px 0;font-size:11px;color:var(--dim)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>🏆 Winner takes</span><span style="color:var(--muted)">90% of pot</span></div>
+          <div style="display:flex;justify-content:space-between"><span>🔒 Unlock</span><span style="color:var(--muted)">Level 10 required</span></div>
+        </div>
+        <div class="chips"><span class="chip chip-c">Custom TON</span><span class="chip chip-p">🥊 1v1</span><span class="chip">Lv.10+</span></div>
       </div>
+    </div>
+  </div>
+
+  <!-- 3 JACKPOT CARDS -->
+  <div style="margin-top:48px">
+    <div class="center" style="margin-bottom:24px">
+      <span class="tag tag-y aos">Live Jackpots</span>
+      <h2 class="sec-h aos" style="font-size:clamp(22px,3.5vw,36px)">3 jackpot pools.<br>All growing right now.</h2>
+      <p class="sec-sub center aos">Every game feeds its own jackpot pool. 5% of every card, spin, and scratch goes in. Pays out automatically when it crosses 5 TON.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px" class="aos">
+
+      <!-- Jackpot Bingo -->
+      <div style="border-radius:20px;padding:24px;background:linear-gradient(135deg,#1A0A2E,#2D1659);border:1.5px solid rgba(139,92,246,.3);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(139,92,246,.15),transparent);border-radius:50%"></div>
+        <div style="font-size:2rem;margin-bottom:12px">🎱</div>
+        <div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px">Jackpot Bingo</div>
+        <div style="font-size:.75rem;color:rgba(167,139,250,.7);margin-bottom:16px">5% of every bingo card</div>
+        <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:12px 16px;margin-bottom:12px">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(167,139,250,.5);margin-bottom:4px">Live Pool</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#A78BFA" id="lp-jp-bingo-live">— TON</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem">
+          <span style="color:rgba(255,255,255,.4)">Pays from</span>
+          <span style="color:#A78BFA;font-weight:700">5 TON</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-top:4px">
+          <span style="color:rgba(255,255,255,.4)">Trigger</span>
+          <span style="color:rgba(255,255,255,.6)">4 corners + center</span>
+        </div>
+        <div style="margin-top:12px;height:4px;background:rgba(139,92,246,.1);border-radius:2px;overflow:hidden">
+          <div id="lp-jp-bingo-bar" style="height:100%;background:linear-gradient(90deg,#7C3AED,#A78BFA);width:0%;transition:width 1s;border-radius:2px"></div>
+        </div>
+        <div style="text-align:right;font-size:.6rem;color:rgba(167,139,250,.4);margin-top:2px">of 5 TON threshold</div>
+        <a href="https://tonviewer.com/UQCuAzEFSHby4O7u6OTjOFfgUzhYO7fzABhD3qVpu2Cm3ZNW" target="_blank" style="display:block;margin-top:12px;font-size:.65rem;color:rgba(167,139,250,.5);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔗 UQCuAzEFSH...ZNW ↗</a>
+      </div>
+
+      <!-- Jackpot Fortune Wheel -->
+      <div style="border-radius:20px;padding:24px;background:linear-gradient(135deg,#1A0E00,#2E1A00);border:1.5px solid rgba(249,115,22,.3);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(249,115,22,.15),transparent);border-radius:50%"></div>
+        <div style="font-size:2rem;margin-bottom:12px">🎡</div>
+        <div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px">Jackpot Fortune Wheel</div>
+        <div style="font-size:.75rem;color:rgba(253,186,116,.7);margin-bottom:16px">5% of every spin</div>
+        <div style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:12px;padding:12px 16px;margin-bottom:12px">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(253,186,116,.5);margin-bottom:4px">Live Pool</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#FB923C" id="lp-jp-wheel-live">— TON</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem">
+          <span style="color:rgba(255,255,255,.4)">Pays from</span>
+          <span style="color:#FB923C;font-weight:700">5 TON</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-top:4px">
+          <span style="color:rgba(255,255,255,.4)">Probability</span>
+          <span style="color:rgba(255,255,255,.6)">~3.125% per spin</span>
+        </div>
+        <div style="margin-top:12px;height:4px;background:rgba(249,115,22,.1);border-radius:2px;overflow:hidden">
+          <div id="lp-jp-wheel-bar" style="height:100%;background:linear-gradient(90deg,#EA580C,#FB923C);width:0%;transition:width 1s;border-radius:2px"></div>
+        </div>
+        <div style="text-align:right;font-size:.6rem;color:rgba(253,186,116,.4);margin-top:2px">of 5 TON threshold</div>
+        <a href="https://tonviewer.com/UQBsquwpUobW4lX-R1iePFkFbgadAtJxVZZXbJJc94j3r7n7" target="_blank" style="display:block;margin-top:12px;font-size:.65rem;color:rgba(253,186,116,.5);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔗 UQBsquwpUo...n7 ↗</a>
+      </div>
+
+      <!-- Jackpot Scratch Cards -->
+      <div style="border-radius:20px;padding:24px;background:linear-gradient(135deg,#001A0A,#002E15);border:1.5px solid rgba(52,211,153,.3);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(52,211,153,.15),transparent);border-radius:50%"></div>
+        <div style="font-size:2rem;margin-bottom:12px">🃏</div>
+        <div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px">Jackpot Scratch</div>
+        <div style="font-size:.75rem;color:rgba(110,231,183,.7);margin-bottom:16px">5% of every scratch card</div>
+        <div style="background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:12px 16px;margin-bottom:12px">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(110,231,183,.5);margin-bottom:4px">Live Pool</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#34D399" id="lp-jp-scratch-live">— TON</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem">
+          <span style="color:rgba(255,255,255,.4)">Pays from</span>
+          <span style="color:#34D399;font-weight:700">5 TON</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-top:4px">
+          <span style="color:rgba(255,255,255,.4)">Trigger</span>
+          <span style="color:rgba(255,255,255,.6)">5+ 🎰 symbols</span>
+        </div>
+        <div style="margin-top:12px;height:4px;background:rgba(52,211,153,.1);border-radius:2px;overflow:hidden">
+          <div id="lp-jp-scratch-bar" style="height:100%;background:linear-gradient(90deg,#059669,#34D399);width:0%;transition:width 1s;border-radius:2px"></div>
+        </div>
+        <div style="text-align:right;font-size:.6rem;color:rgba(110,231,183,.4);margin-top:2px">of 5 TON threshold</div>
+        <a href="https://tonviewer.com/UQCa6_UdOi9fuI7XuxetbiQ17bHiZ6bKJtmrsLSd3ywiaFOd" target="_blank" style="display:block;margin-top:12px;font-size:.65rem;color:rgba(110,231,183,.5);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔗 UQCa6_UdOi...FOd ↗</a>
+      </div>
+
     </div>
   </div>
 </div>
@@ -314,7 +420,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
     </div>
     <div class="how-grid">
       <div class="how-step aos" style="--sc:#7C3AED"><div class="step-num" style="background:linear-gradient(135deg,#6D28D9,#7C3AED);box-shadow:0 0 20px rgba(124,58,237,.4)">1</div><h3>Open TonBola</h3><p>Tap the link in Telegram. The mini app opens instantly — no install needed.</p></div>
-      <div class="how-step aos" style="--sc:#F97316;transition-delay:.07s"><div class="step-num" style="background:linear-gradient(135deg,#EA580C,#F97316);box-shadow:0 0 20px rgba(249,115,22,.4)">2</div><h3>Pick a game & room</h3><p>Choose from Bingo, Wheel, Scratch or PvP. Pick Free, TON, TON or VIP.</p></div>
+      <div class="how-step aos" style="--sc:#F97316;transition-delay:.07s"><div class="step-num" style="background:linear-gradient(135deg,#EA580C,#F97316);box-shadow:0 0 20px rgba(249,115,22,.4)">2</div><h3>Pick a game & room</h3><p>Bingo (0.25 TON/card), Wheel (0.10 TON/spin), Scratch (0.10–1.00 TON), PvP (custom bet).</p></div>
       <div class="how-step aos" style="--sc:#10B981;transition-delay:.14s"><div class="step-num" style="background:linear-gradient(135deg,#059669,#10B981);box-shadow:0 0 20px rgba(16,185,129,.4)">3</div><h3>Pay & play</h3><p>One transaction loads your session. No fee per round, no surprises.</p></div>
       <div class="how-step aos" style="--sc:#EC4899;transition-delay:.21s"><div class="step-num" style="background:linear-gradient(135deg,#DB2777,#EC4899);box-shadow:0 0 20px rgba(236,72,153,.4)">4</div><h3>Win & collect</h3><p>Winnings hit your wallet instantly via smart contract. No manual claim.</p></div>
     </div>
@@ -329,14 +435,13 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
       <p class="sec-sub center aos">Every TON and TON you spend earns XP. Hit milestone levels to unlock new rooms, modes, and exclusive perks.</p>
     </div>
     <div class="xp-rates aos">
-      <span class="xp-rate" style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:var(--v3)">⚡ 1 TON = <strong style="margin-left:4px">500 XP</strong></span>
-      <span class="xp-rate" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.22);color:var(--cyan2)">💎 1 TON = <strong style="margin-left:4px">2500 XP</strong></span>
-      <span class="xp-rate" style="background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.22);color:var(--yellow2)">🎖️ Warrior Pass = <strong style="margin-left:4px">2× XP</strong></span>
+      <span class="xp-rate" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.22);color:var(--cyan2)">💎 1 TON spent = <strong style="margin-left:4px">500 XP</strong></span>
+      <span class="xp-rate" style="background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.22);color:var(--yellow2)">🎖️ Warrior Pass = <strong style="margin-left:4px">2× XP all month</strong></span>
     </div>
     <div class="levels-track aos">
       <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#6D28D9,#7C3AED);box-shadow:0 0 15px rgba(124,58,237,.4)">1</div><div class="lv-conn" style="background:rgba(124,58,237,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 1 <span style="font-size:12px;color:var(--dim);font-weight:400">· 0 XP</span></div><div class="lv-desc">Free Bingo Room + Bronze Scratch Cards available from day one</div></div></div>
-      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#0891B2,#06B6D4);box-shadow:0 0 15px rgba(6,182,212,.4)">5</div><div class="lv-conn" style="background:rgba(6,182,212,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 5 <span style="font-size:12px;color:var(--dim);font-weight:400">· 2,500 XP</span></div><div class="lv-desc">🔓 TON Bingo Room · Silver Scratch Cards · Fortune Wheel</div></div></div>
-      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#B45309,#D97706);box-shadow:0 0 15px rgba(217,119,6,.4)">10</div><div class="lv-conn" style="background:rgba(217,119,6,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 10 <span style="font-size:12px;color:var(--dim);font-weight:400">· 5,000 XP</span></div><div class="lv-desc">🔓 TON Bingo Room · Gold Scratch Cards · PvP Battle</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#0891B2,#06B6D4);box-shadow:0 0 15px rgba(6,182,212,.4)">5</div><div class="lv-conn" style="background:rgba(6,182,212,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 5 <span style="font-size:12px;color:var(--dim);font-weight:400">· 2,500 XP</span></div><div class="lv-desc">🔓 Standard Bingo (0.25 TON) · Silver Scratch · Fortune Wheel</div></div></div>
+      <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#B45309,#D97706);box-shadow:0 0 15px rgba(217,119,6,.4)">10</div><div class="lv-conn" style="background:rgba(217,119,6,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 10 <span style="font-size:12px;color:var(--dim);font-weight:400">· 5,000 XP</span></div><div class="lv-desc">🔓 Gold Scratch Cards (1.00 TON) · PvP Battle</div></div></div>
       <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#9D174D,#DB2777);box-shadow:0 0 15px rgba(219,39,119,.4)">15</div><div class="lv-conn" style="background:rgba(219,39,119,.2)"></div></div><div class="lv-body"><div class="lv-title">Level 15 <span style="font-size:12px;color:var(--dim);font-weight:400">· 7,500 XP</span></div><div class="lv-desc">🔓 VIP Bingo Room · Priority matchmaking · Early access to new games</div></div></div>
       <div class="lv-row"><div class="lv-line"><div class="lv-dot" style="background:linear-gradient(135deg,#064E3B,#059669);box-shadow:0 0 15px rgba(5,150,105,.4)">20+</div></div><div class="lv-body"><div class="lv-title">Level 20+ <span style="font-size:12px;color:var(--dim);font-weight:400">· 10,000+ XP</span></div><div class="lv-desc">⭐ Legend status · Custom avatar frame · $TBOLA multiplier boost</div></div></div>
     </div>
@@ -359,7 +464,6 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
         <div><div class="warrior-title">⚔️ Warrior Pass</div><div class="warrior-sub">Monthly subscription · Cancel anytime</div></div>
         <div class="warrior-prices">
           <div class="pp feat"><div class="amt">3 TON</div><div class="lbl">per month</div></div>
-          <div class="pp"><div class="amt">3 $TON</div><div class="lbl">per month</div></div>
         </div>
       </div>
       <div class="ben-grid">
@@ -379,7 +483,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
     <div class="center">
       <span class="tag tag-g aos">Earn $TBOLA</span>
       <h2 class="sec-h aos">You earn whether<br>you win or not.</h2>
-      <p class="sec-sub center aos">$TBOLA is TonBola's native token. 8% of every entry funds the pool. Airdrop distributed based on accumulated XP.</p>
+      <p class="sec-sub center aos">$TBOLA is TonBola's native token, earned by playing. Airdrop distributed based on accumulated XP.</p>
     </div>
     <div class="earn-grid">
       <div class="earn-card aos"><span class="earn-icon">🎱</span><div class="earn-title">Play Bingo</div><div class="earn-desc">Every card earns XP and $TBOLA. Win or lose — you always earn.</div></div>
@@ -387,7 +491,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
       <div class="earn-card aos" style="transition-delay:.1s"><span class="earn-icon">🃏</span><div class="earn-title">Scratch Cards</div><div class="earn-desc">Instant XP on every scratch. Bronze, Silver and Gold all count.</div></div>
       <div class="earn-card aos" style="transition-delay:.15s"><span class="earn-icon">⚔️</span><div class="earn-title">PvP Battle</div><div class="earn-desc">XP for every PvP match — winner or not. Competition pays.</div></div>
       <div class="earn-card aos" style="transition-delay:.2s"><span class="earn-icon">👥</span><div class="earn-title">Invite Friends</div><div class="earn-desc">Earn % of every card your referrals buy. Forever, no cap.</div></div>
-      <div class="earn-card aos" style="transition-delay:.25s"><span class="earn-icon">🏆</span><div class="earn-title">Leaderboard</div><div class="earn-desc">Weekly prize pool from the 3% leaderboard fund for top warriors.</div></div>
+      <div class="earn-card aos" style="transition-delay:.25s"><span class="earn-icon">🏆</span><div class="earn-title">Leaderboard</div><div class="earn-desc">4 rank pools (weekly/monthly/individual/squad). Top 5 share the weekly pool every Monday.</div></div>
     </div>
   </div>
 </div>
@@ -397,7 +501,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:
     <div class="center">
       <span class="tag tag-y aos">$TBOLA Token</span>
       <h2 class="sec-h aos">Earned by playing.<br>Not bought.</h2>
-      <p class="sec-sub center aos">Every card, every spin, every game contributes. Airdrop distributed based on accumulated XP.</p>
+      <p class="sec-sub center aos">Every TON played is split automatically: 55% prize pool, 5% jackpot, 4% rank pools, 36% dev.</p>
     </div>
     <div class="tok-grid">
       <div class="tok aos"><div class="tok-lbl">Ticker</div><div class="tok-val">$TBOLA</div></div>
