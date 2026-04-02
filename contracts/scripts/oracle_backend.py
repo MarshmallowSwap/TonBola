@@ -218,13 +218,21 @@ async def pay_winner(req: PayWinnerReq, bg: BackgroundTasks):
     if amount_nano <= 0:
         raise HTTPException(400, "Amount must be > 0")
 
-    # Anti-double-pay: verifica stato partita
-    rows = await sb_get(f"games?id=eq.{req.game_id}&select=id,status")
-    if rows and rows[0].get("status") in ("paid", "payment_pending"):
-        raise HTTPException(409, f"Game {req.game_id} already paid/pending")
+    # Anti-double-pay: verifica stato partita (skip se game non esiste in DB)
+    try:
+        rows = await sb_get(f"games?id=eq.{req.game_id}&select=id,status")
+        if isinstance(rows, list) and rows and rows[0].get("status") in ("paid", "payment_pending"):
+            raise HTTPException(409, f"Game {req.game_id} already paid/pending")
+    except HTTPException:
+        raise
+    except Exception:
+        pass  # game non in DB, procedi comunque
 
-    # Marca pending
-    await sb_patch(f"games?id=eq.{req.game_id}", {"status": "payment_pending"})
+    # Marca pending (ignora se game non in DB)
+    try:
+        await sb_patch(f"games?id=eq.{req.game_id}", {"status": "payment_pending"})
+    except Exception:
+        pass
 
     params = {
         "winner": req.winner_wallet,
