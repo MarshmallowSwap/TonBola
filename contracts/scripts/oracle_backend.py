@@ -56,7 +56,7 @@ async def send_to_contract(msg_type: str, params: dict, attach_nano: int = 50_00
     params_json = json.dumps(params).replace("'", "\'")
     script = f"""
 const {{ mnemonicToPrivateKey }} = require('@ton/crypto');
-const {{ WalletContractV4, TonClient, internal, beginCell, Address, toNano }} = require('@ton/ton');
+const {{ WalletContractV4, TonClient4, internal, beginCell, Address, toNano }} = require('@ton/ton');
 
 function buildBody(type, p) {{
     const b = beginCell();
@@ -92,7 +92,7 @@ function buildBody(type, p) {{
     const mnemonic = `{ORACLE_MNEMONIC}`.trim().split(' ');
     const kp = await mnemonicToPrivateKey(mnemonic);
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
-    const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
+    const client = new TonClient4({{ endpoint: 'https://mainnet-v4.tonhubapi.com' }});
     const wc = client.open(wallet);
     let seqno = 0;
     try {{ seqno = await wc.getSeqno(); }} catch(_e) {{ seqno = 0; }}
@@ -131,11 +131,11 @@ async def send_ton_direct(to_addr: str, amount_nano: int, comment: str = "") -> 
     """Invia TON direttamente dall'oracle (per sweep/withdraw)."""
     script = f"""
 const {{ mnemonicToPrivateKey }} = require('@ton/crypto');
-const {{ WalletContractV4, TonClient, internal }} = require('@ton/ton');
+const {{ WalletContractV4, TonClient4, internal }} = require('@ton/ton');
 (async () => {{
     const kp = await mnemonicToPrivateKey(`{ORACLE_MNEMONIC}`.trim().split(' '));
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
-    const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
+    const client = new TonClient4({{ endpoint: 'https://mainnet-v4.tonhubapi.com' }});
     const wc = client.open(wallet);
     let seqno = 0;
     try {{ seqno = await wc.getSeqno(); }} catch(_e) {{ seqno = 0; }}
