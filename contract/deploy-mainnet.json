@@ -1,0 +1,17 @@
+{
+  "contract": "UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW",
+  "owner": "UQCU4QrHnuuLUzu0qJEOwQFSTFol5ihNbmd0EkLX81zoJK5b",
+  "oracle": "UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l",
+  "network": "mainnet",
+  "split": {
+    "prize": "55%",
+    "jackpot": "5%",
+    "rank_weekly_i": "1.5%",
+    "rank_monthly_i": "1%",
+    "rank_weekly_s": "1%",
+    "rank_monthly_s": "0.5%",
+    "oracle_gas": "1%",
+    "dev": "35%"
+  },
+  "tonviewer": "https://tonviewer.com/UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW"
+}

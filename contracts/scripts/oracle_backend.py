@@ -15,7 +15,7 @@ import httpx
 app = FastAPI(title="TonBola Oracle")
 
 # ── Config da env ────────────────────────────────────────────
-VAULT_ADDRESS   = os.environ.get("VAULT_ADDRESS", "")      # dopo il deploy
+VAULT_ADDRESS   = os.environ.get("VAULT_ADDRESS", "UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW")      # dopo il deploy
 ORACLE_MNEMONIC = os.environ.get("ORACLE_MNEMONIC",
     "bulk royal camp fame baby accuse item method air reflect vendor "
     "bundle feel carpet rescue borrow switch bubble gentle grid summer "
