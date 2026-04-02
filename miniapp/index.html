@@ -1307,9 +1307,21 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       box-shadow:0 4px 0 #065F46;transition:all .2s">
       🎟️ Buy &amp; Scratch — select a card first
     </button>
-    <!-- Warrior Pass auto-scratch hint -->
-    <div id="sc-auto-hint" style="display:none;text-align:center;margin-top:6px;font-size:.62rem;color:rgba(139,92,246,.7);font-weight:600">
-      ⚔️ Warrior Pass · Auto-scratch attivo
+    <!-- Auto-scratch toggle (Warrior Pass) -->
+    <div id="sc-auto-row" style="display:none;margin-top:10px;padding:10px 14px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div>
+          <div style="font-size:.75rem;font-weight:700;color:#A78BFA">⚡ Auto-Scratch</div>
+          <div style="font-size:.62rem;color:rgba(255,255,255,.4);margin-top:1px">Rivela tutte le card automaticamente</div>
+        </div>
+        <div id="sc-auto-toggle" onclick="toggleAutoScratch()"
+          style="width:44px;height:24px;border-radius:50px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.15);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0">
+          <div id="sc-auto-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#888;transition:all .2s"></div>
+        </div>
+      </div>
+      <div id="sc-auto-lock" style="display:none;margin-top:6px;font-size:.62rem;color:rgba(255,140,0,.7);text-align:center">
+        🔒 Warrior Pass required · <span onclick="subscribeWarriorPass()" style="color:#A78BFA;text-decoration:underline;cursor:pointer">Get it</span>
+      </div>
     </div>
   </div>
 
@@ -3938,6 +3950,35 @@ function showScratchTable(tier) {
 
 let scratchQty = 1
 const SCRATCH_QTY_MAX = 20
+let scratchAutoEnabled = false  // auto-scratch toggle
+
+function toggleAutoScratch() {
+  if (!user.warriorPass) {
+    // Mostra lock hint
+    const lock = document.getElementById('sc-auto-lock')
+    if (lock) { lock.style.display = 'block'; setTimeout(() => lock.style.display='none', 3000) }
+    return
+  }
+  scratchAutoEnabled = !scratchAutoEnabled
+  _updateAutoToggleUI()
+}
+
+function _updateAutoToggleUI() {
+  const toggle = document.getElementById('sc-auto-toggle')
+  const knob   = document.getElementById('sc-auto-knob')
+  if (!toggle || !knob) return
+  if (scratchAutoEnabled) {
+    toggle.style.background = 'rgba(139,92,246,.5)'
+    toggle.style.borderColor = 'rgba(139,92,246,.8)'
+    knob.style.left = '22px'
+    knob.style.background = '#A78BFA'
+  } else {
+    toggle.style.background = 'rgba(255,255,255,.1)'
+    toggle.style.borderColor = 'rgba(255,255,255,.15)'
+    knob.style.left = '2px'
+    knob.style.background = '#888'
+  }
+}
 
 function setScratchQtyAbs(n) {
   scratchQty = Math.max(1, Math.min(SCRATCH_QTY_MAX, n))
@@ -3971,9 +4012,11 @@ function updateScratchBuyBtn() {
     btn.style.opacity = '1'
     btn.style.pointerEvents = 'auto'
   }
-  // Mostra hint auto-scratch per Warrior Pass
-  const hint = document.getElementById('sc-auto-hint')
-  if (hint) hint.style.display = user.warriorPass && scratchQty > 1 ? 'block' : 'none'
+  // Mostra toggle auto-scratch quando qty > 1
+  const autoRow = document.getElementById('sc-auto-row')
+  if (autoRow) autoRow.style.display = scratchQty > 1 ? 'flex' : 'none'
+  const autoLock = document.getElementById('sc-auto-lock')
+  if (autoLock && !user.warriorPass) autoLock.style.display = 'none'
 }
 
 function selectScratchCard(tier) {
@@ -4020,7 +4063,7 @@ async function buyScratchCard() {
   if (btn) { btn.style.opacity = '.6'; btn.style.pointerEvents = 'none'; btn.textContent = '⏳ Processing...' }
 
   const comment = `TonBola:scratch:${scratchSelected}:x${qty}`
-  const isAuto = user.warriorPass && qty > 1  // auto-scratch se warrior pass + multi-card
+  const isAuto = user.warriorPass && scratchAutoEnabled && qty > 1
 
   const onSuccess = () => {
     if (btn) { btn.style.opacity = '.4'; btn.style.pointerEvents = 'none'; btn.textContent = '✅ ' + qty + ' card' + (qty>1?'s':'')+' purchased!' }
