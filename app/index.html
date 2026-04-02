@@ -3199,6 +3199,15 @@ function initHome(){
 }
 
 function openLobby(r){
+  // Per TON rooms: richiedi wallet connesso prima di entrare
+  if (r !== 'free' && !tcWallet) {
+    if (tg?.showPopup) tg.showPopup({
+      title: '💎 Connect Wallet',
+      message: 'You need to connect your TON wallet to play for real prizes.',
+      buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel', text:'Cancel'}]
+    }, (id) => { if (id === 'connect') connectWallet() })
+    return
+  }
   const ul=getMilestoneUnlocks(),gates={ton:'tonRoom',vip:'vipRoom'},gk=gates[r]
   if(gk&&!ul[gk]){
     const lm={vipRoom:15},lv=lm[gk],ul2={vipRoom:['VIP Room','+5% prizes']}
@@ -3861,7 +3870,19 @@ function initTonConnect() {
     tc.onStatusChange(w => {
       tcWallet = w
       updateWalletUI()
-      console.log(w ? '✅ Wallet: ' + w.account.address : '❌ Disconnected')
+      if (w?.account?.address) {
+        user.wallet_address = w.account.address
+        console.log('✅ Wallet connected:', w.account.address.slice(0,12)+'...')
+        // Se siamo in partita, aggiorna il backend con il wallet
+        if (bingoWS?.readyState === 1) {
+          bingoWS.send(JSON.stringify({
+            type: 'wallet_update',
+            wallet_address: w.account.address
+          }))
+        }
+      } else {
+        console.log('❌ Wallet disconnected')
+      }
     })
     console.log('✅ TonConnect UI ready')
   } catch(e) {
@@ -6915,11 +6936,14 @@ function connectBingoWS() {
   bingoWS = new WebSocket(wsUrl)
 
   bingoWS.onopen = () => {
+    // Ottieni wallet address — se non connesso usa stringa vuota
+    const walletAddr = tcWallet?.account?.address || user.wallet_address || ''
+    console.log('[BINGO WS] Joining room, wallet:', walletAddr ? walletAddr.slice(0,12)+'...' : 'NOT CONNECTED')
     bingoWS.send(JSON.stringify({
       user_id:        user.telegramId || user.id || 'anon',
       name:           user.name || user.username || 'Player',
       cards:          nCards,
-      wallet_address: tcWallet?.account?.address || '',
+      wallet_address: walletAddr,
     }))
   }
 
