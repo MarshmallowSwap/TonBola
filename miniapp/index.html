@@ -3199,15 +3199,6 @@ function initHome(){
 }
 
 function openLobby(r){
-  // Per TON rooms: richiedi wallet connesso prima di entrare
-  if (r !== 'free' && !tcWallet) {
-    if (tg?.showPopup) tg.showPopup({
-      title: '💎 Connect Wallet',
-      message: 'You need to connect your TON wallet to play for real prizes.',
-      buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel', text:'Cancel'}]
-    }, (id) => { if (id === 'connect') connectWallet() })
-    return
-  }
   const ul=getMilestoneUnlocks(),gates={ton:'tonRoom',vip:'vipRoom'},gk=gates[r]
   if(gk&&!ul[gk]){
     const lm={vipRoom:15},lv=lm[gk],ul2={vipRoom:['VIP Room','+5% prizes']}
@@ -4058,6 +4049,30 @@ function buildGamePaymentBOC(gameType, gameId) {
 async function sendTonPayment(amountTon, comment, onSuccess, onFail, gameType=1, gameId=null) {
   if (!tc) { initTonConnect(); await new Promise(r=>setTimeout(r,1200)) }
   if (!tc) { if(onFail) onFail('no_tc'); return }
+
+  // Se wallet non connesso, aprilo prima di procedere col pagamento
+  if (!tcWallet && !tc.wallet) {
+    if (tg?.showPopup) {
+      tg.showPopup({
+        title: '💎 Connect Wallet',
+        message: 'Connect your TON wallet to pay and play.',
+        buttons: [{id:'connect', type:'default', text:'Connect Wallet'}, {type:'cancel'}]
+      }, async (id) => {
+        if (id === 'connect') {
+          await connectWallet()
+          await new Promise(r => setTimeout(r, 2000))
+          if (tcWallet || tc.wallet) {
+            sendTonPayment(amountTon, comment, onSuccess, onFail, gameType, gameId)
+          } else {
+            if (onFail) onFail('no_wallet')
+          }
+        } else {
+          if (onFail) onFail('cancelled')
+        }
+      })
+      return
+    }
+  }
 
   const nanotons = String(Math.round(amountTon * 1000000000))
   const gid = gameId || Date.now()
@@ -7029,9 +7044,8 @@ function connectBingoWS() {
   bingoWS = new WebSocket(wsUrl)
 
   bingoWS.onopen = () => {
-    // Ottieni wallet address — se non connesso usa stringa vuota
-    const walletAddr = tcWallet?.account?.address || user.wallet_address || ''
-    console.log('[BINGO WS] Joining room, wallet:', walletAddr ? walletAddr.slice(0,12)+'...' : 'NOT CONNECTED')
+    // wallet_address: disponibile perché l'utente ha appena pagato (wallet connesso)
+    const walletAddr = tcWallet?.account?.address || tc?.wallet?.account?.address || user.wallet_address || ''
     bingoWS.send(JSON.stringify({
       user_id:        user.telegramId || user.id || 'anon',
       name:           user.name || user.username || 'Player',
