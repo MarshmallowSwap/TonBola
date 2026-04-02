@@ -768,7 +768,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 </style>
 
 <!-- TonConnect SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.0.2/dist/tonconnect-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.0.10/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 
@@ -3848,7 +3848,16 @@ function initTonConnect() {
   try {
     const UI = window.TON_CONNECT_UI
     if (!UI) { setTimeout(initTonConnect, 800); return }
-    tc = new UI.TonConnectUI({ manifestUrl: MANIFEST_URL, buttonRootId: null })
+    tc = new UI.TonConnectUI({
+      manifestUrl: MANIFEST_URL,
+      buttonRootId: null,
+      uiPreferences: { theme: 'DARK' },
+      walletsListConfiguration: {
+        includeWallets: [
+          { name: 'Telegram Wallet', appName: 'telegram-wallet' }
+        ]
+      }
+    })
     tc.onStatusChange(w => {
       tcWallet = w
       updateWalletUI()
@@ -3883,8 +3892,18 @@ async function connectWallet() {
     return
   }
 
-  // TonConnectUI opens the wallet selection modal automatically
-  await tc.openModal()
+  // Tenta apertura diretta Telegram Wallet, fallback al modal
+  try {
+    // Prova prima il Telegram Wallet (TON Space)
+    if (typeof tc.openSingleWalletModal === 'function') {
+      await tc.openSingleWalletModal('telegram-wallet')
+    } else {
+      await tc.openModal()
+    }
+  } catch(e) {
+    console.warn('openSingleWalletModal failed, using modal:', e)
+    await tc.openModal()
+  }
 }
 
 
