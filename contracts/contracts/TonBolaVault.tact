@@ -1,241 +1,325 @@
-// TonBolaVault — TonBola Smart Contract
-// Split automatico pagamenti + pagamento vincitori via oracle firmato
+// ═══════════════════════════════════════════════════════════════
+//  TonBolaVault — Contratto Master TonBola
+//  TON-only · Split universale · Prize pools · Rank pools
+//
+//  SPLIT per ogni TON ricevuto:
+//    55.0% → Prize Pool partita
+//     5.0% → Jackpot Pool (per gioco)
+//     1.5% → Rank Weekly Individual
+//     1.0% → Rank Monthly Individual
+//     1.0% → Rank Weekly Squad
+//     0.5% → Rank Monthly Squad
+//     0.2% → Oracle gas (autofinanziamento)
+//    35.8% → Dev / Operations
+// ═══════════════════════════════════════════════════════════════
 
-trait Ownable {
-    owner: Address;
-    fun requireOwner() {
-        require(sender() == self.owner, "Not owner");
-    }
+import "@stdlib/deploy";
+import "@stdlib/ownable";
+
+// ── Messaggi ─────────────────────────────────────────────────
+
+message(0x01) GamePayment {
+    game_type: Int as uint8;   // 0=bingo 1=wheel 2=scratch
+    game_id:   Int as uint64;
 }
 
-// ── Messaggi ──────────────────────────────────────────────────
-message(0x47696d70) GamePayment {
+message(0x02) PayWinner {
+    game_id:  Int as uint64;
+    winner:   Address;
+    amount:   Int as coins;
+    win_type: Int as uint8;    // 0=line 1=bingo 2=pvp 3=jackpot
+}
+
+message(0x03) PayRank {
+    rank_type:  Int as uint8;
+    period_key: Int as uint64;
+    w1: Address; a1: Int as coins;
+    w2: Address; a2: Int as coins;
+    w3: Address; a3: Int as coins;
+    w4: Address; a4: Int as coins;
+    w5: Address; a5: Int as coins;
+}
+
+message(0x04) JackpotPayout {
     game_type: Int as uint8;
-    game_id: Int as uint64;
-    player_id: Int as uint64;
+    winner:    Address;
+    amount:    Int as coins;
 }
 
-message(0x50617957) PayWinner {
-    winner: Address;
-    amount: Int as coins;
-    game_id: Int as uint64;
-    nonce: Int as uint64;
-    signature: Slice;
-}
+message(0x05) SetOracle  { oracle: Address; }
+message(0x06) WithdrawDev { amount: Int as coins; }
+message(0x07) RefundPool  { game_id: Int as uint64; }
 
-message(0x4a61636b) PayJackpot {
-    winner: Address;
-    pool_id: Int as uint8;
-    nonce: Int as uint64;
-    signature: Slice;
-}
+// ── Struct ────────────────────────────────────────────────────
 
-message(0x436f6e66) UpdateConfig {
-    dev_wallet: Address;
-    token_fund: Address;
-    leaderboard_wallet: Address;
-    platform_wallet: Address;
-    oracle_pubkey: Int as uint256;
-}
-
-message WinnerPaid {
-    winner: Address;
-    amount: Int as coins;
-    game_id: Int as uint64;
+struct GamePool {
+    amount:    Int as coins;
+    game_type: Int as uint8;
+    paid_out:  Bool;
 }
 
 // ── Contratto ─────────────────────────────────────────────────
-contract TonBolaVault with Ownable {
 
-    owner: Address;
-    dev_wallet: Address;
-    token_fund: Address;
-    leaderboard_wallet: Address;
-    platform_wallet: Address;
-    oracle_pubkey: Int as uint256;
+contract TonBolaVault with Deployable, Ownable {
 
-    last_nonce: Int as uint64;
-    jackpot_ton: Int as coins;
-    total_in: Int as coins;
-    total_paid: Int as coins;
-    game_count: Int as uint64;
-    prize_pool: Int as coins;  // tracked separately for transparency
+    owner:   Address;
+    oracle:  Address;
 
-    init(
-        dev_wallet: Address,
-        token_fund: Address,
-        leaderboard_wallet: Address,
-        platform_wallet: Address,
-        oracle_pubkey: Int
-    ) {
-        self.owner = sender();
-        self.dev_wallet = dev_wallet;
-        self.token_fund = token_fund;
-        self.leaderboard_wallet = leaderboard_wallet;
-        self.platform_wallet = platform_wallet;
-        self.oracle_pubkey = oracle_pubkey;
-        self.last_nonce = 0;
-        self.jackpot_ton = 0;
-        self.total_in = 0;
-        self.total_paid = 0;
-        self.game_count = 0;
-        self.prize_pool = 0;
+    // Prize pools (game_id → pool)
+    game_pools: map<Int, GamePool>;
+
+    // Jackpot pools (per gioco)
+    jackpot_bingo:   Int as coins = 0;
+    jackpot_wheel:   Int as coins = 0;
+    jackpot_scratch: Int as coins = 0;
+
+    // Rank pools
+    rank_weekly_ind:    Int as coins = 0;
+    rank_monthly_ind:   Int as coins = 0;
+    rank_weekly_squad:  Int as coins = 0;
+    rank_monthly_squad: Int as coins = 0;
+
+    // Dev balance (35.8%)
+    dev_balance: Int as coins = 0;
+
+    // Stats
+    total_processed: Int as coins = 0;
+
+    // Anti-replay rank
+    paid_periods: map<Int, Bool>;
+
+    // ── Split constants (basis points, 10000 = 100%) ─────────
+    const BP_PRIZE:         Int = 5500;  // 55.0%
+    const BP_JACKPOT:       Int = 500;   //  5.0%
+    const BP_RANK_WEEKLY_I: Int = 150;   //  1.5%
+    const BP_RANK_MONTHLY_I:Int = 100;   //  1.0%
+    const BP_RANK_WEEKLY_S: Int = 100;   //  1.0%
+    const BP_RANK_MONTHLY_S:Int = 50;    //  0.5%
+    const BP_ORACLE_GAS:    Int = 20;    //  0.2% → oracle autofinanziamento
+    // dev = remainder ≈ 35.8%
+
+    // Jackpot threshold: 5 TON
+    const JACKPOT_MIN: Int = 5000000000;
+
+    // Minimo balance contratto per gas (0.2 TON)
+    const MIN_BALANCE: Int = 200000000;
+
+    // Minimo TON per inviare (evita dust)
+    const MIN_SEND: Int = 5000000;       // 0.005 TON
+
+    init(owner: Address, oracle: Address) {
+        self.owner  = owner;
+        self.oracle = oracle;
     }
 
-    // ── Ricezione pagamento di gioco ──────────────────────────
+    // ── Ricevi pagamento gioco ────────────────────────────────
     receive(msg: GamePayment) {
-        let amount: Int = context().value;
-        require(amount >= ton("0.05"), "Amount too low");
+        let amt: Int = context().value;
+        require(amt >= 10000000, "Min 0.01 TON");
 
-        // Gas storage: mantieni 0.05 TON nel contratto
-        let usable: Int = amount - ton("0.05");
+        // Calcola split
+        let prize:      Int = amt * self.BP_PRIZE          / 10000;
+        let jackpot:    Int = amt * self.BP_JACKPOT         / 10000;
+        let rwi:        Int = amt * self.BP_RANK_WEEKLY_I   / 10000;
+        let rmi:        Int = amt * self.BP_RANK_MONTHLY_I  / 10000;
+        let rws:        Int = amt * self.BP_RANK_WEEKLY_S   / 10000;
+        let rms:        Int = amt * self.BP_RANK_MONTHLY_S  / 10000;
+        let oracle_gas: Int = amt * self.BP_ORACLE_GAS      / 10000;
+        let dev:        Int = amt - prize - jackpot - rwi - rmi - rws - rms - oracle_gas;
 
-        // Split: 32% dev, 8% token, 3% lb, 2% platform, 55% prize pool
-        let dev_share: Int      = usable * 3200 / 10000;
-        let token_share: Int    = usable * 800  / 10000;
-        let lb_share: Int       = usable * 300  / 10000;
-        let platform_share: Int = usable * 200  / 10000;
-        let prize_share: Int    = usable - dev_share - token_share - lb_share - platform_share;
-
-        // Forward ai wallet (SENZA modo SendRemainingBalance)
-        message(MessageParameters{
-            to: self.dev_wallet,
-            value: dev_share,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "dev_fee".asComment()
-        });
-
-        message(MessageParameters{
-            to: self.token_fund,
-            value: token_share,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "token_fund".asComment()
-        });
-
-        message(MessageParameters{
-            to: self.leaderboard_wallet,
-            value: lb_share,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "leaderboard_fund".asComment()
-        });
-
-        message(MessageParameters{
-            to: self.platform_wallet,
-            value: platform_share,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "platform_fee".asComment()
-        });
-
-        // Aggiorna stats
-        self.total_in = self.total_in + amount;
-        self.prize_pool = self.prize_pool + prize_share;
-        self.game_count = self.game_count + 1;
-    }
-
-    // ── Pagamento vincitore (firmato dall'oracle) ─────────────
-    receive(msg: PayWinner) {
-        require(msg.nonce > self.last_nonce, "Nonce already used");
-
-        let hash: Int = beginCell()
-            .storeAddress(msg.winner)
-            .storeCoins(msg.amount)
-            .storeUint(msg.game_id, 64)
-            .storeUint(msg.nonce, 64)
-            .endCell()
-            .hash();
-
-        require(checkSignature(hash, msg.signature, self.oracle_pubkey), "Invalid signature");
-        require(myBalance() >= msg.amount + ton("0.05"), "Insufficient balance");
-
-        self.last_nonce = msg.nonce;
-        self.total_paid = self.total_paid + msg.amount;
-        if (self.prize_pool >= msg.amount) {
-            self.prize_pool = self.prize_pool - msg.amount;
+        // Prize pool partita
+        let existing: GamePool? = self.game_pools.get(msg.game_id);
+        if (existing != null) {
+            let ex: GamePool = existing!!;
+            self.game_pools.set(msg.game_id, GamePool{
+                amount:    ex.amount + prize,
+                game_type: msg.game_type,
+                paid_out:  false
+            });
+        } else {
+            self.game_pools.set(msg.game_id, GamePool{
+                amount:    prize,
+                game_type: msg.game_type,
+                paid_out:  false
+            });
         }
 
-        message(MessageParameters{
-            to: msg.winner,
+        // Jackpot per gioco specifico
+        if (msg.game_type == 0) {
+            self.jackpot_bingo   = self.jackpot_bingo   + jackpot;
+        } else if (msg.game_type == 1) {
+            self.jackpot_wheel   = self.jackpot_wheel   + jackpot;
+        } else {
+            self.jackpot_scratch = self.jackpot_scratch + jackpot;
+        }
+
+        // Rank pools
+        self.rank_weekly_ind    = self.rank_weekly_ind    + rwi;
+        self.rank_monthly_ind   = self.rank_monthly_ind   + rmi;
+        self.rank_weekly_squad  = self.rank_weekly_squad  + rws;
+        self.rank_monthly_squad = self.rank_monthly_squad + rms;
+
+        // Dev
+        self.dev_balance     = self.dev_balance     + dev;
+        self.total_processed = self.total_processed + amt;
+
+        // ── Auto-ricarica oracle gas ─────────────────────────
+        // Invia 0.2% direttamente all'oracle per pagare le future TX.
+        // Così l'oracle non va mai a secco indipendentemente dal volume.
+        if (oracle_gas >= self.MIN_SEND) {
+            send(SendParameters{
+                to:    self.oracle,
+                value: oracle_gas,
+                mode:  SendPayGasSeparately,
+                body:  "oracle_gas".asComment()
+            });
+        }
+    }
+
+    // ── Oracle paga vincitore ─────────────────────────────────
+    receive(msg: PayWinner) {
+        require(sender() == self.oracle, "Only oracle");
+
+        let pool: GamePool? = self.game_pools.get(msg.game_id);
+        require(pool != null, "Pool not found");
+        let p: GamePool = pool!!;
+        require(!p.paid_out, "Already paid");
+        require(msg.amount > 0 && msg.amount <= p.amount, "Invalid amount");
+        require(myBalance() - msg.amount >= self.MIN_BALANCE, "Low balance");
+
+        // Bingo/PvP = finale → chiude il pool
+        let is_final: Bool = (msg.win_type == 1 || msg.win_type == 2);
+        self.game_pools.set(msg.game_id, GamePool{
+            amount:    p.amount - msg.amount,
+            game_type: p.game_type,
+            paid_out:  is_final
+        });
+
+        send(SendParameters{
+            to:    msg.winner,
             value: msg.amount,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "winner_prize".asComment()
+            mode:  SendPayGasSeparately,
+            body:  "TonBola prize".asComment()
         });
     }
 
-    // ── Pagamento jackpot ─────────────────────────────────────
-    receive(msg: PayJackpot) {
-        require(msg.nonce > self.last_nonce, "Nonce already used");
+    // ── Oracle paga jackpot ───────────────────────────────────
+    receive(msg: JackpotPayout) {
+        require(sender() == self.oracle, "Only oracle");
 
-        let hash: Int = beginCell()
-            .storeAddress(msg.winner)
-            .storeUint(msg.pool_id, 8)
-            .storeUint(msg.nonce, 64)
-            .endCell()
-            .hash();
+        let jp: Int = 0;
+        if (msg.game_type == 0) {
+            jp = self.jackpot_bingo;
+            require(jp >= self.JACKPOT_MIN, "Below 5 TON threshold");
+            self.jackpot_bingo = 0;
+        } else if (msg.game_type == 1) {
+            jp = self.jackpot_wheel;
+            require(jp >= self.JACKPOT_MIN, "Below 5 TON threshold");
+            self.jackpot_wheel = 0;
+        } else {
+            jp = self.jackpot_scratch;
+            require(jp >= self.JACKPOT_MIN, "Below 5 TON threshold");
+            self.jackpot_scratch = 0;
+        }
 
-        require(checkSignature(hash, msg.signature, self.oracle_pubkey), "Invalid signature");
+        require(msg.amount <= jp, "Exceeds jackpot");
+        require(myBalance() - msg.amount >= self.MIN_BALANCE, "Low balance");
 
-        let jackpot_amount: Int = self.jackpot_ton;
-        require(jackpot_amount >= ton("0.5"), "Jackpot below minimum");
-        require(myBalance() >= jackpot_amount + ton("0.05"), "Insufficient balance");
-
-        self.last_nonce = msg.nonce;
-        self.jackpot_ton = 0;
-        self.total_paid = self.total_paid + jackpot_amount;
-
-        message(MessageParameters{
-            to: msg.winner,
-            value: jackpot_amount,
-            mode: SendIgnoreErrors,
-            bounce: false,
-            body: "jackpot_win".asComment()
+        send(SendParameters{
+            to:    msg.winner,
+            value: msg.amount,
+            mode:  SendPayGasSeparately,
+            body:  "TonBola jackpot".asComment()
         });
     }
 
-    // ── Aggiungi liquidità al jackpot (solo owner o oracle) ───
-    receive("add_jackpot") {
-        self.jackpot_ton = self.jackpot_ton + context().value;
+    // ── Oracle paga rank (top 5) ──────────────────────────────
+    receive(msg: PayRank) {
+        require(sender() == self.oracle, "Only oracle");
+
+        // Anti-replay: ogni periodo può essere pagato una sola volta
+        let done: Bool? = self.paid_periods.get(msg.period_key);
+        require(done == null || !done!!, "Period already paid");
+        self.paid_periods.set(msg.period_key, true);
+
+        // Seleziona e azzera pool corretto
+        let pool: Int = 0;
+        if (msg.rank_type == 0) {
+            pool = self.rank_weekly_ind;    self.rank_weekly_ind    = 0;
+        } else if (msg.rank_type == 1) {
+            pool = self.rank_monthly_ind;   self.rank_monthly_ind   = 0;
+        } else if (msg.rank_type == 2) {
+            pool = self.rank_weekly_squad;  self.rank_weekly_squad  = 0;
+        } else {
+            pool = self.rank_monthly_squad; self.rank_monthly_squad = 0;
+        }
+
+        require(pool > 0, "Empty pool");
+        let total_pay: Int = msg.a1 + msg.a2 + msg.a3 + msg.a4 + msg.a5;
+        require(total_pay <= pool, "Exceeds pool");
+        require(myBalance() - total_pay >= self.MIN_BALANCE, "Low balance");
+
+        // Paga top 5 — salta chi ha amount 0
+        if (msg.a1 > 0) { send(SendParameters{ to: msg.w1, value: msg.a1, mode: SendPayGasSeparately, body: "TonBola rank 1".asComment() }); }
+        if (msg.a2 > 0) { send(SendParameters{ to: msg.w2, value: msg.a2, mode: SendPayGasSeparately, body: "TonBola rank 2".asComment() }); }
+        if (msg.a3 > 0) { send(SendParameters{ to: msg.w3, value: msg.a3, mode: SendPayGasSeparately, body: "TonBola rank 3".asComment() }); }
+        if (msg.a4 > 0) { send(SendParameters{ to: msg.w4, value: msg.a4, mode: SendPayGasSeparately, body: "TonBola rank 4".asComment() }); }
+        if (msg.a5 > 0) { send(SendParameters{ to: msg.w5, value: msg.a5, mode: SendPayGasSeparately, body: "TonBola rank 5".asComment() }); }
     }
 
-    // ── Aggiungi liquidità al prize pool (solo owner) ─────────
-    receive("add_liquidity") {
-        require(sender() == self.owner, "Only owner");
-        self.prize_pool = self.prize_pool + context().value;
-    }
-
-    // ── Config update ─────────────────────────────────────────
-    receive(msg: UpdateConfig) {
+    // ── Owner: rimborsa pool partita non completata ───────────
+    // Caso edge: partita abbandonata, pool va al dev
+    receive(msg: RefundPool) {
         self.requireOwner();
-        self.dev_wallet = msg.dev_wallet;
-        self.token_fund = msg.token_fund;
-        self.leaderboard_wallet = msg.leaderboard_wallet;
-        self.platform_wallet = msg.platform_wallet;
-        self.oracle_pubkey = msg.oracle_pubkey;
+        let pool: GamePool? = self.game_pools.get(msg.game_id);
+        require(pool != null, "Pool not found");
+        let p: GamePool = pool!!;
+        require(!p.paid_out, "Already paid");
+        self.dev_balance = self.dev_balance + p.amount;
+        self.game_pools.set(msg.game_id, GamePool{
+            amount:    0,
+            game_type: p.game_type,
+            paid_out:  true
+        });
     }
 
-    // ── Emergency (solo owner) ────────────────────────────────
-    receive("emergency_withdraw") {
+    // ── Admin ─────────────────────────────────────────────────
+    receive(msg: SetOracle) {
         self.requireOwner();
-        message(MessageParameters{
-            to: self.owner,
-            value: 0,
-            mode: SendRemainingBalance,
-            bounce: false,
-            body: "emergency".asComment()
+        self.oracle = msg.oracle;
+    }
+
+    receive(msg: WithdrawDev) {
+        self.requireOwner();
+        require(msg.amount <= self.dev_balance, "Exceeds dev balance");
+        require(myBalance() - msg.amount >= self.MIN_BALANCE, "Low balance");
+        self.dev_balance = self.dev_balance - msg.amount;
+        send(SendParameters{
+            to:    self.owner,
+            value: msg.amount,
+            mode:  SendPayGasSeparately,
+            body:  "Dev withdrawal".asComment()
         });
     }
 
     // ── Getters ───────────────────────────────────────────────
-    get fun balance(): Int { return myBalance() }
-    get fun prizePool(): Int { return self.prize_pool }
-    get fun jackpotTon(): Int { return self.jackpot_ton }
-    get fun totalIn(): Int { return self.total_in }
-    get fun totalPaid(): Int { return self.total_paid }
-    get fun gameCount(): Int { return self.game_count }
-    get fun lastNonce(): Int { return self.last_nonce }
-    get fun owner(): Address { return self.owner }
+    get fun getPool(game_id: Int): Int {
+        let p: GamePool? = self.game_pools.get(game_id);
+        if (p == null) { return 0; }
+        return p!!.amount;
+    }
+
+    get fun jackpotBingo():   Int { return self.jackpot_bingo;   }
+    get fun jackpotWheel():   Int { return self.jackpot_wheel;   }
+    get fun jackpotScratch(): Int { return self.jackpot_scratch; }
+
+    get fun rankWeeklyInd():    Int { return self.rank_weekly_ind;    }
+    get fun rankMonthlyInd():   Int { return self.rank_monthly_ind;   }
+    get fun rankWeeklySquad():  Int { return self.rank_weekly_squad;  }
+    get fun rankMonthlySquad(): Int { return self.rank_monthly_squad; }
+
+    get fun devBalance():     Int { return self.dev_balance;     }
+    get fun totalProcessed(): Int { return self.total_processed; }
+    get fun oracle():         Address { return self.oracle;      }
+    get fun balance():        Int { return myBalance();          }
 }

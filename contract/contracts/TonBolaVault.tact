@@ -9,7 +9,8 @@
 //     1.0% → Rank Monthly Individual
 //     1.0% → Rank Weekly Squad
 //     0.5% → Rank Monthly Squad
-//    36.0% → Dev / Operations
+//     0.2% → Oracle gas (autofinanziamento)
+//    35.8% → Dev / Operations
 // ═══════════════════════════════════════════════════════════════
 
 import "@stdlib/deploy";
@@ -19,7 +20,7 @@ import "@stdlib/ownable";
 
 message(0x01) GamePayment {
     game_type: Int as uint8;   // 0=bingo 1=wheel 2=scratch
-    game_id:   Int as uint64;  // ID partita/sessione
+    game_id:   Int as uint64;
 }
 
 message(0x02) PayWinner {
@@ -47,6 +48,7 @@ message(0x04) JackpotPayout {
 
 message(0x05) SetOracle  { oracle: Address; }
 message(0x06) WithdrawDev { amount: Int as coins; }
+message(0x07) RefundPool  { game_id: Int as uint64; }
 
 // ── Struct ────────────────────────────────────────────────────
 
@@ -66,7 +68,7 @@ contract TonBolaVault with Deployable, Ownable {
     // Prize pools (game_id → pool)
     game_pools: map<Int, GamePool>;
 
-    // Jackpot pools
+    // Jackpot pools (per gioco)
     jackpot_bingo:   Int as coins = 0;
     jackpot_wheel:   Int as coins = 0;
     jackpot_scratch: Int as coins = 0;
@@ -77,7 +79,7 @@ contract TonBolaVault with Deployable, Ownable {
     rank_weekly_squad:  Int as coins = 0;
     rank_monthly_squad: Int as coins = 0;
 
-    // Dev balance (36%)
+    // Dev balance (35.8%)
     dev_balance: Int as coins = 0;
 
     // Stats
@@ -86,21 +88,24 @@ contract TonBolaVault with Deployable, Ownable {
     // Anti-replay rank
     paid_periods: map<Int, Bool>;
 
-    // ── Constants ────────────────────────────────────────────
-    // Split in basis points (10000 = 100%)
-    const BP_PRIZE:         Int = 5500;
-    const BP_JACKPOT:       Int = 500;
-    const BP_RANK_WEEKLY_I: Int = 150;
-    const BP_RANK_MONTHLY_I:Int = 100;
-    const BP_RANK_WEEKLY_S: Int = 100;
-    const BP_RANK_MONTHLY_S:Int = 50;
-    // dev = remainder = 3600
+    // ── Split constants (basis points, 10000 = 100%) ─────────
+    const BP_PRIZE:         Int = 5500;  // 55.0%
+    const BP_JACKPOT:       Int = 500;   //  5.0%
+    const BP_RANK_WEEKLY_I: Int = 150;   //  1.5%
+    const BP_RANK_MONTHLY_I:Int = 100;   //  1.0%
+    const BP_RANK_WEEKLY_S: Int = 100;   //  1.0%
+    const BP_RANK_MONTHLY_S:Int = 50;    //  0.5%
+    const BP_ORACLE_GAS:    Int = 20;    //  0.2% → oracle autofinanziamento
+    // dev = remainder ≈ 35.8%
 
     // Jackpot threshold: 5 TON
     const JACKPOT_MIN: Int = 5000000000;
 
-    // Minimum contract balance for gas
-    const MIN_BALANCE: Int = 200000000;  // 0.2 TON
+    // Minimo balance contratto per gas (0.2 TON)
+    const MIN_BALANCE: Int = 200000000;
+
+    // Minimo TON per inviare (evita dust)
+    const MIN_SEND: Int = 5000000;       // 0.005 TON
 
     init(owner: Address, oracle: Address) {
         self.owner  = owner;
@@ -110,16 +115,17 @@ contract TonBolaVault with Deployable, Ownable {
     // ── Ricevi pagamento gioco ────────────────────────────────
     receive(msg: GamePayment) {
         let amt: Int = context().value;
-        require(amt >= 10000000, "Min 0.01 TON");   // spam guard
+        require(amt >= 10000000, "Min 0.01 TON");
 
         // Calcola split
-        let prize:   Int = amt * self.BP_PRIZE         / 10000;
-        let jackpot: Int = amt * self.BP_JACKPOT        / 10000;
-        let rwi:     Int = amt * self.BP_RANK_WEEKLY_I  / 10000;
-        let rmi:     Int = amt * self.BP_RANK_MONTHLY_I / 10000;
-        let rws:     Int = amt * self.BP_RANK_WEEKLY_S  / 10000;
-        let rms:     Int = amt * self.BP_RANK_MONTHLY_S / 10000;
-        let dev:     Int = amt - prize - jackpot - rwi - rmi - rws - rms;
+        let prize:      Int = amt * self.BP_PRIZE          / 10000;
+        let jackpot:    Int = amt * self.BP_JACKPOT         / 10000;
+        let rwi:        Int = amt * self.BP_RANK_WEEKLY_I   / 10000;
+        let rmi:        Int = amt * self.BP_RANK_MONTHLY_I  / 10000;
+        let rws:        Int = amt * self.BP_RANK_WEEKLY_S   / 10000;
+        let rms:        Int = amt * self.BP_RANK_MONTHLY_S  / 10000;
+        let oracle_gas: Int = amt * self.BP_ORACLE_GAS      / 10000;
+        let dev:        Int = amt - prize - jackpot - rwi - rmi - rws - rms - oracle_gas;
 
         // Prize pool partita
         let existing: GamePool? = self.game_pools.get(msg.game_id);
@@ -138,7 +144,7 @@ contract TonBolaVault with Deployable, Ownable {
             });
         }
 
-        // Jackpot per gioco
+        // Jackpot per gioco specifico
         if (msg.game_type == 0) {
             self.jackpot_bingo   = self.jackpot_bingo   + jackpot;
         } else if (msg.game_type == 1) {
@@ -156,9 +162,21 @@ contract TonBolaVault with Deployable, Ownable {
         // Dev
         self.dev_balance     = self.dev_balance     + dev;
         self.total_processed = self.total_processed + amt;
+
+        // ── Auto-ricarica oracle gas ─────────────────────────
+        // Invia 0.2% direttamente all'oracle per pagare le future TX.
+        // Così l'oracle non va mai a secco indipendentemente dal volume.
+        if (oracle_gas >= self.MIN_SEND) {
+            send(SendParameters{
+                to:    self.oracle,
+                value: oracle_gas,
+                mode:  SendPayGasSeparately,
+                body:  "oracle_gas".asComment()
+            });
+        }
     }
 
-    // ── Oracle paga vincitore ────────────────────────────────
+    // ── Oracle paga vincitore ─────────────────────────────────
     receive(msg: PayWinner) {
         require(sender() == self.oracle, "Only oracle");
 
@@ -169,7 +187,7 @@ contract TonBolaVault with Deployable, Ownable {
         require(msg.amount > 0 && msg.amount <= p.amount, "Invalid amount");
         require(myBalance() - msg.amount >= self.MIN_BALANCE, "Low balance");
 
-        // Aggiorna pool
+        // Bingo/PvP = finale → chiude il pool
         let is_final: Bool = (msg.win_type == 1 || msg.win_type == 2);
         self.game_pools.set(msg.game_id, GamePool{
             amount:    p.amount - msg.amount,
@@ -178,14 +196,14 @@ contract TonBolaVault with Deployable, Ownable {
         });
 
         send(SendParameters{
-            to:   msg.winner,
+            to:    msg.winner,
             value: msg.amount,
             mode:  SendPayGasSeparately,
-            body: "TonBola prize".asComment()
+            body:  "TonBola prize".asComment()
         });
     }
 
-    // ── Oracle paga jackpot ──────────────────────────────────
+    // ── Oracle paga jackpot ───────────────────────────────────
     receive(msg: JackpotPayout) {
         require(sender() == self.oracle, "Only oracle");
 
@@ -215,16 +233,16 @@ contract TonBolaVault with Deployable, Ownable {
         });
     }
 
-    // ── Oracle paga rank (top 5, amounts pre-calcolati) ──────
+    // ── Oracle paga rank (top 5) ──────────────────────────────
     receive(msg: PayRank) {
         require(sender() == self.oracle, "Only oracle");
 
-        // Anti-replay
+        // Anti-replay: ogni periodo può essere pagato una sola volta
         let done: Bool? = self.paid_periods.get(msg.period_key);
         require(done == null || !done!!, "Period already paid");
         self.paid_periods.set(msg.period_key, true);
 
-        // Seleziona e azzera pool
+        // Seleziona e azzera pool corretto
         let pool: Int = 0;
         if (msg.rank_type == 0) {
             pool = self.rank_weekly_ind;    self.rank_weekly_ind    = 0;
@@ -241,12 +259,28 @@ contract TonBolaVault with Deployable, Ownable {
         require(total_pay <= pool, "Exceeds pool");
         require(myBalance() - total_pay >= self.MIN_BALANCE, "Low balance");
 
-        // Paga top 5 (amount=0 viene skippato automaticamente da TON)
+        // Paga top 5 — salta chi ha amount 0
         if (msg.a1 > 0) { send(SendParameters{ to: msg.w1, value: msg.a1, mode: SendPayGasSeparately, body: "TonBola rank 1".asComment() }); }
         if (msg.a2 > 0) { send(SendParameters{ to: msg.w2, value: msg.a2, mode: SendPayGasSeparately, body: "TonBola rank 2".asComment() }); }
         if (msg.a3 > 0) { send(SendParameters{ to: msg.w3, value: msg.a3, mode: SendPayGasSeparately, body: "TonBola rank 3".asComment() }); }
         if (msg.a4 > 0) { send(SendParameters{ to: msg.w4, value: msg.a4, mode: SendPayGasSeparately, body: "TonBola rank 4".asComment() }); }
         if (msg.a5 > 0) { send(SendParameters{ to: msg.w5, value: msg.a5, mode: SendPayGasSeparately, body: "TonBola rank 5".asComment() }); }
+    }
+
+    // ── Owner: rimborsa pool partita non completata ───────────
+    // Caso edge: partita abbandonata, pool va al dev
+    receive(msg: RefundPool) {
+        self.requireOwner();
+        let pool: GamePool? = self.game_pools.get(msg.game_id);
+        require(pool != null, "Pool not found");
+        let p: GamePool = pool!!;
+        require(!p.paid_out, "Already paid");
+        self.dev_balance = self.dev_balance + p.amount;
+        self.game_pools.set(msg.game_id, GamePool{
+            amount:    0,
+            game_type: p.game_type,
+            paid_out:  true
+        });
     }
 
     // ── Admin ─────────────────────────────────────────────────
@@ -284,8 +318,8 @@ contract TonBolaVault with Deployable, Ownable {
     get fun rankWeeklySquad():  Int { return self.rank_weekly_squad;  }
     get fun rankMonthlySquad(): Int { return self.rank_monthly_squad; }
 
-    get fun devBalance():      Int { return self.dev_balance;      }
-    get fun totalProcessed():  Int { return self.total_processed;  }
-    get fun oracle():          Address { return self.oracle;       }
-    get fun balance():         Int { return myBalance();           }
+    get fun devBalance():     Int { return self.dev_balance;     }
+    get fun totalProcessed(): Int { return self.total_processed; }
+    get fun oracle():         Address { return self.oracle;      }
+    get fun balance():        Int { return myBalance();          }
 }
