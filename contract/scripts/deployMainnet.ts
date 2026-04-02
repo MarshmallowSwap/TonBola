@@ -1,97 +1,105 @@
-import { Address, toNano, WalletContractV4, internal, beginCell } from "@ton/ton";
-import { TonClient, mnemonicToPrivateKey, KeyPair } from "@ton/ton";
+// ═══════════════════════════════════════════════════════════════
+//  Deploy TonBolaVault — Mainnet
+//  Owner:  EQB_Gcot0yD5pPCQ7qn4OvkLjLtU1zSfvuLh1IrVWbl_1CTU
+//  Oracle: UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l
+// ═══════════════════════════════════════════════════════════════
+
+import { Address, toNano, WalletContractV4, internal, beginCell } from "@ton/core";
+import { TonClient, mnemonicToPrivateKey } from "@ton/ton";
 import { TonBolaVault } from "../build/TonBolaVault/TonBolaVault_TonBolaVault";
 import * as fs from "fs";
 
-// ── CONFIGURAZIONE ──────────────────────────────────────────
-// Inserisci il mnemonic del tuo wallet personale (owner)
-const OWNER_MNEMONIC = process.env.OWNER_MNEMONIC || "";
-// Oracle address già calcolato
 const ORACLE_ADDRESS = "UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l";
-// ────────────────────────────────────────────────────────────
+const DEPLOY_AMOUNT  = toNano("0.25");  // 0.25 TON initial balance
 
-async function deploy() {
-  if (!OWNER_MNEMONIC) {
-    console.error("❌  Imposta OWNER_MNEMONIC come variabile d'ambiente");
+async function main() {
+  const mnemonic = process.env.OWNER_MNEMONIC;
+  if (!mnemonic) {
+    console.error("❌  Manca OWNER_MNEMONIC");
     console.error("    export OWNER_MNEMONIC='parola1 parola2 ... parola24'");
     process.exit(1);
   }
 
-  console.log("🚀  Deploy TonBolaVault su TON Mainnet");
-  console.log("    Oracle:", ORACLE_ADDRESS);
+  console.log("🚀  TonBolaVault — Deploy Mainnet");
 
-  // Client mainnet
   const client = new TonClient({
     endpoint: "https://toncenter.com/api/v2/jsonRPC",
-    apiKey: process.env.TONCENTER_API_KEY || ""
+    apiKey: process.env.TONCENTER_KEY || ""
   });
 
-  // Carica owner wallet
-  const words = OWNER_MNEMONIC.trim().split(" ");
-  const keyPair: KeyPair = await mnemonicToPrivateKey(words);
-  const wallet = WalletContractV4.create({
-    publicKey: keyPair.publicKey,
-    workchain: 0,
-  });
-  const walletContract = client.open(wallet);
+  const kp = await mnemonicToPrivateKey(mnemonic.trim().split(" "));
+  const wallet = WalletContractV4.create({ publicKey: kp.publicKey, workchain: 0 });
+  const wc = client.open(wallet);
   const ownerAddr = wallet.address;
 
-  console.log("    Owner:", ownerAddr.toFriendly());
+  console.log("   Owner  :", ownerAddr.toString({ bounceable: true }));
+  console.log("   Oracle :", ORACLE_ADDRESS);
 
-  // Controlla balance
-  const balance = await walletContract.getBalance();
-  console.log("    Balance:", Number(balance) / 1e9, "TON");
-  if (balance < toNano("0.5")) {
-    console.error("❌  Balance troppo basso — servono almeno 0.5 TON per il deploy");
+  const bal = await wc.getBalance();
+  console.log("   Balance:", Number(bal) / 1e9, "TON");
+  if (bal < DEPLOY_AMOUNT + toNano("0.05")) {
+    console.error("❌  Balance insufficiente — servono almeno 0.30 TON");
     process.exit(1);
   }
 
-  // Crea contratto
-  const oracleAddr = Address.parse(ORACLE_ADDRESS);
-  const vault = await TonBolaVault.fromInit(ownerAddr, oracleAddr);
+  // Calcola indirizzo contratto prima del deploy
+  const oracle = Address.parse(ORACLE_ADDRESS);
+  const vault  = await TonBolaVault.fromInit(ownerAddr, oracle);
 
-  console.log("\n📋  Indirizzo contratto:", vault.address.toFriendly());
-  console.log("    Questo è l'indirizzo su cui i giocatori invieranno i pagamenti");
+  console.log("\n📋  Contratto:", vault.address.toString({ bounceable: false }));
+  console.log("    TONViewer: https://tonviewer.com/" + vault.address.toString({ bounceable: false }));
+
+  // Verifica che non sia già deployato
+  try {
+    const existing = await client.getContractState(vault.address);
+    if (existing.state === "active") {
+      console.log("⚠️   Contratto già attivo a questo indirizzo");
+      console.log("    Indirizzo:", vault.address.toString({ bounceable: false }));
+      saveResult(vault.address.toString({ bounceable: false }), ownerAddr.toString({ bounceable: true }));
+      return;
+    }
+  } catch {}
 
   // Deploy
-  console.log("\n⏳  Invio transazione di deploy...");
-  const seqno = await walletContract.getSeqno();
-
-  await walletContract.sendTransfer({
+  const seqno = await wc.getSeqno();
+  await wc.sendTransfer({
     seqno,
-    secretKey: keyPair.secretKey,
+    secretKey: kp.secretKey,
     messages: [
       internal({
-        to: vault.address,
-        value: toNano("0.3"),
-        init: vault.init,
-        body: beginCell().endCell(),
+        to:    vault.address,
+        value: DEPLOY_AMOUNT,
+        init:  vault.init,
+        body:  beginCell().endCell(),
       }),
     ],
   });
 
-  console.log("✅  Deploy inviato!");
-  console.log("\n📌  Salva questi dati:");
-  console.log("    CONTRACT_ADDRESS =", vault.address.toFriendly());
-  console.log("    OWNER_ADDRESS    =", ownerAddr.toFriendly());
-  console.log("    ORACLE_ADDRESS   =", ORACLE_ADDRESS);
-  console.log("\n🔗  Verifica su TONViewer:");
-  console.log("    https://tonviewer.com/" + vault.address.toFriendly());
-  console.log("\n⏳  Aspetta 15-30 secondi poi verifica che il contratto sia attivo.");
+  console.log("\n✅  Transazione inviata!");
+  console.log("    Aspetta 15-30 secondi poi controlla TONViewer.");
 
-  // Salva indirizzi su file
-  const deployInfo = {
-    contract: vault.address.toFriendly(),
-    owner: ownerAddr.toFriendly(),
-    oracle: ORACLE_ADDRESS,
-    deployedAt: new Date().toISOString(),
-    network: "mainnet"
-  };
-  fs.writeFileSync("deploy-mainnet.json", JSON.stringify(deployInfo, null, 2));
-  console.log("\n💾  Info salvate in contract/deploy-mainnet.json");
+  saveResult(
+    vault.address.toString({ bounceable: false }),
+    ownerAddr.toString({ bounceable: true })
+  );
 }
 
-deploy().catch(e => {
-  console.error("❌  Errore:", e.message);
-  process.exit(1);
-});
+function saveResult(contractAddr: string, ownerAddr: string) {
+  const info = {
+    contract: contractAddr,
+    owner:    ownerAddr,
+    oracle:   ORACLE_ADDRESS,
+    network:  "mainnet",
+    deployedAt: new Date().toISOString(),
+  };
+  fs.writeFileSync("deploy-mainnet.json", JSON.stringify(info, null, 2));
+
+  console.log("\n─────────────────────────────────────────────");
+  console.log("CONTRACT_ADDRESS =", contractAddr);
+  console.log("OWNER_ADDRESS    =", ownerAddr);
+  console.log("ORACLE_ADDRESS   =", ORACLE_ADDRESS);
+  console.log("─────────────────────────────────────────────");
+  console.log("💾  Salvato in deploy-mainnet.json");
+}
+
+main().catch(e => { console.error("❌", e.message); process.exit(1); });
