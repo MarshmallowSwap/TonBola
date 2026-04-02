@@ -2225,6 +2225,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <button class="nb" id="nb-p" onclick="go('sp');setNav('nb-p');renderProfile()"><div class="ni">🛡️</div>Profile</button>
 </nav>
 
+<div id="conf" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden"></div>
 <script>
 window.addEventListener('error', function(e){
   var el = document.getElementById('squad-content')
@@ -3905,6 +3906,29 @@ function openScratch() {
   if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='🎟️ Buy & Scratch — select a card first' }
 }
 
+
+function showScratchTable(tier) {
+  // Aggiorna tab UI
+  ['ton_low','ton_mid','ton'].forEach(t => {
+    const btn = document.getElementById('sct-'+t)
+    if (btn) btn.style.opacity = t === tier ? '1' : '0.45'
+  })
+
+  const prizes = SCRATCH_PRIZES[tier]
+  if (!prizes) return
+  const el = document.getElementById('sc-prize-table')
+  if (!el) return
+
+  el.innerHTML = prizes.map(p => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+      <span style="font-size:1rem;width:28px;text-align:center">${p.sym}</span>
+      <span style="font-size:.75rem;color:rgba(255,255,255,.6);flex:1">${p.match} match</span>
+      <span style="font-size:.78rem;font-weight:700;color:#34D399">${p.prize}</span>
+      <span style="font-size:.65rem;color:rgba(255,255,255,.35)">${p.odds}</span>
+    </div>
+  `).join('')
+}
+
 function selectScratchCard(tier) {
   // Level gate
   const ul = getMilestoneUnlocks()
@@ -4116,6 +4140,7 @@ function finalizeScratch() {
 // ── Jetton Transfer ──
 const NOT_JETTON_MASTER = 'EQAvlWFDxGF2lXm67y4xyLPKAlert3y2OKwnkMN1x0EsD_or'
 const TON_JETTON_MASTER = TON_JETTON_MASTER_ADDR
+const USDT_JETTON_MASTER = TON_JETTON_MASTER_ADDR  // alias TON-only
 TON_DECIMALS = 6 // TON has 6 decimals on TON
 const NOT_DECIMALS = 100000000000 // 9 decimali
 
