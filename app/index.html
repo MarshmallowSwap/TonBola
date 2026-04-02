@@ -3885,6 +3885,21 @@ function initTonConnect() {
       }
     })
     console.log('✅ TonConnect UI ready')
+
+    // Polling: controlla wallet state ogni 2s (fallback per Telegram Wallet)
+    setInterval(() => {
+      const w = tc.wallet
+      if (w && !tcWallet) {
+        tcWallet = w
+        user.wallet_address = w.account?.address || ''
+        updateWalletUI()
+        console.log('✅ Wallet detected via polling:', w.account?.address?.slice(0,12))
+      } else if (!w && tcWallet) {
+        tcWallet = null
+        updateWalletUI()
+      }
+    }, 2000)
+
   } catch(e) {
     console.warn('TonConnect init error:', e)
     setTimeout(initTonConnect, 1000)
@@ -3892,14 +3907,20 @@ function initTonConnect() {
 }
 
 function updateWalletUI() {
-  const connected = !!(tcWallet?.account?.address)
-  const addr = tcWallet?.account?.address || ''
+  // Usa tc.wallet come fonte di verità (più affidabile di tcWallet per Telegram Wallet)
+  const w = tcWallet || tc?.wallet || null
+  if (w && !tcWallet) tcWallet = w
+  const connected = !!(w?.account?.address)
+  const addr = w?.account?.address || ''
   const short = addr ? addr.slice(0,4) + '...' + addr.slice(-4) : ''
   document.querySelectorAll('.tc-connect-btn').forEach(btn => {
     btn.textContent = connected ? '💎 ' + short : '🔗 Connect Wallet'
     btn.style.borderColor = connected ? '#0098EA' : 'rgba(255,255,255,.15)'
     btn.style.color = connected ? '#40B8FF' : 'rgba(255,255,255,.6)'
   })
+  // Aggiorna anche header hub se esiste
+  const hubWallet = document.getElementById('h-wallet-addr')
+  if (hubWallet) hubWallet.textContent = connected ? short : ''
 }
 
 async function connectWallet() {
@@ -3924,6 +3945,13 @@ async function connectWallet() {
   } catch(e) {
     console.warn('openSingleWalletModal failed, using modal:', e)
     await tc.openModal()
+  }
+  // Aspetta 3s e controlla se si è connesso
+  await new Promise(r => setTimeout(r, 3000))
+  if (tc.wallet && !tcWallet) {
+    tcWallet = tc.wallet
+    user.wallet_address = tc.wallet.account?.address || ''
+    updateWalletUI()
   }
 }
 
