@@ -1281,14 +1281,23 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <!-- Buy section: quantità + button -->
   <div style="padding:0 12px 14px">
     <!-- Selettore quantità -->
-    <div id="sc-qty-row" style="display:none;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
-      <span style="font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700">QTY</span>
-      <div style="display:flex;gap:6px">
-        <button onclick="setScratchQty(1)" id="sc-qty-1" class="sc-qty-btn sc-qty-active">1</button>
-        <button onclick="setScratchQty(3)" id="sc-qty-3" class="sc-qty-btn">3</button>
-        <button onclick="setScratchQty(5)" id="sc-qty-5" class="sc-qty-btn">5</button>
+    <div id="sc-qty-row" style="display:none;flex-direction:column;gap:8px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+        <button onclick="addScratchQty(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1.2rem;font-weight:700;cursor:pointer">&#8722;</button>
+        <div style="text-align:center;min-width:60px">
+          <div id="sc-qty-display" style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#34D399;line-height:1">1</div>
+          <div style="font-size:.55rem;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.5px">cards</div>
+        </div>
+        <button onclick="addScratchQty(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(52,211,153,.4);background:rgba(52,211,153,.15);color:#34D399;font-size:1.2rem;font-weight:700;cursor:pointer">+</button>
       </div>
-      <span id="sc-qty-total" style="font-size:.75rem;color:#34D399;font-weight:700;min-width:60px;text-align:right"></span>
+      <div style="display:flex;gap:5px;justify-content:center">
+        <button onclick="addScratchQty(1)"  class="sc-qty-btn">+1</button>
+        <button onclick="addScratchQty(2)"  class="sc-qty-btn">+2</button>
+        <button onclick="addScratchQty(5)"  class="sc-qty-btn">+5</button>
+        <button onclick="addScratchQty(10)" class="sc-qty-btn">+10</button>
+        <button onclick="setScratchQtyAbs(1)" class="sc-qty-btn" style="color:rgba(255,80,80,.7);border-color:rgba(255,80,80,.2)">&#10005;</button>
+      </div>
+      <div style="text-align:center;font-size:.72rem;color:rgba(255,255,255,.4)">Total: <span id="sc-qty-total" style="color:#34D399;font-weight:700"></span></div>
     </div>
     <button id="sc-buy-btn" onclick="buyScratchCard()"
       style="width:100%;padding:16px;border-radius:16px;border:none;
@@ -3927,14 +3936,21 @@ function showScratchTable(tier) {
   `).join('')
 }
 
-let scratchQty = 1  // quantità selezionata
+let scratchQty = 1
+const SCRATCH_QTY_MAX = 20
 
-function setScratchQty(n) {
-  scratchQty = n
-  document.querySelectorAll('.sc-qty-btn').forEach(b => b.classList.remove('sc-qty-active'))
-  const active = document.getElementById('sc-qty-'+n)
-  if (active) active.classList.add('sc-qty-active')
-  // Aggiorna totale e bottone
+function setScratchQtyAbs(n) {
+  scratchQty = Math.max(1, Math.min(SCRATCH_QTY_MAX, n))
+  _updateQtyUI()
+}
+function addScratchQty(delta) {
+  scratchQty = Math.max(1, Math.min(SCRATCH_QTY_MAX, scratchQty + delta))
+  _updateQtyUI()
+}
+function setScratchQty(n) { setScratchQtyAbs(n) }
+function _updateQtyUI() {
+  const disp = document.getElementById('sc-qty-display')
+  if (disp) { disp.textContent = scratchQty; disp.style.color = scratchQty >= 10 ? '#FB923C' : '#34D399' }
   if (scratchSelected) updateScratchBuyBtn()
 }
 
@@ -3945,6 +3961,8 @@ function updateScratchBuyBtn() {
   const btn = document.getElementById('sc-buy-btn')
   const totalEl = document.getElementById('sc-qty-total')
   if (totalEl) totalEl.textContent = total + ' TON'
+  const _disp = document.getElementById('sc-qty-display')
+  if (_disp) { _disp.textContent = scratchQty; _disp.style.color = scratchQty >= 10 ? '#FB923C' : '#34D399' }
   if (btn) {
     const label = scratchQty > 1
       ? `🎟️ Buy ${scratchQty} Cards — ${total} TON`
