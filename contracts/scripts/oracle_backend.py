@@ -51,22 +51,52 @@ ORACLE_MAX_TON   = float(os.environ.get("ORACLE_MAX_TON", "2.0"))
 ORACLE_KEEP_TON  = float(os.environ.get("ORACLE_KEEP_TON", "0.5"))
 
 # ── Node.js TX sender ─────────────────────────────────────────
-async def send_to_contract(body_boc: str, attach_nano: int = 50_000_000) -> bool:
-    """Invia una TX al vault dall'oracle wallet via Node.js."""
+async def send_to_contract(msg_type: str, params: dict, attach_nano: int = 50_000_000) -> bool:
+    """Invia una TX al vault dall'oracle wallet via Node.js (Node.js costruisce il BOC)."""
+    params_json = json.dumps(params).replace("'", "\'")
     script = f"""
 const {{ mnemonicToPrivateKey }} = require('@ton/crypto');
-const {{ WalletContractV4, TonClient, internal, Cell, beginCell }} = require('@ton/ton');
+const {{ WalletContractV4, TonClient, internal, beginCell, Address, toNano }} = require('@ton/ton');
+
+function buildBody(type, p) {{
+    const b = beginCell();
+    if (type === 'pay_winner') {{
+        b.storeUint(0x02, 32);
+        b.storeUint(BigInt(p.game_id), 64);
+        b.storeAddress(Address.parse(p.winner));
+        b.storeCoins(BigInt(p.amount_nano));
+        b.storeUint(p.win_type || 1, 8);
+    }} else if (type === 'jackpot') {{
+        b.storeUint(0x04, 32);
+        b.storeUint(p.game_type, 8);
+        b.storeAddress(Address.parse(p.winner));
+        b.storeCoins(BigInt(p.amount_nano));
+    }} else if (type === 'pay_rank') {{
+        b.storeUint(0x03, 32);
+        b.storeUint(p.rank_type, 8);
+        b.storeUint(BigInt(p.period_key), 64);
+        for (const w of p.winners) {{
+            b.storeAddress(Address.parse(w.address));
+            b.storeCoins(BigInt(w.amount_nano));
+        }}
+    }} else if (type === 'withdraw_dev') {{
+        b.storeUint(0x06, 32);
+        b.storeCoins(BigInt(p.amount_nano));
+    }} else if (type === 'direct') {{
+        // No body — plain TON transfer
+    }}
+    return b.endCell();
+}}
 
 (async () => {{
     const mnemonic = `{ORACLE_MNEMONIC}`.trim().split(' ');
     const kp = await mnemonicToPrivateKey(mnemonic);
     const wallet = WalletContractV4.create({{ publicKey: kp.publicKey, workchain: 0 }});
-    const client = new TonClient({{
-        endpoint: 'https://toncenter.com/api/v2/jsonRPC',
-    }});
+    const client = new TonClient({{ endpoint: 'https://toncenter.com/api/v2/jsonRPC' }});
     const wc = client.open(wallet);
     const seqno = await wc.getSeqno();
-    const body = Cell.fromBoc(Buffer.from('{body_boc}', 'base64'))[0];
+    const params = {params_json};
+    const body = buildBody('{msg_type}', params);
     await wc.sendTransfer({{
         seqno,
         secretKey: kp.secretKey,
@@ -125,48 +155,8 @@ const {{ WalletContractV4, TonClient, internal }} = require('@ton/ton');
         if os.path.exists(tmp): os.unlink(tmp)
         return False
 
-# ── BOC builders ──────────────────────────────────────────────
-def build_pay_winner_boc(winner: str, amount_nano: int, game_id: int, win_type: int = 1) -> str:
-    from pytoniq_core import begin_cell, Address
-    body = (begin_cell()
-        .store_uint(0x02, 32)
-        .store_uint(game_id, 64)
-        .store_address(Address(winner))
-        .store_coins(amount_nano)
-        .store_uint(win_type, 8)
-        .end_cell())
-    return base64.b64encode(body.to_boc()).decode()
-
-def build_jackpot_boc(game_type: int, winner: str, amount_nano: int) -> str:
-    from pytoniq_core import begin_cell, Address
-    body = (begin_cell()
-        .store_uint(0x04, 32)
-        .store_uint(game_type, 8)
-        .store_address(Address(winner))
-        .store_coins(amount_nano)
-        .end_cell())
-    return base64.b64encode(body.to_boc()).decode()
-
-def build_pay_rank_boc(rank_type: int, period_key: int, winners: list) -> str:
-    from pytoniq_core import begin_cell, Address
-    while len(winners) < 5:
-        winners.append({"address": winners[0]["address"], "amount_nano": 0})
-    b = begin_cell()
-    b.store_uint(0x03, 32)
-    b.store_uint(rank_type, 8)
-    b.store_uint(period_key, 64)
-    for w in winners[:5]:
-        b.store_address(Address(w["address"]))
-        b.store_coins(w["amount_nano"])
-    return base64.b64encode(b.end_cell().to_boc()).decode()
-
-def build_withdraw_dev_boc(amount_nano: int) -> str:
-    from pytoniq_core import begin_cell
-    body = (begin_cell()
-        .store_uint(0x06, 32)
-        .store_coins(amount_nano)
-        .end_cell())
-    return base64.b64encode(body.to_boc()).decode()
+# ── TX sender (Node.js builds BOC + sends) ────────────────────
+# BOC building moved entirely to Node.js to avoid pytoniq_core address issues
 
 # ── Auto-sweep oracle → owner ─────────────────────────────────
 async def check_and_sweep():
@@ -233,17 +223,19 @@ async def pay_winner(req: PayWinnerReq, bg: BackgroundTasks):
     if rows and rows[0].get("status") in ("paid", "payment_pending"):
         raise HTTPException(409, f"Game {req.game_id} already paid/pending")
 
-    try:
-        boc = build_pay_winner_boc(req.winner_wallet, amount_nano, req.game_id, req.win_type)
-    except Exception as e:
-        raise HTTPException(500, f"BOC build error: {e}")
-
     # Marca pending
     await sb_patch(f"games?id=eq.{req.game_id}", {"status": "payment_pending"})
 
+    params = {
+        "winner": req.winner_wallet,
+        "amount_nano": amount_nano,
+        "game_id": req.game_id,
+        "win_type": req.win_type
+    }
+
     # Invia TX in background
     async def do_pay():
-        ok = await send_to_contract(boc, 50_000_000)
+        ok = await send_to_contract("pay_winner", params, 50_000_000)
         status = "paid" if ok else "payment_failed"
         await sb_patch(f"games?id=eq.{req.game_id}", {"status": status})
         await check_and_sweep()
@@ -257,13 +249,14 @@ async def pay_winner(req: PayWinnerReq, bg: BackgroundTasks):
 async def pay_jackpot(req: PayJackpotReq, bg: BackgroundTasks):
     """Paga il jackpot wheel o scratch."""
     amount_nano = int(req.amount_ton * 1e9)
-    try:
-        boc = build_jackpot_boc(req.game_type, req.winner_wallet, amount_nano)
-    except Exception as e:
-        raise HTTPException(500, f"BOC build error: {e}")
+    params = {
+        "winner": req.winner_wallet,
+        "amount_nano": amount_nano,
+        "game_type": req.game_type
+    }
 
     async def do_pay():
-        await send_to_contract(boc, 50_000_000)
+        await send_to_contract("jackpot", params, 50_000_000)
         await check_and_sweep()
 
     bg.add_task(do_pay)
@@ -275,12 +268,11 @@ async def pay_jackpot(req: PayJackpotReq, bg: BackgroundTasks):
 async def pay_rank(req: PayRankReq, bg: BackgroundTasks):
     """Paga i top 5 del rank pool. Chiamato dal cron job."""
     winners = [{"address": w.address, "amount_nano": w.amount_nano} for w in req.winners]
-    try:
-        boc = build_pay_rank_boc(req.rank_type, req.period_key, winners)
-    except Exception as e:
-        raise HTTPException(500, f"BOC build error: {e}")
-
-    bg.add_task(send_to_contract, boc, 50_000_000)
+    # Pad to 5 winners
+    while len(winners) < 5:
+        winners.append({"address": winners[0]["address"], "amount_nano": 0})
+    params = {"rank_type": req.rank_type, "period_key": req.period_key, "winners": winners[:5]}
+    bg.add_task(send_to_contract, "pay_rank", params, 50_000_000)
     return {"status": "pending", "rank_type": req.rank_type,
             "period_key": req.period_key, "winners": len(req.winners)}
 
@@ -291,15 +283,8 @@ async def withdraw_dev(req: WithdrawDevReq, bg: BackgroundTasks):
     if req.secret != os.environ.get("ADMIN_SECRET", "tonbola-dev-2026"):
         raise HTTPException(403, "Forbidden")
     amount_nano = int(req.amount_ton * 1e9)
-    try:
-        boc = build_withdraw_dev_boc(amount_nano)
-    except Exception as e:
-        raise HTTPException(500, f"BOC error: {e}")
-
-    # Questo messaggio va firmato dall'OWNER, non dall'oracle
-    # Per sicurezza, l'oracle costruisce il BOC ma l'owner lo invia
-    # In futuro: owner firma direttamente
-    bg.add_task(send_to_contract, boc, 20_000_000)
+    params = {"amount_nano": amount_nano}
+    bg.add_task(send_to_contract, "withdraw_dev", params, 20_000_000)
     return {"status": "pending", "amount_ton": req.amount_ton,
             "note": "WithdrawDev sent to vault — funds go to owner wallet"}
 
@@ -391,8 +376,8 @@ async def cron_rank_weekly(secret: str, bg: BackgroundTasks):
                 print("[RANK] No valid wallet addresses found")
                 return
 
-            boc = build_pay_rank_boc(0, period_key, winners)
-            ok = await send_to_contract(boc, 50_000_000)
+            params = {"rank_type": 0, "period_key": period_key, "winners": winners}
+            ok = await send_to_contract("pay_rank", params, 50_000_000)
             print(f"[RANK] Weekly individual: {'OK' if ok else 'FAILED'}, {len(winners)} winners, pool={pool_nano/1e9:.4f} TON")
         except Exception as e:
             print(f"[RANK] Error: {e}")
