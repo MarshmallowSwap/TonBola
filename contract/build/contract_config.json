@@ -1,0 +1,14 @@
+{
+  "DEV": "UQAjEYySoQTi15oQCNCdCoIT45WLV9FKKl_oi5VK2wZtg6TT",
+  "TOKEN_FUND": "UQBhsVRbxIv0g_3YmL2p_MFFsxUTCXXLwWf_hBKQF57Ztrjf",
+  "LEADERBOARD": "UQCwjv61TRzu4dpmg3gpUEBvB8mnjYOtm1-ezGwpSWqUL0xB",
+  "PLATFORM": "UQAr0sQHQfrE4vfaoNCaTGJ2OtkUwRWmSxF-_6rAiEmTBzC_",
+  "oracle_pubkey": "81596930447221648253673168568189894254664175305553746201413230980358321864729",
+  "split": {
+    "prize_pool": "55%",
+    "dev": "32%",
+    "token_fund": "8%",
+    "leaderboard": "3%",
+    "platform": "2%"
+  }
+}

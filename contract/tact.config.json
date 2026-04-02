@@ -1,0 +1,13 @@
+{
+  "projects": [
+    {
+      "name": "TonBolaVault",
+      "path": "contracts/TonBolaVault.tact",
+      "output": "build/TonBolaVault",
+      "options": {
+        "debug": false,
+        "masterchain": false
+      }
+    }
+  ]
+}

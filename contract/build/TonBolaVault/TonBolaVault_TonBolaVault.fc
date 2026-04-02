@@ -1,0 +1,995 @@
+#pragma version =0.4.6;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+;; TonBolaVault_TonBolaVault.headers.fc
+;;
+;; Header files for TonBolaVault
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_not_null
+forall X -> X __tact_not_null(X x) impure inline;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; __tact_dict_get_int_int
+int __tact_dict_get_int_int(cell d, int kl, int k, int vl) inline;
+
+;; __tact_dict_set_int_int
+(cell, ()) __tact_dict_set_int_int(cell d, int kl, int k, int v, int vl) inline;
+
+;; __tact_dict_get_int_cell
+cell __tact_dict_get_int_cell(cell d, int kl, int k) inline;
+
+;; __tact_dict_set_int_cell
+(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v, builder b) inline;
+
+;; $GamePool$_store
+builder $GamePool$_store(builder build_0, (int, int, int) v) inline;
+
+;; $GamePool$_store_cell
+cell $GamePool$_store_cell((int, int, int) v, builder b) inline;
+
+;; $GamePool$_load
+(slice, ((int, int, int))) $GamePool$_load(slice sc_0) inline;
+
+;; $GamePool$_as_optional
+tuple $GamePool$_as_optional((int, int, int) v) inline;
+
+;; $GamePool$_load_opt
+tuple $GamePool$_load_opt(cell cl) inline;
+
+;; $TonBolaVault$_store
+builder $TonBolaVault$_store(builder build_0, (slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) v) inline;
+
+;; $TonBolaVault$_load
+(slice, ((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell))) $TonBolaVault$_load(slice sc_0) inline;
+
+;; $Context$_get_value
+_ $Context$_get_value((int, slice, int, slice) v) inline;
+
+;; $GamePool$_get_amount
+_ $GamePool$_get_amount((int, int, int) v) inline;
+
+;; $GamePool$_not_null
+((int, int, int)) $GamePool$_not_null(tuple v) inline;
+
+;; $TonBolaVault$init$_load
+(slice, ((slice, slice))) $TonBolaVault$init$_load(slice sc_0) inline;
+
+;; $TonBolaVault$_contract_init
+(slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $TonBolaVault$_contract_init(slice $owner, slice $oracle) impure inline;
+
+;; $TonBolaVault$_contract_load
+(slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $TonBolaVault$_contract_load() impure inline;
+
+;; $TonBolaVault$_contract_store
+() $TonBolaVault$_contract_store((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) v) impure inline;
+
+;; $TonBolaVault$_fun_getPool
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_getPool((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self, int $game_id) impure inline_ref;
+
+;; $TonBolaVault$_fun_jackpotBingo
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotBingo((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_jackpotWheel
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotWheel((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_jackpotScratch
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotScratch((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_rankWeeklyInd
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankWeeklyInd((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_rankMonthlyInd
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankMonthlyInd((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_rankWeeklySquad
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankWeeklySquad((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_rankMonthlySquad
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankMonthlySquad((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_devBalance
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_devBalance((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_totalProcessed
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_totalProcessed((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_oracle
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), slice) $TonBolaVault$_fun_oracle((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_balance
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_balance((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $MessageParameters$_constructor_bounce_to_value_mode_body
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline;
+
+;; $TonBolaVault$_fun_notify
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), ()) $TonBolaVault$_fun_notify((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self, cell $body) impure inline;
+
+;; $TonBolaVault$_fun_requireOwner
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), ()) $TonBolaVault$_fun_requireOwner((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $TonBolaVault$_fun_owner
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), slice) $TonBolaVault$_fun_owner((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref;
+
+;; $GamePool$_constructor_amount_game_type_paid_out
+((int, int, int)) $GamePool$_constructor_amount_game_type_paid_out(int $amount, int $game_type, int $paid_out) inline;
+
+;; $SendParameters$_constructor_to_value_mode_body
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_body(slice $to, int $value, int $mode, cell $body) inline;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline;
+
+
+;; TonBolaVault_TonBolaVault.stdlib.fc
+global (int, slice, int, slice) __tact_context;
+global slice __tact_context_sender;
+global cell __tact_child_contract_codes;
+global int __tact_randomized;
+
+forall X -> X __tact_not_null(X x) impure inline {
+    throw_if(128, null?(x)); return x;
+}
+
+(int, slice, int, slice) __tact_context_get() inline {
+    return __tact_context;
+}
+
+slice __tact_context_get_sender() inline {
+    return __tact_context_sender;
+}
+
+forall X0, X1, X2 -> tuple __tact_tuple_create_3((X0, X1, X2) v) asm """
+    3 TUPLE
+""";
+
+forall X0, X1, X2 -> (X0, X1, X2) __tact_tuple_destroy_3(tuple v) asm """
+    3 UNTUPLE
+""";
+
+int __tact_dict_get_int_int(cell d, int kl, int k, int vl) inline {
+    var (r, ok) = idict_get?(d, kl, k);
+    if (ok) {
+        return r~load_int(vl);
+    } else {
+        return null();
+    }
+}
+
+(cell, ()) __tact_dict_set_int_int(cell d, int kl, int k, int v, int vl) inline {
+    if (null?(v)) {
+        var (r, ok) = idict_delete?(d, kl, k);
+        return (r, ());
+    } else {
+        return (idict_set_builder(d, kl, k, begin_cell().store_int(v, vl)), ());
+    }
+}
+
+cell __tact_dict_get_int_cell(cell d, int kl, int k) inline {
+    var (r, ok) = idict_get_ref?(d, kl, k);
+    if (ok) {
+        return r;
+    } else {
+        return null();
+    }
+}
+
+(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline {
+    if (null?(v)) {
+        var (r, ok) = idict_delete?(d, kl, k);
+        return (r, ());
+    } else {
+        return (idict_set_ref(d, kl, k, v), ());
+    }
+}
+
+int $global_myBalance() impure asm """
+    BALANCE FIRST
+""";
+
+() $global_nativeReserve(int $amount, int $mode) impure asm """
+    RAWRESERVE
+""";
+
+() $global_message((int, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    106 PUSHINT         // 1 + 4 + 4 + 64 + 32 + 1
+    STZEROES
+    // → Stack state
+    // s0: Builder
+    // s1: `body`
+    // s2: `mode`
+    STDICT
+    ENDC
+    SWAP
+    SENDRAWMSG
+""";
+
+() $global_send((int, cell, cell, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    105 PUSHINT         // 1 + 4 + 4 + 64 + 32
+    STZEROES            // store currency_collection, ihr_fee, fwd_fee, created_lt and created_at
+    // → Stack state
+    // s0: Builder
+    // s1: `data`
+    // s2: `code`
+    // s3: `body`
+    // s4: `mode`
+
+    // Group 2: Placing the Builder after code and data, then checking those for nullability
+    s2 XCHG0
+    DUP2
+    ISNULL
+    SWAP
+    ISNULL
+    AND
+    // → Stack state
+    // s0: -1 (true) if `data` and `code` are both null, 0 (false) otherwise
+    // s1: `code`
+    // s2: `data`
+    // s3: Builder
+    // s4: `body`
+    // s5: `mode`
+
+    // Group 3: Left branch of the IFELSE, executed if s0 is -1 (true)
+    <{
+        DROP2 // drop `data` and `code`, since either of those is null
+        b{0} STSLICECONST
+    }> PUSHCONT
+
+    // Group 3: Right branch of the IFELSE, executed if s0 is 0 (false)
+    <{
+        // _ split_depth:(Maybe (## 5))
+        //   special:(Maybe TickTock)
+        //   code:(Maybe ^Cell)
+        //   data:(Maybe ^Cell)
+        //   library:(Maybe ^Cell)
+        // = StateInit;
+        ROT                // place message Builder on top
+        b{10} STSLICECONST // store Maybe = true, Either = false
+        // Start composing inlined StateInit
+        b{00} STSLICECONST // store split_depth and special first
+        STDICT             // store code
+        STDICT             // store data
+        b{0} STSLICECONST  // store library
+    }> PUSHCONT
+
+    // Group 3: IFELSE that does the branching shown above
+    IFELSE
+    // → Stack state
+    // s0: Builder
+    // s1: null or StateInit
+    // s2: `body`
+    // s3: `mode`
+
+    // Group 4: Finalizing the message
+    STDICT // store `body` as ref with an extra Maybe bit, since `body` might be null
+    ENDC
+    // → Stack state
+    // s0: Cell
+    // s1: `mode`
+
+    // Group 5: Sending the message, with `mode` on top
+    SWAP
+    SENDRAWMSG // https://github.com/tact-lang/tact/issues/1558
+""";
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), ()) $TonBolaVault$_fun_notify((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self, cell $body) impure inline {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    slice $to = __tact_context_get_sender();
+    int $bounce = false;
+    if (false) {
+        int $balance = $global_myBalance();
+        int $balanceBeforeMessage = ($balance - $Context$_get_value(__tact_context_get()));
+        if (($balanceBeforeMessage < 0)) {
+            $global_nativeReserve(0, 0);
+            $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 130, $body));
+            return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), ());
+        }
+    }
+    $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 66, $body));
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), ());
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), ()) $TonBolaVault$_fun_requireOwner((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    throw_unless(132, ( equal_slices_bits(__tact_context_get_sender(), $self'owner) ));
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), ());
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), slice) $TonBolaVault$_fun_owner((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_13 = $self'owner;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_13);
+}
+
+;; TonBolaVault_TonBolaVault.constants.fc
+;; Cell HIHQ9Y7mZ5C/RbaFoF2fg7XcCRJwU6OfefpSDDlLads=
+cell __gen_cell_cell_1c81d0f58ee66790bf45b685a05d9f83b5dc09127053a39f79fa520c394b69db() asm """
+    B{b5ee9c7241010101001300002200000000546f6e426f6c61207072697a651c1e3770} B>boc PUSHREF
+""";
+
+;; Cell B8Aw/XdCaUww/lp4f4dGi+wfVP/Qu2dyQ061L4qr8aI=
+cell __gen_cell_cell_07c030fd7742694c30fe5a787f87468bec1f54ffd0bb6772434eb52f8aabf1a2() asm """
+    B{b5ee9c7241010101001500002600000000546f6e426f6c61206a61636b706f74176969a8} B>boc PUSHREF
+""";
+
+;; Cell OYPTM45pgtbTHE/bugY3FrLizE7xFeaZiQFbRWe24pg=
+cell __gen_cell_cell_3983d3338e6982d6d31c4fdbba063716b2e2cc4ef115e69989015b4567b6e298() asm """
+    B{b5ee9c7241010101001400002400000000546f6e426f6c612072616e6b20318b71f3b6} B>boc PUSHREF
+""";
+
+;; Cell SqhEuOMhdq1wYRpDMRspx4nEMNbly2/HZGUCETO3S/w=
+cell __gen_cell_cell_4aa844b8e32176ad70611a43311b29c789c430d6e5cb6fc76465021133b74bfc() asm """
+    B{b5ee9c7241010101001400002400000000546f6e426f6c612072616e6b20327f82a3a5} B>boc PUSHREF
+""";
+
+;; Cell brg5qkSCzj4DMbBFsELteMw9AS1PUZcQ19E3GWbGnHs=
+cell __gen_cell_cell_6eb839aa4482ce3e0331b045b042ed78cc3d012d4f519710d7d1371966c69c7b() asm """
+    B{b5ee9c7241010101001400002400000000546f6e426f6c612072616e6b20337c01c857} B>boc PUSHREF
+""";
+
+;; Cell Ua6ji5umkmbcW0qvjB97ojgiDbwnGbSUiHH1WsxZhGs=
+cell __gen_cell_cell_51aea38b9ba69266dc5b4aaf8c1f7ba238220dbc2719b4948871f55acc59846b() asm """
+    B{b5ee9c7241010101001400002400000000546f6e426f6c612072616e6b203497650283} B>boc PUSHREF
+""";
+
+;; Cell JgL1EO9LSqZ6ww/qeKVZpxyNpyLk4ZXsF++uBZhq0fs=
+cell __gen_cell_cell_2602f510ef4b4aa67ac30fea78a559a71c8da722e4e195ec17efae05986ad1fb() asm """
+    B{b5ee9c7241010101001400002400000000546f6e426f6c612072616e6b203594e66971} B>boc PUSHREF
+""";
+
+;; Cell ATQG5Zwz8Y134wCgXaZC/i9DzCbL2Zy1/ptNB18oXnE=
+cell __gen_cell_cell_013406e59c33f18d77e300a05da642fe2f43cc26cbd99cb5fe9b4d075f285e71() asm """
+    B{b5ee9c7241010101001400002400000000446576207769746864726177616c42852f1e} B>boc PUSHREF
+""";
+
+;; TonBolaVault_TonBolaVault.storage.fc
+;;
+;; Type: Context
+;; TLB: _ bounceable:bool sender:address value:int257 raw:^slice = Context
+;;
+
+_ $Context$_get_value((int, slice, int, slice) v) inline {
+    var (v'bounceable, v'sender, v'value, v'raw) = v;
+    return v'value;
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell value:int257 to:address bounce:bool = SendParameters
+;;
+
+((int, cell, cell, cell, int, slice, int)) $SendParameters$_constructor_to_value_mode_body(slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, null(), null(), $value, $to, true);
+}
+
+;;
+;; Type: MessageParameters
+;; TLB: _ mode:int257 body:Maybe ^cell value:int257 to:address bounce:bool = MessageParameters
+;;
+
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, $value, $to, $bounce);
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v, builder b) inline {
+    return $DeployOk$_store(b, v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: GamePool
+;; TLB: _ amount:coins game_type:uint8 paid_out:bool = GamePool
+;;
+
+builder $GamePool$_store(builder build_0, (int, int, int) v) inline {
+    var (v'amount, v'game_type, v'paid_out) = v;
+    build_0 = build_0.store_varuint16(v'amount);
+    build_0 = build_0.store_uint(v'game_type, 8);
+    build_0 = build_0.store_int(v'paid_out, 1);
+    return build_0;
+}
+
+cell $GamePool$_store_cell((int, int, int) v, builder b) inline {
+    return $GamePool$_store(b, v).end_cell();
+}
+
+(slice, ((int, int, int))) $GamePool$_load(slice sc_0) inline {
+    var v'amount = sc_0~load_varuint16();
+    var v'game_type = sc_0~load_uint(8);
+    var v'paid_out = sc_0~load_int(1);
+    return (sc_0, (v'amount, v'game_type, v'paid_out));
+}
+
+tuple $GamePool$_as_optional((int, int, int) v) inline {
+    var (v'amount, v'game_type, v'paid_out) = v;
+    return __tact_tuple_create_3(v'amount, v'game_type, v'paid_out);
+}
+
+tuple $GamePool$_load_opt(cell cl) inline {
+    if (null?(cl)) {
+        return null();
+    }
+    var sc = cl.begin_parse();
+    return $GamePool$_as_optional(sc~$GamePool$_load());
+}
+
+_ $GamePool$_get_amount((int, int, int) v) inline {
+    var (v'amount, v'game_type, v'paid_out) = v;
+    return v'amount;
+}
+
+((int, int, int)) $GamePool$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (int vvv'amount, int vvv'game_type, int vvv'paid_out) = __tact_tuple_destroy_3(v);
+    return (vvv'amount, vvv'game_type, vvv'paid_out);
+}
+
+((int, int, int)) $GamePool$_constructor_amount_game_type_paid_out(int $amount, int $game_type, int $paid_out) inline {
+    return ($amount, $game_type, $paid_out);
+}
+
+;;
+;; Type: TonBolaVault
+;; TLB: _ owner:address oracle:address game_pools:dict<int, ^GamePool{amount:coins,game_type:uint8,paid_out:bool}> jackpot_bingo:coins jackpot_wheel:coins jackpot_scratch:coins rank_weekly_ind:coins rank_monthly_ind:coins rank_weekly_squad:coins rank_monthly_squad:coins dev_balance:coins total_processed:coins paid_periods:dict<int, bool> = TonBolaVault
+;;
+
+builder $TonBolaVault$_store(builder build_0, (slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) v) inline {
+    var (v'owner, v'oracle, v'game_pools, v'jackpot_bingo, v'jackpot_wheel, v'jackpot_scratch, v'rank_weekly_ind, v'rank_monthly_ind, v'rank_weekly_squad, v'rank_monthly_squad, v'dev_balance, v'total_processed, v'paid_periods) = v;
+    build_0 = build_0.store_slice(v'owner);
+    build_0 = build_0.store_slice(v'oracle);
+    build_0 = build_0.store_dict(v'game_pools);
+    build_0 = build_0.store_varuint16(v'jackpot_bingo);
+    build_0 = build_0.store_varuint16(v'jackpot_wheel);
+    build_0 = build_0.store_varuint16(v'jackpot_scratch);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_varuint16(v'rank_weekly_ind);
+    build_1 = build_1.store_varuint16(v'rank_monthly_ind);
+    build_1 = build_1.store_varuint16(v'rank_weekly_squad);
+    build_1 = build_1.store_varuint16(v'rank_monthly_squad);
+    build_1 = build_1.store_varuint16(v'dev_balance);
+    build_1 = build_1.store_varuint16(v'total_processed);
+    build_1 = build_1.store_dict(v'paid_periods);
+    build_0 = store_builder_ref(build_0, build_1);
+    return build_0;
+}
+
+(slice, ((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell))) $TonBolaVault$_load(slice sc_0) inline {
+    var v'owner = sc_0~load_msg_addr();
+    var v'oracle = sc_0~load_msg_addr();
+    var v'game_pools = sc_0~load_dict();
+    var v'jackpot_bingo = sc_0~load_varuint16();
+    var v'jackpot_wheel = sc_0~load_varuint16();
+    var v'jackpot_scratch = sc_0~load_varuint16();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'rank_weekly_ind = sc_1~load_varuint16();
+    var v'rank_monthly_ind = sc_1~load_varuint16();
+    var v'rank_weekly_squad = sc_1~load_varuint16();
+    var v'rank_monthly_squad = sc_1~load_varuint16();
+    var v'dev_balance = sc_1~load_varuint16();
+    var v'total_processed = sc_1~load_varuint16();
+    var v'paid_periods = sc_1~load_dict();
+    return (sc_0, (v'owner, v'oracle, v'game_pools, v'jackpot_bingo, v'jackpot_wheel, v'jackpot_scratch, v'rank_weekly_ind, v'rank_monthly_ind, v'rank_weekly_squad, v'rank_monthly_squad, v'dev_balance, v'total_processed, v'paid_periods));
+}
+
+(slice, ((slice, slice))) $TonBolaVault$init$_load(slice sc_0) inline {
+    var v'owner = sc_0~load_msg_addr();
+    var v'oracle = sc_0~load_msg_addr();
+    return (sc_0, (v'owner, v'oracle));
+}
+
+(slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $TonBolaVault$_contract_load() impure inline {
+    slice $sc = get_data().begin_parse();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$TonBolaVault$_load();
+    }
+    else {
+        (slice $owner, slice $oracle) = $sc~$TonBolaVault$init$_load();
+        $sc.end_parse();
+        return $TonBolaVault$_contract_init($owner, $oracle);
+    }
+}
+
+() $TonBolaVault$_contract_store((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_int(true, 1);
+    b = $TonBolaVault$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Contract TonBolaVault functions
+;;
+
+(slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $TonBolaVault$_contract_init(slice $owner, slice $oracle) impure inline {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = (null(), null(), null(), 0, 0, 0, 0, 0, 0, 0, 0, 0, null());
+    $self'owner = $owner;
+    $self'oracle = $oracle;
+    return ($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_getPool((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self, int $game_id) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    tuple $p = $GamePool$_load_opt(__tact_dict_get_int_cell($self'game_pools, 257, $game_id));
+    if (null?($p)) {
+        var $fresh$ret_0 = 0;
+        return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_0);
+    }
+    var $fresh$ret_1 = $GamePool$_get_amount($GamePool$_not_null($p));
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_1);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotBingo((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_2 = $self'jackpot_bingo;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_2);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotWheel((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_3 = $self'jackpot_wheel;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_3);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_jackpotScratch((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_4 = $self'jackpot_scratch;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_4);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankWeeklyInd((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_5 = $self'rank_weekly_ind;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_5);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankMonthlyInd((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_6 = $self'rank_monthly_ind;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_6);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankWeeklySquad((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_7 = $self'rank_weekly_squad;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_7);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_rankMonthlySquad((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_8 = $self'rank_monthly_squad;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_8);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_devBalance((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_9 = $self'dev_balance;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_9);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_totalProcessed((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_10 = $self'total_processed;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_10);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), slice) $TonBolaVault$_fun_oracle((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_11 = $self'oracle;
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_11);
+}
+
+((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell), int) $TonBolaVault$_fun_balance((slice, slice, cell, int, int, int, int, int, int, int, int, int, cell) $self) impure inline_ref {
+    var (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)) = $self;
+    var $fresh$ret_12 = $global_myBalance();
+    return (($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods), $fresh$ret_12);
+}
+
+;;
+;; Get methods of a Contract TonBolaVault
+;;
+
+_ %getPool(int $game_id) method_id(87704) {
+    int $game_id = $game_id;
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_getPool($game_id);
+    return res;
+}
+
+_ %jackpotBingo() method_id(74768) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_jackpotBingo();
+    return res;
+}
+
+_ %jackpotWheel() method_id(119641) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_jackpotWheel();
+    return res;
+}
+
+_ %jackpotScratch() method_id(96678) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_jackpotScratch();
+    return res;
+}
+
+_ %rankWeeklyInd() method_id(121946) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_rankWeeklyInd();
+    return res;
+}
+
+_ %rankMonthlyInd() method_id(72185) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_rankMonthlyInd();
+    return res;
+}
+
+_ %rankWeeklySquad() method_id(83490) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_rankWeeklySquad();
+    return res;
+}
+
+_ %rankMonthlySquad() method_id(76298) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_rankMonthlySquad();
+    return res;
+}
+
+_ %devBalance() method_id(106810) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_devBalance();
+    return res;
+}
+
+_ %totalProcessed() method_id(67874) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_totalProcessed();
+    return res;
+}
+
+_ %oracle() method_id(89095) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_oracle();
+    return res;
+}
+
+_ %balance() method_id(104128) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_balance();
+    return res;
+}
+
+_ %owner() method_id(83229) {
+    var self = $TonBolaVault$_contract_load();
+    var res = self~$TonBolaVault$_fun_owner();
+    return res;
+}
+
+;;
+;; Routing of a Contract TonBolaVault
+;;
+
+;; message opcode reader utility: only binary receivers
+;; Returns 32 bit message opcode, otherwise throws the "Invalid incoming message" exit code
+(slice, int) ~load_opcode_internal(slice s) asm( -> 1 0) "32 LDUQ 130 THROWIFNOT";
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    cs~skip_bits(2);
+    var msg_bounceable = cs~load_int(1);
+    var msg_bounced = cs~load_int(1);
+    slice msg_sender_addr = cs~load_msg_addr();
+    __tact_context = (msg_bounceable, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var ($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods) = $TonBolaVault$_contract_load();
+    
+    ;; Handle bounced messages
+    if (msg_bounced) { return (); }
+    var op = in_msg~load_opcode_internal();
+    ;; Receive GamePayment message
+    if (op == 0x1) {
+        var $msg'game_type = in_msg~load_uint(8);
+        var $msg'game_id = in_msg~load_uint(64);
+        int $amt = $Context$_get_value(__tact_context_get());
+        throw_unless(47290, ($amt >= 10000000));
+        int $prize = (($amt * 5500) / 10000);
+        int $jackpot = (($amt * 500) / 10000);
+        int $rwi = (($amt * 150) / 10000);
+        int $rmi = (($amt * 100) / 10000);
+        int $rws = (($amt * 100) / 10000);
+        int $rms = (($amt * 50) / 10000);
+        int $dev = (((((($amt - $prize) - $jackpot) - $rwi) - $rmi) - $rws) - $rms);
+        tuple $existing = $GamePool$_load_opt(__tact_dict_get_int_cell($self'game_pools, 257, $msg'game_id));
+        if ((~ null?($existing))) {
+            var ($ex'amount, $ex'game_type, $ex'paid_out) = $GamePool$_not_null($existing);
+            $self'game_pools~__tact_dict_set_int_cell(257, $msg'game_id, $GamePool$_store_cell($GamePool$_constructor_amount_game_type_paid_out(($ex'amount + $prize), $msg'game_type, false), begin_cell()));
+        } else {
+            $self'game_pools~__tact_dict_set_int_cell(257, $msg'game_id, $GamePool$_store_cell($GamePool$_constructor_amount_game_type_paid_out($prize, $msg'game_type, false), begin_cell()));
+        }
+        ifnot ($msg'game_type) {
+            $self'jackpot_bingo = ($self'jackpot_bingo + $jackpot);
+        } elseif (($msg'game_type == 1)) {
+            $self'jackpot_wheel = ($self'jackpot_wheel + $jackpot);
+        } else {
+            $self'jackpot_scratch = ($self'jackpot_scratch + $jackpot);
+        }
+        $self'rank_weekly_ind = ($self'rank_weekly_ind + $rwi);
+        $self'rank_monthly_ind = ($self'rank_monthly_ind + $rmi);
+        $self'rank_weekly_squad = ($self'rank_weekly_squad + $rws);
+        $self'rank_monthly_squad = ($self'rank_monthly_squad + $rms);
+        $self'dev_balance = ($self'dev_balance + $dev);
+        $self'total_processed = ($self'total_processed + $amt);
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive PayWinner message
+    if (op == 0x2) {
+        var $msg'game_id = in_msg~load_uint(64);
+        var $msg'winner = in_msg~load_msg_addr();
+        var $msg'amount = in_msg~load_varuint16();
+        var $msg'win_type = in_msg~load_uint(8);
+        throw_unless(29474, ( equal_slices_bits(__tact_context_get_sender(), $self'oracle) ));
+        tuple $pool = $GamePool$_load_opt(__tact_dict_get_int_cell($self'game_pools, 257, $msg'game_id));
+        throw_unless(12043, (~ null?($pool)));
+        var ($p'amount, $p'game_type, $p'paid_out) = $GamePool$_not_null($pool);
+        throw_unless(11026, (~ $p'paid_out));
+        throw_unless(17062, ( (($msg'amount > 0)) ? (($msg'amount <= $p'amount)) : (false) ));
+        throw_unless(18343, (($global_myBalance() - $msg'amount) >= 200000000));
+        int $is_final = ( (($msg'win_type == 1)) ? (true) : (($msg'win_type == 2)) );
+        $self'game_pools~__tact_dict_set_int_cell(257, $msg'game_id, $GamePool$_store_cell($GamePool$_constructor_amount_game_type_paid_out(($p'amount - $msg'amount), $p'game_type, $is_final), begin_cell()));
+        $global_send($SendParameters$_constructor_to_value_mode_body($msg'winner, $msg'amount, 1, __gen_cell_cell_1c81d0f58ee66790bf45b685a05d9f83b5dc09127053a39f79fa520c394b69db()));
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive JackpotPayout message
+    if (op == 0x4) {
+        var $msg'game_type = in_msg~load_uint(8);
+        var $msg'winner = in_msg~load_msg_addr();
+        var $msg'amount = in_msg~load_varuint16();
+        throw_unless(29474, ( equal_slices_bits(__tact_context_get_sender(), $self'oracle) ));
+        int $jp = 0;
+        ifnot ($msg'game_type) {
+            $jp = $self'jackpot_bingo;
+            throw_unless(7043, ($jp >= 5000000000));
+            $self'jackpot_bingo = 0;
+        } elseif (($msg'game_type == 1)) {
+            $jp = $self'jackpot_wheel;
+            throw_unless(7043, ($jp >= 5000000000));
+            $self'jackpot_wheel = 0;
+        } else {
+            $jp = $self'jackpot_scratch;
+            throw_unless(7043, ($jp >= 5000000000));
+            $self'jackpot_scratch = 0;
+        }
+        throw_unless(42669, ($msg'amount <= $jp));
+        throw_unless(18343, (($global_myBalance() - $msg'amount) >= 200000000));
+        $global_send($SendParameters$_constructor_to_value_mode_body($msg'winner, $msg'amount, 1, __gen_cell_cell_07c030fd7742694c30fe5a787f87468bec1f54ffd0bb6772434eb52f8aabf1a2()));
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive PayRank message
+    if (op == 0x3) {
+        var $msg'rank_type = in_msg~load_uint(8);
+        var $msg'period_key = in_msg~load_uint(64);
+        var $msg'w1 = in_msg~load_msg_addr();
+        var $msg'a1 = in_msg~load_varuint16();
+        var $msg'w2 = in_msg~load_msg_addr();
+        var $msg'a2 = in_msg~load_varuint16();
+        slice sc_1 = in_msg~load_ref().begin_parse();
+        var $msg'w3 = sc_1~load_msg_addr();
+        var $msg'a3 = sc_1~load_varuint16();
+        var $msg'w4 = sc_1~load_msg_addr();
+        var $msg'a4 = sc_1~load_varuint16();
+        slice sc_2 = sc_1~load_ref().begin_parse();
+        var $msg'w5 = sc_2~load_msg_addr();
+        var $msg'a5 = sc_2~load_varuint16();
+        throw_unless(29474, ( equal_slices_bits(__tact_context_get_sender(), $self'oracle) ));
+        int $done = __tact_dict_get_int_int($self'paid_periods, 257, $msg'period_key, 1);
+        throw_unless(21831, ( (null?($done)) ? (true) : ((~ __tact_not_null($done))) ));
+        $self'paid_periods~__tact_dict_set_int_int(257, $msg'period_key, true, 1);
+        int $pool = 0;
+        ifnot ($msg'rank_type) {
+            $pool = $self'rank_weekly_ind;
+            $self'rank_weekly_ind = 0;
+        } elseif (($msg'rank_type == 1)) {
+            $pool = $self'rank_monthly_ind;
+            $self'rank_monthly_ind = 0;
+        } elseif (($msg'rank_type == 2)) {
+            $pool = $self'rank_weekly_squad;
+            $self'rank_weekly_squad = 0;
+        } else {
+            $pool = $self'rank_monthly_squad;
+            $self'rank_monthly_squad = 0;
+        }
+        throw_unless(8580, ($pool > 0));
+        int $total_pay = (((($msg'a1 + $msg'a2) + $msg'a3) + $msg'a4) + $msg'a5);
+        throw_unless(4151, ($total_pay <= $pool));
+        throw_unless(18343, (($global_myBalance() - $total_pay) >= 200000000));
+        if (($msg'a1 > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($msg'w1, $msg'a1, 1, __gen_cell_cell_3983d3338e6982d6d31c4fdbba063716b2e2cc4ef115e69989015b4567b6e298()));
+        }
+        if (($msg'a2 > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($msg'w2, $msg'a2, 1, __gen_cell_cell_4aa844b8e32176ad70611a43311b29c789c430d6e5cb6fc76465021133b74bfc()));
+        }
+        if (($msg'a3 > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($msg'w3, $msg'a3, 1, __gen_cell_cell_6eb839aa4482ce3e0331b045b042ed78cc3d012d4f519710d7d1371966c69c7b()));
+        }
+        if (($msg'a4 > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($msg'w4, $msg'a4, 1, __gen_cell_cell_51aea38b9ba69266dc5b4aaf8c1f7ba238220dbc2719b4948871f55acc59846b()));
+        }
+        if (($msg'a5 > 0)) {
+            $global_send($SendParameters$_constructor_to_value_mode_body($msg'w5, $msg'a5, 1, __gen_cell_cell_2602f510ef4b4aa67ac30fea78a559a71c8da722e4e195ec17efae05986ad1fb()));
+        }
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive SetOracle message
+    if (op == 0x5) {
+        var $msg'oracle = in_msg~load_msg_addr();
+        ($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)~$TonBolaVault$_fun_requireOwner();
+        $self'oracle = $msg'oracle;
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive WithdrawDev message
+    if (op == 0x6) {
+        var $msg'amount = in_msg~load_varuint16();
+        ($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)~$TonBolaVault$_fun_requireOwner();
+        throw_unless(14319, ($msg'amount <= $self'dev_balance));
+        throw_unless(18343, (($global_myBalance() - $msg'amount) >= 200000000));
+        $self'dev_balance = ($self'dev_balance - $msg'amount);
+        $global_send($SendParameters$_constructor_to_value_mode_body($self'owner, $msg'amount, 1, __gen_cell_cell_013406e59c33f18d77e300a05da642fe2f43cc26cbd99cb5fe9b4d075f285e71()));
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Receive Deploy message
+    if (op == 0x946a98b6) {
+        var $deploy'queryId = in_msg~load_uint(64);
+        ($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods)~$TonBolaVault$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId), begin_cell()));
+        $TonBolaVault$_contract_store(($self'owner, $self'oracle, $self'game_pools, $self'jackpot_bingo, $self'jackpot_wheel, $self'jackpot_scratch, $self'rank_weekly_ind, $self'rank_monthly_ind, $self'rank_weekly_squad, $self'rank_monthly_squad, $self'dev_balance, $self'total_processed, $self'paid_periods));
+        return ();
+    }
+    
+    ;; Throw if not handled
+    throw(130);
+}
+
+
+() __tact_selector_hack_asm() impure asm """
+@atend @ 1 {
+        execute current@ context@ current!
+        {
+            // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+            // We want to extract recv_internal/recv_external from the dict and select needed function
+            // not by jumping to the needed function by it's index, but by using usual IF statements.
+
+            }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+
+            <{ // Start of the new code builder
+                SETCP0
+                // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                swap
+                // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                <s ref@
+
+                // Extract the recv_internal from the dict
+                dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                swap
+
+                // Delete the recv_internal from the dict
+                0 swap @procdictkeylen idict- drop
+                // Delete the recv_external from the dict (it's okay if it's not there)
+                -1 swap @procdictkeylen idict- drop
+                // Delete the __tact_selector_hack from the dict
+                65535 swap @procdictkeylen idict- drop
+
+                // Bring the code builder from the bottom of the stack
+                // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                depth 1- roll
+                // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                swap
+
+                // Check if the dict is empty
+                dup null?
+                // Store a copy of this flag in the bottom of the stack
+                dup depth 1- -roll
+                {
+                    // If the dict is empty, just drop it (it will be null if it's empty)
+                    drop
+                }
+                {
+                    // If the dict is not empty, prepare continuation to be stored in c3
+                    <{
+                        // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                        swap @procdictkeylen DICTPUSHCONST
+                        // Jump to the needed function by it's index
+                        DICTIGETJMPZ
+                        // If such key is not found, throw 11 along with the key as an argument
+                        11 THROWARG
+                    }> PUSHCONT
+                    // Store the continuation in c3
+                    c3 POP
+                } cond
+
+                // Function id is on top of the (runtime) stack
+                DUP IFNOTJMP:<{
+                    // place recv_internal here
+                    DROP swap @addop
+                }>
+
+                // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                depth 1- roll
+                {
+                    // If the dict is empty, throw 11
+                    11 THROWARG
+                }
+                {
+                    // If the dict is not empty, jump to continuation from c3
+                    c3 PUSH JMPX
+                } cond
+            }> b>
+        } : }END>c
+        current@ context! current!
+    } does @atend !
+""";
+
+() __tact_selector_hack() method_id(65535) {
+    return __tact_selector_hack_asm();
+}
