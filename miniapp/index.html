@@ -785,7 +785,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div class="r-icon ri-ton" style="background-image:url(assets/icon-ton.png);background-size:contain;background-repeat:no-repeat;background-position:center;font-size:0;width:35px;height:35px"></div>
         <div style="flex:1">
           <div class="rn">$TON Room</div>
-          <div class="rd">Pay $TON · Win $TON · Instant payout</div>
+          <div class="rd">Pay $TON · Win $TON · +$TBOLA</div>
         </div>
         <div class="rbadge" style="background:rgba(0,96,160,.25);color:#40B8FF;border-color:#0060A0">$TON</div>
       </div>
@@ -864,7 +864,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-size:1.4rem">⚔️</div>
         <div style="flex:1">
           <div style="font-size:.92rem;font-weight:800;color:#fff">Warrior Pass</div>
-          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">3 $TON or 3 $TON / month</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-top:2px">3 TON / month</div>
         </div>
         <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
           border-radius:50px;padding:4px 12px;font-size:.68rem;font-weight:800;color:#fff">UPGRADE</div>
@@ -890,7 +890,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)">🎱 Bingo</div>
         <div style="font-size:.72rem;color:var(--violet3);margin-top:2px">
-          Live draws every 5 min · $TON · $TON · VIP
+          Live draws every 5 min · Win $TON · +$TBOLA · VIP
         </div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <span style="background:rgba(58,255,138,.15);border:1px solid rgba(58,255,138,.4);
@@ -924,7 +924,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;
           color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2)">Fortune Wheel</div>
         <div style="font-size:.72rem;color:rgba(255,255,255,.9);margin-top:2px;font-weight:500">
-          Spin to win · Jackpot pool · $TON · $TON
+          Spin to win · Jackpot pool · Win $TON
         </div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <span style="background:rgba(255,255,255,.25);
@@ -961,7 +961,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
             color:#34D399;font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:50px;letter-spacing:.5px">● LIVE</span>
           <span style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);
             color:rgba(255,255,255,.7);font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:50px">
-            💎 TON · 💎 TON
+            💎 TON prizes · +$TBOLA
           </span>
         </div>
       </div>
@@ -1175,7 +1175,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
     <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:260px">
       <button onclick="document.getElementById('w-wp-gate').style.display='none';showWarriorPass()"
         style="padding:14px;border-radius:14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);border:none;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer">
-        ⚔️ Get Warrior Pass — 5 TON / 3 TON
+        ⚔️ Get Warrior Pass — 3 TON / month
       </button>
       <button onclick="document.getElementById('w-wp-gate').style.display='none'"
         style="padding:11px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer">
@@ -1531,7 +1531,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <div style="font-size:1.5rem">⚔️</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:.95rem;font-weight:800;color:#fff">Warrior Pass</div>
-        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">3 $TON or 3 $TON / month · All games</div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.6);margin-top:2px">3 TON / month · All games</div>
       </div>
       <div style="background:linear-gradient(135deg,#A78BFA,#8B5CF6);
         border-radius:50px;padding:5px 14px;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0">UPGRADE</div>
@@ -2280,6 +2280,23 @@ let mySquad = null
 const PVP_BOT_NAMES = ['CryptoWolf','TonShark','BingoKing','LuckyAce','TONinja','WhaleHunter']
 const tg=window.Telegram?.WebApp
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#000000')}catch(e){};try{tg.setBackgroundColor('#000000')}catch(e){}}
+
+// Auto-connect wallet al boot (non-blocking)
+;(async function autoConnectWallet() {
+  await new Promise(r => setTimeout(r, 1500))  // aspetta DOM + TonConnect
+  try {
+    initTonConnect()
+    await new Promise(r => setTimeout(r, 1200))
+    if (!tc) return
+    // Prova a ripristinare sessione esistente (se l'utente aveva già connesso)
+    const status = await tc.connectionRestored
+    if (!tcWallet && status) {
+      console.log('[AutoConnect] Session restored')
+    }
+  } catch(e) {
+    console.log('[AutoConnect] no previous session')
+  }
+})()
 
 // Level icon — badge shown next to avatar
 function getLevelIcon(lv){
@@ -3156,7 +3173,7 @@ function startGame(){
   const discount2=nCards>=2?0.9:1
   const paidReal=c.price*nCards*discount2
   const poolReal=c.cur==='free'?0:paidReal*0.55
-  const fmt=v=>c.cur==='usdt'?v.toFixed(2)+' TON':c.cur==='ton'?v.toFixed(2)+' TON':'$TBOLA'
+  const fmt=v=>v.toFixed(3)+' TON':'$TBOLA'
   document.getElementById('g-rm').textContent=c.name
   // Premi minimi garantiti (solo pagamento del giocatore) — server sovrascriverà con pool totale
   document.getElementById('g-lp').textContent=c.cur==='free'?'125 $TBOLA':fmt(poolReal*0.25)
@@ -3471,7 +3488,7 @@ function closeWarriorPass() {
   ov.style.transition='opacity .2s'; ov.style.opacity='0'
   setTimeout(()=>{ ov.classList.remove('show'); ov.style.opacity=''; ov.style.transition='' }, 220)
 }
-function subscribeWarriorPass() {
+async function subscribeWarriorPass() {
   const feeStr = '3 TON'
 
   const onSuccess = () => {
@@ -3501,6 +3518,25 @@ function subscribeWarriorPass() {
 function initHub() {
   // Update hub user info
   const u = user
+  // Forza ricarica TBOLA da Supabase se è ancora 0
+  if ((u.tbola || 0) === 0 && u.telegramId) {
+    setTimeout(async () => {
+      try {
+        const url = `${SUPABASE_URL}/rest/v1/users?telegram_id=eq.${u.telegramId}&select=tbola_balance`
+        const r = await fetch(url, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } })
+        if (r.ok) {
+          const rows = await r.json()
+          if (rows[0]?.tbola_balance) {
+            user.tbola = rows[0].tbola_balance
+            const el = document.getElementById('hub-tbola')
+            if (el) el.textContent = formatTbola(user.tbola)
+            const el2 = document.getElementById('bc-tbola')
+            if (el2) el2.textContent = formatTbola(user.tbola)
+          }
+        }
+      } catch(e) { console.log('[TBOLA] refresh error:', e) }
+    }, 800)
+  }
   const av = document.getElementById('hub-av')
   const nm = document.getElementById('hub-name')
   const tb = document.getElementById('hub-tbola')
@@ -5908,7 +5944,7 @@ function createSquad() {
   _doCreateSquad(name)
 }
 
-function _doCreateSquad(name) {
+async function _doCreateSquad(name) {
   const desc = document.getElementById('squad-desc')?.value.trim()
 
   const doCreate = async () => {
