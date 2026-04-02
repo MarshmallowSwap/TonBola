@@ -870,9 +870,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
           border-radius:50px;padding:4px 12px;font-size:.68rem;font-weight:800;color:#fff">UPGRADE</div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">
-        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">🃏 +2 plays/day</span>
-        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">📈 +5% win rate</span>
-        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">🎰 Jackpot +10%</span>
+        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">🎁 Free play/day</span>
+        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">⚡ Auto-Spin/Scratch</span>
+        <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">👑 VIP Access</span>
         <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:2px 8px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.9)">🪙 2× $TBOLA</span>
       </div>
       <div style="font-size:.6rem;color:rgba(255,255,255,.45)">✅ Valid for all games — Bingo · Fortune Wheel · all future games</div>
@@ -1120,20 +1120,51 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
   <!-- Last result -->
   <div id="w-last-result" style="text-align:center;min-height:40px;margin:0 12px 12px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;padding:8px;border-radius:10px"></div>
 
-  <!-- Auto-spin button (Warrior Pass) -->
+  <!-- Warrior Pass section nella Wheel -->
   <div style="margin:0 12px 12px">
-    <button id="w-autospin-btn" onclick="toggleAutoSpin()"
-      style="width:100%;padding:11px;border-radius:14px;border:1.5px solid rgba(139,92,246,.3);background:rgba(139,92,246,.06);color:rgba(139,92,246,.6);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-      <span>⚡</span>
-      <span id="w-autospin-label">Auto-Spin</span>
-      <span style="font-size:.6rem;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);border-radius:50px;padding:2px 8px;color:rgba(167,139,250,.6)">Warrior Pass</span>
-    </button>
+
+    <!-- Se ha il pass ATTIVO -->
+    <div id="w-warrior-active" style="display:none;background:linear-gradient(135deg,rgba(109,40,217,.15),rgba(139,92,246,.08));border:1.5px solid rgba(167,139,250,.35);border-radius:16px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:1.3rem">⚔️</span>
+        <div style="flex:1">
+          <div style="font-size:.88rem;font-weight:700;color:#A78BFA">Warrior Pass Attivo</div>
+          <div style="font-size:.62rem;color:rgba(167,139,250,.55);margin-top:1px">Auto-Spin · Free spin/day · 2× $TBOLA</div>
+        </div>
+        <div id="w-wp-days" style="font-size:.65rem;font-weight:700;color:rgba(167,139,250,.6);background:rgba(139,92,246,.15);border-radius:50px;padding:3px 10px">30d</div>
+      </div>
+      <!-- Free spin indicator -->
+      <div id="w-free-spin-row" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(58,255,138,.07);border:1px solid rgba(58,255,138,.2);border-radius:10px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:.85rem">🎁</span>
+          <span style="font-size:.75rem;font-weight:700;color:#3AFF8A">Free Spin Today</span>
+        </div>
+        <div id="w-free-spin-status" style="font-size:.7rem;font-weight:700;color:#3AFF8A">Available</div>
+      </div>
+      <!-- Auto-spin button -->
+      <button id="w-autospin-btn" onclick="toggleAutoSpin()"
+        style="width:100%;padding:10px;border-radius:12px;border:1.5px solid rgba(167,139,250,.4);background:rgba(139,92,246,.12);color:#A78BFA;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+        <span>⚡</span>
+        <span id="w-autospin-label">Auto-Spin: OFF</span>
+      </button>
+    </div>
+
+    <!-- Se NON ha il pass -->
+    <div id="w-warrior-inactive" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(139,92,246,.06);border:1.5px dashed rgba(139,92,246,.25);border-radius:14px;cursor:pointer" onclick="showWarriorPass()">
+      <span style="font-size:1.2rem">⚔️</span>
+      <div style="flex:1">
+        <div style="font-size:.82rem;font-weight:700;color:rgba(167,139,250,.7)">Sblocca Warrior Pass</div>
+        <div style="font-size:.62rem;color:rgba(167,139,250,.4);margin-top:1px">Auto-Spin · Free spin/day · 2× $TBOLA · 3 TON/mese</div>
+      </div>
+      <div style="font-size:.7rem;font-weight:700;color:rgba(167,139,250,.5);background:rgba(139,92,246,.12);border-radius:50px;padding:4px 10px">Upgrade →</div>
+    </div>
+
   </div>
 
-  <!-- Free spin badge -->
-  <div id="w-pass-badge" style="display:none;align-items:center;justify-content:center;gap:8px;margin:0 12px 12px;background:rgba(139,92,246,.12);border:1.5px solid rgba(139,92,246,.4);border-radius:12px;padding:10px 16px">
-    <span>⚔️</span>
-    <div style="font-size:.82rem;font-weight:700;color:#C4B5FD">Free Spin added!</div>
+  <!-- Free spin badge (notifica) -->
+  <div id="w-pass-badge" style="display:none;align-items:center;justify-content:center;gap:8px;margin:0 12px 12px;background:rgba(58,255,138,.08);border:1.5px solid rgba(58,255,138,.3);border-radius:12px;padding:10px 16px">
+    <span>🎁</span>
+    <div style="font-size:.82rem;font-weight:700;color:#3AFF8A">Free Spin aggiunto!</div>
   </div>
 
   <!-- Warrior Pass gate -->
@@ -1476,6 +1507,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
       <span style="color:var(--muted)" id="p-nxp">80 XP to next</span>
     </div>
     <div class="xpt"><div class="xpf" id="p-xpf" style="width:20%"></div></div>
+    <div id="p-wp-badge" style="display:none;align-items:center;gap:6px;justify-content:center;margin-bottom:6px;background:linear-gradient(135deg,rgba(109,40,217,.25),rgba(139,92,246,.15));border:1.5px solid rgba(167,139,250,.4);border-radius:50px;padding:4px 14px">
+      <span style="font-size:.85rem">⚔️</span>
+      <span style="font-size:.72rem;font-weight:700;color:#A78BFA">Warrior Pass</span>
+      <span class="wp-days" style="font-size:.65rem;color:rgba(167,139,250,.6)">30d left</span>
+    </div>
     <div class="ptbola" id="p-tbola">505 $TBOLA</div>
     <div class="plbl">🔥 <span id="p-str">1</span>-day streak · ⚔ <span id="p-gm">3</span> games</div>
   </div>
@@ -2077,24 +2113,24 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
         ⚡ Monthly Benefits
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
-        <div style="font-size:1.3rem;flex-shrink:0">🃏</div>
-        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Extra Free Cards</div><div style="font-size:.7rem;color:var(--muted)">+2 free cards/day (3 total)</div></div>
+        <div style="font-size:1.3rem;flex-shrink:0">🎁</div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Free Play al Giorno</div><div style="font-size:.7rem;color:var(--muted)">1 Bronze Scratch o 1 Wheel Spin gratis ogni giorno (0.10 TON/gg)</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
-        <div style="font-size:1.3rem;flex-shrink:0">📈</div>
-        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Gold Card Boost</div><div style="font-size:.7rem;color:var(--muted)">+5% win rate on every game</div></div>
+        <div style="font-size:1.3rem;flex-shrink:0">⚡</div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Auto-Spin &amp; Auto-Scratch</div><div style="font-size:.7rem;color:var(--muted)">Wheel gira da sola · Scratch si rivela in automatico</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
         <div style="font-size:1.3rem;flex-shrink:0">👑</div>
-        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">VIP Access</div><div style="font-size:.7rem;color:var(--muted)">VIP $TON Room — no level req</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">VIP Access</div><div style="font-size:.7rem;color:var(--muted)">VIP Room senza requisiti di livello</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,184,0,.1)">
-        <div style="font-size:1.3rem;flex-shrink:0">💰</div>
-        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Double $TBOLA</div><div style="font-size:.7rem;color:var(--muted)">2× all $TBOLA earned this month</div></div>
+        <div style="font-size:1.3rem;flex-shrink:0">🪙</div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">2× $TBOLA</div><div style="font-size:.7rem;color:var(--muted)">Doppi token su ogni partita per 30 giorni</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
         <div style="font-size:1.3rem;flex-shrink:0">🎖️</div>
-        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Exclusive Badge</div><div style="font-size:.7rem;color:var(--muted)">Warrior badge on your profile</div></div>
+        <div><div style="font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#fff">Badge Esclusivo</div><div style="font-size:.7rem;color:var(--muted)">Badge Warrior sul profilo per tutto il mese</div></div>
       </div>
     </div>
 
@@ -3414,8 +3450,7 @@ function showWarriorPass(isRenewal) {
   ov.classList.remove('show')
   void ov.offsetWidth
   ov.classList.add('show')
-  wpCur = 'usdt'
-  selectWPCur('usdt')
+  selectWPCur('ton')
   // Show renewal banner if pass expired
   let rb = document.getElementById('wp-renewal-banner')
   if(!rb) {
@@ -3451,19 +3486,19 @@ function closeWarriorPass() {
   setTimeout(()=>{ ov.classList.remove('show'); ov.style.opacity=''; ov.style.transition='' }, 220)
 }
 function subscribeWarriorPass() {
-  const feeStr = wpCur === 'usdt' ? '3 $TON' : '3 $TON'
+  const feeStr = '3 TON'
 
   const onSuccess = () => {
     user.warriorPass = true
     user.wpExpiry = Date.now() + 30*24*60*60*1000
-    addXP(wpCur === 'usdt' ? 3.5 : 0, 'usdt')
+    addXP(3, 'ton')  // 3 TON = 1500 XP
     sbActivateWarriorPass()
     closeWarriorPass()
     updateWheelAutoSpinBtn()
     setTimeout(() => {
       if(tg?.showPopup) tg.showPopup({
         title:'⚔️ Warrior Pass Active!',
-        message:'Welcome, Warrior!\n\nYour benefits are active for 30 days.\n\n🃏 +2 free scratches/week\n📈 +5% win rate\n👑 VIP access\n💰 2× $TBOLA\n🎖️ Warrior badge\n🎡 Auto-Spin unlocked!',
+        message:'Benvenuto, Warrior!\n\nI tuoi benefit sono attivi per 30 giorni:\n\n🎁 1 free play/giorno\n⚡ Auto-Spin & Auto-Scratch\n👑 VIP Room senza requisiti\n🪙 2× $TBOLA per 30gg\n🎖️ Badge Warrior sul profilo',
         buttons:[{type:'ok'}]
       })
     }, 300)
@@ -3498,6 +3533,30 @@ function initHub() {
   const hubJpTon = document.getElementById('hub-sc-jp-ton')
   if(hubJp)    hubJp.textContent    = (scratchJpTon||0).toFixed(2)+' TON'
   if(hubJpTon) hubJpTon.textContent = (scratchJpTon||0).toFixed(2)+' TON'
+}
+
+
+// ── FREE DAILY PLAY (Warrior Pass) ───────────────────
+// Math: 3 TON/mese ÷ 30gg = 0.10 TON/giorno = 1 Bronze scratch o 1 wheel spin gratis
+function getTodayKey() {
+  return new Date().toISOString().split('T')[0]
+}
+function getFreePlaysUsed(type) {
+  return parseInt(localStorage.getItem('fp_'+type+'_'+getTodayKey()) || '0')
+}
+function markFreePlaysUsed(type) {
+  localStorage.setItem('fp_'+type+'_'+getTodayKey(),
+    getFreePlaysUsed(type) + 1)
+}
+function hasFreePlaysAvailable(type) {
+  if(!user.warriorPass) return false
+  return getFreePlaysUsed(type) < 1  // 1 free play/giorno per tipo
+}
+function tryUseFreePlay(type, onGranted) {
+  if(!hasFreePlaysAvailable(type)) return false
+  markFreePlaysUsed(type)
+  onGranted()
+  return true
 }
 
 function openBingo() {
@@ -3543,9 +3602,39 @@ function setWheelMultiplier(mult) {
   updateWheelUI()
 }
 
+
+function updateWheelWarriorUI() {
+  const active   = document.getElementById('w-warrior-active')
+  const inactive = document.getElementById('w-warrior-inactive')
+  const daysEl   = document.getElementById('w-wp-days')
+  const freeRow  = document.getElementById('w-free-spin-row')
+  const freeStatus = document.getElementById('w-free-spin-status')
+
+  if(user.warriorPass) {
+    if(active)   active.style.display   = 'block'
+    if(inactive) inactive.style.display = 'none'
+    // Days remaining
+    if(daysEl && user.wpExpiry) {
+      const d = Math.ceil((user.wpExpiry - Date.now()) / 86400000)
+      daysEl.textContent = Math.max(0,d) + 'd left'
+    }
+    // Free spin status
+    const hasFree = hasFreePlaysAvailable('wheel')
+    if(freeStatus) {
+      freeStatus.textContent   = hasFree ? 'Available ✓' : 'Used today'
+      freeStatus.style.color   = hasFree ? '#3AFF8A'     : 'rgba(255,255,255,.3)'
+    }
+    if(freeRow) freeRow.style.opacity = hasFree ? '1' : '.5'
+  } else {
+    if(active)   active.style.display   = 'none'
+    if(inactive) inactive.style.display = 'flex'
+  }
+}
+
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   wheelSpinsSelected = 0
+  updateWheelWarriorUI()
   // Draw wheel with slight delay so canvas is visible
   setTimeout(() => drawWheel(wheelAngle), 50)
   setWheelCur('usdt')
@@ -3851,6 +3940,8 @@ async function buyScratchCard() {
   const onSuccess = () => {
     if(btn){ btn.style.opacity='.4'; btn.style.pointerEvents='none'; btn.textContent='✅ Card purchased!' }
     revealScratchCard(t)
+    // Warrior Pass: auto-scratch
+    if(user.warriorPass) setTimeout(() => revealAll(), 800)
   }
   const onFail = () => {
     if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto' }
@@ -4395,6 +4486,35 @@ function setWheelMultiplier(mult) {
   updateWheelUI()
 }
 
+
+function updateWheelWarriorUI() {
+  const active   = document.getElementById('w-warrior-active')
+  const inactive = document.getElementById('w-warrior-inactive')
+  const daysEl   = document.getElementById('w-wp-days')
+  const freeRow  = document.getElementById('w-free-spin-row')
+  const freeStatus = document.getElementById('w-free-spin-status')
+
+  if(user.warriorPass) {
+    if(active)   active.style.display   = 'block'
+    if(inactive) inactive.style.display = 'none'
+    // Days remaining
+    if(daysEl && user.wpExpiry) {
+      const d = Math.ceil((user.wpExpiry - Date.now()) / 86400000)
+      daysEl.textContent = Math.max(0,d) + 'd left'
+    }
+    // Free spin status
+    const hasFree = hasFreePlaysAvailable('wheel')
+    if(freeStatus) {
+      freeStatus.textContent   = hasFree ? 'Available ✓' : 'Used today'
+      freeStatus.style.color   = hasFree ? '#3AFF8A'     : 'rgba(255,255,255,.3)'
+    }
+    if(freeRow) freeRow.style.opacity = hasFree ? '1' : '.5'
+  } else {
+    if(active)   active.style.display   = 'none'
+    if(inactive) inactive.style.display = 'flex'
+  }
+}
+
 function openWheel() {
   go('s-wheel'); setNav('nb-h')
   drawWheel(0)
@@ -4574,6 +4694,19 @@ function updateWheelUI() {
   if(bar) bar.style.width = pct+'%'
   const cur = document.getElementById('w-jp-cur')
   if(cur) cur.textContent = wheelJackpot.toFixed(1)+' TON'
+}
+
+// Usa il free spin giornaliero warrior
+function useWheelFreePlay() {
+  if(!hasFreePlaysAvailable('wheel')) return
+  tryUseFreePlay('wheel', () => {
+    wheelSpinsSelected = (wheelSpinsSelected||0) + 1
+    updateWheelUI()
+    updateWheelWarriorUI()
+    const badge = document.getElementById('w-pass-badge')
+    if(badge) { badge.style.display='flex'; setTimeout(()=>badge.style.display='none', 2500) }
+    showToast('🎁 Free Spin aggiunto!')
+  })
 }
 
 async function startWheelSession() {
