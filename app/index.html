@@ -3915,11 +3915,46 @@ function initTonConnect() {
   }
 }
 
+
+// Converte indirizzo raw TON (0:hex) → user-friendly (UQ...)
+function rawToFriendly(raw) {
+  try {
+    if (!raw) return ''
+    // Se già user-friendly (inizia con UQ/EQ) ritorna così
+    if (/^[UE]Q/.test(raw)) return raw
+    // Parsa "0:hexhash"
+    const parts = raw.split(':')
+    if (parts.length !== 2) return raw
+    const wc = parseInt(parts[0])
+    const hashHex = parts[1].padStart(64, '0')
+    // Converti hex → bytes
+    const bytes = new Uint8Array(36)
+    bytes[0] = 0x51  // non-bounceable (UQ)
+    bytes[1] = wc === 0 ? 0x00 : 0xFF
+    for (let i = 0; i < 32; i++)
+      bytes[i + 2] = parseInt(hashHex.slice(i*2, i*2+2), 16)
+    // CRC16 CCITT
+    let crc = 0
+    for (let i = 0; i < 34; i++) {
+      crc ^= bytes[i] << 8
+      for (let j = 0; j < 8; j++)
+        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF
+    }
+    bytes[34] = (crc >> 8) & 0xFF
+    bytes[35] = crc & 0xFF
+    // Base64url encode
+    let b64 = btoa(String.fromCharCode(...bytes))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    return b64
+  } catch(e) { return raw }
+}
+
 function updateWalletUI() {
   const w = tcWallet || tc?.wallet || null
   if (w && !tcWallet) { tcWallet = w; user.wallet_address = w.account?.address || '' }
   const connected = !!(w?.account?.address)
-  const addr = w?.account?.address || ''
+  const rawAddr = w?.account?.address || ''
+  const addr = rawToFriendly(rawAddr) || rawAddr
   // Mostra primi 6 + ultimi 4 per riconoscimento
   const short = addr ? addr.slice(0,6) + '..' + addr.slice(-4) : ''
   document.querySelectorAll('.tc-connect-btn').forEach(btn => {
@@ -3936,7 +3971,8 @@ async function connectWallet() {
 
   if (tcWallet || tc?.wallet) {
     const w = tcWallet || tc.wallet
-    const addr = w.account?.address || ''
+    const rawAddr = w.account?.address || ''
+    const addr = rawToFriendly(rawAddr) || rawAddr
     const short = addr.slice(0,6)+'...'+addr.slice(-4)
     if (tg?.showPopup) {
       tg.showPopup({
