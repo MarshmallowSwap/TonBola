@@ -6873,6 +6873,22 @@ function pvpPlayAgain() { pvpGameActive=false; pvpShowLobby() }
 
 
 // ── connectBingoWS (from multiplayer WS) ──
+
+// ── Mostra errore connessione bingo ──────────────────────────────────────────
+function showBingoConnError(msg) {
+  const bar = document.getElementById('game-bar')
+  if (!bar) return
+  bar.style.display = 'flex'
+  bar.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;width:100%;padding:0 12px;justify-content:center">
+      <div style="font-size:1.2rem;animation:pulse 1s infinite">⏳</div>
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:700;color:#FCD34D">Connection Lost</div>
+        <div style="font-size:.65rem;color:rgba(255,255,255,.5)">${msg || 'Reconnecting to game server...'}</div>
+      </div>
+    </div>`
+}
+
 function connectBingoWS() {
   if(bingoWS) { try{bingoWS.close()}catch{} }
 
@@ -6892,13 +6908,24 @@ function connectBingoWS() {
     try { handleBingoMsg(JSON.parse(evt.data)) } catch(e) {}
   }
 
-  bingoWS.onerror = () => {
-    // Fallback to local game
-    startLocalGame()
+  bingoWS.onerror = (err) => {
+    console.warn('[BINGO WS] Connection error — retrying in 3s')
+    showBingoConnError()
+    setTimeout(() => {
+      if (isGameActive) connectBingoWS()
+    }, 3000)
   }
 
-  bingoWS.onclose = () => {
+  bingoWS.onclose = (evt) => {
     bingoWS = null
+    if (isGameActive && evt.code !== 1000) {
+      // Riconnessione automatica solo se la partita è ancora attiva
+      console.warn('[BINGO WS] Disconnected — reconnecting in 2s')
+      showBingoConnError()
+      setTimeout(() => {
+        if (isGameActive) connectBingoWS()
+      }, 2000)
+    }
   }
 
   // Ping keepalive
@@ -6910,10 +6937,9 @@ function connectBingoWS() {
 
 // ── drawLocalN (from multiplayer WS) ──
 function drawLocalN(){
-  const av=Array.from({length:90},(_,i)=>i+1).filter(n=>!drawn.includes(n))
-  if(!av.length)return
-  const n=av[Math.floor(Math.random()*av.length)]
-  drawn.push(n);renderBalls();markC(n);checkW()
+  // Disabled: all draws must come from server via WebSocket
+  // Local extraction removed to ensure all players see the same numbers
+  console.warn('[BINGO] drawLocalN disabled — server-side only')
 }
 
 // ── formatPrize (from multiplayer WS) ──
@@ -7122,15 +7148,13 @@ function showWinFromServer(d) {
 
 // ── startLocalGame (from multiplayer WS) ──
 function startLocalGame() {
-  gameOver = false; isGameActive = true
-  cards = Array.from({length:nCards},()=>genCard())
-  drawn = []
-  renderCards(); renderBalls()
-  if(timer) clearInterval(timer)
-  let cd=3
-  timer = setInterval(()=>{
-    cd--; if(cd<=0){cd=3;drawLocalN()}
-  },1000)
+  // Disabled: game must always go through WebSocket server
+  // All players must see the same numbers drawn at the same time
+  console.warn('[BINGO] Local game disabled — server WS required')
+  showBingoConnError('Server connection required to play. Retrying...')
+  setTimeout(() => {
+    if (isGameActive) connectBingoWS()
+  }, 2000)
 }
 
 // ── updateLobbyUI (from multiplayer WS) ──
