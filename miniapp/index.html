@@ -3522,8 +3522,8 @@ function initHub() {
   if ((u.tbola || 0) === 0 && u.telegramId) {
     setTimeout(async () => {
       try {
-        const url = `${SUPABASE_URL}/rest/v1/users?telegram_id=eq.${u.telegramId}&select=tbola_balance`
-        const r = await fetch(url, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } })
+        const url = `${SUPA_URL}/rest/v1/users?telegram_id=eq.${u.telegramId}&select=tbola_balance`
+        const r = await fetch(url, { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY } })
         if (r.ok) {
           const rows = await r.json()
           if (rows[0]?.tbola_balance) {
