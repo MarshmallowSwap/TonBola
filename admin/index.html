@@ -364,12 +364,60 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <!-- ACTIONS -->
   <div class="section-title">Actions</div>
   <div class="actions-grid">
-    <div class="action-card" style="border-color:rgba(139,92,246,.25)">
-      <div class="action-title" style="color:var(--violet)">💸 Withdraw Dev Balance</div>
-      <div class="action-desc">Withdraw accumulated 35% operations revenue from the vault to your owner wallet.</div>
+    <!-- GLOBAL WITHDRAW -->
+    <div class="action-card" style="border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.06);grid-column:1/-1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:2rem">💸</div>
+        <div>
+          <div class="action-title" style="color:var(--violet);font-size:1.1rem">Global Withdraw — Dev Wallet</div>
+          <div class="action-desc" style="margin:0">Ritira tutto il devBalance accumulato (35%) direttamente al wallet owner.</div>
+        </div>
+      </div>
+
+      <!-- Live balance display -->
+      <div style="display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.25);border-radius:12px;padding:14px 18px;margin-bottom:14px">
+        <div>
+          <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:2px">Dev Balance disponibile</div>
+          <div id="gw-balance" style="font-size:1.8rem;font-weight:800;color:#A78BFA;font-family:monospace">— TON</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-bottom:2px">Dest. wallet</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);font-family:monospace" id="gw-dest">UQAjEY…g6TT</div>
+        </div>
+      </div>
+
+      <!-- Slider percentuale -->
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:.75rem;color:rgba(255,255,255,.5)">Percentuale da ritirare</span>
+          <span id="gw-pct-label" style="font-size:.75rem;font-weight:700;color:var(--violet)">100%</span>
+        </div>
+        <input type="range" id="gw-pct" min="10" max="100" value="100" step="5"
+               style="width:100%;accent-color:#8B5CF6"
+               oninput="updateGWAmount()">
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.35)">Importo:</span>
+          <span id="gw-amount-preview" style="font-size:.8rem;font-weight:700;color:#fff">— TON</span>
+        </div>
+      </div>
+
+      <!-- Bottone WITHDRAW GLOBALE -->
+      <button class="action-btn btn-violet" id="gw-btn"
+              onclick="doGlobalWithdraw()"
+              style="width:100%;font-size:1rem;padding:14px;border-radius:12px;letter-spacing:.3px">
+        ⬇️ Withdraw al Dev Wallet
+      </button>
+
+      <div class="action-result" id="gw-result" style="margin-top:10px"></div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid rgba(255,255,255,.08);margin:16px 0 12px"></div>
+
+      <!-- Custom amount (vecchio sistema) -->
+      <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:8px">Oppure importo personalizzato:</div>
       <div class="action-row">
-        <input class="action-input" id="withdraw-amount" type="number" placeholder="Amount TON" step="0.1" min="0.1">
-        <button class="action-btn btn-violet" onclick="doWithdraw()">Withdraw</button>
+        <input class="action-input" id="withdraw-amount" type="number" placeholder="Importo TON" step="0.1" min="0.1">
+        <button class="action-btn btn-violet" onclick="doWithdraw()">Invia</button>
       </div>
       <div class="action-result" id="withdraw-result"></div>
     </div>
@@ -475,6 +523,7 @@ function showResult(id, msg, ok) {
 
 // ── LOAD ALL DATA ─────────────────────────────────────────────
 async function loadAll() {
+  loadDevBalance()  // carica balance live
   try {
     await Promise.all([loadOracleData(), loadVaultData(), loadSupabaseData()])
     document.getElementById('last-update').textContent =
@@ -601,11 +650,87 @@ async function loadSupabaseData() {
 }
 
 // ── ACTIONS ───────────────────────────────────────────────────
+// Wallet dev destinazione
+const DEV_WALLET = 'UQAjEYySoQTi15oQCNCdCoIT45WLV9FKKl_oi5VK2wZtg6TT'
+
+// Legge devBalance live dal contratto
+async function loadDevBalance() {
+  try {
+    const VAULT = 'UQDF2yS_xqltxFi7M8DSx0yKza_UfQu2uP1kz82yvLRWQCuW'
+    const r = await fetch(`https://tonapi.io/v2/blockchain/accounts/${VAULT}/methods/devBalance`).then(r=>r.json())
+    const raw = r.stack?.[0]?.num ?? '0'
+    const val = parseInt(raw, raw.startsWith('0x') ? 16 : 10) / 1e9
+    document.getElementById('gw-balance').textContent = val.toFixed(4) + ' TON'
+    document.getElementById('gw-dest').textContent = DEV_WALLET.slice(0,8) + '…' + DEV_WALLET.slice(-4)
+    window._devBalance = val
+    updateGWAmount()
+    return val
+  } catch(e) {
+    document.getElementById('gw-balance').textContent = '— TON'
+    return 0
+  }
+}
+
+function updateGWAmount() {
+  const pct = parseInt(document.getElementById('gw-pct').value)
+  const bal = window._devBalance || 0
+  const amount = (bal * pct / 100)
+  document.getElementById('gw-pct-label').textContent = pct + '%'
+  document.getElementById('gw-amount-preview').textContent = amount.toFixed(4) + ' TON'
+  window._gwAmount = amount
+}
+
+async function doGlobalWithdraw() {
+  const amount = window._gwAmount || 0
+  if (amount < 0.01) {
+    showResult('gw-result', '❌ Nessun saldo disponibile da ritirare', false)
+    return
+  }
+  const pct = document.getElementById('gw-pct').value
+  const confirmed = confirm(
+    `⚠️ CONFERMA WITHDRAW GLOBALE\n\n` +
+    `Importo: ${amount.toFixed(4)} TON (${pct}% del dev balance)\n` +
+    `Destinazione: ${DEV_WALLET}\n\n` +
+    `Continuare?`
+  )
+  if (!confirmed) return
+
+  const btn = document.getElementById('gw-btn')
+  btn.disabled = true
+  btn.textContent = '⏳ Invio TX...'
+  showResult('gw-result', '⏳ Invio WithdrawDev al vault...', true)
+
+  try {
+    const r = await fetch(`${ORACLE}/withdraw-dev`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({amount_ton: parseFloat(amount.toFixed(4)), secret: ADMIN_SECRET})
+    }).then(r=>r.json())
+
+    showResult('gw-result',
+      `✅ TX inviata! ${amount.toFixed(4)} TON → ${DEV_WALLET.slice(0,10)}...\n` +
+      `Status: ${JSON.stringify(r)}`, true)
+    btn.textContent = '✅ Inviato!'
+
+    // Aggiorna balance dopo 8s
+    setTimeout(() => {
+      loadDevBalance()
+      loadAll()
+      btn.disabled = false
+      btn.textContent = '⬇️ Withdraw al Dev Wallet'
+    }, 8000)
+  } catch(e) {
+    showResult('gw-result', '❌ Errore: ' + e.message, false)
+    btn.disabled = false
+    btn.textContent = '⬇️ Withdraw al Dev Wallet'
+  }
+}
+
 async function doWithdraw() {
   const amount = parseFloat(document.getElementById('withdraw-amount').value)
-  if (!amount || amount <= 0) { showResult('withdraw-result', 'Enter a valid amount', false); return }
+  if (!amount || amount <= 0) { showResult('withdraw-result', 'Inserisci un importo valido', false); return }
   try {
-    showResult('withdraw-result', '⏳ Sending WithdrawDev TX...', true)
+    showResult('withdraw-result', '⏳ Invio TX...', true)
     const r = await fetch(`${ORACLE}/withdraw-dev`, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
