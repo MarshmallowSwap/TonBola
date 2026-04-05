@@ -234,7 +234,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="card-label">Oracle Balance</div>
       <div class="card-value" id="kpi-oracle">—</div>
       <div class="card-sub">Auto-sweep at 2 TON</div>
-      <div class="card-addr"><a href="https://tonviewer.com/UQA3AUgpuq-MtHI26RhOr6MfGFtxMfa7C_N_ZDhK8yYnY17l" target="_blank">UQA3AU...17l ↗</a></div>
+      <div class="card-addr"><a href="https://tonviewer.com/UQADibLmOiGoKv_hfkbN2HEB3eEp5T4lqksCKKxWnArqAe40" target="_blank">UQADibL...e40 ↗</a></div>
     </div>
     <div class="card">
       <div class="card-accent" style="background:linear-gradient(90deg,var(--cyan),#0891B2)"></div>
@@ -431,14 +431,41 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="action-result" id="rank-result"></div>
     </div>
 
-    <div class="action-card" style="border-color:rgba(34,211,238,.2)">
-      <div class="action-title" style="color:var(--cyan)">⚡ Oracle Sweep</div>
-      <div class="action-desc">Check oracle balance and sweep surplus to owner wallet if above threshold (2 TON).</div>
-      <div class="action-row">
-        <input class="action-input" id="max-oracle" type="number" placeholder="Max TON (default 2)" step="0.5">
-        <button class="action-btn btn-green" onclick="doSetSweep()">Set & Sweep</button>
+    <div class="action-card" style="border-color:rgba(34,211,238,.3);background:rgba(34,211,238,.04)">
+      <div class="action-title" style="color:var(--cyan)">🏦 Withdraw All — Tutto al Dev Wallet</div>
+      <div class="action-desc">Ritira in un solo click: Dev Balance (35%) dal vault + saldo oracle. Tutto va a <span style="font-family:monospace;font-size:.75rem;color:rgba(255,255,255,.6)">UQAjEY…g6TT</span></div>
+
+      <!-- Riepilogo live -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+        <div style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px">
+          <div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Dev Balance</div>
+          <div id="wa-dev" style="font-size:1.2rem;font-weight:800;color:#A78BFA;font-family:monospace">— TON</div>
+        </div>
+        <div style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px">
+          <div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Oracle Balance</div>
+          <div id="wa-oracle" style="font-size:1.2rem;font-weight:800;color:#22D3EE;font-family:monospace">— TON</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;grid-column:1/-1;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.5)">TOTALE STIMATO</span>
+          <span id="wa-total" style="font-size:1.4rem;font-weight:900;color:#fff;font-family:monospace">— TON</span>
+        </div>
       </div>
-      <div class="action-result" id="sweep-result"></div>
+
+      <button class="action-btn btn-green" id="wa-btn" onclick="doWithdrawAll()"
+              style="width:100%;font-size:1rem;padding:14px;border-radius:12px">
+        🏦 Withdraw All al Dev Wallet
+      </button>
+      <div class="action-result" id="wa-result" style="margin-top:10px"></div>
+
+      <!-- Sweep manuale oracle (opzione avanzata) -->
+      <details style="margin-top:14px">
+        <summary style="font-size:.7rem;color:rgba(255,255,255,.35);cursor:pointer;user-select:none">⚙️ Opzioni avanzate oracle sweep</summary>
+        <div class="action-row" style="margin-top:8px">
+          <input class="action-input" id="max-oracle" type="number" placeholder="Max TON oracle (default 2)" step="0.5">
+          <button class="action-btn btn-green" onclick="doSetSweep()">Sweep</button>
+        </div>
+        <div class="action-result" id="sweep-result"></div>
+      </details>
     </div>
 
     <div class="action-card" style="border-color:rgba(248,113,113,.15)">
@@ -523,7 +550,8 @@ function showResult(id, msg, ok) {
 
 // ── LOAD ALL DATA ─────────────────────────────────────────────
 async function loadAll() {
-  loadDevBalance()  // carica balance live
+  loadDevBalance()          // carica dev balance live
+  loadOracleBalanceForWA()  // carica oracle balance live
   try {
     await Promise.all([loadOracleData(), loadVaultData(), loadSupabaseData()])
     document.getElementById('last-update').textContent =
@@ -651,7 +679,8 @@ async function loadSupabaseData() {
 
 // ── ACTIONS ───────────────────────────────────────────────────
 // Wallet dev destinazione
-const DEV_WALLET = 'UQAjEYySoQTi15oQCNCdCoIT45WLV9FKKl_oi5VK2wZtg6TT'
+const DEV_WALLET    = 'UQAjEYySoQTi15oQCNCdCoIT45WLV9FKKl_oi5VK2wZtg6TT'
+const ORACLE_WALLET = 'UQADibLmOiGoKv_hfkbN2HEB3eEp5T4lqksCKKxWnArqAe40'
 
 // Legge devBalance live dal contratto
 async function loadDevBalance() {
@@ -664,11 +693,105 @@ async function loadDevBalance() {
     document.getElementById('gw-dest').textContent = DEV_WALLET.slice(0,8) + '…' + DEV_WALLET.slice(-4)
     window._devBalance = val
     updateGWAmount()
+    // Aggiorna anche Withdraw All
+    if (document.getElementById('wa-dev'))
+      document.getElementById('wa-dev').textContent = val.toFixed(4) + ' TON'
+    updateWithdrawAllTotal()
     return val
   } catch(e) {
     document.getElementById('gw-balance').textContent = '— TON'
     return 0
   }
+}
+
+async function loadOracleBalanceForWA() {
+  try {
+    const r = await fetch(`https://tonapi.io/v2/accounts/${ORACLE_WALLET}`).then(r=>r.json())
+    const val = parseInt(r.balance) / 1e9
+    window._oracleBalance = val
+    if (document.getElementById('wa-oracle'))
+      document.getElementById('wa-oracle').textContent = val.toFixed(4) + ' TON'
+    updateWithdrawAllTotal()
+    return val
+  } catch(e) { return 0 }
+}
+
+function updateWithdrawAllTotal() {
+  const dev    = window._devBalance    || 0
+  const oracle = window._oracleBalance || 0
+  // Oracle: teniamo 0.1 TON per gas futuro
+  const total  = dev + Math.max(0, oracle - 0.1)
+  if (document.getElementById('wa-total'))
+    document.getElementById('wa-total').textContent = total.toFixed(4) + ' TON'
+  window._waTotal = total
+}
+
+async function doWithdrawAll() {
+  const dev    = window._devBalance    || 0
+  const oracle = Math.max(0, (window._oracleBalance || 0) - 0.1)
+  const total  = dev + oracle
+
+  if (total < 0.01) {
+    showResult('wa-result', '❌ Nessun saldo disponibile', false)
+    return
+  }
+
+  const confirmed = confirm(
+    `⚠️ WITHDRAW ALL — CONFERMA\n\n` +
+    `Dev Balance:    ${dev.toFixed(4)} TON\n` +
+    `Oracle surplus: ${oracle.toFixed(4)} TON (lascia 0.1 TON per gas)\n` +
+    `TOTALE:         ${total.toFixed(4)} TON\n\n` +
+    `Destinazione: ${DEV_WALLET}\n\n` +
+    `Continuare con entrambi i prelievi?`
+  )
+  if (!confirmed) return
+
+  const btn = document.getElementById('wa-btn')
+  btn.disabled = true
+  btn.textContent = '⏳ Invio TX...'
+  showResult('wa-result', '⏳ Step 1/2: Withdraw Dev Balance...', true)
+
+  let log = []
+
+  // Step 1: Withdraw devBalance dal vault
+  try {
+    const r1 = await fetch(`${ORACLE}/withdraw-dev`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({amount_ton: parseFloat(dev.toFixed(4)), secret: ADMIN_SECRET})
+    }).then(r=>r.json())
+    log.push(`✅ Dev Balance: ${dev.toFixed(4)} TON → TX inviata`)
+  } catch(e) {
+    log.push(`❌ Dev Balance: ${e.message}`)
+  }
+
+  showResult('wa-result', log.join('\n') + '\n⏳ Step 2/2: Sweep Oracle...', true)
+  await new Promise(r => setTimeout(r, 3000))  // aspetta la prima TX
+
+  // Step 2: Sweep oracle surplus → dev wallet
+  if (oracle > 0.01) {
+    try {
+      // Setta max oracle a 0.1 TON (tutto il resto va al dev)
+      const r2 = await fetch(`${ORACLE}/set-max-balance?max_ton=0.1&keep_ton=0.1`, {method:'POST'}).then(r=>r.json())
+      log.push(`✅ Oracle sweep: ${oracle.toFixed(4)} TON → TX inviata`)
+    } catch(e) {
+      log.push(`❌ Oracle sweep: ${e.message}`)
+    }
+  } else {
+    log.push(`ℹ️ Oracle: saldo insufficiente per sweep`)
+  }
+
+  showResult('wa-result', log.join('\n') + '\n\n💰 Totale prelevato: ~' + total.toFixed(4) + ' TON', true)
+  btn.textContent = '✅ Completato!'
+
+  // Ricarica dopo 10s
+  setTimeout(() => {
+    loadDevBalance()
+    loadOracleBalanceForWA()
+    loadAll()
+    btn.disabled = false
+    btn.textContent = '🏦 Withdraw All al Dev Wallet'
+  }, 10000)
 }
 
 function updateGWAmount() {
